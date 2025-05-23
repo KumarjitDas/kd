@@ -54,6 +54,7 @@ dkms.conf
 # CMake Build directory
 build/*
 Build/*
+cmake-build*/*
 
 # VS Code project
 .vscode/*
