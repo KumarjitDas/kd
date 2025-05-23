@@ -1,5 +1,5 @@
 /**
- * @file example2.c
+ * @file example-002.c
  * @author Kumarjit Das
  * @date 2025-05-24
  * @brief KD library example source file #2.
