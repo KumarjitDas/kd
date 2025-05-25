@@ -1,7 +1,7 @@
-# file: set_c_standard.cmake
+# file: add_sources_to_target.cmake
 # author: Kumarjit Das
-# date: 2025-05-24
-# brief: KD library cmake C standard configuration file.
+# date: 2025-05-25
+# brief: KD library cmake library configuration file.
 
 # LICENSE: BSD 3-Clause License
 #
@@ -34,15 +34,16 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-# Using C99 standard to compile the library
-set_target_properties(${KD_LIBRARY_NAME} PROPERTIES
-                      C_STANDARD 99
-                      C_STANDARD_REQUIRED YES
-                      C_EXTENSIONS OFF
-                      )
-set_target_properties(${MEM_LIBRARY_NAME} PROPERTIES
-                      C_STANDARD 99
-                      C_STANDARD_REQUIRED YES
-                      C_EXTENSIONS OFF
-                      )
-write_status("Setting C standard as C99.")
+write_status("Adding sources to the main library target...")
+
+# Adding the include file to the main target
+set(INCLUDE_FILE "${INCLUDE_DIR}/mem.h")
+target_sources(${MEM_LIBRARY_NAME} PRIVATE ${INCLUDE_FILE})
+
+# Adding the source files to the main target
+set(SRC_FILES "${SRC_DIR}/mem.c")
+target_sources(${MEM_LIBRARY_NAME} PRIVATE ${SRC_FILES})
+
+# Setting the install destination for include and source file
+install(FILES ${INCLUDE_FILE} DESTINATION "include")
+install(FILES ${SRC_FILES} DESTINATION "src")

@@ -1,8 +1,8 @@
 /**
- * @file example-002.c
+ * @file example-008-mem.c
  * @author Kumarjit Das
- * @date 2025-05-24
- * @brief KD library example source file #2.
+ * @date 2025-05-25
+ * @brief MEM library example source file #4.
  */
 /**
  * LICENSE: BSD 3-Clause License
@@ -39,6 +39,8 @@
 
 #include <stdio.h>
 #include "kd.h"
+#include "types.h"
+#include "mem.h"
 
 
 int main(int argc, char** argv)
@@ -46,17 +48,33 @@ int main(int argc, char** argv)
   (void) argc;
   (void) argv;
 
-  printf("KD example #2 :: begin\n\n");
+  printf("MEM example #4 :: begin\n\n");
 
-  printf("API Version: %s\n", KD_VERSION_STR);
-  printf("Compiler: %s\n", KD_COMP_STR);
-  printf("Target Operating System: %s\n", KD_OS_STR);
-  printf("Target CPU: %s\n", KD_CPU_STR);
-  printf("Target Architecture Integer Size: %s\n", KD_ARCH_INT_STR);
-  printf("Target Architecture Pointer(Address) Size: %s\n", KD_ARCH_PTR_STR);
-  printf("Endianness: %s\n", KD_ENDIAN_STR);
+  i32* buffer = null;
+  bool result = kdAllocWithSizeInfo(&buffer, 64 * SZ_I32);
 
-  printf("\nKD example #2 :: end\n\n");
+  if (result && buffer)
+  {
+    printf("Allocation successful.\n");
+    printf(
+      "Allocated size: "
+      #if defined TYPES_64BIT_INTEGER
+      FMTSP_U64
+      #else
+      FMTSP_U32
+      #endif  /* TYPES_64BIT_INTEGER */
+      " bytes\n",
+      kdGetAllocSize(buffer)
+    );
+    // Use the buffer...
+    kdFreeWithSizeInfo(&buffer);
+  }
+  else
+  {
+    printf("Allocation failed.\n");
+  }
 
-  return 0;
+  printf("\nMEM example #4 :: end\n\n");
+
+  return result;
 }

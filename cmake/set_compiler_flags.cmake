@@ -40,7 +40,15 @@ set(MSVC_WARNINGS /WX /W4 /w14242 /w14254 /w14263 /w14265 /w14287 /we4289 /w1429
 set(CLANG_WARNINGS -Werror -Wall -Wextra -Wpedantic -Wshadow -Wcast-align -Wconversion -Wsign-conversion
     -Wdouble-promotion -Wunused -Wnull-dereference)
 
-set(GCC_WARNINGS ${CLANG_WARNINGS} -Wmisleading-indentation -Wduplicated-cond -Wduplicated-branches -Wlogical-op)
+set(GCC_WARNINGS ${CLANG_WARNINGS})
+
+if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
+  if (CMAKE_C_COMPILER_VERSION VERSION_GREATER_EQUAL 7)
+    list(APPEND GCC_WARNINGS -Wmisleading-indentation -Wduplicated-cond -Wduplicated-branches -Wlogical-op)
+  else ()
+    list(APPEND GCC_WARNINGS -Wmisleading-indentation -Wlogical-op)
+  endif ()
+endif ()
 
 # Setting compiler warnings to the main target
 if (MSVC)
@@ -54,4 +62,11 @@ elseif (CMAKE_C_COMPILER_ID STREQUAL "GNU")
   write_status("Setting compiler warnings for GNU.")
 else ()
   message(AUTHOR_WARNING "No compiler warnings set for ${KD_LIBRARY_NAME}")
+endif ()
+
+# Setting the compiler flags for the main target
+if (${KD_TARGET_OS} STREQUAL "linux" AND ${KD_TARGET_ARCH} STREQUAL "x86")
+  write_status("Setting compiler & linker flags for Linux x86 architecture...")
+  target_compile_options(${KD_LIBRARY_NAME} INTERFACE -m32)
+  target_link_options(${KD_LIBRARY_NAME} INTERFACE -m32)
 endif ()

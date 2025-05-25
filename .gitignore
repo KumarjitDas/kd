@@ -69,3 +69,6 @@ cmake-build*/*
 # Environment files
 setup_env.bat
 setup_env.sh
+
+# Others
+*.zip

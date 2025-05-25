@@ -58,11 +58,12 @@ foreach (EXAMPLE_ITEM ${EXAMPLE_LIST})
 
   # Link the built executable with the main library
   target_link_libraries(${EXAMPLE_TARGET} PRIVATE "KD::${KD_LIBRARY_NAME}")
+  target_link_libraries(${EXAMPLE_TARGET} PRIVATE "KD::${MEM_LIBRARY_NAME}")
 
   # Setting build postfixes for different build configurations
   set_target_properties(
     ${EXAMPLE_TARGET} PROPERTIES
-    C_STANDARD 90
+    C_STANDARD 99
     DEBUG_POSTFIX "${KD_STATIC_POSTFIX}-d"
     RELEASE_POSTFIX "${KD_STATIC_POSTFIX}"
     MINSIZEREL_POSTFIX "${KD_STATIC_POSTFIX}-mr"

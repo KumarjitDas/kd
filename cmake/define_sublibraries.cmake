@@ -1,7 +1,7 @@
-# file: set_c_standard.cmake
+# file: define_sublibraries.cmake
 # author: Kumarjit Das
-# date: 2025-05-24
-# brief: KD library cmake C standard configuration file.
+# date: 2025-05-25
+# brief: KD library cmake sublibrary configuration file.
 
 # LICENSE: BSD 3-Clause License
 #
@@ -34,15 +34,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-# Using C99 standard to compile the library
-set_target_properties(${KD_LIBRARY_NAME} PROPERTIES
-                      C_STANDARD 99
-                      C_STANDARD_REQUIRED YES
-                      C_EXTENSIONS OFF
-                      )
-set_target_properties(${MEM_LIBRARY_NAME} PROPERTIES
-                      C_STANDARD 99
-                      C_STANDARD_REQUIRED YES
-                      C_EXTENSIONS OFF
-                      )
-write_status("Setting C standard as C99.")
+# Adding the sublibrary: mem
+set(MEM_LIBRARY_NAME "mem" CACHE STRING "Name of the memory library.")
+string(TOLOWER ${MEM_LIBRARY_NAME} MEM_LIBRARY_NAME_LOWER)
+string(TOUPPER ${MEM_LIBRARY_NAME} MEM_LIBRARY_NAME_UPPER)

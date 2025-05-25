@@ -123,14 +123,9 @@ typedef u32                       usize;
 #endif  /* KD_ARCH_64BIT_PTR */
 
 typedef u8                        byte;
-typedef u32                       charcode;
+typedef u32                       chr;
 typedef float                     f32;
 typedef double                    f64;
-
-#if !(defined KD_CPLUSPLUS && defined KD_GOOGLE_TEST && defined KD_OS_WINDOWS && defined KD_COMP_MSVC)
-typedef f32                       fmin;
-typedef f64                       fmax;
-#endif
 
 union kd_types__type_any_
 {
@@ -150,7 +145,7 @@ union kd_types__type_any_
   umax      val_umax;
   usize     val_usize;
   byte      val_byte;
-  charcode  val_charcode;
+  chr       val_chr;
   f32       val_f32;
   f64       val_f64;
   bool*     ptr_bool;
@@ -166,7 +161,7 @@ union kd_types__type_any_
   umax*     ptr_umax;
   usize*    ptr_usize;
   byte*     ptr_byte;
-  charcode* ptr_charcode;
+  chr*      ptr_chr;
   f32*      ptr_f32;
   f64*      ptr_f64;
 
@@ -176,13 +171,6 @@ union kd_types__type_any_
   i64*      ptr_i64;
   u64*      ptr_u64;
 #endif  /* KD_ARCH_64BIT_INT */
-
-#if !(defined KD_CPLUSPLUS && defined KD_GOOGLE_TEST && defined KD_OS_WINDOWS && defined KD_COMP_MSVC)
-  fmin      val_fmin;
-  fmax      val_fmax;
-  fmin*     ptr_fmin;
-  fmax*     ptr_fmax;
-#endif
 };
 
 typedef union kd_types__type_any_ any;
@@ -240,7 +228,7 @@ typedef union kd_types__type_any_ any;
 #define LIT_UMIN(x)     (umin) (x)
 
 #define LIT_BYTE(x)     (byte) (x)
-#define LIT_CHARCODE(x) (charcode) LIT_U32(x)
+#define LIT_CHR(x)      (chr) LIT_U32(x)
 #define LIT_F32(x)      x##F
 #define LIT_F64(x)      (f64) (x)
 
@@ -271,7 +259,7 @@ typedef union kd_types__type_any_ any;
 #define MIN_U32      LIT_U32(0)
 #define MIN_UMIN     LIT_UMIN(0)
 #define MIN_BYTE     LIT_BYTE(0)
-#define MIN_CHARCODE LIT_CHARCODE(0)
+#define MIN_CHR      LIT_CHR(0)
 #define MIN_F32      LIT_F32(-1.175494071E-38)
 #define MIN_F64      LIT_F64(-2.22507385850720139E-308)
 #define MIN_PTR      LIT_PTR(0)
@@ -308,8 +296,8 @@ typedef union kd_types__type_any_ any;
 #define MAX_U16      LIT_U16(65535)
 #define MAX_U32      LIT_U32(4294967295)
 #define MAX_UMIN     LIT_UMIN(255)
-#define MAX_BYTE     LIT_BYTE(MAX_U8)
-#define MAX_CHARCODE LIT_CHARCODE(MAX_U32)
+#define MAX_BYTE     LIT_BYTE(255)
+#define MAX_CHR      LIT_CHR(4294967295)
 #define MAX_F32      LIT_F32(3.402823466E+38)
 #define MAX_F64      LIT_F64(1.79769313486231571E+308)
 
@@ -351,6 +339,14 @@ typedef union kd_types__type_any_ any;
   #undef null
 #endif  /* null */
 
+#if defined RESULT_SUCCESS
+  #undef RESULT_SUCCESS
+#endif  /* RESULT_SUCCESS */
+
+#if defined RESULT_FAILURE
+  #undef RESULT_FAILURE
+#endif  /* RESULT_FAILURE */
+
 #if defined EXIT_SUCCESS
   #undef EXIT_SUCCESS
 #endif  /* EXIT_SUCCESS */
@@ -359,9 +355,11 @@ typedef union kd_types__type_any_ any;
   #undef EXIT_FAILURE
 #endif  /* EXIT_FAILURE */
 
-#define null         LIT_PTR(0x00)
-#define EXIT_SUCCESS 0
-#define EXIT_FAILURE 1
+#define null           LIT_PTR(0x00)
+#define RESULT_SUCCESS true
+#define RESULT_FAILURE false
+#define EXIT_SUCCESS   0
+#define EXIT_FAILURE   1
 
 
 /**
@@ -383,7 +381,7 @@ typedef union kd_types__type_any_ any;
 #define SZ_UMAX     sizeof(umax)
 #define SZ_USIZE    sizeof(usize)
 #define SZ_BYTE     sizeof(byte)
-#define SZ_CHARCODE sizeof(charcode)
+#define SZ_CHR      sizeof(chr)
 #define SZ_F32      sizeof(f32)
 #define SZ_F64      sizeof(f64)
 #define SZ_ANY      sizeof(any)
@@ -392,11 +390,6 @@ typedef union kd_types__type_any_ any;
 #if defined KD_ARCH_64BIT_INT
   #define SZ_I64    sizeof(i64)
   #define SZ_U64    sizeof(u64)
-#endif
-
-#if !(defined KD_CPLUSPLUS && defined KD_GOOGLE_TEST && defined KD_OS_WINDOWS && defined KD_COMP_MSVC)
-  #define SZ_FMIN   sizeof(fmin)
-  #define SZ_FMAX   sizeof(fmax)
 #endif
 
 
@@ -432,7 +425,7 @@ typedef union kd_types__type_any_ any;
   #define FMTSP_U32      "%u"
 #endif  /* KD_ARCH_32BIT_INT */
 
-#define FMTSP_CHARCODE  FMTSP_U32
+#define FMTSP_CHR        FMTSP_U32
 
 #if defined KD_ARCH_64BIT_INT
   #ifdef KD_COMP_MSVC
@@ -499,7 +492,7 @@ typedef union kd_types__type_any_ any;
   #define FSBTC_U32(x)      (unsigned int) (x)
 #endif  /* KD_ARCH_32BIT_INT */
 
-#define FSBTC_CHARCODE(x)   FSBTC_U32(x)
+#define FSBTC_CHR(x)         FSBTC_U32(x)
 
 #if defined KD_ARCH_64BIT_INT
   #ifdef KD_COMP_MSVC
@@ -576,7 +569,7 @@ typedef union kd_types__type_any_ any;
 #define ASSIGN_ANY_VAL_UMIN(x, v)     ASSIGN_ANY_TVAL(umin, x, v)
 #define ASSIGN_ANY_VAL_UMAX(x, v)     ASSIGN_ANY_TVAL(umax, x, v)
 #define ASSIGN_ANY_VAL_BYTE(x, v)     ASSIGN_ANY_TVAL(byte, x, v)
-#define ASSIGN_ANY_VAL_CHARCODE(x, v) ASSIGN_ANY_TVAL(charcode, x, v)
+#define ASSIGN_ANY_VAL_CHR(x, v)      ASSIGN_ANY_TVAL(chr, x, v)
 #define ASSIGN_ANY_VAL_USIZE(x, v)    ASSIGN_ANY_TVAL(usize, x, v)
 #define ASSIGN_ANY_VAL_F32(x, v)      ASSIGN_ANY_TVAL(f32, x, v)
 #define ASSIGN_ANY_VAL_F64(x, v)      ASSIGN_ANY_TVAL(f64, x, v)
@@ -585,11 +578,6 @@ typedef union kd_types__type_any_ any;
   #define ASSIGN_ANY_VAL_I64(x, v)    ASSIGN_ANY_TVAL(i64, x, v)
   #define ASSIGN_ANY_VAL_U64(x, v)    ASSIGN_ANY_TVAL(u64, x, v)
 #endif  /* KD_ARCH_64BIT_INT */
-
-#if !(defined KD_CPLUSPLUS && defined KD_GOOGLE_TEST && defined KD_OS_WINDOWS && defined KD_COMP_MSVC)
-  #define ASSIGN_ANY_VAL_FMIN(x, v)   ASSIGN_ANY_TVAL(fmin, x, v)
-  #define ASSIGN_ANY_VAL_FMAX(x, v)   ASSIGN_ANY_TVAL(fmax, x, v)
-#endif
 
 #define ASSIGN_ANY_PTR(x, v)          (x).ptr = (void*) (v)
 #define ASSIGN_ANY_TPTR(T, x, v)      (x).ptr_##T = (T*) (v)
@@ -604,7 +592,7 @@ typedef union kd_types__type_any_ any;
 #define ASSIGN_ANY_PTR_UMIN(x, v)     ASSIGN_ANY_TPTR(umin, x, v)
 #define ASSIGN_ANY_PTR_UMAX(x, v)     ASSIGN_ANY_TPTR(umax, x, v)
 #define ASSIGN_ANY_PTR_BYTE(x, v)     ASSIGN_ANY_TPTR(byte, x, v)
-#define ASSIGN_ANY_PTR_CHARCODE(x, v) ASSIGN_ANY_TPTR(charcode, x, v)
+#define ASSIGN_ANY_PTR_CHR(x, v)      ASSIGN_ANY_TPTR(chr, x, v)
 #define ASSIGN_ANY_PTR_USIZE(x, v)    ASSIGN_ANY_TPTR(usize, x, v)
 #define ASSIGN_ANY_PTR_F32(x, v)      ASSIGN_ANY_TPTR(f32, x, v)
 #define ASSIGN_ANY_PTR_F64(x, v)      ASSIGN_ANY_TPTR(f64, x, v)
@@ -613,11 +601,6 @@ typedef union kd_types__type_any_ any;
   #define ASSIGN_ANY_PTR_I64(x, v)    ASSIGN_ANY_TPTR(i64, x, v)
   #define ASSIGN_ANY_PTR_U64(x, v)    ASSIGN_ANY_TPTR(u64, x, v)
 #endif  /* KD_ARCH_64BIT_INT */
-
-#if !(defined KD_CPLUSPLUS && defined KD_GOOGLE_TEST && defined KD_OS_WINDOWS && defined KD_COMP_MSVC)
-  #define ASSIGN_ANY_PTR_FMIN(x, v)   ASSIGN_ANY_TPTR(fmin, x, v)
-  #define ASSIGN_ANY_PTR_FMAX(x, v)   ASSIGN_ANY_TPTR(fmax, x, v)
-#endif
 
 
 KD_EXTERN_END

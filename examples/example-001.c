@@ -41,16 +41,16 @@
 #include "kd.h"
 
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
   (void) argc;
   (void) argv;
 
-  (void) printf("KD example #1 :: begin\n\n");
+  printf("KD example #1 :: begin\n\n");
 
-  (void) printf("API Version: %s\n", KD_VERSION_STR);
-  
-  (void) printf(
+  printf("API Version: %s\n", KD_VERSION_STR);
+
+  printf(
     "Compiler: %s\n",
     #if defined KD_COMP_INTEL
     "Intel C/C++"
@@ -79,7 +79,7 @@ int main(int argc, char **argv)
     #endif  /* KD_COMP_INTEL */
   );
 
-  (void) printf(
+  printf(
     "Target Operating System: %s\n",
     #if defined KD_OS_LINUX
     "Linux"
@@ -89,11 +89,11 @@ int main(int argc, char **argv)
     "GameCube"
     #elif defined KD_OS_MINGW
     "MinGW"
-      #if defined KD_OS_MINGW64
+    #if defined KD_OS_MINGW64
       " 64-bit"
-      #else
-      " 32-bit"
-      #endif  /* defined KD_OS_MINGW64 */
+    #else
+    " 32-bit"
+    #endif  /* defined KD_OS_MINGW64 */
     #elif defined KD_OS_GO32
     "GO32/MS-DOS"
     #elif defined KD_OS_DOS32
@@ -124,13 +124,13 @@ int main(int argc, char **argv)
     "XBOX"
     #elif defined KD_OS_WINDOWS
     "Windows"
-      #if defined KD_OS_WINCE
+    #if defined KD_OS_WINCE
       " CE"
-      #elif defined KD_OS_WIN64
+    #elif defined KD_OS_WIN64
       " 64-bit"
-      #else
+    #else
       " 32-bit"
-      #endif  /* defined KD_OS_WINCE */
+    #endif  /* defined KD_OS_WINCE */
     #elif defined KD_OS_PALM
     "PalmOS"
     #elif defined KD_OS_MACOS
@@ -140,8 +140,8 @@ int main(int argc, char **argv)
     #endif  /* KD_OS_LINUX */
   );
 
-  
-  (void) printf(
+
+  printf(
     "Target CPU: %s\n",
     #if defined KD_CPU_PPC750
     "IBM PowerPC 750 (NGC)"
@@ -149,18 +149,18 @@ int main(int argc, char **argv)
     "MC68000"
     #elif defined KD_CPU_PPC
     "PowerPC"
-      #if defined KD_CPU_PPC64
+    #if defined KD_CPU_PPC64
       " 64-bit"
-      #endif  /* defined KD_CPU_PPC64 */
+    #endif  /* defined KD_CPU_PPC64 */
     #elif defined KD_CPU_CRAYT3E
     "Cray T3E (Alpha 21164)"
     #elif defined KD_CPU_SH3 || defined KD_CPU_SH4
     "Hitachi SH-"
-      #if defined KD_CPU_SH4
+    #if defined KD_CPU_SH4
       "4"
-      #else
+    #else
       "3"
-      #endif  /* defined KD_CPU_SH4 */
+    #endif  /* defined KD_CPU_SH4 */
     #elif defined KD_CPU_SPARC64
     "Sparc/64"
     #elif defined KD_CPU_SPARC
@@ -172,11 +172,11 @@ int main(int argc, char **argv)
     #elif defined KD_CPU_IA64
     "IA64"
     #elif defined KD_CPU_X86 || defined KD_CPU_X86_64
-      #if defined KD_CPU_X86_64
+    #if defined KD_CPU_X86_64
       "AMD x86-64"
-      #else
-      "Intel 386+"
-      #endif  /* defined KD_CPU_X86_64 */
+    #else
+    "Intel 386+"
+    #endif  /* defined KD_CPU_X86_64 */
     #elif defined KD_CPU_AXP
     "AXP"
     #elif defined KD_CPU_HPPA
@@ -186,7 +186,7 @@ int main(int argc, char **argv)
     #endif  /* KD_CPU_PPC750 */
   );
 
-  (void) printf(
+  printf(
     "Target Architecture Integer Size: %s\n",
     #if defined KD_ARCH_64BIT_INT
     "64 bit"
@@ -197,7 +197,7 @@ int main(int argc, char **argv)
     #endif  /* KD_ARCH_64BIT_INT */
   );
 
-  (void) printf(
+  printf(
     "Target Architecture Pointer(Address) Size: %s\n",
     #if defined KD_ARCH_64BIT_PTR
     "64 bit"
@@ -208,7 +208,7 @@ int main(int argc, char **argv)
     #endif  /* KD_ARCH_64BIT_PTR */
   );
 
-  (void) printf(
+  printf(
     "Endianness: %s\n",
     #if defined KD_ENDIAN_LITTLE
     "Little"
@@ -217,7 +217,7 @@ int main(int argc, char **argv)
     #endif  /* KD_ENDIAN_LITTLE */
   );
 
-  (void) printf("\nKD example #1 :: end\n\n");
+  printf("\nKD example #1 :: end\n\n");
 
   return 0;
 }

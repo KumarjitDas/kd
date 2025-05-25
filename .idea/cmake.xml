@@ -2,7 +2,12 @@
 <project version="4">
   <component name="CMakeSharedSettings">
     <configurations>
-      <configuration PROFILE_NAME="Debug (Windows x64)" ENABLED="true" GENERATION_DIR="cmake-build-debug-windows-x64" CONFIG_NAME="Debug" TOOLCHAIN_NAME="Visual Studio" GENERATION_OPTIONS="-DCMAKE_BUILD_TYPE=Debug -DKD_TARGET_OS=windows -DKD_TARGET_ARCH=x64 -DCMAKE_INSTALL_PREFIX:PATH=%USERPROFILE%\Releases\Windows\x64" NO_GENERATOR="true" />
+      <configuration PROFILE_NAME="Debug (Windows x86)" ENABLED="true" GENERATION_DIR="cmake-build-debug-windows-x86" CONFIG_NAME="Debug" TOOLCHAIN_NAME="Visual Studio 32-bit" GENERATION_OPTIONS="-DCMAKE_BUILD_TYPE=Debug -DKD_TARGET_OS=windows -DKD_TARGET_ARCH=x86 -DCMAKE_INSTALL_PREFIX:PATH=%USERPROFILE%\Releases\Windows\x86" NO_GENERATOR="true" />
+      <configuration PROFILE_NAME="Debug (Windows x64)" ENABLED="true" GENERATION_DIR="cmake-build-debug-windows-x64" CONFIG_NAME="Debug" TOOLCHAIN_NAME="Visual Studio 32-bit" GENERATION_OPTIONS="-DCMAKE_BUILD_TYPE=Debug -DKD_TARGET_OS=windows -DKD_TARGET_ARCH=x64 -DCMAKE_INSTALL_PREFIX:PATH=%USERPROFILE%\Releases\Windows\x64" NO_GENERATOR="true" />
+      <configuration PROFILE_NAME="Debug (MinGW32)" ENABLED="true" CONFIG_NAME="Debug" TOOLCHAIN_NAME="MinGW 32-bit" GENERATION_OPTIONS="-G Ninja -DCMAKE_BUILD_TYPE=Debug -DKD_TARGET_OS=windows -DKD_TARGET_ARCH=x86 -DCMAKE_INSTALL_PREFIX:PATH=%USERPROFILE%\Releases\Windows\x86" />
+      <configuration PROFILE_NAME="Debug (MinGW64)" ENABLED="true" CONFIG_NAME="Debug" TOOLCHAIN_NAME="MinGW 64-bit" GENERATION_OPTIONS="-G Ninja -DCMAKE_BUILD_TYPE=Debug -DKD_TARGET_OS=windows -DKD_TARGET_ARCH=x64 -DCMAKE_INSTALL_PREFIX:PATH=%USERPROFILE%\Releases\Windows\x64" />
+      <configuration PROFILE_NAME="Debug (Linux 32)" ENABLED="true" CONFIG_NAME="Debug" TOOLCHAIN_NAME="WSL 32/64" GENERATION_OPTIONS="-DCMAKE_BUILD_TYPE=Debug -DKD_TARGET_OS=linux -DKD_TARGET_ARCH=x86 -DCMAKE_INSTALL_PREFIX:PATH=%USERPROFILE%\Releases\Linux\x86" NO_GENERATOR="true" />
+      <configuration PROFILE_NAME="Debug (Linux 64)" ENABLED="true" CONFIG_NAME="Debug" TOOLCHAIN_NAME="WSL 32/64" GENERATION_OPTIONS="-DCMAKE_BUILD_TYPE=Debug -DKD_TARGET_OS=linux -DKD_TARGET_ARCH=x64 -DCMAKE_INSTALL_PREFIX:PATH=%USERPROFILE%\Releases\Linux\x64" NO_GENERATOR="true" />
     </configurations>
   </component>
 </project>

@@ -52,8 +52,14 @@ include("cmake/validate_target_platform.cmake")
 # Validate the build configuration
 include("cmake/validate_build_config.cmake")
 
+# Define sublibraries
+include("cmake/define_sublibraries.cmake")
+
 # Create the main library
 include("cmake/create_library.cmake")
+
+# Add sources to the library
+include("CMake/add_sources_to_target.cmake")
 
 # Set the build output directories
 include("cmake/set_build_output_directories.cmake")

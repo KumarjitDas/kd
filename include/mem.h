@@ -1,8 +1,9 @@
 /**
- * @file example-002.c
+ * @file mem.h
  * @author Kumarjit Das
- * @date 2025-05-24
- * @brief KD library example source file #2.
+ * @date 2025-05-25
+ * @version 0.0.3
+ * @brief Main header file of the MEM library.
  */
 /**
  * LICENSE: BSD 3-Clause License
@@ -37,26 +38,44 @@
  */
 
 
-#include <stdio.h>
+#ifndef MEM_H_
+#define MEM_H_
+
+
 #include "kd.h"
+#include "types.h"
+
+KD_EXTERN_BEGIN
 
 
-int main(int argc, char** argv)
-{
-  (void) argc;
-  (void) argv;
+#if defined TYPES_64BIT_INTEGER
+#define USE_64BIT 1
+#endif  /* TYPES_64BIT_INTEGER */
 
-  printf("KD example #2 :: begin\n\n");
 
-  printf("API Version: %s\n", KD_VERSION_STR);
-  printf("Compiler: %s\n", KD_COMP_STR);
-  printf("Target Operating System: %s\n", KD_OS_STR);
-  printf("Target CPU: %s\n", KD_CPU_STR);
-  printf("Target Architecture Integer Size: %s\n", KD_ARCH_INT_STR);
-  printf("Target Architecture Pointer(Address) Size: %s\n", KD_ARCH_PTR_STR);
-  printf("Endianness: %s\n", KD_ENDIAN_STR);
+#if defined USE_64BIT
 
-  printf("\nKD example #2 :: end\n\n");
+KDAPI(bool) kdAlloc(void* dst, u64 sz);
+KDAPI(bool) kdRealloc(void* dst, u64 new_sz, void* src, u64 old_sz);
+KDAPI(bool) kdAllocWithSizeInfo(void* dst, u64 sz);
+KDAPI(bool) kdReallocWithSizeInfo(void* dst, u64 new_sz, void* src, u64 old_sz);
+KDAPI(u64)  kdGetAllocSize(void* src);
 
-  return 0;
-}
+#else
+
+KDAPI(bool) kdAlloc(void* dst, u32 sz);
+KDAPI(bool) kdRealloc(void* dst, u32 new_sz, void* src, u32 old_sz);
+KDAPI(bool) kdAllocWithSizeInfo(void* dst, u32 sz);
+KDAPI(bool) kdReallocWithSizeInfo(void* dst, u32 new_sz, void* src, u32 old_sz);
+KDAPI(u32)  kdGetAllocSize(void* src);
+
+#endif  /* USE_64BIT */
+
+
+KDAPI(bool) kdFree(void* dst);
+KDAPI(bool) kdFreeWithSizeInfo(void* dst);
+
+
+KD_EXTERN_END
+
+#endif  /* MEM_H_ */

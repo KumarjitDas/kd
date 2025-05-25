@@ -147,12 +147,14 @@
 #if defined __MINGW32__
   #define KD_OS_MINGW 1
   #define KD_OS_MINGW32 1
+  #undef  KD_OS_STR
   #define KD_OS_STR "MinGW (32-bit)"
 #endif
 
 #if defined __MINGW64__
   #define KD_OS_MINGW 1
   #define KD_OS_MINGW64 1
+  #undef  KD_OS_STR
   #define KD_OS_STR "MinGW (64-bit)"
 #endif
 
@@ -247,6 +249,7 @@
   #if !defined KD_OS_XBOX
     #if defined _WIN64
       #define KD_OS_WIN64 1
+      #undef  KD_OS_STR
       #define KD_OS_STR "Windows 64-bit"
     #else
       #if !defined KD_OS_STR
@@ -529,7 +532,7 @@
 #if defined _MSC_VER || defined __BORLANDC__ || defined __WATCOMC__ || (defined __alpha && defined __DECC)
   #define KD_ARCH_64BIT_INT   1
 #elif defined __GNUC__ || defined __MWERKS__ || defined __SUNPRO_C || defined __SUNPRO_CC || defined __APPLE_CC__ || defined KD_OS_IRIX || defined _LONG_LONG || defined _CRAYC
-  #if __SIZEOF_LONG__ == 8
+  #if defined __x86_64__ || defined __ppc64__ || defined __aarch64__ || defined __LP64__ || defined _WIN64 || __SIZEOF_POINTER__ == 8 || __SIZEOF_LONG__ == 8
     #define KD_ARCH_64BIT_INT 1
   #endif
 #elif defined __LP64__ || defined __powerpc64__ || defined KD_CPU_SPARC64

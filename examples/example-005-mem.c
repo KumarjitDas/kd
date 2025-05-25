@@ -1,8 +1,8 @@
 /**
- * @file example-002.c
+ * @file example-005-mem.c
  * @author Kumarjit Das
- * @date 2025-05-24
- * @brief KD library example source file #2.
+ * @date 2025-05-25
+ * @brief MEM library example source file #1.
  */
 /**
  * LICENSE: BSD 3-Clause License
@@ -39,6 +39,8 @@
 
 #include <stdio.h>
 #include "kd.h"
+#include "types.h"
+#include "mem.h"
 
 
 int main(int argc, char** argv)
@@ -46,17 +48,23 @@ int main(int argc, char** argv)
   (void) argc;
   (void) argv;
 
-  printf("KD example #2 :: begin\n\n");
+  printf("MEM example #1 :: begin\n\n");
 
-  printf("API Version: %s\n", KD_VERSION_STR);
-  printf("Compiler: %s\n", KD_COMP_STR);
-  printf("Target Operating System: %s\n", KD_OS_STR);
-  printf("Target CPU: %s\n", KD_CPU_STR);
-  printf("Target Architecture Integer Size: %s\n", KD_ARCH_INT_STR);
-  printf("Target Architecture Pointer(Address) Size: %s\n", KD_ARCH_PTR_STR);
-  printf("Endianness: %s\n", KD_ENDIAN_STR);
+  i32* buffer = null;
+  bool result = kdAlloc(&buffer, 64 * SZ_I32);
 
-  printf("\nKD example #2 :: end\n\n");
+  if (result && buffer)
+  {
+    printf("Allocation successful.\n");
+    // Use the buffer...
+    kdFree(&buffer);
+  }
+  else
+  {
+    printf("Allocation failed.\n");
+  }
 
-  return 0;
+  printf("\nMEM example #1 :: end\n\n");
+
+  return result;
 }
