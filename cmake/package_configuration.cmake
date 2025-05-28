@@ -1,7 +1,7 @@
 # file: package_configuration.cmake
 # author: Kumarjit Das
 # date: 2025-05-24
-# brief: KD library cmake package configuration file.
+# brief: KD library cmake package configuration script.
 
 # LICENSE: BSD 3-Clause License
 #

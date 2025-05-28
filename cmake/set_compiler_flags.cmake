@@ -1,7 +1,7 @@
 # file: set_compiler_flags.cmake
 # author: Kumarjit Das
 # date: 2025-05-24
-# brief: KD library cmake compiler flags configuration file.
+# brief: KD library cmake compiler flags configuration script.
 
 # LICENSE: BSD 3-Clause License
 #
@@ -65,7 +65,7 @@ else ()
 endif ()
 
 # Setting the compiler flags for the main target
-if (${KD_TARGET_OS} STREQUAL "linux" AND ${KD_TARGET_ARCH} STREQUAL "x86")
+if (${KD_TARGET_OS} STREQUAL "Linux" AND ${KD_TARGET_ARCH} STREQUAL "x86")
   write_status("Setting compiler & linker flags for Linux x86 architecture...")
   target_compile_options(${KD_LIBRARY_NAME} INTERFACE -m32)
   target_link_options(${KD_LIBRARY_NAME} INTERFACE -m32)

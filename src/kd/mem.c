@@ -39,91 +39,70 @@
 
 
 #define KD_BUILDING_LIB 1
-#include "kd.h"
-
-#include "types.h"
-#include "mem.h"
+#include "kd/defs.h"
+#include "kd/types/fw.h"
+#include "kd/mem.h"
 
 
 /**
  * Windows specific
  */
 #if defined KD_OS_WINDOWS
-#include <windows.h>
-#else
-#include <stdlib.h>
-#endif
 
-#if defined TYPES_64BIT_INTEGER
-#define KD__OFFSET_SIZE SZ_U64
-typedef u64 kd__usize;
-#else
-#define KD__OFFSET_SIZE SZ_U32
-typedef u32 kd__usize;
-#endif  /* USE_64BIT */
+  #include <windows.h>
 
 
-#if defined KD_OS_WINDOWS
-
-bool
-#if defined USE_64BIT
-kdAlloc(void* dst, u64 sz)
-#else
-kdAlloc(void* dst, u32 sz)
-#endif  /* USE_64BIT */
+kd_bool_t
+kdMemAlloc(void* dst, kd_usize_t sz)
 {
   if (!dst || sz == 0)
   {
-    return RESULT_FAILURE;
+    return KD_RESULT_FAILURE;
   }
 
   HANDLE heap = GetProcessHeap();
   if (!heap)
   {
-    return RESULT_FAILURE;
+    return KD_RESULT_FAILURE;
   }
 
-  const byte* ptr = (byte*) HeapAlloc(heap, 0, sz);
+  const byte* ptr = (byte*)HeapAlloc(heap, 0, sz);
   if (!ptr)
   {
-    return RESULT_FAILURE;
+    return KD_RESULT_FAILURE;
   }
 
   const byte** addr_ptr = dst;
   *addr_ptr             = ptr;
 
-  return RESULT_SUCCESS;
+  return KD_RESULT_SUCCESS;
 }
 
 
-bool
-#if defined USE_64BIT
-kdRealloc(void* dst, u64 new_sz, void* src, u64 old_sz)
-#else
-kdRealloc(void* dst, u32 new_sz, void* src, u32 old_sz)
-#endif  /* USE_64BIT */
+kd_bool_t
+kdMemRealloc(void* dst, kd_usize_t new_sz, void* src, kd_usize_t old_sz)
 {
-  (void) old_sz;
+  (void)old_sz;
 
   if (!dst)
   {
-    return RESULT_FAILURE;
+    return KD_RESULT_FAILURE;
   }
 
   const byte** addr_ptr_dst = dst;
   const byte*  ptr_dst      = *addr_ptr_dst;
   const byte** addr_ptr_src = src;
-  const byte*  ptr_src      = src ? *addr_ptr_src : null;
+  const byte*  ptr_src      = src ? *addr_ptr_src : kd_null;
 
   if (!ptr_src && new_sz == 0)
   {
-    return RESULT_FAILURE;
+    return KD_RESULT_FAILURE;
   }
 
   HANDLE heap = GetProcessHeap();
   if (!heap)
   {
-    return RESULT_FAILURE;
+    return KD_RESULT_FAILURE;
   }
 
   if (!ptr_src && new_sz > 0)
@@ -132,44 +111,45 @@ kdRealloc(void* dst, u32 new_sz, void* src, u32 old_sz)
 
     if (addr_ptr_src)
     {
-      *addr_ptr_src = null;
+      *addr_ptr_src = kd_null;
     }
 
     *addr_ptr_dst = ptr_dst;
 
-    return RESULT_SUCCESS;
+    return KD_RESULT_SUCCESS;
   }
 
   if (ptr_src && new_sz == 0)
   {
-    const bool result = HeapFree(heap, 0, (LPVOID) ptr_src);
-    *addr_ptr_src     = null;
-    *addr_ptr_dst     = null;
+    const kd_bool_t result = HeapFree(heap, 0, (PVOID)ptr_src);
+    *addr_ptr_src          = kd_null;
+    *addr_ptr_dst          = kd_null;
     return result;
   }
 
-  ptr_dst = HeapReAlloc(heap, 0, (LPVOID) ptr_src, new_sz);
+  ptr_dst = HeapReAlloc(heap, 0, (PVOID)ptr_src, new_sz);
   if (!ptr_dst)
   {
-    return RESULT_FAILURE;
+    return KD_RESULT_FAILURE;
   }
 
   if (addr_ptr_src)
   {
-    *addr_ptr_src = null;
+    *addr_ptr_src = kd_null;
   }
 
   *addr_ptr_dst = ptr_dst;
 
-  return RESULT_SUCCESS;
+  return KD_RESULT_SUCCESS;
 }
 
 
-bool kdFree(void* dst)
+kd_bool_t
+kdFree(void* dst)
 {
   if (!dst)
   {
-    return RESULT_FAILURE;
+    return KD_RESULT_FAILURE;
   }
 
   const byte** addr_ptr = dst;
@@ -177,133 +157,129 @@ bool kdFree(void* dst)
 
   if (!ptr)
   {
-    return RESULT_SUCCESS;
+    return KD_RESULT_SUCCESS;
   }
 
   HANDLE heap = GetProcessHeap();
   if (!heap)
   {
-    return RESULT_FAILURE;
+    return KD_RESULT_FAILURE;
   }
 
-  const bool result = HeapFree(heap, 0, (LPVOID) ptr);
-  *addr_ptr         = null;
+  const kd_bool_t result = HeapFree(heap, 0, (PVOID)ptr);
+  *addr_ptr              = kd_null;
 
   return result;
 }
 
 
-bool
-#if defined USE_64BIT
-kdAllocWithSizeInfo(void* dst, u64 sz)
-#else
-kdAllocWithSizeInfo(void* dst, u32 sz)
-#endif  /* USE_64BIT */
+kd_bool_t
+kdMemAllocWithSizeInfo(void* dst, kd_usize_t sz)
 {
   if (!dst || sz == 0)
   {
-    return RESULT_FAILURE;
+    return KD_RESULT_FAILURE;
   }
 
   HANDLE heap = GetProcessHeap();
   if (!heap)
   {
-    return RESULT_FAILURE;
+    return KD_RESULT_FAILURE;
   }
 
-  const byte* ptr = (byte*) HeapAlloc(heap, 0, sz + KD__OFFSET_SIZE);
+  const byte* ptr = (byte*)HeapAlloc(heap, 0, sz + KD_SZ_USIZE);
   if (!ptr)
   {
-    return RESULT_FAILURE;
+    return KD_RESULT_FAILURE;
   }
 
-  *((kd__usize*) ptr)   = sz;
+  *((kd_usize_t*)ptr)   = sz;
   const byte** addr_ptr = dst;
-  *addr_ptr             = ptr + KD__OFFSET_SIZE;
+  *addr_ptr             = ptr + KD_SZ_USIZE;
 
-  return RESULT_SUCCESS;
+  return KD_RESULT_SUCCESS;
 }
 
 
-bool
-#if defined USE_64BIT
-kdReallocWithSizeInfo(void* dst, u64 new_sz, void* src, u64 old_sz)
-#else
-kdReallocWithSizeInfo(void* dst, u32 new_sz, void* src, u32 old_sz)
-#endif  /* USE_64BIT */
+kd_bool_t
+kdMemReallocWithSizeInfo(void* dst, kd_usize_t new_sz, void* src, kd_usize_t old_sz)
 {
-  (void) old_sz;
+  (void)old_sz;
 
   if (!dst)
   {
-    return RESULT_FAILURE;
+    return KD_RESULT_FAILURE;
   }
 
   const byte** addr_ptr_dst = dst;
   const byte*  ptr_dst      = *addr_ptr_dst;
   const byte** addr_ptr_src = src;
-  byte*        ptr_src      = src ? (byte*) *addr_ptr_src : null;
+  byte*        ptr_src      = src ? (byte*)*addr_ptr_src : kd_null;
 
   if (!ptr_src && new_sz == 0)
   {
-    return RESULT_FAILURE;
+    return KD_RESULT_FAILURE;
   }
 
   HANDLE heap = GetProcessHeap();
   if (!heap)
   {
-    return RESULT_FAILURE;
+    return KD_RESULT_FAILURE;
   }
 
   if (!ptr_src && new_sz > 0)
   {
-    ptr_dst                 = HeapAlloc(heap, 0, new_sz + KD__OFFSET_SIZE);
-    *((kd__usize*) ptr_dst) = new_sz;
+    ptr_dst                 = HeapAlloc(heap, 0, new_sz + KD_SZ_USIZE);
+    *((kd_usize_t*)ptr_dst) = new_sz;
 
     if (addr_ptr_src)
     {
-      *addr_ptr_src = null;
+      *addr_ptr_src = kd_null;
     }
 
-    *addr_ptr_dst = ptr_dst + KD__OFFSET_SIZE;
+    *addr_ptr_dst = ptr_dst + KD_SZ_USIZE;
 
-    return RESULT_SUCCESS;
+    return KD_RESULT_SUCCESS;
   }
 
-  ptr_src -= KD__OFFSET_SIZE;
+  if (ptr_src)
+  {
+    ptr_src -= KD_SZ_USIZE;
+  }
 
   if (ptr_src && new_sz == 0)
   {
-    const bool result = HeapFree(heap, 0, ptr_src);
-    *addr_ptr_src     = null;
-    *addr_ptr_dst     = null;
+    const kd_bool_t result = HeapFree(heap, 0, ptr_src);
+    *addr_ptr_src          = kd_null;
+    *addr_ptr_dst          = kd_null;
     return result;
   }
 
-  ptr_dst = HeapReAlloc(heap, 0, ptr_src, new_sz + KD__OFFSET_SIZE);
+  ptr_dst = HeapReAlloc(heap, 0, ptr_src, new_sz + KD_SZ_USIZE);
   if (!ptr_dst)
   {
-    return RESULT_FAILURE;
+    return KD_RESULT_FAILURE;
   }
 
-  *((kd__usize*) ptr_dst) = new_sz;
+  *((kd_usize_t*)ptr_dst) = new_sz;
 
   if (addr_ptr_src)
   {
-    *addr_ptr_src = null;
+    *addr_ptr_src = kd_null;
   }
 
-  *addr_ptr_dst = ptr_dst + KD__OFFSET_SIZE;
+  *addr_ptr_dst = ptr_dst + KD_SZ_USIZE;
 
-  return RESULT_SUCCESS;
+  return KD_RESULT_SUCCESS;
 }
 
 
-bool kdFreeWithSizeInfo(void* dst)
+kd_bool_t
+kdFreeWithSizeInfo(void* dst)
 {
   if (!dst)
   {
-    return RESULT_FAILURE;
+    return KD_RESULT_FAILURE;
   }
 
   const byte** addr_ptr = dst;
@@ -311,35 +287,33 @@ bool kdFreeWithSizeInfo(void* dst)
 
   if (!ptr)
   {
-    return RESULT_FAILURE;
+    return KD_RESULT_FAILURE;
   }
 
   HANDLE heap = GetProcessHeap();
   if (!heap)
   {
-    return RESULT_FAILURE;
+    return KD_RESULT_FAILURE;
   }
 
-  const bool result = HeapFree(heap, 0, (LPVOID) (ptr - KD__OFFSET_SIZE));
-  *addr_ptr         = null;
+  const kd_bool_t result = HeapFree(heap, 0, (PVOID)(ptr - KD_SZ_USIZE));
+  *addr_ptr              = kd_null;
 
   return result;
 }
 
 
-#if defined USE_64BIT
-u64
-#else
-u32
-#endif  /* USE_64BIT */
-kdGetAllocSize(void* src)
+kd_usize_t
+kdMemGetAllocSize(void* src)
 {
-  if (src == null)
+  if (src == kd_null)
   {
     return 0;
   }
 
-  return *((kd__usize*) ((byte*) src - KD__OFFSET_SIZE));
+  return *((kd_usize_t*)((byte*)src - KD_SZ_USIZE));
 }
 
-#endif
+#else
+
+#endif /* KD_OS_WINDOWS */

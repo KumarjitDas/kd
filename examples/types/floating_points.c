@@ -1,8 +1,8 @@
 /**
- * @file example-002.c
+ * @file floating_points.c
  * @author Kumarjit Das
  * @date 2025-05-24
- * @brief KD library example source file #2.
+ * @brief Floating point types example.
  */
 /**
  * LICENSE: BSD 3-Clause License
@@ -37,26 +37,60 @@
  */
 
 
+#include "kd/defs.h"
+
+#define KD_USE_SIMPLIFIED_TYPES
+#include "kd/types/fp.h"
+
 #include <stdio.h>
-#include "kd.h"
 
 
-int main(int argc, char** argv)
+int
+       main(argc, argv)
+int    argc;
+char** argv;
 {
-  (void) argc;
-  (void) argv;
+  f32 val_f32;
+  f64 val_f64;
 
-  printf("KD example #2 :: begin\n\n");
+  (void)argc;
+  (void)argv;
 
-  printf("API Version: %s\n", KD_VERSION_STR);
-  printf("Compiler: %s\n", KD_COMP_STR);
-  printf("Target Operating System: %s\n", KD_OS_STR);
-  printf("Target CPU: %s\n", KD_CPU_STR);
-  printf("Target Architecture Integer Size: %s\n", KD_ARCH_INT_STR);
-  printf("Target Architecture Pointer(Address) Size: %s\n", KD_ARCH_PTR_STR);
-  printf("Endianness: %s\n", KD_ENDIAN_STR);
+  printf("Floating point types example :: begin\n");
 
-  printf("\nKD example #2 :: end\n\n");
+  printf("\nAPI Version: %s\n", KD_VERSION_CSTR);
 
-  return 0;
+  printf("\nSizes of types:\n\n");
+
+  printf("KD_SZ_F32 = %d,\n", (int)KD_SZ_F32);
+  printf("KD_SZ_F64 = %d,\n", (int)KD_SZ_F64);
+
+  printf("\nMinimum values of types:\n\n");
+
+  printf("KD_MIN_F32 = " KD_FMTSP_F32 ",\n", KD_FSBTC_F32(KD_MIN_F32));
+  printf("KD_MIN_F64 = " KD_FMTSP_F64 ",\n", KD_FSBTC_F64(KD_MIN_F64));
+  printf("KD_MIN_FMIN = " KD_FMTSP_FMIN ",\n", KD_FSBTC_FMIN(KD_MIN_FMIN));
+  printf("KD_MIN_FMAX = " KD_FMTSP_FMAX ",\n", KD_FSBTC_FMAX(KD_MIN_FMAX));
+
+  printf("\nMaximum values of types:\n\n");
+
+  printf("KD_MAX_F32 = " KD_FMTSP_F32 ",\n", KD_FSBTC_F32(KD_MAX_F32));
+  printf("KD_MAX_F64 = " KD_FMTSP_F64 ",\n", KD_FSBTC_F64(KD_MAX_F64));
+  printf("KD_MAX_FMIN = " KD_FMTSP_FMIN ",\n", KD_FSBTC_FMIN(KD_MAX_FMIN));
+  printf("KD_MAX_FMAX = " KD_FMTSP_FMAX ",\n", KD_FSBTC_FMAX(KD_MAX_FMAX));
+
+  printf("\nValues of constant values:\n\n");
+  printf("...\n");
+
+  printf("\nValues of types:\n\n");
+
+  val_f32 = KD_MAX_F32;
+  val_f64 = KD_MAX_F64;
+
+  printf("val_f32 = " KD_FMTSP_F32 ",\n", KD_FSBTC_F32(val_f32));
+  printf("val_f64 = " KD_FMTSP_F64 ",\n", KD_FSBTC_F64(val_f64));
+
+  printf("\nFloating point types example :: end\n");
+
+  return KD_EXIT_SUCCESS;
 }

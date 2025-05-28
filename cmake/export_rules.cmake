@@ -1,7 +1,7 @@
 # file: export_rules.cmake
 # author: Kumarjit Das
 # date: 2025-05-24
-# brief: KD library cmake export rules file.
+# brief: KD library cmake export rules script.
 
 # LICENSE: BSD 3-Clause License
 #

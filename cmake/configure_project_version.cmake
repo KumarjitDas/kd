@@ -36,12 +36,10 @@
 
 # Configuring the version header file of the library
 write_status("Configuring the project version for kd.h.in and types.h.in files...")
-configure_file("templates/kd.h.in" "include/kd.h")
-configure_file("templates/types.h.in" "include/types.h")
+configure_file("configs/version.h.in" "include/kd/version.h")
 
 # Setting the install destination of the version header file
 install(FILES
-        "${CMAKE_CURRENT_BINARY_DIR}/include/kd.h"
-        "${CMAKE_CURRENT_BINARY_DIR}/include/types.h"
-        DESTINATION "${KD_INSTALL_DIR_NAME}/include"
+        "${CMAKE_CURRENT_BINARY_DIR}/include/kd/version.h"
+        DESTINATION "${KD_INSTALL_DIR_NAME}/include/kd"
         )

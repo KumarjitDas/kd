@@ -1,7 +1,7 @@
 # file: set_build_output_directories.cmake
 # author: Kumarjit Das
 # date: 2025-05-24
-# brief: KD library cmake build output directory configuration file.
+# brief: KD library cmake build output directory configuration script.
 
 # LICENSE: BSD 3-Clause License
 #

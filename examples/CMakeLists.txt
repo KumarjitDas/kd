@@ -36,34 +36,46 @@
 
 write_status("'examples' subdirectory added.")
 
+# Define all the subdirectories that contain the examples
+set(EXAMPLE_SUBDIRS
+    "sys_info"
+    "types"
+    )
+
 # Get all .c files in the directory
-file(GLOB ALL_C_FILES "*.c")
-
-# Initialize an empty list to store file names without extensions
-set(EXAMPLE_LIST "")
-
-# Loop over each file and extract the name without extension
-foreach (FILE_PATH ${ALL_C_FILES})
-  get_filename_component(FILE_NAME_WE ${FILE_PATH} NAME_WE)
-  list(APPEND EXAMPLE_LIST ${FILE_NAME_WE})
+file(GLOB ALL_C_FILES "")
+foreach (EXAMPLE_SUBDIR IN LISTS EXAMPLE_SUBDIRS)
+  file(GLOB EXAMPLE_C_FILES "${EXAMPLE_SUBDIR}/*.c")
+  list(APPEND ALL_C_FILES ${EXAMPLE_C_FILES})
 endforeach ()
 
 # Loop through each item in the examples list
-foreach (EXAMPLE_ITEM ${EXAMPLE_LIST})
+foreach (FILE_PATH ${ALL_C_FILES})
+  # Normalize slashes
+  file(TO_CMAKE_PATH "${FILE_PATH}" NORM_FILE_PATH)
+
+  # Remove everything before and including 'examples/'
+  string(REGEX REPLACE ".*examples/" "" RELATIVE_FILE_PATH "${NORM_FILE_PATH}")
+
+  # Remove file extension
+  string(REGEX REPLACE "\\.[^.]*$" "" RELATIVE_FILE_PATH "${RELATIVE_FILE_PATH}")
+
+  # Replace '/' with '-'
+  string(REPLACE "/" "-" EXAMPLE_ITEM "${RELATIVE_FILE_PATH}")
+
   # Attaching library name in front of example item
   set(EXAMPLE_TARGET "${KD_PROJECT_NAME_LOWER}-${EXAMPLE_ITEM}")
 
   # Build an executable from the `EXAMPLE_ITEM` source
-  add_executable(${EXAMPLE_TARGET} "${EXAMPLE_ITEM}.c")
+  add_executable(${EXAMPLE_TARGET} ${FILE_PATH})
 
   # Link the built executable with the main library
   target_link_libraries(${EXAMPLE_TARGET} PRIVATE "KD::${KD_LIBRARY_NAME}")
-  target_link_libraries(${EXAMPLE_TARGET} PRIVATE "KD::${MEM_LIBRARY_NAME}")
 
   # Setting build postfixes for different build configurations
   set_target_properties(
     ${EXAMPLE_TARGET} PROPERTIES
-    C_STANDARD 99
+    C_STANDARD 90
     DEBUG_POSTFIX "${KD_STATIC_POSTFIX}-d"
     RELEASE_POSTFIX "${KD_STATIC_POSTFIX}"
     MINSIZEREL_POSTFIX "${KD_STATIC_POSTFIX}-mr"

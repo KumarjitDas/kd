@@ -1,7 +1,7 @@
 # file: add_sources_to_target.cmake
 # author: Kumarjit Das
 # date: 2025-05-25
-# brief: KD library cmake library configuration file.
+# brief: KD library cmake add target sources script.
 
 # LICENSE: BSD 3-Clause License
 #
@@ -37,12 +37,16 @@
 write_status("Adding sources to the main library target...")
 
 # Adding the include file to the main target
-set(INCLUDE_FILE "${INCLUDE_DIR}/mem.h")
-target_sources(${MEM_LIBRARY_NAME} PRIVATE ${INCLUDE_FILE})
+set(INCLUDE_FILE
+    "${INCLUDE_DIR}/kd/defs.h"
+    "${INCLUDE_DIR}/kd/types/fw.h"
+    "${INCLUDE_DIR}/kd/types/fp.h"
+    "${INCLUDE_DIR}/kd/mem.h")
+target_sources(${KD_LIBRARY_NAME} PRIVATE ${INCLUDE_FILE})
 
 # Adding the source files to the main target
-set(SRC_FILES "${SRC_DIR}/mem.c")
-target_sources(${MEM_LIBRARY_NAME} PRIVATE ${SRC_FILES})
+set(SRC_FILES "${SRC_DIR}/kd/mem.c")
+target_sources(${KD_LIBRARY_NAME} PRIVATE ${SRC_FILES})
 
 # Setting the install destination for include and source file
 install(FILES ${INCLUDE_FILE} DESTINATION "include")

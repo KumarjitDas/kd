@@ -1,7 +1,7 @@
 # file: validate_target_platform.cmake
 # author: Kumarjit Das
 # date: 2025-05-24
-# brief: KD library cmake build configuration file.
+# brief: KD library cmake target platform validation script.
 
 # LICENSE: BSD 3-Clause License
 #
@@ -35,8 +35,8 @@
 
 
 # Defining lists of valid values
-set(_VALID_TARGET_OS "windows" "linux")
-set(_VALID_TARGET_ARCH "x86" "x64")
+set(_VALID_TARGET_OS "Windows" "Linux" "MacOS")
+set(_VALID_TARGET_ARCH "x86" "x64" "arm32" "arm64")
 
 # Validate target OS configuration
 write_status("Validating target OS configuration...")

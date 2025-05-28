@@ -1,7 +1,7 @@
 # file: create_library.cmake
 # author: Kumarjit Das
 # date: 2025-05-24
-# brief: KD library cmake library configuration file.
+# brief: KD library cmake library creation script.
 
 # LICENSE: BSD 3-Clause License
 #
@@ -35,7 +35,7 @@
 
 
 # Adding the main library
-add_library(${KD_LIBRARY_NAME} INTERFACE "")
+add_library(${KD_LIBRARY_NAME} "")
 write_status("Creating library: ${KD_LIBRARY_NAME}.")
 
 # Setting an alias in `KD` namespace
@@ -43,26 +43,18 @@ add_library("KD::${KD_LIBRARY_NAME}" ALIAS ${KD_LIBRARY_NAME})
 write_status("Adding alias to the library: KD::${KD_LIBRARY_NAME}.")
 
 # Adding the mem library
-add_library(${MEM_LIBRARY_NAME} "")
-target_compile_definitions(${MEM_LIBRARY_NAME} INTERFACE KD_DLL=1)
-target_link_libraries(${MEM_LIBRARY_NAME} INTERFACE KD::${KD_LIBRARY_NAME})
+#add_library(mem "")
+#target_compile_definitions(mem INTERFACE KD_DLL=1)
+#target_link_libraries(mem INTERFACE KD::${KD_LIBRARY_NAME})
 
 # Setting the public include directory for the mem library
-target_include_directories(
-  ${MEM_LIBRARY_NAME} PUBLIC
-  $<BUILD_INTERFACE:${INCLUDE_DIR}>
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
-  $<INSTALL_INTERFACE:include>
-  )
-
-# Setting the relative include path
-if (CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
-  target_compile_definitions(
-    ${MEM_LIBRARY_NAME} PUBLIC
-    $<$<CONFIG:Debug>:MEM_DEBUG_MODE>
-    )
-endif ()
+#target_include_directories(
+#  ${MEM_LIBRARY_NAME} PUBLIC
+#  $<BUILD_INTERFACE:${INCLUDE_DIR}>
+#  $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
+#  $<INSTALL_INTERFACE:include>
+#  )
 
 # Setting an alias in `MEM` namespace
-add_library("KD::${MEM_LIBRARY_NAME}" ALIAS ${MEM_LIBRARY_NAME})
-write_status("Adding alias to the ${MEM_LIBRARY_NAME} library: KD::${MEM_LIBRARY_NAME}.")
+#add_library("KD::mem" ALIAS "mem")
+#write_status("Adding alias to the 'mem' library: KD::mem.")

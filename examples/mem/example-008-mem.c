@@ -1,8 +1,8 @@
 /**
- * @file example-010-mem.c
+ * @file example-008-mem.c
  * @author Kumarjit Das
  * @date 2025-05-25
- * @brief MEM library example source file #6.
+ * @brief MEM library example source file #4.
  */
 /**
  * LICENSE: BSD 3-Clause License
@@ -48,38 +48,33 @@ int main(int argc, char** argv)
   (void) argc;
   (void) argv;
 
-  printf("MEM example #6 :: begin\n\n");
+  printf("MEM example #4 :: begin\n\n");
 
   i32* buffer = null;
-  if (!kdAllocWithSizeInfo(&buffer, 32 * SZ_I32))
-  {
-    printf("Initial allocation failed.\n");
-    return EXIT_FAILURE;
-  }
+  bool result = kdMemAllocWithSizeInfo(&buffer, 64 * SZ_I32);
 
-  printf("Initial allocation succeeded.\n");
-  printf(
-    "Allocated size: "
-    #if defined TYPES_64BIT_INTEGER
-    FMTSP_U64
-    #else
-    FMTSP_U32
-    #endif  /* TYPES_64BIT_INTEGER */
-    " bytes\n",
-    kdGetAllocSize(buffer)
-  );
-
-  bool result = kdFreeWithSizeInfo(&buffer);
-  if (result && !buffer)
+  if (result && buffer)
   {
-    printf("Buffer freed successfully.\n");
+    printf("Allocation successful.\n");
+    printf(
+      "Allocated size: "
+      #if defined TYPES_64BIT_INTEGER
+      FMTSP_U64
+      #else
+      FMTSP_U32
+      #endif  /* TYPES_64BIT_INTEGER */
+      " bytes\n",
+      kdMemGetAllocSize(buffer)
+    );
+    // Use the buffer...
+    kdFreeWithSizeInfo(&buffer);
   }
   else
   {
-    printf("Failed to free buffer.\n");
+    printf("Allocation failed.\n");
   }
 
-  printf("\nMEM example #6 :: end\n\n");
+  printf("\nMEM example #4 :: end\n\n");
 
-  return result;
+  return result ? EXIT_SUCCESS : EXIT_FAILURE;
 }

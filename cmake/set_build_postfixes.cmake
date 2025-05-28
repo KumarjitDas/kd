@@ -1,7 +1,7 @@
 # file: set_build_postfixes.cmake
 # author: Kumarjit Das
 # date: 2025-05-24
-# brief: KD library cmake build postfixes configuration file.
+# brief: KD library cmake build postfixes configuration script.
 
 # LICENSE: BSD 3-Clause License
 #

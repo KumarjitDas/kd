@@ -1,9 +1,9 @@
 /**
- * @file mem.h
+ * @file kd.h
  * @author Kumarjit Das
- * @date 2025-05-25
- * @version 0.0.3
- * @brief Main header file of the MEM library.
+ * @date 2025-05-28
+ * @since 0.0.4
+ * @brief KD library public common header.
  */
 /**
  * LICENSE: BSD 3-Clause License
@@ -38,44 +38,13 @@
  */
 
 
-#ifndef MEM_H_
-#define MEM_H_
+#ifndef KD_H_
+#define KD_H_
 
 
-#include "kd.h"
-#include "types.h"
-
-KD_EXTERN_BEGIN
-
-
-#if defined TYPES_64BIT_INTEGER
-#define USE_64BIT 1
-#endif  /* TYPES_64BIT_INTEGER */
+#include "kd/version.h"
+#include "kd/defs.h"
+#include "kd/types/fw.h"
 
 
-#if defined USE_64BIT
-
-KDAPI(bool) kdAlloc(void* dst, u64 sz);
-KDAPI(bool) kdRealloc(void* dst, u64 new_sz, void* src, u64 old_sz);
-KDAPI(bool) kdAllocWithSizeInfo(void* dst, u64 sz);
-KDAPI(bool) kdReallocWithSizeInfo(void* dst, u64 new_sz, void* src, u64 old_sz);
-KDAPI(u64)  kdGetAllocSize(void* src);
-
-#else
-
-KDAPI(bool) kdAlloc(void* dst, u32 sz);
-KDAPI(bool) kdRealloc(void* dst, u32 new_sz, void* src, u32 old_sz);
-KDAPI(bool) kdAllocWithSizeInfo(void* dst, u32 sz);
-KDAPI(bool) kdReallocWithSizeInfo(void* dst, u32 new_sz, void* src, u32 old_sz);
-KDAPI(u32)  kdGetAllocSize(void* src);
-
-#endif  /* USE_64BIT */
-
-
-KDAPI(bool) kdFree(void* dst);
-KDAPI(bool) kdFreeWithSizeInfo(void* dst);
-
-
-KD_EXTERN_END
-
-#endif  /* MEM_H_ */
+#endif /* KD_H_ */

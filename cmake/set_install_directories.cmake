@@ -1,7 +1,7 @@
 # file: set_install_directories.cmake
 # author: Kumarjit Das
 # date: 2025-05-24
-# brief: KD library cmake install directories configuration file.
+# brief: KD library cmake install directories configuration script.
 
 # LICENSE: BSD 3-Clause License
 #

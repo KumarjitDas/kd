@@ -1,8 +1,8 @@
 /**
- * @file example-008-mem.c
+ * @file example-007-mem.c
  * @author Kumarjit Das
  * @date 2025-05-25
- * @brief MEM library example source file #4.
+ * @brief MEM library example source file #3.
  */
 /**
  * LICENSE: BSD 3-Clause License
@@ -38,9 +38,9 @@
 
 
 #include <stdio.h>
+#include "../../include/kd/mem.h"
 #include "kd.h"
 #include "types.h"
-#include "mem.h"
 
 
 int main(int argc, char** argv)
@@ -48,33 +48,70 @@ int main(int argc, char** argv)
   (void) argc;
   (void) argv;
 
-  printf("MEM example #4 :: begin\n\n");
+  printf("MEM example #3 :: begin\n\n");
 
-  i32* buffer = null;
-  bool result = kdAllocWithSizeInfo(&buffer, 64 * SZ_I32);
+  i16* buffer1 = null;
+  i32* buffer2 = null;
+  chr* buffer3 = null;
 
-  if (result && buffer)
+  if (!kdMemAlloc(&buffer1, 32 * SZ_I16))
   {
-    printf("Allocation successful.\n");
-    printf(
-      "Allocated size: "
-      #if defined TYPES_64BIT_INTEGER
-      FMTSP_U64
-      #else
-      FMTSP_U32
-      #endif  /* TYPES_64BIT_INTEGER */
-      " bytes\n",
-      kdGetAllocSize(buffer)
-    );
-    // Use the buffer...
-    kdFreeWithSizeInfo(&buffer);
+    printf("Buffer 1 allocation failed.\n");
+    return EXIT_FAILURE;
   }
-  else
+  if (!kdMemAlloc(&buffer2, 16 * SZ_I32))
   {
-    printf("Allocation failed.\n");
+    printf("Buffer 2 allocation failed.\n");
+    return EXIT_FAILURE;
+  }
+  if (!kdMemAlloc(&buffer3, 16 * SZ_CHR))
+  {
+    printf("Buffer 3 allocation failed.\n");
+    return EXIT_FAILURE;
   }
 
-  printf("\nMEM example #4 :: end\n\n");
+  printf("Buffer 1: " FMTSP_PTR "\n", FSBTC_PTR(buffer1));
+  printf("Buffer 2: " FMTSP_PTR "\n", FSBTC_PTR(buffer2));
+  printf("Buffer 3: " FMTSP_PTR "\n", FSBTC_PTR(buffer3));
 
-  return result;
+  bool result = kdFree(&buffer1);
+  result &= kdFree(&buffer2);
+  result &= kdFree(&buffer3);
+
+  if (!kdMemAlloc(&buffer1, 32 * SZ_I16))
+  {
+    printf("Buffer 1 allocation failed.\n");
+    return EXIT_FAILURE;
+  }
+
+  if (!kdMemAlloc(&buffer2, 16 * SZ_I32))
+  {
+    printf("Buffer 2 allocation failed.\n");
+    return EXIT_FAILURE;
+  }
+  result &= kdFree(&buffer2);
+
+  if (!kdMemAlloc(&buffer3, 16 * SZ_CHR))
+  {
+    printf("Buffer 3 allocation failed.\n");
+    return EXIT_FAILURE;
+  }
+
+  if (!kdMemAlloc(&buffer2, 16 * SZ_I32))
+  {
+    printf("Buffer 2 allocation failed.\n");
+    return EXIT_FAILURE;
+  }
+
+  printf("Buffer 1: " FMTSP_PTR "\n", FSBTC_PTR(buffer1));
+  printf("Buffer 2: " FMTSP_PTR "\n", FSBTC_PTR(buffer2));
+  printf("Buffer 3: " FMTSP_PTR "\n", FSBTC_PTR(buffer3));
+
+  result &= kdFree(&buffer1);
+  result &= kdFree(&buffer2);
+  result &= kdFree(&buffer3);
+
+  printf("\nMEM example #3 :: end\n\n");
+
+  return result ? EXIT_SUCCESS : EXIT_FAILURE;
 }

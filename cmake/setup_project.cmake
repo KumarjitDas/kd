@@ -1,7 +1,7 @@
 # file: setup_project.cmake
 # author: Kumarjit Das
 # date: 2025-05-24
-# brief: KD library cmake project setup file.
+# brief: KD library cmake project setup script.
 
 # LICENSE: BSD 3-Clause License
 #
@@ -46,7 +46,7 @@ string(TOUPPER ${KD_LIBRARY_NAME} KD_LIBRARY_NAME_UPPER)
 # Setting project version
 set(${KD_LIBRARY_NAME_UPPER}_VERSION_MAJOR 0)
 set(${KD_LIBRARY_NAME_UPPER}_VERSION_MINOR 0)
-set(${KD_LIBRARY_NAME_UPPER}_VERSION_PATCH 3)
+set(${KD_LIBRARY_NAME_UPPER}_VERSION_PATCH 4)
 
 string(CONCAT ${KD_LIBRARY_NAME_UPPER}_VERSION
        "${${KD_LIBRARY_NAME_UPPER}_VERSION_MAJOR}."
@@ -55,7 +55,8 @@ string(CONCAT ${KD_LIBRARY_NAME_UPPER}_VERSION
 
 # Setting project description
 string(CONCAT ${KD_PROJECT_NAME_UPPER}_DESCRIPTION
-       "A modern standard library for C, designed to bring powerful data structures and algorithms to the C programming language.")
+       "A modern standard library for C, designed to bring powerful data structures "
+       "and algorithms to the C programming language.")
 
 set(KD_INSTALL_DIR_NAME "${KD_PROJECT_NAME_LOWER}-v${${KD_LIBRARY_NAME_UPPER}_VERSION}")
 
@@ -70,11 +71,10 @@ function(write_status)
   message(STATUS "[${KD_PROJECT_NAME_UPPER}] ${STATUS_VARIABLE}")
 endfunction()
 
-write_status("Initiating the project setup.")
+write_status("Initiating the project setup...")
 
 # Generate compile commands for IDE's
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
-
 write_status("CMAKE_EXPORT_COMPILE_COMMANDS is set to: ${CMAKE_EXPORT_COMPILE_COMMANDS}")
 
 # Setting the current user directory
@@ -83,7 +83,6 @@ if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
 else ()
   set(KD_CURRENT_USER_PATH "/$ENV{USER}")
 endif ()
-
 write_status("Current user path: ${KD_CURRENT_USER_PATH}")
 
 # Getting the build directory name from current binary directory

@@ -1,8 +1,8 @@
 /**
- * @file example-005-mem.c
+ * @file cstr_macros.c
  * @author Kumarjit Das
- * @date 2025-05-25
- * @brief MEM library example source file #1.
+ * @date 2025-05-24
+ * @brief System information C-string macros example.
  */
 /**
  * LICENSE: BSD 3-Clause License
@@ -39,32 +39,27 @@
 
 #include <stdio.h>
 #include "kd.h"
-#include "types.h"
-#include "mem.h"
 
 
-int main(int argc, char** argv)
+int
+       main(argc, argv)
+int    argc;
+char** argv;
 {
-  (void) argc;
-  (void) argv;
+  (void)argc;
+  (void)argv;
 
-  printf("MEM example #1 :: begin\n\n");
+  printf("System information C-string macros example :: begin\n\n");
 
-  i32* buffer = null;
-  bool result = kdAlloc(&buffer, 64 * SZ_I32);
+  printf("API Version: %s\n", KD_VERSION_CSTR);
+  printf("Compiler: %s\n", KD_COMP_CSTR);
+  printf("Target Operating System: %s\n", KD_OS_CSTR);
+  printf("Target CPU: %s\n", KD_CPU_CSTR);
+  printf("Target Architecture Integer Size: %s\n", KD_ARCH_INT_CSTR);
+  printf("Target Architecture Pointer(Address) Size: %s\n", KD_ARCH_PTR_CSTR);
+  printf("Endianness: %s\n", KD_ENDIAN_CSTR);
 
-  if (result && buffer)
-  {
-    printf("Allocation successful.\n");
-    // Use the buffer...
-    kdFree(&buffer);
-  }
-  else
-  {
-    printf("Allocation failed.\n");
-  }
+  printf("\nSystem information C-string macros example :: end\n\n");
 
-  printf("\nMEM example #1 :: end\n\n");
-
-  return result;
+  return KD_EXIT_SUCCESS;
 }

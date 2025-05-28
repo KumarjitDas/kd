@@ -1,8 +1,9 @@
 /**
- * @file example-007-mem.c
+ * @file mem.h
  * @author Kumarjit Das
  * @date 2025-05-25
- * @brief MEM library example source file #3.
+ * @since 0.0.3
+ * @brief Main header file of the MEM library.
  */
 /**
  * LICENSE: BSD 3-Clause License
@@ -37,39 +38,39 @@
  */
 
 
-#include <stdio.h>
-#include "kd.h"
-#include "types.h"
-#include "mem.h"
+#ifndef KD_MEM_H_
+#define KD_MEM_H_
 
 
-int main(int argc, char** argv)
-{
-  (void) argc;
-  (void) argv;
+#include "kd/defs.h"
+#include "kd/types/fw.h"
 
-  printf("MEM example #3 :: begin\n\n");
+KD_EXTERN_BEGIN
 
-  i32* buffer = null;
-  if (!kdAlloc(&buffer, 32 * SZ_I32))
-  {
-    printf("Initial allocation failed.\n");
-    return EXIT_FAILURE;
-  }
 
-  printf("Initial allocation succeeded.\n");
+#if defined KD_USE_SIMPLIFIED_TYPES
 
-  bool result = kdFree(&buffer);
-  if (result && !buffer)
-  {
-    printf("Buffer freed successfully.\n");
-  }
-  else
-  {
-    printf("Failed to free buffer.\n");
-  }
+KDAPI(bool) kdMemAlloc(void* dst, usize sz);
+KDAPI(bool) kdMemRealloc(void* dst, usize new_sz, void* src, usize old_sz);
+KDAPI(bool) kdMemAllocWithSizeInfo(void* dst, usize sz);
+KDAPI(bool) kdMemReallocWithSizeInfo(void* dst, usize new_sz, void* src, usize old_sz);
+KDAPI(usize) kdMemGetAllocSize(void* src);
+KDAPI(bool) kdFree(void* dst);
+KDAPI(bool) kdFreeWithSizeInfo(void* dst);
 
-  printf("\nMEM example #3 :: end\n\n");
+#else
 
-  return result;
-}
+KDAPI(kd_bool_t) kdMemAlloc(void* dst, kd_usize_t sz);
+KDAPI(kd_bool_t) kdMemRealloc(void* dst, kd_usize_t new_sz, void* src, kd_usize_t old_sz);
+KDAPI(kd_bool_t) kdMemAllocWithSizeInfo(void* dst, kd_usize_t sz);
+KDAPI(kd_bool_t) kdMemReallocWithSizeInfo(void* dst, kd_usize_t new_sz, void* src, kd_usize_t old_sz);
+KDAPI(kd_usize_t) kdMemGetAllocSize(void* src);
+KDAPI(kd_bool_t) kdFree(void* dst);
+KDAPI(kd_bool_t) kdFreeWithSizeInfo(void* dst);
+
+#endif /* KD_USE_SIMPLIFIED_TYPES */
+
+
+KD_EXTERN_END
+
+#endif /* KD_MEM_H_ */

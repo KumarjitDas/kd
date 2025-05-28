@@ -1,7 +1,7 @@
 # file: set_include_directories.cmake
 # author: Kumarjit Das
 # date: 2025-05-24
-# brief: KD library cmake include directory configuration file.
+# brief: KD library cmake include directory configuration script.
 
 # LICENSE: BSD 3-Clause License
 #
@@ -38,7 +38,7 @@
 set(RELATIVE_INCLUDE_DIR_PATH "include" CACHE PATH "Public include directories of this project.")
 
 target_include_directories(
-  ${KD_LIBRARY_NAME} INTERFACE
+  ${KD_LIBRARY_NAME} PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${RELATIVE_INCLUDE_DIR_PATH}>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/${RELATIVE_INCLUDE_DIR_PATH}>
   $<INSTALL_INTERFACE:include>

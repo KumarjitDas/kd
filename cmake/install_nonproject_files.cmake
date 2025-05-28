@@ -1,7 +1,7 @@
 # file: install_nonproject_files.cmake
 # author: Kumarjit Das
 # date: 2025-05-24
-# brief: KD library cmake export rules file.
+# brief: KD library cmake non-project files install script.
 
 # LICENSE: BSD 3-Clause License
 #
@@ -40,6 +40,7 @@ install(
   "${CMAKE_CURRENT_SOURCE_DIR}/CHANGELOG.md"
   "${CMAKE_CURRENT_SOURCE_DIR}/README.md"
   "${CMAKE_CURRENT_SOURCE_DIR}/RELEASENOTES.md"
+  "${CMAKE_CURRENT_SOURCE_DIR}/.clang-format"
   DESTINATION "${KD_INSTALL_DIR_NAME}"
   )
 

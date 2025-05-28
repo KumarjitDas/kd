@@ -1,9 +1,9 @@
 /**
- * @file kd.h
+ * @file defs.h
  * @author Kumarjit Das
- * @date 2025-05-24
- * @version @KD_VERSION_MAJOR@.@KD_VERSION_MINOR@.@KD_VERSION_PATCH@
- * @brief A simple header-only C library for compile-time system information.
+ * @date 2025-05-28
+ * @since 0.0.4
+ * @brief Platform specific defs for the KD library.
  */
 /**
  * LICENSE: BSD 3-Clause License
@@ -38,18 +38,18 @@
  */
 
 
+#ifndef KD_DEFS_H_
+#define KD_DEFS_H_
+
+
+#include "kd/version.h"
+
+
 #if defined KD_DEFINED_LIBKD
   #undef KD_DEFINED_LIBKD
-#endif  /* KD_DEFINED_LIBKD */
+#endif /* KD_DEFINED_LIBKD */
 
 #define KD_DEFINED_LIBKD 1
-
-#define KD_VERSION_MAJOR @KD_VERSION_MAJOR@
-#define KD_VERSION_MINOR @KD_VERSION_MINOR@
-#define KD_VERSION_PATCH @KD_VERSION_PATCH@
-
-#define KD_VERSION_STR "@KD_VERSION_MAJOR@.@KD_VERSION_MINOR@.@KD_VERSION_PATCH@"
-#define KD_VERSION_ARR { KD_VERSION_MAJOR, KD_VERSION_MINOR, KD_VERSION_PATCH }
 
 
 /**
@@ -60,22 +60,22 @@
 
 #if defined __ECC || defined __ICC || defined __INTEL_COMPILER
   #define KD_COMP_INTEL 1
-  #define KD_COMP_STR "Intel C/C++"
+  #define KD_COMP_CSTR  "Intel C/C++"
 #endif
 
 #if (defined __host_mips || defined __sgi) && !defined __GNUC__
   #define KD_COMP_MIPSPRO 1
-  #define KD_COMP_STR "MIPSpro C/C++"
+  #define KD_COMP_CSTR    "MIPSpro C/C++"
 #endif
 
 #if defined __hpux && !defined __GNUC__
   #define KD_COMP_HPCC 1
-  #define KD_COMP_STR "HP-UX CC"
+  #define KD_COMP_CSTR "HP-UX CC"
 #endif
 
 #if defined __GNUC__
-  #define KD_COMP_GCC 1
-  #define KD_COMP_STR "Gnu GCC"
+  #define KD_COMP_GCC  1
+  #define KD_COMP_CSTR "Gnu GCC"
 #endif
 
 #if defined __APPLE_CC__
@@ -83,42 +83,42 @@
 #endif
 
 #if defined __IBMC__ || defined __IBMCPP__
-  #define KD_COMP_IBM 1
-  #define KD_COMP_STR "IBM C/C++"
+  #define KD_COMP_IBM  1
+  #define KD_COMP_CSTR "IBM C/C++"
 #endif
 
 #if defined _MSC_VER
   #define KD_COMP_MSVC 1
-  #define KD_COMP_STR "Microsoft Visual C++"
+  #define KD_COMP_CSTR "Microsoft Visual C++"
 #endif
 
 #if defined __SUNPRO_C
-  #define KD_COMP_SUN 1
-  #define KD_COMP_STR "Sun Pro"
+  #define KD_COMP_SUN  1
+  #define KD_COMP_CSTR "Sun Pro"
 #endif
 
 #if defined __BORLANDC__
   #define KD_COMP_BORLAND 1
-  #define KD_COMP_STR "Borland C/C++"
+  #define KD_COMP_CSTR    "Borland C/C++"
 #endif
 
 #if defined __MWERKS__
   #define KD_COMP_METROWERKS 1
-  #define KD_COMP_STR "MetroWerks CodeWarrior"
+  #define KD_COMP_CSTR       "MetroWerks CodeWarrior"
 #endif
 
 #if defined __DECC || defined __DECCXX
-  #define KD_COMP_DEC 1
-  #define KD_COMP_STR "Compaq/DEC C/C++"
+  #define KD_COMP_DEC  1
+  #define KD_COMP_CSTR "Compaq/DEC C/C++"
 #endif
 
 #if defined __WATCOMC__
   #define KD_COMP_WATCOM 1
-  #define KD_COMP_STR "Watcom C/C++"
+  #define KD_COMP_CSTR   "Watcom C/C++"
 #endif
 
-#if !defined KD_COMP_STR
-  #define KD_COMP_STR "Unknown"
+#if !defined KD_COMP_CSTR
+  #define KD_COMP_CSTR "Unknown"
 #endif
 
 
@@ -130,37 +130,37 @@
 
 #if defined linux || defined __linux__
   #define KD_OS_LINUX 1
-  #define KD_OS_STR "Linux"
+  #define KD_OS_CSTR  "Linux"
 #endif
 
 #if defined __CYGWIN32__
   #define KD_OS_CYGWIN32 1
-  #define KD_OS_STR "Cygwin"
+  #define KD_OS_CSTR     "Cygwin"
 #endif
 
 #if defined GEKKO
   #define KD_OS_GAMECUBE
   #define __powerpc__
-  #define KD_OS_STR "GameCube"
+  #define KD_OS_CSTR "GameCube"
 #endif
 
 #if defined __MINGW32__
-  #define KD_OS_MINGW 1
+  #define KD_OS_MINGW   1
   #define KD_OS_MINGW32 1
-  #undef  KD_OS_STR
-  #define KD_OS_STR "MinGW (32-bit)"
+  #undef KD_OS_CSTR
+  #define KD_OS_CSTR "MinGW (32-bit)"
 #endif
 
 #if defined __MINGW64__
-  #define KD_OS_MINGW 1
+  #define KD_OS_MINGW   1
   #define KD_OS_MINGW64 1
-  #undef  KD_OS_STR
-  #define KD_OS_STR "MinGW (64-bit)"
+  #undef KD_OS_CSTR
+  #define KD_OS_CSTR "MinGW (64-bit)"
 #endif
 
 #if defined GO32 && defined DJGPP && defined __MSDOS__
   #define KD_OS_GO32 1
-  #define KD_OS_STR "GO32/MS-DOS"
+  #define KD_OS_CSTR "GO32/MS-DOS"
 #endif
 
 /**
@@ -169,91 +169,91 @@
  */
 #if defined __WATCOMC__ && defined __386__ && defined __DOS__
   #define KD_OS_DOS32 1
-  #define KD_OS_STR "DOS/32-bit"
+  #define KD_OS_CSTR  "DOS/32-bit"
 #endif
 
 #if defined _UNICOS
   #define KD_OS_UNICOS 1
-  #define KD_OS_STR "UNICOS"
+  #define KD_OS_CSTR   "UNICOS"
 #endif
 
 #if (defined __MWERKS__ && defined __powerc && !defined macintosh) || defined __APPLE_CC__ || defined macosx
-  #define KD_OS_OSX 1
-  #define KD_OS_STR "MacOS X"
+  #define KD_OS_OSX  1
+  #define KD_OS_CSTR "MacOS X"
 #endif
 
 #if defined __sun__ || defined sun || defined __sun || defined __solaris__
   #if defined __SVR4 || defined __svr4__ || defined __solaris__
     #define KD_OS_SOLARIS 1
-    #define KD_OS_STR "Solaris"
+    #define KD_OS_CSTR    "Solaris"
   #endif
   #if !defined KD_OS_STRING
     #define KD_OS_SUNOS 1
-    #define KD_OS_STR "SunOS"
+    #define KD_OS_CSTR  "SunOS"
   #endif
 #endif
 
 #if defined __sgi__ || defined sgi || defined __sgi
   #define KD_OS_IRIX 1
-  #define KD_OS_STR "Irix"
+  #define KD_OS_CSTR "Irix"
 #endif
 
 #if defined __hpux__ || defined __hpux
   #define KD_OS_HPUX 1
-  #define KD_OS_STR "HP-UX"
+  #define KD_OS_CSTR "HP-UX"
 #endif
 
 #if defined _AIX
-  #define KD_OS_AIX 1
-  #define KD_OS_STR "AIX"
+  #define KD_OS_AIX  1
+  #define KD_OS_CSTR "AIX"
 #endif
 
 #if (defined __alpha && defined __osf__)
   #define KD_OS_TRU64 1
-  #define KD_OS_STR "Tru64"
+  #define KD_OS_CSTR  "Tru64"
 #endif
 
 #if defined __BEOS__ || defined __beos__
   #define KD_OS_BEOS 1
-  #define KD_OS_STR "BeOS"
+  #define KD_OS_CSTR "BeOS"
 #endif
 
 #if defined amiga || defined amigados || defined AMIGA || defined _AMIGA
   #define KD_OS_AMIGA 1
-  #define KD_OS_STR "Amiga"
+  #define KD_OS_CSTR  "Amiga"
 #endif
 
 #if defined __unix__
   #define KD_OS_UNIX 1
 
-  #if !defined KD_OS_STR
-    #define KD_OS_STR "Unix-like (generic)"
+  #if !defined KD_OS_CSTR
+    #define KD_OS_CSTR "Unix-like (generic)"
   #endif
 #endif
 
 #if defined _WIN32_WCE
   #define KD_OS_WINDOWS 1
-  #define KD_OS_WINCE 1
-  #define KD_OS_STR "Windows CE"
+  #define KD_OS_WINCE   1
+  #define KD_OS_CSTR    "Windows CE"
 #endif
 
 #if defined _XBOX
   #define KD_OS_XBOX 1
-  #define KD_OS_STR "XBOX"
+  #define KD_OS_CSTR "XBOX"
 #endif
 
 #if defined _WIN32 || defined WIN32 || defined __NT__ || defined __WIN32__
   #define KD_OS_WINDOWS 1
-  #define KD_OS_WIN32 1
+  #define KD_OS_WIN32   1
 
   #if !defined KD_OS_XBOX
     #if defined _WIN64
       #define KD_OS_WIN64 1
-      #undef  KD_OS_STR
-      #define KD_OS_STR "Windows 64-bit"
+      #undef KD_OS_CSTR
+      #define KD_OS_CSTR "Windows 64-bit"
     #else
-      #if !defined KD_OS_STR
-        #define KD_OS_STR "Windows 32-bit"
+      #if !defined KD_OS_CSTR
+        #define KD_OS_CSTR "Windows 32-bit"
       #endif
     #endif
   #endif
@@ -261,19 +261,19 @@
 
 #if defined __palmos__
   #define KD_OS_PALM 1
-  #define KD_OS_STR "PalmOS"
+  #define KD_OS_CSTR "PalmOS"
 #endif
 
 #if defined THINK_C || defined macintosh
   #define KD_OS_MACOS 1
-  #define KD_OS_STR "MacOS"
+  #define KD_OS_CSTR  "MacOS"
 #endif
 
-#if !defined KD_OS_STR
+#if !defined KD_OS_CSTR
   #if defined _R5900
-    #define POSH_OS_STRING "Sony PS2(embedded)"
+    #define KD_OS_STRING "Sony PS2(embedded)"
   #else
-    #define POSH_OS_STRING "Embedded/Unknown"
+    #define KD_OS_STRING "Embedded/Unknown"
   #endif
 #endif
 
@@ -286,30 +286,31 @@
 
 #if defined GEKKO
   #define KD_CPU_PPC750 1
-  #define KD_CPU_STR "IBM PowerPC 750 (NGC)"
+  #define KD_CPU_CSTR   "IBM PowerPC 750 (NGC)"
 #endif
 
 #if defined mc68000 || defined m68k || defined __MC68K__ || defined m68000
-  #define KD_CPU_68K 1
-  #define KD_CPU_STR "MC68000"
+  #define KD_CPU_68K  1
+  #define KD_CPU_CSTR "MC68000"
 #endif
 
-#if defined __PPC__ || defined __POWERPC__ || defined powerpc || defined _POWER || defined __ppc__ || defined __powerpc__
+#if defined __PPC__ || defined __POWERPC__ || defined powerpc || defined _POWER || defined __ppc__ ||                  \
+  defined __powerpc__
   #define KD_CPU_PPC 1
 
   #if defined __powerpc64__
     #define KD_CPU_PPC64 1
-    #define KD_CPU_STR "PowerPC 64-bit"
+    #define KD_CPU_CSTR  "PowerPC 64-bit"
   #else
     #define KD_CPU_PPC32 1
-    #define KD_CPU_STR "PowerPC 32-bit"
+    #define KD_CPU_CSTR  "PowerPC 32-bit"
   #endif
 #endif
 
 #if defined _CRAYT3E || defined _CRAYMPP
   /* target processor is a DEC Alpha 21164 used in a Cray T3E */
   #define KD_CPU_CRAYT3E 1
-  #define KD_CPU_STR "Cray T3E (Alpha 21164)"
+  #define KD_CPU_CSTR    "Cray T3E (Alpha 21164)"
 #endif
 
 #if defined CRAY || defined _CRAY && !defined _CRAYT3E
@@ -317,14 +318,14 @@
 #endif
 
 #if defined _SH3
-  #define KD_CPU_SH3 1
-  #define KD_CPU_STR "Hitachi SH-3"
+  #define KD_CPU_SH3  1
+  #define KD_CPU_CSTR "Hitachi SH-3"
 #endif
 
 #if defined __sh4__ || defined __SH4__
-  #define KD_CPU_SH3 1
-  #define KD_CPU_SH4 1
-  #define KD_CPU_STR "Hitachi SH-4"
+  #define KD_CPU_SH3  1
+  #define KD_CPU_SH4  1
+  #define KD_CPU_CSTR "Hitachi SH-4"
 #endif
 
 #if defined __sparc__ || defined __sparc
@@ -332,33 +333,34 @@
 
   #if defined __arch64__ || defined __sparcv9 || defined __sparc_v9__
     #define KD_CPU_SPARC64 1
-    #define KD_CPU_STR "Sparc/64"
+    #define KD_CPU_CSTR    "Sparc/64"
   #else
-    #define KD_CPU_STR "Sparc/32"
+    #define KD_CPU_CSTR "Sparc/32"
   #endif
 #endif
 
 #if defined ARM || defined __arm__ || defined _ARM
-  #define KD_CPU_ARM 1
-  #define KD_CPU_STR "ARM"
+  #define KD_CPU_ARM  1
+  #define KD_CPU_CSTR "ARM"
 #endif
 
 #if defined mips || defined __mips__ || defined __MIPS__ || defined _MIPS
   #define KD_CPU_MIPS 1
 
   #if defined _R5900
-    #define KD_CPU_STR "MIPS R5900 (PS2)"
+    #define KD_CPU_CSTR "MIPS R5900 (PS2)"
   #else
-    #define KD_CPU_STR "MIPS"
+    #define KD_CPU_CSTR "MIPS"
   #endif
 #endif
 
 #if defined __ia64 || defined _M_IA64 || defined __ia64__
   #define KD_CPU_IA64 1
-  #define KD_CPU_STR "IA64"
+  #define KD_CPU_CSTR "IA64"
 #endif
 
-#if defined __X86__ || defined __i386__ || defined i386 || defined _M_IX86 || defined __386__ || defined __x86_64__ || defined _M_X64
+#if defined __X86__ || defined __i386__ || defined i386 || defined _M_IX86 || defined __386__ || defined __x86_64__ || \
+  defined _M_X64
   #define KD_CPU_X86 1
 
   #if defined __x86_64__ || defined _M_X64
@@ -366,25 +368,25 @@
   #endif
 
   #if defined KD_CPU_X86_64
-    #define KD_CPU_STR "AMD x86-64"
+    #define KD_CPU_CSTR "AMD x86-64"
   #else
-    #define KD_CPU_STR "Intel 386+"
+    #define KD_CPU_CSTR "Intel 386+"
   #endif
 #endif
 
 #if defined __alpha || defined alpha || defined _M_ALPHA || defined __alpha__
-  #define KD_CPU_AXP 1
-  #define KD_CPU_STR "AXP"
+  #define KD_CPU_AXP  1
+  #define KD_CPU_CSTR "AXP"
 #endif
 
 #if defined __hppa || defined hppa
   #define KD_CPU_HPPA 1
-  #define KD_CPU_STR "PA-RISC"
+  #define KD_CPU_CSTR "PA-RISC"
 #endif
 
-#if !defined KD_CPU_STR
-  #define KD could not determine the target CPU
-  #define KD_CPU_STR "Unknown"
+#if !defined KD_CPU_CSTR
+  #define KD          could not determine the target CPU
+  #define KD_CPU_CSTR "Unknown"
 #endif
 
 
@@ -396,12 +398,12 @@
 
 #if defined KD_CPU_X86 && !defined KD_CPU_X86_64
   #if defined __GNUC__
-    #define KD_CDECL __attribute__((cdecl))
-    #define KD_STDCALL __attribute__((stdcall))
+    #define KD_CDECL    __attribute__((cdecl))
+    #define KD_STDCALL  __attribute__((stdcall))
     #define KD_FASTCALL __attribute__((fastcall))
   #elif (defined _MSC_VER || defined __WATCOMC__ || defined __BORLANDC__ || defined __MWERKS__)
-    #define KD_CDECL __cdecl
-    #define KD_STDCALL __stdcall
+    #define KD_CDECL    __cdecl
+    #define KD_STDCALL  __stdcall
     #define KD_FASTCALL __fastcall
   #endif
 #else
@@ -437,7 +439,7 @@
           #define KD_IMPORTEXPORT
         #endif
       #endif
-    #endif  /* defined _MSC_VER */
+    #endif /* defined _MSC_VER */
     #if defined __BORLANDC__
       #if (__BORLANDC__ >= 0x500)
         #if defined KD_BUILDING_LIB
@@ -452,7 +454,7 @@
           #define KD_IMPORTEXPORT
         #endif
       #endif
-    #endif  /* defined __BORLANDC__ */
+    #endif /* defined __BORLANDC__ */
     /* for all other compilers */
     #if defined __GNUC__ || defined __WATCOMC__ || defined __MWERKS__
       #if defined KD_BUILDING_LIB
@@ -460,11 +462,11 @@
       #else
         #define KD_IMPORTEXPORT __declspec(dllimport)
       #endif
-    #endif  /* all other compilers */
+    #endif /* all other compilers */
     #if !defined KD_IMPORTEXPORT
       #error Building DLLs not supported on this compiler
     #endif
-  #endif  /* defined KD_OS_WIN32 */
+  #endif /* defined KD_OS_WIN32 */
 #endif
 
 #if !defined KD_IMPORTEXPORT
@@ -500,12 +502,14 @@
 #endif
 
 #if defined KD_CPLUSPLUS
-  #define KD_EXTERN_BEGIN extern "C" {
+  #define KD_EXTERN_BEGIN                                                                                              \
+    extern "C"                                                                                                         \
+    {
   #define KD_EXTERN_END }
 #else
   #define KD_EXTERN_BEGIN
   #define KD_EXTERN_END
-#endif  /* KD_CPLUSPLUS */
+#endif /* KD_CPLUSPLUS */
 
 
 /**
@@ -514,12 +518,13 @@
  * ---------------------------------------------------------------------------------------------------------------------
  */
 
-#if defined KD_CPU_X86 || defined KD_CPU_AXP || defined KD_CPU_STRONGARM || defined KD_OS_WIN32 || defined KD_OS_WINCE || defined __MIPSEL__
+#if defined KD_CPU_X86 || defined KD_CPU_AXP || defined KD_CPU_STRONGARM || defined KD_OS_WIN32 ||                     \
+  defined                                                                           KD_OS_WINCE || defined __MIPSEL__
   #define KD_ENDIAN_LITTLE 1
-  #define KD_ENDIAN_STR "little"
+  #define KD_ENDIAN_CSTR   "little"
 #else
-  #define KD_ENDIAN_BIG 1
-  #define KD_ENDIAN_STR "big"
+  #define KD_ENDIAN_BIG  1
+  #define KD_ENDIAN_CSTR "big"
 #endif
 
 
@@ -530,50 +535,65 @@
  */
 
 #if defined _MSC_VER || defined __BORLANDC__ || defined __WATCOMC__ || (defined __alpha && defined __DECC)
-  #define KD_ARCH_64BIT_INT   1
-#elif defined __GNUC__ || defined __MWERKS__ || defined __SUNPRO_C || defined __SUNPRO_CC || defined __APPLE_CC__ || defined KD_OS_IRIX || defined _LONG_LONG || defined _CRAYC
-  #if defined __x86_64__ || defined __ppc64__ || defined __aarch64__ || defined __LP64__ || defined _WIN64 || __SIZEOF_POINTER__ == 8 || __SIZEOF_LONG__ == 8
+  #define KD_ARCH_64BIT_INT 1
+#elif defined __GNUC__ || defined __MWERKS__ || defined __SUNPRO_C || defined __SUNPRO_CC || defined __APPLE_CC__ ||   \
+  defined KD_OS_IRIX || defined _LONG_LONG || defined _CRAYC
+  #if defined __x86_64__ || defined __ppc64__ || defined __aarch64__ || defined __LP64__ || defined _WIN64 ||          \
+    __SIZEOF_POINTER__ == 8 || __SIZEOF_LONG__ == 8
     #define KD_ARCH_64BIT_INT 1
   #endif
 #elif defined __LP64__ || defined __powerpc64__ || defined KD_CPU_SPARC64
-  #define KD_ARCH_64BIT_INT   1
+  #define KD_ARCH_64BIT_INT 1
 #endif
 
 #if !defined KD_ARCH_64BIT_INT
-  #define KD_ARCH_32BIT_INT   1
+  #define KD_ARCH_32BIT_INT 1
 #endif
 
 #if defined KD_ARCH_64BIT_INT
-  #define KD_ARCH_INT_STR     "64 bit"
+  #define KD_ARCH_INT_CSTR "64 bit"
 #elif defined KD_ARCH_32BIT_INT
-  #define KD_ARCH_INT_STR     "32 bit"
+  #define KD_ARCH_INT_CSTR "32 bit"
 #else
-  #define KD_ARCH_INT_STR     "Unknown"
-#endif  /* KD_ARCH_64BIT_INT */
+  #define KD_ARCH_INT_CSTR "Unknown"
+#endif /* KD_ARCH_64BIT_INT */
 
 #if defined KD_CPU_AXP && (defined KD_OS_TRU64 || defined KD_OS_LINUX)
-  #define KD_ARCH_64BIT_PTR   1
+  #define KD_ARCH_64BIT_PTR 1
 #endif
 
 #if defined KD_CPU_X86_64 && defined KD_OS_LINUX
-  #define KD_ARCH_64BIT_PTR   1
+  #define KD_ARCH_64BIT_PTR 1
 #endif
 
-#if defined KD_CPU_SPARC64 || defined KD_OS_WIN64 || defined __64BIT__ || defined __LP64 || defined _LP64 || defined __LP64__ || defined _ADDR64 || defined _CRAYC
-  #define KD_ARCH_64BIT_PTR   1
+#if defined KD_CPU_SPARC64 || defined KD_OS_WIN64 || defined __64BIT__ || defined __LP64 || defined _LP64 ||           \
+  defined __LP64__ || defined _ADDR64 || defined _CRAYC
+  #define KD_ARCH_64BIT_PTR 1
 #endif
 
 #if !defined KD_ARCH_64BIT_PTR
-  #define KD_ARCH_32BIT_PTR   1
+  #define KD_ARCH_32BIT_PTR 1
 #endif
 
 #if defined KD_ARCH_64BIT_PTR
-  #define KD_ARCH_PTR_STR     "64 bit"
+  #define KD_ARCH_PTR_CSTR "64 bit"
 #elif defined KD_ARCH_32BIT_PTR
-  #define KD_ARCH_PTR_STR     "32 bit"
+  #define KD_ARCH_PTR_CSTR "32 bit"
 #else
-  #define KD_ARCH_PTR_STR     "Unknown"
-#endif  /* KD_ARCH_64BIT_PTR */
+  #define KD_ARCH_PTR_CSTR "Unknown"
+#endif /* KD_ARCH_64BIT_PTR */
+
+
+/**
+ * ---------------------------------------------------------------------------------------------------------------------
+ *  Constant Values/Macros
+ * ---------------------------------------------------------------------------------------------------------------------
+ */
+
+#define KD_RESULT_SUCCESS 1
+#define KD_RESULT_FAILURE 0
+#define KD_EXIT_SUCCESS   0
+#define KD_EXIT_FAILURE   1
 
 
 /**
@@ -584,8 +604,10 @@
 
 #ifdef KD_DLL
   #undef KD_DLL
-#endif  /* KD_DLL */
+#endif /* KD_DLL */
 
 #ifdef KD_BUILDING_LIB
   #undef KD_BUILDING_LIB
-#endif  /* KD_BUILDING_LIB */
+#endif /* KD_BUILDING_LIB */
+
+#endif /* KD_DEFS_H_ */

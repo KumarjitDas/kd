@@ -34,15 +34,10 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-# Using C99 standard to compile the library
+# Setting C standard to compile the library
 set_target_properties(${KD_LIBRARY_NAME} PROPERTIES
-                      C_STANDARD 99
+                      C_STANDARD 90
                       C_STANDARD_REQUIRED YES
                       C_EXTENSIONS OFF
                       )
-set_target_properties(${MEM_LIBRARY_NAME} PROPERTIES
-                      C_STANDARD 99
-                      C_STANDARD_REQUIRED YES
-                      C_EXTENSIONS OFF
-                      )
-write_status("Setting C standard as C99.")
+write_status("Setting C standard as C89/C90.")
