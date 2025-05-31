@@ -1,9 +1,12 @@
 <component name="ProjectDictionaryState">
   <dictionary name="project">
     <words>
+      <w>algn</w>
+      <w>aloc</w>
       <w>borlandc</w>
       <w>c-string</w>
       <w>cstr</w>
+      <w>delims</w>
       <w>fmax</w>
       <w>fmin</w>
       <w>fmtsp</w>
@@ -12,6 +15,8 @@
       <w>kumarjit</w>
       <w>libkd</w>
       <w>libtypes</w>
+      <w>memalgn</w>
+      <w>toks</w>
       <w>tval</w>
       <w>umax</w>
       <w>umin</w>

@@ -41,20 +41,3 @@ write_status("Creating library: ${KD_LIBRARY_NAME}.")
 # Setting an alias in `KD` namespace
 add_library("KD::${KD_LIBRARY_NAME}" ALIAS ${KD_LIBRARY_NAME})
 write_status("Adding alias to the library: KD::${KD_LIBRARY_NAME}.")
-
-# Adding the mem library
-#add_library(mem "")
-#target_compile_definitions(mem INTERFACE KD_DLL=1)
-#target_link_libraries(mem INTERFACE KD::${KD_LIBRARY_NAME})
-
-# Setting the public include directory for the mem library
-#target_include_directories(
-#  ${MEM_LIBRARY_NAME} PUBLIC
-#  $<BUILD_INTERFACE:${INCLUDE_DIR}>
-#  $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
-#  $<INSTALL_INTERFACE:include>
-#  )
-
-# Setting an alias in `MEM` namespace
-#add_library("KD::mem" ALIAS "mem")
-#write_status("Adding alias to the 'mem' library: KD::mem.")

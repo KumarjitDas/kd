@@ -40,6 +40,7 @@ write_status("'examples' subdirectory added.")
 set(EXAMPLE_SUBDIRS
     "sys_info"
     "types"
+    "mem"
     )
 
 # Get all .c files in the directory
@@ -75,7 +76,7 @@ foreach (FILE_PATH ${ALL_C_FILES})
   # Setting build postfixes for different build configurations
   set_target_properties(
     ${EXAMPLE_TARGET} PROPERTIES
-    C_STANDARD 90
+    C_STANDARD ${KD_C_STANDARD}
     DEBUG_POSTFIX "${KD_STATIC_POSTFIX}-d"
     RELEASE_POSTFIX "${KD_STATIC_POSTFIX}"
     MINSIZEREL_POSTFIX "${KD_STATIC_POSTFIX}-mr"

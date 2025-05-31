@@ -38,6 +38,9 @@
 write_status("Configuring the project version for kd.h.in and types.h.in files...")
 configure_file("configs/version.h.in" "include/kd/version.h")
 
+# Adding the version header file to the main target
+target_sources(${KD_LIBRARY_NAME} PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/include/kd/version.h")
+
 # Setting the install destination of the version header file
 install(FILES
         "${CMAKE_CURRENT_BINARY_DIR}/include/kd/version.h"

@@ -46,9 +46,7 @@
 
 
 int
-       main(argc, argv)
-int    argc;
-char** argv;
+main(int argc, char** argv)
 {
   f32 val_f32;
   f64 val_f64;

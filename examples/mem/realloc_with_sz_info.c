@@ -1,8 +1,8 @@
 /**
- * @file example-006-mem.c
+ * @file realloc_with_sz_info.c
  * @author Kumarjit Das
  * @date 2025-05-25
- * @brief MEM library example source file #2.
+ * @brief Memory reallocation with size information example.
  */
 /**
  * LICENSE: BSD 3-Clause License
@@ -37,98 +37,109 @@
  */
 
 
-#include <stdio.h>
-#include "../../include/kd/mem.h"
+#define KD_USE_SIMPLIFIED_TYPES
 #include "kd.h"
-#include "types.h"
+
+#include <stdio.h>
 
 
-int main(int argc, char** argv)
+int
+main(int argc, char** argv)
 {
-  (void) argc;
-  (void) argv;
+  i32 *buffer, *new_buffer;
+  u32  size, new_size;
+  bool result;
 
-  printf("MEM example #2 :: begin\n\n");
+  (void)argc;
+  (void)argv;
 
-  i32* buffer   = null;
-  u32  size     = 32 * SZ_I32;
-  u32  new_size = 64 * SZ_I32;
+  printf("Memory reallocation with size information example :: begin\n\n");
 
-  if (!kdMemAlloc(&buffer, size))
+  buffer   = null;
+  size     = 32 * KD_SZ_I32;
+  new_size = 64 * KD_SZ_I32;
+
+  if (!kdMemAllocWithSizeInfo(&buffer, size))
   {
     printf("Initial allocation failed.\n");
-    return EXIT_FAILURE;
+    return KD_EXIT_FAILURE;
   }
 
   printf("Initial allocation succeeded.\n");
+  printf("Allocated size: " KD_FMTSP_USIZE " bytes\n", kdMemGetAllocSize(buffer));
 
-  i32* new_buffer = null;
-  bool result     = kdMemRealloc(&new_buffer, new_size, &buffer, size);
+  new_buffer = null;
+  result     = kdMemReallocWithSizeInfo(&new_buffer, new_size, &buffer, size);
 
   if (result && new_buffer && !buffer)
   {
     printf("Reallocation successful.\n");
-    // Use the new_buffer...
-    kdFree(&new_buffer);
+    printf("Reallocated size: " KD_FMTSP_USIZE " bytes\n", kdMemGetAllocSize(new_buffer));
+    /* Use the new_buffer... */
+    kdFreeWithSizeInfo(&new_buffer);
   }
   else
   {
     printf("Reallocation failed.\n");
-    kdFree(&buffer);
+    kdFreeWithSizeInfo(&buffer);
   }
 
-  if (!kdMemAlloc(&buffer, size))
+  if (!kdMemAllocWithSizeInfo(&buffer, size))
   {
     printf("Allocation for size 0 test failed.\n");
-    return EXIT_FAILURE;
+    return KD_EXIT_FAILURE;
   }
 
   printf("Allocation for size 0 test succeeded.\n");
+  printf("Allocated size: " KD_FMTSP_USIZE " bytes\n", kdMemGetAllocSize(buffer));
 
-  result = kdMemRealloc(&new_buffer, 0, &buffer, size);
+  result = kdMemReallocWithSizeInfo(&new_buffer, 0, &buffer, size);
 
   if (result && !new_buffer && !buffer)
   {
     printf("Reallocation with size 0 successful.\n");
-    // Use the new_buffer...
-    kdFree(&new_buffer);
+    printf("Reallocated size: " KD_FMTSP_USIZE " bytes\n", kdMemGetAllocSize(new_buffer));
+    /* Use the new_buffer... */
+    kdFreeWithSizeInfo(&new_buffer);
   }
   else
   {
     printf("Reallocation with size 0 failed.\n");
-    kdFree(&buffer);
+    kdFreeWithSizeInfo(&buffer);
   }
 
   buffer = null;
-  result = kdMemRealloc(&new_buffer, new_size, &buffer, 0);
+  result = kdMemReallocWithSizeInfo(&new_buffer, new_size, &buffer, 0);
 
   if (result && new_buffer)
   {
     printf("Reallocation with null buffer successful.\n");
-    // Use the new_buffer...
-    kdFree(&new_buffer);
+    printf("Reallocated size: " KD_FMTSP_USIZE " bytes\n", kdMemGetAllocSize(new_buffer));
+    /* Use the new_buffer... */
+    kdFreeWithSizeInfo(&new_buffer);
   }
   else
   {
     printf("Reallocation with null buffer failed.\n");
-    kdFree(&buffer);
+    kdFreeWithSizeInfo(&buffer);
   }
 
-  result = kdMemRealloc(&new_buffer, new_size, null, 0);
+  result = kdMemReallocWithSizeInfo(&new_buffer, new_size * 2, null, 0);
 
   if (result && new_buffer)
   {
     printf("Reallocation with null source successful.\n");
-    // Use the new_buffer...
-    kdFree(&new_buffer);
+    printf("Reallocated size: " KD_FMTSP_USIZE " bytes\n", kdMemGetAllocSize(new_buffer));
+    /* Use the new_buffer... */
+    kdFreeWithSizeInfo(&new_buffer);
   }
   else
   {
     printf("Reallocation with null source failed.\n");
-    kdFree(&buffer);
+    kdFreeWithSizeInfo(&buffer);
   }
 
-  printf("\nMEM example #2 :: end\n\n");
+  printf("\nMemory reallocation with size information example :: end\n\n");
 
-  return result ? EXIT_SUCCESS : EXIT_FAILURE;
+  return result ? KD_EXIT_SUCCESS : KD_EXIT_FAILURE;
 }

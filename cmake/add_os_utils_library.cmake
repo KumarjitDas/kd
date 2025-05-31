@@ -1,7 +1,7 @@
-# file: set_c_standard.cmake
+# file: add_os_utils_library.cmake
 # author: Kumarjit Das
-# date: 2025-05-24
-# brief: KD library cmake C standard configuration file.
+# date: 2025-05-31
+# brief: _os_utils library configuration script.
 
 # LICENSE: BSD 3-Clause License
 #
@@ -34,10 +34,49 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-# Setting C standard to compile the library
-set_target_properties(${KD_LIBRARY_NAME} PROPERTIES
-                      C_STANDARD ${KD_C_STANDARD}
+# Adding the _os_utils library
+add_library(_os_utils "")
+target_compile_definitions(_os_utils INTERFACE KD_DLL=1)
+
+set_target_properties(_os_utils PROPERTIES
+                      C_STANDARD 90
                       C_STANDARD_REQUIRED YES
                       C_EXTENSIONS OFF
                       )
-write_status("Setting C standard as C89/C90.")
+
+target_include_directories(
+  _os_utils PUBLIC
+  $<BUILD_INTERFACE:${INCLUDE_DIR}>
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+  )
+
+target_link_libraries(${KD_LIBRARY_NAME} PRIVATE _os_utils)
+
+# Adding the version header file to the _os_utils target
+target_sources(_os_utils PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/include/kd/version.h")
+
+# Adding the _os_utils target to the export rules
+install(TARGETS _os_utils EXPORT ${KD_PROJECT_NAME_LOWER}-targets)
+
+set(INCLUDE_FILES
+    "${INCLUDE_DIR}/_os_utils/common.h"
+    "${INCLUDE_DIR}/_os_utils/mem.h")
+set(SRC_FILES
+    "${SRC_DIR}/_os_utils/mem.c")
+
+#[[if (KD_TARGET_OS STREQUAL "Windows")
+  if (KD_TARGET_ARCH STREQUAL "x86" OR KD_TARGET_ARCH STREQUAL "arm32")
+    set(SRC_FILES
+        "${SRC_DIR}/_os_utils/mem/win32.c")
+  elseif (KD_TARGET_ARCH STREQUAL "x64" OR KD_TARGET_ARCH STREQUAL "arm64")
+    set(SRC_FILES
+        "${SRC_DIR}/_os_utils/mem/win64.c")
+  endif ()
+endif ()]]
+
+# Adding the include file to the _os_utils target
+target_sources(_os_utils PRIVATE ${INCLUDE_FILES})
+
+# Adding the source files to the _os_utils target
+target_sources(_os_utils PRIVATE ${SRC_FILES})

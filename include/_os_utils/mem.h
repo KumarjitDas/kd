@@ -1,8 +1,9 @@
 /**
- * @file cstr_macros.c
+ * @file mem.h
  * @author Kumarjit Das
- * @date 2025-05-24
- * @brief System information C-string macros example.
+ * @date 2025-05-31
+ * @since 0.0.5
+ * @brief OS specific implementation header file for the MEM library.
  */
 /**
  * LICENSE: BSD 3-Clause License
@@ -36,29 +37,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef KD__OS_UTILS_MEM_H_
+#define KD__OS_UTILS_MEM_H_
 
-#include <stdio.h>
-#include "kd.h"
+#include "common.h"
+
+#include <windows.h>
+
+KD_EXTERN_BEGIN
 
 
-int
-main(int argc, char** argv)
-{
-  (void)argc;
-  (void)argv;
+#if defined KD_OS_WINDOWS
 
-  printf("System information C-string macros example :: begin\n\n");
+KDAPI(kd_bool_t) kdi_MemAlloc(void* dst, kd_usize_t sz);
+KDAPI(kd_bool_t) kdi_MemRealloc(void* dst, kd_usize_t new_sz, void* src, kd_usize_t old_sz);
+KDAPI(kd_bool_t) kdi_Free(void* dst);
+KDAPI(kd_bool_t) kdi_MemAllocWithSizeInfo(void* dst, kd_usize_t sz);
+KDAPI(kd_bool_t) kdi_MemReallocWithSizeInfo(void* dst, kd_usize_t new_sz, void* src, kd_usize_t old_sz);
+KDAPI(kd_bool_t) kdi_FreeWithSizeInfo(void* dst);
+KDAPI(kd_usize_t) kdi_MemGetAllocSize(void* src);
 
-  printf("API Version: %s\n", KD_VERSION_CSTR);
-  printf("Compiler: %s\n", KD_COMP_CSTR);
-  printf("C Standard: %s\n", KD_C_STD_CSTR);
-  printf("Target Operating System: %s\n", KD_OS_CSTR);
-  printf("Target CPU: %s\n", KD_CPU_CSTR);
-  printf("Target Architecture Integer Size: %s\n", KD_ARCH_INT_CSTR);
-  printf("Target Architecture Pointer(Address) Size: %s\n", KD_ARCH_PTR_CSTR);
-  printf("Endianness: %s\n", KD_ENDIAN_CSTR);
+#endif /* KD_OS_WINDOWS */
 
-  printf("\nSystem information C-string macros example :: end\n\n");
 
-  return KD_EXIT_SUCCESS;
-}
+KD_EXTERN_END
+
+#endif /* KD__OS_UTILS_MEM_H_ */

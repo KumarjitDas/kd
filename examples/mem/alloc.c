@@ -1,8 +1,8 @@
 /**
- * @file example-005-mem.c
+ * @file alloc.c
  * @author Kumarjit Das
  * @date 2025-05-25
- * @brief MEM library example source file #1.
+ * @brief Memory allocation and free example.
  */
 /**
  * LICENSE: BSD 3-Clause License
@@ -37,34 +37,38 @@
  */
 
 
-#include <stdio.h>
+#define KD_USE_SIMPLIFIED_TYPES
 #include "kd.h"
-#include "types.h"
-#include "mem.h"
+
+#include <stdio.h>
 
 
-int main(int argc, char** argv)
+int
+main(int argc, char** argv)
 {
-  (void) argc;
-  (void) argv;
+  i32* arr;
+  bool result;
 
-  printf("MEM example #1 :: begin\n\n");
+  (void)argc;
+  (void)argv;
 
-  i32* buffer = null;
-  bool result = kdMemAlloc(&buffer, 64 * SZ_I32);
+  printf("Memory allocation and free example :: begin\n\n");
 
-  if (result && buffer)
+  arr    = null;
+  result = kdMemAlloc(&arr, 64 * KD_SZ_I32);
+
+  if (result && arr)
   {
     printf("Allocation successful.\n");
-    // Use the buffer...
-    kdFree(&buffer);
+    /* Use the buffer... */
+    kdFree(&arr);
   }
   else
   {
     printf("Allocation failed.\n");
   }
 
-  printf("\nMEM example #1 :: end\n\n");
+  printf("\nMemory allocation and free example :: end\n\n");
 
-  return result ? EXIT_SUCCESS : EXIT_FAILURE;
+  return result ? KD_EXIT_SUCCESS : KD_EXIT_FAILURE;
 }

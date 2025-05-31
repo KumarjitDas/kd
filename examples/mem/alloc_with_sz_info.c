@@ -1,8 +1,8 @@
 /**
- * @file example-008-mem.c
+ * @file alloc_with_sz_info.c
  * @author Kumarjit Das
  * @date 2025-05-25
- * @brief MEM library example source file #4.
+ * @brief Memory allocation with size information and free example.
  */
 /**
  * LICENSE: BSD 3-Clause License
@@ -37,36 +37,31 @@
  */
 
 
-#include <stdio.h>
+#define KD_USE_SIMPLIFIED_TYPES
 #include "kd.h"
-#include "types.h"
-#include "mem.h"
+
+#include <stdio.h>
 
 
-int main(int argc, char** argv)
+int
+main(int argc, char** argv)
 {
-  (void) argc;
-  (void) argv;
+  i32* buffer;
+  bool result;
 
-  printf("MEM example #4 :: begin\n\n");
+  (void)argc;
+  (void)argv;
 
-  i32* buffer = null;
-  bool result = kdMemAllocWithSizeInfo(&buffer, 64 * SZ_I32);
+  printf("Memory allocation with size information and free example :: begin\n\n");
+
+  buffer = null;
+  result = kdMemAllocWithSizeInfo(&buffer, 64 * KD_SZ_I32);
 
   if (result && buffer)
   {
     printf("Allocation successful.\n");
-    printf(
-      "Allocated size: "
-      #if defined TYPES_64BIT_INTEGER
-      FMTSP_U64
-      #else
-      FMTSP_U32
-      #endif  /* TYPES_64BIT_INTEGER */
-      " bytes\n",
-      kdMemGetAllocSize(buffer)
-    );
-    // Use the buffer...
+    printf("Allocated size: " KD_FMTSP_USIZE " bytes\n", kdMemGetAllocSize(buffer));
+    /* Use the buffer... */
     kdFreeWithSizeInfo(&buffer);
   }
   else
@@ -74,7 +69,7 @@ int main(int argc, char** argv)
     printf("Allocation failed.\n");
   }
 
-  printf("\nMEM example #4 :: end\n\n");
+  printf("\nMemory allocation with size information and free example :: end\n\n");
 
-  return result ? EXIT_SUCCESS : EXIT_FAILURE;
+  return result ? KD_EXIT_SUCCESS : KD_EXIT_FAILURE;
 }

@@ -120,6 +120,53 @@
 #if !defined KD_COMP_CSTR
   #define KD_COMP_CSTR "Unknown"
 #endif
+#include <limits.h>
+
+
+/**
+ * ---------------------------------------------------------------------------------------------------------------------
+ *  C Standard
+ * ---------------------------------------------------------------------------------------------------------------------
+ */
+
+#if defined(__STDC_VERSION__)
+  #if (__STDC_VERSION__ >= 202311L)
+    #define KD_C_STD_NO   23
+    #define KD_C_STD_23   1
+    #define KD_C_STD_CSTR "C23"
+  #elif (__STDC_VERSION__ >= 201710L)
+    #define KD_C_STD_NO   17
+    #define KD_C_STD_17   1
+    #define KD_C_STD_CSTR "C17"
+  #elif (__STDC_VERSION__ >= 201112L)
+    #define KD_C_STD_NO   11
+    #define KD_C_STD_11   1
+    #define KD_C_STD_CSTR "C11"
+  #elif (__STDC_VERSION__ >= 199901L)
+    #define KD_C_STD_NO   99
+    #define KD_C_STD_99   1
+    #define KD_C_STD_CSTR "C99"
+  #else
+    #define KD_C_STD_90 1
+  #endif
+#else
+  #define KD_C_STD_90 1
+#endif
+
+#if defined KD_C_STD_90
+  #define KD_C_STD_89    1
+  #define KD_C_STD_89_90 1
+  #define KD_C_STD_NO    90
+  #define KD_C_STD_CSTR  "C89/C90"
+#endif
+
+#if !defined KD_C_STD_NO
+  #define KD_C_STD_NO 0
+#endif
+
+#if !defined KD_C_STD_CSTR
+  #define KD_C_STD_CSTR "Unknown"
+#endif
 
 
 /**

@@ -45,6 +45,7 @@
 #include "kd/version.h"
 #include "kd/defs.h"
 #include "kd/types/fw.h"
+#include "kd/mem.h"
 
 
 #endif /* KD_H_ */

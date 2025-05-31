@@ -1,8 +1,8 @@
 /**
- * @file example-009-mem.c
+ * @file realloc.c
  * @author Kumarjit Das
  * @date 2025-05-25
- * @brief MEM library example source file #5.
+ * @brief Memory reallocation example.
  */
 /**
  * LICENSE: BSD 3-Clause License
@@ -37,158 +37,103 @@
  */
 
 
-#include <stdio.h>
+#define KD_USE_SIMPLIFIED_TYPES
 #include "kd.h"
-#include "types.h"
-#include "mem.h"
+
+#include <stdio.h>
 
 
-int main(int argc, char** argv)
+int
+main(int argc, char** argv)
 {
-  (void) argc;
-  (void) argv;
+  i32 *buffer, *new_buffer;
+  u32  size, new_size;
+  bool result;
 
-  printf("MEM example #5 :: begin\n\n");
+  (void)argc;
+  (void)argv;
 
-  i32* buffer   = null;
-  u32  size     = 32 * SZ_I32;
-  u32  new_size = 64 * SZ_I32;
+  printf("Memory reallocation example :: begin\n\n");
 
-  if (!kdMemAllocWithSizeInfo(&buffer, size))
+  buffer   = null;
+  size     = 32 * KD_SZ_I32;
+  new_size = 64 * KD_SZ_I32;
+
+  if (!kdMemAlloc(&buffer, size))
   {
     printf("Initial allocation failed.\n");
-    return EXIT_FAILURE;
+    return KD_EXIT_FAILURE;
   }
 
   printf("Initial allocation succeeded.\n");
-  printf(
-    "Allocated size: "
-    #if defined TYPES_64BIT_INTEGER
-    FMTSP_U64
-    #else
-    FMTSP_U32
-    #endif  /* TYPES_64BIT_INTEGER */
-    " bytes\n",
-    kdMemGetAllocSize(buffer)
-  );
 
-  i32* new_buffer = null;
-  bool result     = kdMemReallocWithSizeInfo(&new_buffer, new_size, &buffer, size);
+  new_buffer = null;
+  result     = kdMemRealloc(&new_buffer, new_size, &buffer, size);
 
   if (result && new_buffer && !buffer)
   {
     printf("Reallocation successful.\n");
-    printf(
-      "Reallocated size: "
-      #if defined TYPES_64BIT_INTEGER
-      FMTSP_U64
-      #else
-      FMTSP_U32
-      #endif  /* TYPES_64BIT_INTEGER */
-      " bytes\n",
-      kdMemGetAllocSize(new_buffer)
-    );
-    // Use the new_buffer...
-    kdFreeWithSizeInfo(&new_buffer);
+    /* Use the new_buffer... */
+    kdFree(&new_buffer);
   }
   else
   {
     printf("Reallocation failed.\n");
-    kdFreeWithSizeInfo(&buffer);
+    kdFree(&buffer);
   }
 
-  if (!kdMemAllocWithSizeInfo(&buffer, size))
+  if (!kdMemAlloc(&buffer, size))
   {
     printf("Allocation for size 0 test failed.\n");
-    return EXIT_FAILURE;
+    return KD_EXIT_FAILURE;
   }
 
   printf("Allocation for size 0 test succeeded.\n");
-  printf(
-    "Allocated size: "
-    #if defined TYPES_64BIT_INTEGER
-    FMTSP_U64
-    #else
-    FMTSP_U32
-    #endif  /* TYPES_64BIT_INTEGER */
-    " bytes\n",
-    kdMemGetAllocSize(buffer)
-  );
 
-  result = kdMemReallocWithSizeInfo(&new_buffer, 0, &buffer, size);
+  result = kdMemRealloc(&new_buffer, 0, &buffer, size);
 
   if (result && !new_buffer && !buffer)
   {
     printf("Reallocation with size 0 successful.\n");
-    printf(
-      "Reallocated size: "
-      #if defined TYPES_64BIT_INTEGER
-      FMTSP_U64
-      #else
-      FMTSP_U32
-      #endif  /* TYPES_64BIT_INTEGER */
-      " bytes\n",
-      kdMemGetAllocSize(new_buffer)
-    );
-    // Use the new_buffer...
-    kdFreeWithSizeInfo(&new_buffer);
+    /* Use the new_buffer... */
+    kdFree(&new_buffer);
   }
   else
   {
     printf("Reallocation with size 0 failed.\n");
-    kdFreeWithSizeInfo(&buffer);
+    kdFree(&buffer);
   }
 
   buffer = null;
-  result = kdMemReallocWithSizeInfo(&new_buffer, new_size, &buffer, 0);
+  result = kdMemRealloc(&new_buffer, new_size, &buffer, 0);
 
   if (result && new_buffer)
   {
     printf("Reallocation with null buffer successful.\n");
-    printf(
-      "Reallocated size: "
-      #if defined TYPES_64BIT_INTEGER
-      FMTSP_U64
-      #else
-      FMTSP_U32
-      #endif  /* TYPES_64BIT_INTEGER */
-      " bytes\n",
-      kdMemGetAllocSize(new_buffer)
-    );
-    // Use the new_buffer...
-    kdFreeWithSizeInfo(&new_buffer);
+    /* Use the new_buffer... */
+    kdFree(&new_buffer);
   }
   else
   {
     printf("Reallocation with null buffer failed.\n");
-    kdFreeWithSizeInfo(&buffer);
+    kdFree(&buffer);
   }
 
-  result = kdMemReallocWithSizeInfo(&new_buffer, new_size, null, 0);
+  result = kdMemRealloc(&new_buffer, new_size, null, 0);
 
   if (result && new_buffer)
   {
     printf("Reallocation with null source successful.\n");
-    printf(
-      "Reallocated size: "
-      #if defined TYPES_64BIT_INTEGER
-      FMTSP_U64
-      #else
-      FMTSP_U32
-      #endif  /* TYPES_64BIT_INTEGER */
-      " bytes\n",
-      kdMemGetAllocSize(new_buffer)
-    );
-    // Use the new_buffer...
-    kdFreeWithSizeInfo(&new_buffer);
+    /* Use the new_buffer... */
+    kdFree(&new_buffer);
   }
   else
   {
     printf("Reallocation with null source failed.\n");
-    kdFreeWithSizeInfo(&buffer);
+    kdFree(&buffer);
   }
 
-  printf("\nMEM example #5 :: end\n\n");
+  printf("\nMemory reallocation example :: end\n\n");
 
-  return result ? EXIT_SUCCESS : EXIT_FAILURE;
+  return result ? KD_EXIT_SUCCESS : KD_EXIT_FAILURE;
 }

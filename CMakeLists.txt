@@ -88,5 +88,8 @@ include("cmake/package_configuration.cmake")
 # Install all non-project files
 include("cmake/install_nonproject_files.cmake")
 
+# Add the `_os_utils` library
+include("cmake/add_os_utils_library.cmake")
+
 # Adding the `Examples` directories
 add_subdirectory("examples")

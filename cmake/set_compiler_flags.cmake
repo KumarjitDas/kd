@@ -48,6 +48,10 @@ if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
   else ()
     list(APPEND GCC_WARNINGS -Wmisleading-indentation -Wlogical-op)
   endif ()
+
+  if (${KD_TARGET_OS} STREQUAL "Windows")
+    list(APPEND GCC_WARNINGS -Wno-format -fno-builtin-printf)
+  endif ()
 endif ()
 
 # Setting compiler warnings to the main target
@@ -64,7 +68,7 @@ else ()
   message(AUTHOR_WARNING "No compiler warnings set for ${KD_LIBRARY_NAME}")
 endif ()
 
-# Setting the compiler flags for the main target
+# Setting the compiler flags for the main target on Linux x86 architecture
 if (${KD_TARGET_OS} STREQUAL "Linux" AND ${KD_TARGET_ARCH} STREQUAL "x86")
   write_status("Setting compiler & linker flags for Linux x86 architecture...")
   target_compile_options(${KD_LIBRARY_NAME} INTERFACE -m32)
