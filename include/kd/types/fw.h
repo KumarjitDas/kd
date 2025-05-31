@@ -80,6 +80,8 @@ enum kd_enum_bool_t
   kd_true
 };
 typedef enum kd_enum_bool_t kd_bool_t;
+#else
+typedef bool kd_bool_t;
 #endif
 
 typedef char          kd_i8_t;
@@ -419,12 +421,12 @@ typedef kd_u32_t kd_chr_t;
     #undef false
     #define false kd_false
     #define true  kd_true
+typedef kd_bool_t bool;
   #endif
   #undef KD_FSBTC_BOOL
   #undef null
   #define KD_FSBTC_BOOL(x) ((x) ? "true" : "false")
   #define null             kd_null
-typedef kd_bool_t bool;
 typedef kd_i8_t    i8;
 typedef kd_i16_t   i16;
 typedef kd_i32_t   i32;

@@ -52,20 +52,20 @@ KD_EXTERN_BEGIN
 
 KDAPI(bool) kdMemAlloc(void* dst, usize sz);
 KDAPI(bool) kdMemRealloc(void* dst, usize new_sz, void* src, usize old_sz);
-KDAPI(bool) kdFree(void* dst);
+KDAPI(bool) kdMemFree(void* dst);
 KDAPI(bool) kdMemAllocWithSizeInfo(void* dst, usize sz);
 KDAPI(bool) kdMemReallocWithSizeInfo(void* dst, usize new_sz, void* src, usize old_sz);
-KDAPI(bool) kdFreeWithSizeInfo(void* dst);
+KDAPI(bool) kdMemFreeWithSizeInfo(void* dst);
 KDAPI(usize) kdMemGetAllocSize(void* src);
 
 #else
 
 KDAPI(kd_bool_t) kdMemAlloc(void* dst, kd_usize_t sz);
 KDAPI(kd_bool_t) kdMemRealloc(void* dst, kd_usize_t new_sz, void* src, kd_usize_t old_sz);
-KDAPI(kd_bool_t) kdFree(void* dst);
+KDAPI(kd_bool_t) kdMemFree(void* dst);
 KDAPI(kd_bool_t) kdMemAllocWithSizeInfo(void* dst, kd_usize_t sz);
 KDAPI(kd_bool_t) kdMemReallocWithSizeInfo(void* dst, kd_usize_t new_sz, void* src, kd_usize_t old_sz);
-KDAPI(kd_bool_t) kdFreeWithSizeInfo(void* dst);
+KDAPI(kd_bool_t) kdMemFreeWithSizeInfo(void* dst);
 KDAPI(kd_usize_t) kdMemGetAllocSize(void* src);
 
 #endif /* KD_USE_SIMPLIFIED_TYPES */

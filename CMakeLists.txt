@@ -52,6 +52,9 @@ include("cmake/validate_target_platform.cmake")
 # Validate the build configuration
 include("cmake/validate_build_config.cmake")
 
+# Fetch external libraries
+include("cmake/add_external_libs.cmake")
+
 # Create the main library
 include("cmake/create_library.cmake")
 
@@ -90,6 +93,9 @@ include("cmake/install_nonproject_files.cmake")
 
 # Add the `_os_utils` library
 include("cmake/add_os_utils_library.cmake")
+
+# Add tests for the target
+include("CMake/include_tests.cmake")
 
 # Adding the `Examples` directories
 add_subdirectory("examples")

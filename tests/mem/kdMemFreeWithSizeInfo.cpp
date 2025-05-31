@@ -1,8 +1,8 @@
 /**
- * @file alloc_with_sz_info.c
+ * @file kdMemFreeWithSizeInfo.cpp
  * @author Kumarjit Das
- * @date 2025-05-25
- * @brief Memory allocation with size information and free example.
+ * @date 2025-05-31
+ * @brief kdMemFreeWithSizeInfo test file.
  */
 /**
  * LICENSE: BSD 3-Clause License
@@ -39,37 +39,46 @@
 
 #define KD_USE_SIMPLIFIED_TYPES
 #include "kd.h"
+#include "gtest/gtest.h"
 
-#include <stdio.h>
-
-
-int
-main(int argc, char** argv)
+TEST(MemoryFreeWithSizeInfoTest, BasicArguments)
 {
-  i32* buffer;
-  bool result;
+  u8* ptr = static_cast<u8*>(null);
 
-  (void)argc;
-  (void)argv;
+  // Freeing a null pointer should fail
+  EXPECT_EQ(kdMemFreeWithSizeInfo(null), KD_RESULT_FAILURE);
 
-  printf("Memory allocation with size information and free example :: begin\n\n");
+  // Allocate and free valid memory
+  EXPECT_EQ(kdMemAllocWithSizeInfo(&ptr, 256), KD_RESULT_SUCCESS);
+  ASSERT_NE(ptr, null);
+  EXPECT_EQ(kdMemGetAllocSize(ptr), 256);
+  EXPECT_EQ(kdMemFreeWithSizeInfo(&ptr), KD_RESULT_SUCCESS);
+  EXPECT_EQ(ptr, null);
 
-  buffer = null;
-  result = kdMemAllocWithSizeInfo(&buffer, 64 * KD_SZ_I32);
+  // Double-free should fail safely
+  EXPECT_EQ(kdMemFreeWithSizeInfo(&ptr), KD_RESULT_FAILURE);
+}
 
-  if (result && buffer)
-  {
-    printf("Allocation successful.\n");
-    printf("Allocated size: " KD_FMTSP_USIZE " bytes\n", kdMemGetAllocSize(buffer));
-    /* Use the buffer... */
-    kdMemFreeWithSizeInfo(&buffer);
-  }
-  else
-  {
-    printf("Allocation failed.\n");
-  }
+TEST(MemoryFreeWithSizeInfoTest, BasicFreeSequence)
+{
+  u8 *ptr1 = static_cast<u8*>(null), *ptr2 = static_cast<u8*>(null), *ptr3 = static_cast<u8*>(null),
+     *ptr4 = static_cast<u8*>(null);
 
-  printf("\nMemory allocation with size information and free example :: end\n\n");
+  EXPECT_EQ(kdMemAllocWithSizeInfo(&ptr1, 64), KD_RESULT_SUCCESS);
+  EXPECT_EQ(kdMemGetAllocSize(ptr1), 64);
+  EXPECT_EQ(kdMemAllocWithSizeInfo(&ptr2, 128), KD_RESULT_SUCCESS);
+  EXPECT_EQ(kdMemGetAllocSize(ptr2), 128);
+  EXPECT_EQ(kdMemAllocWithSizeInfo(&ptr3, 256), KD_RESULT_SUCCESS);
+  EXPECT_EQ(kdMemGetAllocSize(ptr3), 256);
+  EXPECT_EQ(kdMemAllocWithSizeInfo(&ptr4, 512), KD_RESULT_SUCCESS);
+  EXPECT_EQ(kdMemGetAllocSize(ptr4), 512);
 
-  return result ? KD_EXIT_SUCCESS : KD_EXIT_FAILURE;
+  EXPECT_EQ(kdMemFreeWithSizeInfo(&ptr1), KD_RESULT_SUCCESS);
+  EXPECT_EQ(ptr1, null);
+  EXPECT_EQ(kdMemFreeWithSizeInfo(&ptr2), KD_RESULT_SUCCESS);
+  EXPECT_EQ(ptr2, null);
+  EXPECT_EQ(kdMemFreeWithSizeInfo(&ptr3), KD_RESULT_SUCCESS);
+  EXPECT_EQ(ptr3, null);
+  EXPECT_EQ(kdMemFreeWithSizeInfo(&ptr4), KD_RESULT_SUCCESS);
+  EXPECT_EQ(ptr4, null);
 }

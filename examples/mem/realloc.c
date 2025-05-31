@@ -74,12 +74,12 @@ main(int argc, char** argv)
   {
     printf("Reallocation successful.\n");
     /* Use the new_buffer... */
-    kdFree(&new_buffer);
+    kdMemFree(&new_buffer);
   }
   else
   {
     printf("Reallocation failed.\n");
-    kdFree(&buffer);
+    kdMemFree(&buffer);
   }
 
   if (!kdMemAlloc(&buffer, size))
@@ -96,12 +96,12 @@ main(int argc, char** argv)
   {
     printf("Reallocation with size 0 successful.\n");
     /* Use the new_buffer... */
-    kdFree(&new_buffer);
+    kdMemFree(&new_buffer);
   }
   else
   {
     printf("Reallocation with size 0 failed.\n");
-    kdFree(&buffer);
+    kdMemFree(&buffer);
   }
 
   buffer = null;
@@ -111,12 +111,12 @@ main(int argc, char** argv)
   {
     printf("Reallocation with null buffer successful.\n");
     /* Use the new_buffer... */
-    kdFree(&new_buffer);
+    kdMemFree(&new_buffer);
   }
   else
   {
     printf("Reallocation with null buffer failed.\n");
-    kdFree(&buffer);
+    kdMemFree(&buffer);
   }
 
   result = kdMemRealloc(&new_buffer, new_size, null, 0);
@@ -125,12 +125,12 @@ main(int argc, char** argv)
   {
     printf("Reallocation with null source successful.\n");
     /* Use the new_buffer... */
-    kdFree(&new_buffer);
+    kdMemFree(&new_buffer);
   }
   else
   {
     printf("Reallocation with null source failed.\n");
-    kdFree(&buffer);
+    kdMemFree(&buffer);
   }
 
   printf("\nMemory reallocation example :: end\n\n");

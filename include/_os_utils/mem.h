@@ -51,10 +51,10 @@ KD_EXTERN_BEGIN
 
 KDAPI(kd_bool_t) kdi_MemAlloc(void* dst, kd_usize_t sz);
 KDAPI(kd_bool_t) kdi_MemRealloc(void* dst, kd_usize_t new_sz, void* src, kd_usize_t old_sz);
-KDAPI(kd_bool_t) kdi_Free(void* dst);
+KDAPI(kd_bool_t) kdi_MemFree(void* dst);
 KDAPI(kd_bool_t) kdi_MemAllocWithSizeInfo(void* dst, kd_usize_t sz);
 KDAPI(kd_bool_t) kdi_MemReallocWithSizeInfo(void* dst, kd_usize_t new_sz, void* src, kd_usize_t old_sz);
-KDAPI(kd_bool_t) kdi_FreeWithSizeInfo(void* dst);
+KDAPI(kd_bool_t) kdi_MemFreeWithSizeInfo(void* dst);
 KDAPI(kd_usize_t) kdi_MemGetAllocSize(void* src);
 
 #endif /* KD_OS_WINDOWS */

@@ -58,9 +58,9 @@ kdMemRealloc(void* dst, kd_usize_t new_sz, void* src, kd_usize_t old_sz)
 
 
 kd_bool_t
-kdFree(void* dst)
+kdMemFree(void* dst)
 {
-  return kdi_Free(dst);
+  return kdi_MemFree(dst);
 }
 
 
@@ -79,9 +79,9 @@ kdMemReallocWithSizeInfo(void* dst, kd_usize_t new_sz, void* src, kd_usize_t old
 
 
 kd_bool_t
-kdFreeWithSizeInfo(void* dst)
+kdMemFreeWithSizeInfo(void* dst)
 {
-  return kdi_FreeWithSizeInfo(dst);
+  return kdi_MemFreeWithSizeInfo(dst);
 }
 
 

@@ -1,8 +1,8 @@
 /**
- * @file alloc_with_sz_info.c
+ * @file kdMemGetAllocSize.cpp
  * @author Kumarjit Das
- * @date 2025-05-25
- * @brief Memory allocation with size information and free example.
+ * @date 2025-05-31
+ * @brief kdMemGetAllocSize test file.
  */
 /**
  * LICENSE: BSD 3-Clause License
@@ -39,37 +39,30 @@
 
 #define KD_USE_SIMPLIFIED_TYPES
 #include "kd.h"
+#include "gtest/gtest.h"
 
-#include <stdio.h>
 
-
-int
-main(int argc, char** argv)
+TEST(MemoryGetAllocSizeTest, BasicQueries)
 {
-  i32* buffer;
-  bool result;
+  u8* ptr = static_cast<u8*>(null);
 
-  (void)argc;
-  (void)argv;
+  // Null pointer should return size 0
+  EXPECT_EQ(kdMemGetAllocSize(null), 0);
 
-  printf("Memory allocation with size information and free example :: begin\n\n");
+  // Allocate and check size
+  EXPECT_EQ(kdMemAllocWithSizeInfo(&ptr, 64), KD_RESULT_SUCCESS);
+  ASSERT_NE(ptr, null);
+  EXPECT_EQ(kdMemGetAllocSize(ptr), 64);
 
-  buffer = null;
-  result = kdMemAllocWithSizeInfo(&buffer, 64 * KD_SZ_I32);
+  // Resize and check size
+  u8* dst = static_cast<u8*>(null);
+  EXPECT_EQ(kdMemReallocWithSizeInfo(&dst, 128, &ptr, 64), KD_RESULT_SUCCESS);
+  EXPECT_EQ(ptr, null);
+  ASSERT_NE(dst, null);
+  EXPECT_EQ(kdMemGetAllocSize(dst), 128);
 
-  if (result && buffer)
-  {
-    printf("Allocation successful.\n");
-    printf("Allocated size: " KD_FMTSP_USIZE " bytes\n", kdMemGetAllocSize(buffer));
-    /* Use the buffer... */
-    kdMemFreeWithSizeInfo(&buffer);
-  }
-  else
-  {
-    printf("Allocation failed.\n");
-  }
-
-  printf("\nMemory allocation with size information and free example :: end\n\n");
-
-  return result ? KD_EXIT_SUCCESS : KD_EXIT_FAILURE;
+  // Free and check again
+  EXPECT_EQ(kdMemFreeWithSizeInfo(&dst), KD_RESULT_SUCCESS);
+  EXPECT_EQ(dst, null);
+  EXPECT_EQ(kdMemGetAllocSize(dst), 0);
 }

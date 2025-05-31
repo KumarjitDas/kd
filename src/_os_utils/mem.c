@@ -50,6 +50,11 @@ kdi_MemAlloc(void* dst, kd_usize_t sz)
 
   if (!dst || sz == 0)
   {
+    if (dst)
+    {
+      *(kd_u8_t**)dst = kd_null;
+    }
+
     return KD_RESULT_FAILURE;
   }
 
@@ -86,10 +91,11 @@ kdi_MemRealloc(void* dst, kd_usize_t new_sz, void* src, kd_usize_t old_sz)
     return KD_RESULT_FAILURE;
   }
 
-  addr_ptr_dst = dst;
-  ptr_dst      = *addr_ptr_dst;
-  addr_ptr_src = src;
-  ptr_src      = src ? *addr_ptr_src : kd_null;
+  addr_ptr_dst  = dst;
+  *addr_ptr_dst = kd_null;
+  ptr_dst       = kd_null;
+  addr_ptr_src  = src;
+  ptr_src       = src ? *addr_ptr_src : kd_null;
 
   if (!ptr_src && new_sz == 0)
   {
@@ -142,7 +148,7 @@ kdi_MemRealloc(void* dst, kd_usize_t new_sz, void* src, kd_usize_t old_sz)
 
 
 kd_bool_t
-kdi_Free(void* dst)
+kdi_MemFree(void* dst)
 {
   HANDLE    heap;
   byte **   addr_ptr, *ptr;
@@ -182,6 +188,11 @@ kdi_MemAllocWithSizeInfo(void* dst, kd_usize_t sz)
 
   if (!dst || sz == 0)
   {
+    if (dst)
+    {
+      *(kd_u8_t**)dst = kd_null;
+    }
+
     return KD_RESULT_FAILURE;
   }
 
@@ -219,10 +230,11 @@ kdi_MemReallocWithSizeInfo(void* dst, kd_usize_t new_sz, void* src, kd_usize_t o
     return KD_RESULT_FAILURE;
   }
 
-  addr_ptr_dst = dst;
-  ptr_dst      = *addr_ptr_dst;
-  addr_ptr_src = src;
-  ptr_src      = src ? (byte*)*addr_ptr_src : kd_null;
+  addr_ptr_dst  = dst;
+  *addr_ptr_dst = kd_null;
+  ptr_dst       = kd_null;
+  addr_ptr_src  = src;
+  ptr_src       = src ? (byte*)*addr_ptr_src : kd_null;
 
   if (!ptr_src && new_sz == 0)
   {
@@ -283,7 +295,7 @@ kdi_MemReallocWithSizeInfo(void* dst, kd_usize_t new_sz, void* src, kd_usize_t o
 
 
 kd_bool_t
-kdi_FreeWithSizeInfo(void* dst)
+kdi_MemFreeWithSizeInfo(void* dst)
 {
   HANDLE    heap;
   byte **   addr_ptr, *ptr;

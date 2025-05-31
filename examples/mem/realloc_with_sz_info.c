@@ -76,12 +76,12 @@ main(int argc, char** argv)
     printf("Reallocation successful.\n");
     printf("Reallocated size: " KD_FMTSP_USIZE " bytes\n", kdMemGetAllocSize(new_buffer));
     /* Use the new_buffer... */
-    kdFreeWithSizeInfo(&new_buffer);
+    kdMemFreeWithSizeInfo(&new_buffer);
   }
   else
   {
     printf("Reallocation failed.\n");
-    kdFreeWithSizeInfo(&buffer);
+    kdMemFreeWithSizeInfo(&buffer);
   }
 
   if (!kdMemAllocWithSizeInfo(&buffer, size))
@@ -100,12 +100,12 @@ main(int argc, char** argv)
     printf("Reallocation with size 0 successful.\n");
     printf("Reallocated size: " KD_FMTSP_USIZE " bytes\n", kdMemGetAllocSize(new_buffer));
     /* Use the new_buffer... */
-    kdFreeWithSizeInfo(&new_buffer);
+    kdMemFreeWithSizeInfo(&new_buffer);
   }
   else
   {
     printf("Reallocation with size 0 failed.\n");
-    kdFreeWithSizeInfo(&buffer);
+    kdMemFreeWithSizeInfo(&buffer);
   }
 
   buffer = null;
@@ -116,12 +116,12 @@ main(int argc, char** argv)
     printf("Reallocation with null buffer successful.\n");
     printf("Reallocated size: " KD_FMTSP_USIZE " bytes\n", kdMemGetAllocSize(new_buffer));
     /* Use the new_buffer... */
-    kdFreeWithSizeInfo(&new_buffer);
+    kdMemFreeWithSizeInfo(&new_buffer);
   }
   else
   {
     printf("Reallocation with null buffer failed.\n");
-    kdFreeWithSizeInfo(&buffer);
+    kdMemFreeWithSizeInfo(&buffer);
   }
 
   result = kdMemReallocWithSizeInfo(&new_buffer, new_size * 2, null, 0);
@@ -131,12 +131,12 @@ main(int argc, char** argv)
     printf("Reallocation with null source successful.\n");
     printf("Reallocated size: " KD_FMTSP_USIZE " bytes\n", kdMemGetAllocSize(new_buffer));
     /* Use the new_buffer... */
-    kdFreeWithSizeInfo(&new_buffer);
+    kdMemFreeWithSizeInfo(&new_buffer);
   }
   else
   {
     printf("Reallocation with null source failed.\n");
-    kdFreeWithSizeInfo(&buffer);
+    kdMemFreeWithSizeInfo(&buffer);
   }
 
   printf("\nMemory reallocation with size information example :: end\n\n");

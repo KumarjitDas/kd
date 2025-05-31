@@ -61,7 +61,7 @@ main(int argc, char** argv)
   {
     printf("Allocation successful.\n");
     /* Use the buffer... */
-    kdFree(&arr);
+    kdMemFree(&arr);
   }
   else
   {
