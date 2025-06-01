@@ -42,7 +42,7 @@
 #include "gtest/gtest.h"
 
 
-u8 Ptr[1024];
+static u8 Ptr[1024];
 
 TEST(MemAlgnGetOffsetPtrTest, AlignsAndStoresOffsetCorrectly)
 {

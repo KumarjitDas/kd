@@ -97,3 +97,7 @@ foreach (FILE_PATH ${ALL_CPP_FILES})
 
   write_status("Added test: ${TEST_TARGET}")
 endforeach ()
+
+# Adding the all tests target
+add_executable(${KD_PROJECT_NAME_LOWER}_test-all "all.cpp" ${ALL_CPP_FILES})
+target_link_libraries(${KD_PROJECT_NAME_LOWER}_test-all PRIVATE "KD::${KD_LIBRARY_NAME}" GTest::gtest_main)

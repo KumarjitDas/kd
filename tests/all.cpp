@@ -1,8 +1,8 @@
 /**
- * @file kdMemAlgnGetHeadPtr.cpp
+ * @file all.cpp
  * @author Kumarjit Das
  * @date 2025-06-01
- * @brief kdMemAlgnGetHeadPtr test file.
+ * @brief all test file.
  */
 /**
  * LICENSE: BSD 3-Clause License
@@ -37,36 +37,12 @@
  */
 
 
-#define KD_USE_SIMPLIFIED_TYPES
-#include "kd.h"
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 
 
-static u8 Ptr[1024];
-
-TEST(MemAlgnGetHeadPtrTest, ReturnsOriginalPointerFromOffsetPtr)
+int
+main(int argc, char** argv)
 {
-  u8* off = static_cast<u8*>(kdMemAlgnGetOffsetPtr(Ptr + 123, 4, 1));
-
-  EXPECT_NE(off, null);
-  EXPECT_EQ(kdMemAlgnGetHeadPtr(off, 1), Ptr + 123);
-
-  off = static_cast<u8*>(kdMemAlgnGetOffsetPtr(Ptr + 456, 4, 2));
-
-  EXPECT_NE(off, null);
-  EXPECT_EQ(kdMemAlgnGetHeadPtr(off, 2), Ptr + 456);
-
-  off = static_cast<u8*>(kdMemAlgnGetOffsetPtr(Ptr + 789, 8, 4));
-
-  EXPECT_NE(off, null);
-  EXPECT_EQ(kdMemAlgnGetHeadPtr(off, 4), Ptr + 789);
-}
-
-TEST(MemAlgnGetHeadPtrTest, InvalidInputsHandled)
-{
-  EXPECT_EQ(kdMemAlgnGetHeadPtr(null, 1), null);
-  EXPECT_EQ(kdMemAlgnGetHeadPtr(Ptr + 123, 3), null);
-  EXPECT_EQ(kdMemAlgnGetHeadPtr(Ptr + 234, 5), null);
-  EXPECT_EQ(kdMemAlgnGetHeadPtr(Ptr + 456, 6), null);
-  EXPECT_EQ(kdMemAlgnGetHeadPtr(Ptr + 678, 7), null);
+  ::testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
 }
