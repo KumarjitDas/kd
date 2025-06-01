@@ -1,9 +1,8 @@
 /**
- * @file kd.h
+ * @file kdMemAlgnGetHeadPtr.cpp
  * @author Kumarjit Das
- * @date 2025-05-28
- * @since 0.0.4
- * @brief KD library public common header.
+ * @date 2025-06-01
+ * @brief kdMemAlgnGetHeadPtr test file.
  */
 /**
  * LICENSE: BSD 3-Clause License
@@ -38,15 +37,36 @@
  */
 
 
-#ifndef KD_H_
-#define KD_H_
+#define KD_USE_SIMPLIFIED_TYPES
+#include "kd.h"
+#include "gtest/gtest.h"
 
 
-#include "kd/version.h"
-#include "kd/defs.h"
-#include "kd/types/fw.h"
-#include "kd/mem.h"
-#include "kd/mem_algn.h"
+u8 Ptr[1024];
 
+TEST(MemAlgnGetHeadPtrTest, ReturnsOriginalPointerFromOffsetPtr)
+{
+  u8* off = static_cast<u8*>(kdMemAlgnGetOffsetPtr(Ptr + 123, 4, 1));
 
-#endif /* KD_H_ */
+  EXPECT_NE(off, null);
+  EXPECT_EQ(kdMemAlgnGetHeadPtr(off, 1), Ptr + 123);
+
+  off = static_cast<u8*>(kdMemAlgnGetOffsetPtr(Ptr + 456, 4, 2));
+
+  EXPECT_NE(off, null);
+  EXPECT_EQ(kdMemAlgnGetHeadPtr(off, 2), Ptr + 456);
+
+  off = static_cast<u8*>(kdMemAlgnGetOffsetPtr(Ptr + 789, 8, 4));
+
+  EXPECT_NE(off, null);
+  EXPECT_EQ(kdMemAlgnGetHeadPtr(off, 4), Ptr + 789);
+}
+
+TEST(MemAlgnGetHeadPtrTest, InvalidInputsHandled)
+{
+  EXPECT_EQ(kdMemAlgnGetHeadPtr(null, 1), null);
+  EXPECT_EQ(kdMemAlgnGetHeadPtr(Ptr + 123, 3), null);
+  EXPECT_EQ(kdMemAlgnGetHeadPtr(Ptr + 234, 5), null);
+  EXPECT_EQ(kdMemAlgnGetHeadPtr(Ptr + 456, 6), null);
+  EXPECT_EQ(kdMemAlgnGetHeadPtr(Ptr + 678, 7), null);
+}

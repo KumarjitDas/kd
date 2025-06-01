@@ -41,6 +41,7 @@ include(GoogleTest)
 # Define all the subdirectories that contain the examples
 set(TEST_SUBDIRS
     "mem"
+    "mem_algn"
     )
 
 # Get all .cpp files in the directory

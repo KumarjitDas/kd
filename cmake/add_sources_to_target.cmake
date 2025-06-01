@@ -37,17 +37,20 @@
 write_status("Adding sources to the main library target...")
 
 # Adding the include file to the main target
-set(INCLUDE_FILE
+set(INCLUDE_FILES
     "${INCLUDE_DIR}/kd/defs.h"
     "${INCLUDE_DIR}/kd/types/fw.h"
     "${INCLUDE_DIR}/kd/types/fp.h"
-    "${INCLUDE_DIR}/kd/mem.h")
-target_sources(${KD_LIBRARY_NAME} PRIVATE ${INCLUDE_FILE})
+    "${INCLUDE_DIR}/kd/mem.h"
+    "${INCLUDE_DIR}/kd/mem_algn.h")
+target_sources(${KD_LIBRARY_NAME} PRIVATE ${INCLUDE_FILES})
 
 # Adding the source files to the main target
-set(SRC_FILES "${SRC_DIR}/kd/mem.c")
+set(SRC_FILES
+    "${SRC_DIR}/kd/mem.c"
+    "${SRC_DIR}/kd/mem_algn.c")
 target_sources(${KD_LIBRARY_NAME} PRIVATE ${SRC_FILES})
 
 # Setting the install destination for include and source file
-install(FILES ${INCLUDE_FILE} DESTINATION "include")
+install(FILES ${INCLUDE_FILES} DESTINATION "include")
 install(FILES ${SRC_FILES} DESTINATION "src")
