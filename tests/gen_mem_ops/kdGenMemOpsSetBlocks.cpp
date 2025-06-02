@@ -1,9 +1,8 @@
 /**
- * @file kd.h
+ * @file kdGenMemOpsSetBlocks.cpp
  * @author Kumarjit Das
- * @date 2025-05-28
- * @since 0.0.4
- * @brief KD library public common header.
+ * @date 2025-06-02
+ * @brief kdGenMemOpsSetBlocks test file.
  */
 /**
  * LICENSE: BSD 3-Clause License
@@ -38,16 +37,51 @@
  */
 
 
-#ifndef KD_H_
-#define KD_H_
+#define KD_USE_SIMPLIFIED_TYPES
+#include "kd.h"
+#include "gtest/gtest.h"
 
 
-#include "kd/version.h"
-#include "kd/defs.h"
-#include "kd/types/fw.h"
-#include "kd/mem.h"
-#include "kd/mem_algn.h"
-#include "kd/gen_mem_ops.h"
+TEST(GenMemOpsSetBlocksTest, FillsMemoryWithBlockPattern)
+{
+  kd_i16_t arr[16];
 
+#ifdef KD_LITTLE_ENDIAN
+  kd_i8_t  val_arr[] = {69, 0};
+  kd_i16_t val       = *reinterpret_cast<kd_i16_t*>(val_arr);
+#else
+  kd_i16_t val = 69;
+#endif
 
-#endif /* KD_H_ */
+  EXPECT_EQ(kdGenMemOpsSetBlocks(arr, sizeof(arr), &val, sizeof(val)), KD_RESULT_SUCCESS);
+
+  for (kd_usize_t i = 0; i < (sizeof(arr) / sizeof(*arr)); ++i)
+  {
+    EXPECT_EQ(arr[i], 69);
+  }
+}
+
+TEST(GenMemOpsSetBlocksTest, ZeroSizeReturnsFalse)
+{
+  kd_byte_t ptr[16];
+
+  EXPECT_EQ(kdGenMemOpsSetBlocks(kd_null, 0, ptr, 8), KD_RESULT_FAILURE);
+  EXPECT_EQ(kdGenMemOpsSetBlocks(ptr, 0, ptr, 8), KD_RESULT_FAILURE);
+}
+
+TEST(GenMemOpsSetBlocksTest, ZeroBlockSizeReturnsFalse)
+{
+  kd_byte_t ptr[16];
+
+  EXPECT_EQ(kdGenMemOpsSetBlocks(ptr, sizeof(ptr), kd_null, 0), KD_RESULT_FAILURE);
+  EXPECT_EQ(kdGenMemOpsSetBlocks(ptr, sizeof(ptr), ptr, 0), KD_RESULT_FAILURE);
+}
+
+TEST(GenMemOpsSetBlocksTest, NullPointerReturnsFalse)
+{
+  kd_byte_t ptr[16];
+
+  EXPECT_EQ(kdGenMemOpsSetBlocks(kd_null, 16, kd_null, 8), KD_RESULT_FAILURE);
+  EXPECT_EQ(kdGenMemOpsSetBlocks(kd_null, 16, ptr, 8), KD_RESULT_FAILURE);
+  EXPECT_EQ(kdGenMemOpsSetBlocks(ptr, 16, kd_null, 8), KD_RESULT_FAILURE);
+}

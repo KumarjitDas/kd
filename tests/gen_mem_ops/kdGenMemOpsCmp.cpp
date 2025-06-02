@@ -1,9 +1,8 @@
 /**
- * @file kd.h
+ * @file kdGenMemOpsCmp.cpp
  * @author Kumarjit Das
- * @date 2025-05-28
- * @since 0.0.4
- * @brief KD library public common header.
+ * @date 2025-06-02
+ * @brief kdGenMemOpsCmp test file.
  */
 /**
  * LICENSE: BSD 3-Clause License
@@ -38,16 +37,44 @@
  */
 
 
-#ifndef KD_H_
-#define KD_H_
+#define KD_USE_SIMPLIFIED_TYPES
+#include "kd.h"
+#include "gtest/gtest.h"
 
 
-#include "kd/version.h"
-#include "kd/defs.h"
-#include "kd/types/fw.h"
-#include "kd/mem.h"
-#include "kd/mem_algn.h"
-#include "kd/gen_mem_ops.h"
+TEST(GenMemOpsCmpTest, ReturnsZeroIfEqual)
+{
+  kd_byte_t ptr1[] = {1, 2, 3, 4, 5};
+  kd_byte_t ptr2[] = {1, 2, 3, 4, 5};
 
+  EXPECT_EQ(kdGenMemOpsCmp(ptr1, ptr2, sizeof(ptr1)), 0);
+}
 
-#endif /* KD_H_ */
+TEST(GenMemOpsCmpTest, ReturnsNegativeIfFirstLess)
+{
+  kd_byte_t ptr1[] = {1, 2, 8, 4, 5};
+  kd_byte_t ptr2[] = {1, 2, 3, 4, 5};
+
+  EXPECT_EQ(kdGenMemOpsCmp(ptr1, ptr2, sizeof(ptr1)), 5);
+}
+
+TEST(GenMemOpsCmpTest, ReturnsPositiveIfFirstGreater)
+{
+  kd_byte_t ptr1[] = {1, 2, 3, 4, 5};
+  kd_byte_t ptr2[] = {1, 2, 8, 4, 5};
+
+  EXPECT_EQ(kdGenMemOpsCmp(ptr1, ptr2, sizeof(ptr1)), -5);
+}
+
+TEST(GenMemOpsCmpTest, HandlesNullPointersSafely)
+{
+  kd_byte_t ptr1[16], ptr2[16];
+
+  EXPECT_EQ(kdGenMemOpsCmp(kd_null, kd_null, 0), 0);
+  EXPECT_EQ(kdGenMemOpsCmp(kd_null, kd_null, sizeof(ptr1)), 0);
+  EXPECT_EQ(kdGenMemOpsCmp(kd_null, ptr2, 0), -1);
+  EXPECT_EQ(kdGenMemOpsCmp(kd_null, ptr2, sizeof(ptr1)), -1);
+  EXPECT_EQ(kdGenMemOpsCmp(ptr1, kd_null, 0), 1);
+  EXPECT_EQ(kdGenMemOpsCmp(ptr1, kd_null, sizeof(ptr1)), 1);
+  EXPECT_EQ(kdGenMemOpsCmp(ptr1, ptr2, 0), 0);
+}

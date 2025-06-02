@@ -1,9 +1,8 @@
 /**
- * @file kd.h
+ * @file kdGenMemOpsFindByteIndex.cpp
  * @author Kumarjit Das
- * @date 2025-05-28
- * @since 0.0.4
- * @brief KD library public common header.
+ * @date 2025-06-02
+ * @brief kdGenMemOpsFindByteIndex test file.
  */
 /**
  * LICENSE: BSD 3-Clause License
@@ -38,16 +37,41 @@
  */
 
 
-#ifndef KD_H_
-#define KD_H_
+#define KD_USE_SIMPLIFIED_TYPES
+#include "kd.h"
+#include "gtest/gtest.h"
 
 
-#include "kd/version.h"
-#include "kd/defs.h"
-#include "kd/types/fw.h"
-#include "kd/mem.h"
-#include "kd/mem_algn.h"
-#include "kd/gen_mem_ops.h"
+TEST(GenMemOpsFindByteIndexTest, ReturnsCorrectIndexIfFound)
+{
+  kd_usize_t idx;
+  kd_byte_t  ptr[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
+  EXPECT_EQ(kdGenMemOpsFindByteIndex(&idx, ptr, sizeof(ptr), 3), KD_RESULT_SUCCESS);
+  EXPECT_EQ(idx, 2);
+  EXPECT_EQ(kdGenMemOpsFindByteIndex(&idx, ptr, sizeof(ptr), 8), KD_RESULT_SUCCESS);
+  EXPECT_EQ(idx, 7);
+}
 
-#endif /* KD_H_ */
+TEST(GenMemOpsFindByteIndexTest, ReturnsFalseIfNotFound)
+{
+  kd_usize_t idx;
+  kd_byte_t  ptr[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+
+  EXPECT_EQ(kdGenMemOpsFindByteIndex(&idx, ptr, sizeof(ptr), 0), KD_RESULT_FAILURE);
+  EXPECT_EQ(kdGenMemOpsFindByteIndex(&idx, ptr, sizeof(ptr), 11), KD_RESULT_FAILURE);
+}
+
+TEST(GenMemOpsFindByteIndexTest, HandlesNullPointerOrIndexPointer)
+{
+  kd_usize_t idx;
+  kd_byte_t  ptr[16];
+
+  EXPECT_EQ(kdGenMemOpsFindByteIndex((kd_usize_t*)kd_null, kd_null, 0, 69), KD_RESULT_FAILURE);
+  EXPECT_EQ(kdGenMemOpsFindByteIndex((kd_usize_t*)kd_null, kd_null, sizeof(ptr), 69), KD_RESULT_FAILURE);
+  EXPECT_EQ(kdGenMemOpsFindByteIndex((kd_usize_t*)kd_null, ptr, 0, 69), KD_RESULT_FAILURE);
+  EXPECT_EQ(kdGenMemOpsFindByteIndex((kd_usize_t*)kd_null, ptr, sizeof(ptr), 69), KD_RESULT_FAILURE);
+  EXPECT_EQ(kdGenMemOpsFindByteIndex(&idx, kd_null, 0, 69), KD_RESULT_FAILURE);
+  EXPECT_EQ(kdGenMemOpsFindByteIndex(&idx, kd_null, sizeof(ptr), 69), KD_RESULT_FAILURE);
+  EXPECT_EQ(kdGenMemOpsFindByteIndex(&idx, ptr, 0, 69), KD_RESULT_FAILURE);
+}
