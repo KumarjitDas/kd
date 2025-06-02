@@ -46,16 +46,8 @@ TEST(GenMemOpsFindBlockIndexTest, ReturnsCorrectIndexIfBlockFound)
 {
   kd_usize_t idx;
   kd_i16_t   arr[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-
-#ifdef KD_LITTLE_ENDIAN
-  kd_i8_t  val1_arr[] = {3, 0};
-  kd_i8_t  val2_arr[] = {8, 0};
-  kd_i16_t val1       = *reinterpret_cast<kd_i16_t*>(val1_arr);
-  kd_i16_t val2       = *reinterpret_cast<kd_i16_t*>(val2_arr);
-#else
-  kd_i16_t val1 = 3;
-  kd_i16_t val2 = 8;
-#endif
+  kd_i16_t   val1  = 3;
+  kd_i16_t   val2  = 8;
 
   EXPECT_EQ(kdGenMemOpsFindBlockIndex(&idx, arr, sizeof(arr), &val1, sizeof(val1)), KD_RESULT_SUCCESS);
   EXPECT_EQ(idx, 2 * sizeof(val1));
@@ -68,13 +60,7 @@ TEST(GenMemOpsFindBlockIndexTest, ReturnsFalseIfBlockNotFound)
   kd_usize_t idx;
   kd_i16_t   arr[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
   kd_i16_t   val1  = 0;
-
-#ifdef KD_LITTLE_ENDIAN
-  kd_i8_t  val2_arr[] = {11, 0};
-  kd_i16_t val2       = *reinterpret_cast<kd_i16_t*>(val2_arr);
-#else
-  kd_i16_t val2 = 11;
-#endif
+  kd_i16_t   val2  = 11;
 
   EXPECT_EQ(kdGenMemOpsFindBlockIndex(&idx, arr, sizeof(arr), &val1, sizeof(val1)), KD_RESULT_FAILURE);
   EXPECT_EQ(kdGenMemOpsFindBlockIndex(&idx, arr, sizeof(arr), &val2, sizeof(val2)), KD_RESULT_FAILURE);

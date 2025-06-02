@@ -48,8 +48,8 @@ TEST(GenMemOpsBlocksCompSpnTest, FindsFirstMatchingBlock)
   kd_i16_t keys1[] = {'1', '2', '3', '4', '5', '6', '7', '8', '9', '0'};
   kd_i16_t keys2[] = {'!', '@', '#', '$', '%', '^', '&', '*', '-', '+'};
 
-  EXPECT_EQ(kdGenMemOpsBlocksCompSpn(ptr, sizeof(ptr), keys1, sizeof(*keys1), sizeof(keys1) / sizeof(*keys1)), ptr + 4);
-  EXPECT_EQ(kdGenMemOpsBlocksCompSpn(ptr, sizeof(ptr), keys2, sizeof(*keys2), sizeof(keys2) / sizeof(*keys2)), ptr + 7);
+  EXPECT_EQ(kdGenMemOpsBlocksCompSpn(ptr, sizeof(ptr), keys1, sizeof(*keys1), sizeof(keys1)), ptr + 4);
+  EXPECT_EQ(kdGenMemOpsBlocksCompSpn(ptr, sizeof(ptr), keys2, sizeof(*keys2), sizeof(keys2)), ptr + 7);
 }
 
 TEST(GenMemOpsBlocksCompSpnTest, ReturnsNullIfAllMismatch)
@@ -57,28 +57,26 @@ TEST(GenMemOpsBlocksCompSpnTest, ReturnsNullIfAllMismatch)
   kd_i16_t ptr[]  = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k'};
   kd_i16_t keys[] = {'1', '2', '3', '4', '5', '6', '7', '8', '9', '0'};
 
-  EXPECT_EQ(kdGenMemOpsBlocksCompSpn(ptr, sizeof(ptr), keys, sizeof(*keys), sizeof(keys) / sizeof(*keys)), kd_null);
+  EXPECT_EQ(kdGenMemOpsBlocksCompSpn(ptr, sizeof(ptr), keys, sizeof(*keys), sizeof(keys)), kd_null);
 }
 
 TEST(GenMemOpsBlocksCompSpnTest, HandlesZeroBlockSize)
 {
-  kd_i16_t   ptr[16], keys[8];
-  kd_usize_t num_keys = sizeof(keys) / sizeof(*keys);
+  kd_i16_t ptr[16], keys[8];
 
   EXPECT_EQ(kdGenMemOpsBlocksCompSpn(ptr, 0, keys, 0, 0), kd_null);
-  EXPECT_EQ(kdGenMemOpsBlocksCompSpn(ptr, 0, keys, 0, num_keys), kd_null);
+  EXPECT_EQ(kdGenMemOpsBlocksCompSpn(ptr, 0, keys, 0, sizeof(keys)), kd_null);
   EXPECT_EQ(kdGenMemOpsBlocksCompSpn(ptr, 0, keys, sizeof(*keys), 0), kd_null);
   EXPECT_EQ(kdGenMemOpsBlocksCompSpn(ptr, sizeof(ptr), keys, 0, 0), kd_null);
-  EXPECT_EQ(kdGenMemOpsBlocksCompSpn(ptr, sizeof(ptr), keys, 0, num_keys), kd_null);
+  EXPECT_EQ(kdGenMemOpsBlocksCompSpn(ptr, sizeof(ptr), keys, 0, sizeof(keys)), kd_null);
   EXPECT_EQ(kdGenMemOpsBlocksCompSpn(ptr, sizeof(ptr), keys, sizeof(*keys), 0), kd_null);
 }
 
 TEST(GenMemOpsBlocksCompSpnTest, HandlesNullPointers)
 {
-  kd_i16_t   ptr[16], keys[8];
-  kd_usize_t num_keys = sizeof(keys) / sizeof(*keys);
+  kd_i16_t ptr[16], keys[8];
 
-  EXPECT_EQ(kdGenMemOpsBlocksCompSpn(kd_null, sizeof(ptr), kd_null, sizeof(*keys), num_keys), kd_null);
-  EXPECT_EQ(kdGenMemOpsBlocksCompSpn(kd_null, sizeof(ptr), keys, sizeof(*keys), num_keys), kd_null);
-  EXPECT_EQ(kdGenMemOpsBlocksCompSpn(ptr, sizeof(ptr), kd_null, sizeof(*keys), num_keys), kd_null);
+  EXPECT_EQ(kdGenMemOpsBlocksCompSpn(kd_null, sizeof(ptr), kd_null, sizeof(*keys), sizeof(keys)), kd_null);
+  EXPECT_EQ(kdGenMemOpsBlocksCompSpn(kd_null, sizeof(ptr), keys, sizeof(*keys), sizeof(keys)), kd_null);
+  EXPECT_EQ(kdGenMemOpsBlocksCompSpn(ptr, sizeof(ptr), kd_null, sizeof(*keys), sizeof(keys)), kd_null);
 }

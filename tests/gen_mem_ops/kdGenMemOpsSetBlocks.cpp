@@ -45,13 +45,7 @@
 TEST(GenMemOpsSetBlocksTest, FillsMemoryWithBlockPattern)
 {
   kd_i16_t arr[16];
-
-#ifdef KD_LITTLE_ENDIAN
-  kd_i8_t  val_arr[] = {69, 0};
-  kd_i16_t val       = *reinterpret_cast<kd_i16_t*>(val_arr);
-#else
   kd_i16_t val = 69;
-#endif
 
   EXPECT_EQ(kdGenMemOpsSetBlocks(arr, sizeof(arr), &val, sizeof(val)), KD_RESULT_SUCCESS);
 

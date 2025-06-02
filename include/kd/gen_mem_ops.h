@@ -61,16 +61,17 @@ KDAPI(bool)
 kdGenMemOpsFindBlockIndex(usize* idx_ptr, void* ptr, usize sz, void* block, usize block_sz);
 KDAPI(i32) kdGenMemOpsCmp(void* ptr1, void* ptr2, usize sz);
 KDAPI(bool) kdGenMemOpsCat(void* dst, usize sz, void* src1, usize sz1, void* src2, usize sz2);
-KDAPI(void*) kdGenMemOpsBytesCompSpn(void* ptr, usize sz, void* keys, usize num);
+KDAPI(void*) kdGenMemOpsBytesCompSpn(void* ptr, usize sz, void* keys, usize keys_sz);
 KDAPI(bool)
-kdGenMemOpsBytesCompSpnIndex(usize* idx_ptr, void* ptr, usize sz, void* keys, usize num);
+kdGenMemOpsBytesCompSpnIndex(usize* idx_ptr, void* ptr, usize sz, void* keys, usize keys_sz);
 KDAPI(void*)
-kdGenMemOpsBlocksCompSpn(void* ptr, usize sz, void* key_blocks, usize key_block_sz, usize num);
+kdGenMemOpsBlocksCompSpn(void* ptr, usize sz, void* key_blocks, usize key_block_sz, usize key_blocks_sz);
 KDAPI(bool)
-kdGenMemOpsBlocksCompSpnIndex(usize* idx_ptr, void* ptr, usize sz, void* key_blocks, usize key_block_sz, usize num);
-KDAPI(usize) kdGenMemOpsBytesSpn(void* ptr, usize sz, void* keys, usize num);
+kdGenMemOpsBlocksCompSpnIndex(usize* idx_ptr, void* ptr, usize sz, void* key_blocks, usize key_block_sz,
+                              usize key_blocks_sz);
+KDAPI(usize) kdGenMemOpsBytesSpn(void* ptr, usize sz, void* keys, usize keys_sz);
 KDAPI(usize)
-kdGenMemOpsBlocksSpn(void* ptr, usize sz, void* key_blocks, usize key_block_sz, usize num);
+kdGenMemOpsBlocksSpn(void* ptr, usize sz, void* key_blocks, usize key_block_sz, usize key_blocks_sz);
 
 #else
 
@@ -85,17 +86,17 @@ KDAPI(kd_bool_t)
 kdGenMemOpsFindBlockIndex(kd_usize_t* idx_ptr, void* ptr, kd_usize_t sz, void* block, kd_usize_t block_sz);
 KDAPI(kd_i32_t) kdGenMemOpsCmp(void* ptr1, void* ptr2, kd_usize_t sz);
 KDAPI(kd_bool_t) kdGenMemOpsCat(void* dst, kd_usize_t sz, void* src1, kd_usize_t sz1, void* src2, kd_usize_t sz2);
-KDAPI(void*) kdGenMemOpsBytesCompSpn(void* ptr, kd_usize_t sz, void* keys, kd_usize_t num);
+KDAPI(void*) kdGenMemOpsBytesCompSpn(void* ptr, kd_usize_t sz, void* keys, kd_usize_t keys_sz);
 KDAPI(kd_bool_t)
-kdGenMemOpsBytesCompSpnIndex(kd_usize_t* idx_ptr, void* ptr, kd_usize_t sz, void* keys, kd_usize_t num);
+kdGenMemOpsBytesCompSpnIndex(kd_usize_t* idx_ptr, void* ptr, kd_usize_t sz, void* keys, kd_usize_t keys_sz);
 KDAPI(void*)
-kdGenMemOpsBlocksCompSpn(void* ptr, kd_usize_t sz, void* key_blocks, kd_usize_t key_block_sz, kd_usize_t num);
+kdGenMemOpsBlocksCompSpn(void* ptr, kd_usize_t sz, void* key_blocks, kd_usize_t key_block_sz, kd_usize_t key_blocks_sz);
 KDAPI(kd_bool_t)
 kdGenMemOpsBlocksCompSpnIndex(kd_usize_t* idx_ptr, void* ptr, kd_usize_t sz, void* key_blocks, kd_usize_t key_block_sz,
-                              kd_usize_t num);
-KDAPI(kd_usize_t) kdGenMemOpsBytesSpn(void* ptr, kd_usize_t sz, void* keys, kd_usize_t num);
+                              kd_usize_t key_blocks_sz);
+KDAPI(kd_usize_t) kdGenMemOpsBytesSpn(void* ptr, kd_usize_t sz, void* keys, kd_usize_t keys_sz);
 KDAPI(kd_usize_t)
-kdGenMemOpsBlocksSpn(void* ptr, kd_usize_t sz, void* key_blocks, kd_usize_t key_block_sz, kd_usize_t num);
+kdGenMemOpsBlocksSpn(void* ptr, kd_usize_t sz, void* key_blocks, kd_usize_t key_block_sz, kd_usize_t key_blocks_sz);
 
 #endif /* KD_USE_SIMPLIFIED_TYPES */
 

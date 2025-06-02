@@ -47,7 +47,7 @@ TEST(GenMemOpsBlocksSpnTest, ReturnsFullSizeIfAllBlocksMatch)
   kd_i16_t ptr[]  = {'6', '9', '4', '2', '0'};
   kd_i16_t keys[] = {'1', '2', '3', '4', '5', '6', '7', '8', '9', '0'};
 
-  EXPECT_EQ(kdGenMemOpsBlocksSpn(ptr, sizeof(ptr), keys, sizeof(*keys), sizeof(keys) / sizeof(*keys)), sizeof(ptr));
+  EXPECT_EQ(kdGenMemOpsBlocksSpn(ptr, sizeof(ptr), keys, sizeof(*keys), sizeof(keys)), sizeof(ptr));
 }
 
 TEST(GenMemOpsBlocksSpnTest, ReturnsCorrectPrefixBlockSpan)
@@ -55,8 +55,7 @@ TEST(GenMemOpsBlocksSpnTest, ReturnsCorrectPrefixBlockSpan)
   kd_i16_t ptr[]  = {'1', '2', '9', 't', 'h'};
   kd_i16_t keys[] = {'1', '2', '3', '4', '5', '6', '7', '8', '9', '0'};
 
-  EXPECT_EQ(kdGenMemOpsBlocksSpn(ptr, sizeof(ptr), keys, sizeof(*keys), sizeof(keys) / sizeof(*keys)),
-            3 * sizeof(*ptr));
+  EXPECT_EQ(kdGenMemOpsBlocksSpn(ptr, sizeof(ptr), keys, sizeof(*keys), sizeof(keys)), 3 * sizeof(*ptr));
 }
 
 TEST(GenMemOpsBlocksSpnTest, ReturnsZeroIfPrefixNotFound)
@@ -64,28 +63,26 @@ TEST(GenMemOpsBlocksSpnTest, ReturnsZeroIfPrefixNotFound)
   kd_i16_t ptr[]  = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k'};
   kd_i16_t keys[] = {'1', '2', '3', '4', '5', '6', '7', '8', '9', '0'};
 
-  EXPECT_EQ(kdGenMemOpsBlocksSpn(ptr, sizeof(ptr), keys, sizeof(*keys), sizeof(keys) / sizeof(*keys)), 0);
+  EXPECT_EQ(kdGenMemOpsBlocksSpn(ptr, sizeof(ptr), keys, sizeof(*keys), sizeof(keys)), 0);
 }
 
 TEST(GenMemOpsBlocksSpnTest, HandlesZeroBlockSize)
 {
-  kd_i16_t   ptr[16], keys[8];
-  kd_usize_t num_keys = sizeof(keys) / sizeof(*keys);
+  kd_i16_t ptr[16], keys[8];
 
   EXPECT_EQ(kdGenMemOpsBlocksSpn(ptr, 0, keys, 0, 0), 0);
-  EXPECT_EQ(kdGenMemOpsBlocksSpn(ptr, 0, keys, 0, num_keys), 0);
+  EXPECT_EQ(kdGenMemOpsBlocksSpn(ptr, 0, keys, 0, sizeof(keys)), 0);
   EXPECT_EQ(kdGenMemOpsBlocksSpn(ptr, 0, keys, sizeof(*keys), 0), 0);
   EXPECT_EQ(kdGenMemOpsBlocksSpn(ptr, sizeof(ptr), keys, 0, 0), 0);
-  EXPECT_EQ(kdGenMemOpsBlocksSpn(ptr, sizeof(ptr), keys, 0, num_keys), 0);
+  EXPECT_EQ(kdGenMemOpsBlocksSpn(ptr, sizeof(ptr), keys, 0, sizeof(keys)), 0);
   EXPECT_EQ(kdGenMemOpsBlocksSpn(ptr, sizeof(ptr), keys, sizeof(*keys), 0), 0);
 }
 
 TEST(GenMemOpsBlocksSpnTest, HandlesNullPointers)
 {
-  kd_i16_t   ptr[16], keys[8];
-  kd_usize_t num_keys = sizeof(keys) / sizeof(*keys);
+  kd_i16_t ptr[16], keys[8];
 
-  EXPECT_EQ(kdGenMemOpsBlocksSpn(kd_null, sizeof(ptr), kd_null, sizeof(*keys), num_keys), 0);
-  EXPECT_EQ(kdGenMemOpsBlocksSpn(kd_null, sizeof(ptr), keys, sizeof(*keys), num_keys), 0);
-  EXPECT_EQ(kdGenMemOpsBlocksSpn(ptr, sizeof(ptr), kd_null, sizeof(*keys), num_keys), 0);
+  EXPECT_EQ(kdGenMemOpsBlocksSpn(kd_null, sizeof(ptr), kd_null, sizeof(*keys), sizeof(keys)), 0);
+  EXPECT_EQ(kdGenMemOpsBlocksSpn(kd_null, sizeof(ptr), keys, sizeof(*keys), sizeof(keys)), 0);
+  EXPECT_EQ(kdGenMemOpsBlocksSpn(ptr, sizeof(ptr), kd_null, sizeof(*keys), sizeof(keys)), 0);
 }

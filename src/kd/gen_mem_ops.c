@@ -42,25 +42,18 @@
 #include "kd/defs.h"
 #include "kd/types/fw.h"
 #include "kd/gen_mem_ops.h"
+#include "_internal/gen_mem_ops_sn.h"
 
 
 kd_bool_t
 kdGenMemOpsSetBytes(void* ptr, kd_usize_t sz, kd_byte_t val)
 {
-  kd_byte_t* dst_ptr;
-
   if (!ptr || !sz)
   {
     return KD_RESULT_FAILURE;
   }
 
-  dst_ptr = ptr;
-
-  while (sz--)
-  {
-    *dst_ptr = val;
-    ++dst_ptr;
-  }
+  kdi_GenMemOpsSetBlocks_S8(ptr, sz, val);
 
   return KD_RESULT_SUCCESS;
 }
@@ -69,24 +62,40 @@ kdGenMemOpsSetBytes(void* ptr, kd_usize_t sz, kd_byte_t val)
 kd_bool_t
 kdGenMemOpsSetBlocks(void* ptr, kd_usize_t sz, void* block, kd_usize_t block_sz)
 {
-  kd_byte_t* dst_ptr;
-  kd_usize_t i;
+  kd_u8_t  block_val_u8;
+  kd_u16_t block_val_u16;
+  kd_u32_t block_val_u32;
+#if defined KD_ARCH_64BIT_INT
+  kd_u64_t block_val_u64;
+#endif
 
   if (!ptr || !sz || !block || !block_sz)
   {
     return KD_RESULT_FAILURE;
   }
 
-  dst_ptr = ptr;
-
-  while (sz)
+  switch (block_sz)
   {
-    i = 0;
-    while ((i < block_sz) && sz--)
-    {
-      *dst_ptr = *((kd_byte_t*)block + i++);
-      ++dst_ptr;
-    }
+    case 1:
+      block_val_u8 = *(kd_u8_t*)block;
+      kdi_GenMemOpsSetBlocks_S8(ptr, sz, block_val_u8);
+      break;
+    case 2:
+      block_val_u16 = *(kd_u16_t*)block;
+      kdi_GenMemOpsSetBlocks_S16(ptr, sz, block_val_u16);
+      break;
+    case 4:
+      block_val_u32 = *(kd_u32_t*)block;
+      kdi_GenMemOpsSetBlocks_S32(ptr, sz, block_val_u32);
+      break;
+#if defined KD_ARCH_64BIT_INT
+    case 8:
+      block_val_u64 = *(kd_u64_t*)block;
+      kdi_GenMemOpsSetBlocks_S64(ptr, sz, block_val_u64);
+      break;
+#endif
+    default:
+      kdi_GenMemOpsSetBlocks_Sn(ptr, sz, block, block_sz);
   }
 
   return KD_RESULT_SUCCESS;
@@ -159,126 +168,110 @@ kdGenMemOpsMove(void* dst, void* src, kd_usize_t sz)
 void*
 kdGenMemOpsFindByte(void* ptr, kd_usize_t sz, kd_byte_t item)
 {
-  kd_byte_t* src_ptr;
-
   if (!ptr || !sz)
   {
     return kd_null;
   }
 
-  src_ptr = ptr;
-
-  while (sz--)
-  {
-    if (*src_ptr == item)
-    {
-      return src_ptr;
-    }
-    ++src_ptr;
-  }
-
-  return kd_null;
+  return kdi_GenMemOpsFindBlockWithIndex_S8(kd_null, ptr, sz, item);
 }
 
 
 kd_bool_t
 kdGenMemOpsFindByteIndex(kd_usize_t* idx_ptr, void* ptr, kd_usize_t sz, kd_byte_t item)
 {
-  kd_byte_t* src_ptr;
-  kd_usize_t idx;
+  void* found_ptr;
 
   if (!idx_ptr || !ptr || !sz)
   {
     return KD_RESULT_FAILURE;
   }
 
-  idx     = 0;
-  src_ptr = (kd_byte_t*)ptr;
+  found_ptr = kdi_GenMemOpsFindBlockWithIndex_S8(idx_ptr, ptr, sz, item);
 
-  while (sz--)
-  {
-    if (*src_ptr == item)
-    {
-      *idx_ptr = idx;
-      return KD_RESULT_SUCCESS;
-    }
-
-    ++idx;
-    ++src_ptr;
-  }
-
-  return KD_RESULT_FAILURE;
+  return found_ptr ? KD_RESULT_SUCCESS : KD_RESULT_FAILURE;
 }
 
 
 void*
 kdGenMemOpsFindBlock(void* ptr, kd_usize_t sz, void* block, kd_usize_t block_sz)
 {
-  kd_byte_t* src_ptr;
-  kd_usize_t i, match_cnt;
+  kd_u8_t  block_val_u8;
+  kd_u16_t block_val_u16;
+  kd_u32_t block_val_u32;
+#if defined KD_ARCH_64BIT_INT
+  kd_u64_t block_val_u64;
+#endif
 
   if (!ptr || !sz || !block || !block_sz)
   {
     return kd_null;
   }
 
-  src_ptr = (kd_byte_t*)ptr;
-
-  while (sz)
+  switch (block_sz)
   {
-    i         = 0;
-    match_cnt = 0;
-
-    while ((i < block_sz) && sz--)
-    {
-      match_cnt += *src_ptr == *((kd_byte_t*)block + i++);
-      ++src_ptr;
-    }
-
-    if (match_cnt == block_sz)
-    {
-      return src_ptr - block_sz;
-    }
+    case 1:
+      block_val_u8 = *(kd_u8_t*)block;
+      return kdi_GenMemOpsFindBlockWithIndex_S8(kd_null, ptr, sz, block_val_u8);
+    case 2:
+      block_val_u16 = *(kd_u16_t*)block;
+      return kdi_GenMemOpsFindBlockWithIndex_S16(kd_null, ptr, sz, block_val_u16);
+    case 4:
+      block_val_u32 = *(kd_u32_t*)block;
+      return kdi_GenMemOpsFindBlockWithIndex_S32(kd_null, ptr, sz, block_val_u32);
+#if defined KD_ARCH_64BIT_INT
+    case 8:
+      block_val_u64 = *(kd_u64_t*)block;
+      return kdi_GenMemOpsFindBlockWithIndex_S64(kd_null, ptr, sz, block_val_u64);
+#endif
+    default:;
   }
 
-  return kd_null;
+  return kdi_GenMemOpsFindBlockWithIndex_Sn(kd_null, ptr, sz, block, block_sz);
 }
 
 
 kd_bool_t
 kdGenMemOpsFindBlockIndex(kd_usize_t* idx_ptr, void* ptr, kd_usize_t sz, void* block, kd_usize_t block_sz)
 {
-  kd_byte_t* src_ptr;
-  kd_usize_t i, match_cnt, idx;
+  void*    found_ptr;
+  kd_u8_t  block_val_u8;
+  kd_u16_t block_val_u16;
+  kd_u32_t block_val_u32;
+#if defined KD_ARCH_64BIT_INT
+  kd_u64_t block_val_u64;
+#endif
 
   if (!idx_ptr || !ptr || !sz || !block || !block_sz)
   {
     return KD_RESULT_FAILURE;
   }
 
-  idx     = 0;
-  src_ptr = (kd_byte_t*)ptr;
-
-  while (sz)
+  switch (block_sz)
   {
-    i         = 0;
-    match_cnt = 0;
-
-    while ((i < block_sz) && sz--)
-    {
-      match_cnt += *src_ptr == *((kd_byte_t*)block + i++);
-      ++src_ptr;
-      ++idx;
-    }
-
-    if (match_cnt == block_sz)
-    {
-      *idx_ptr = idx - block_sz;
-      return KD_RESULT_SUCCESS;
-    }
+    case 1:
+      block_val_u8 = *(kd_u8_t*)block;
+      found_ptr    = kdi_GenMemOpsFindBlockWithIndex_S8(idx_ptr, ptr, sz, block_val_u8);
+      break;
+    case 2:
+      block_val_u16 = *(kd_u16_t*)block;
+      found_ptr     = kdi_GenMemOpsFindBlockWithIndex_S16(idx_ptr, ptr, sz, block_val_u16);
+      break;
+    case 4:
+      block_val_u32 = *(kd_u32_t*)block;
+      found_ptr     = kdi_GenMemOpsFindBlockWithIndex_S32(idx_ptr, ptr, sz, block_val_u32);
+      break;
+#if defined KD_ARCH_64BIT_INT
+    case 8:
+      block_val_u64 = *(kd_u64_t*)block;
+      found_ptr     = kdi_GenMemOpsFindBlockWithIndex_S64(idx_ptr, ptr, sz, block_val_u64);
+      break;
+#endif
+    default:;
+      found_ptr = kdi_GenMemOpsFindBlockWithIndex_Sn(idx_ptr, ptr, sz, block, block_sz);
   }
 
-  return KD_RESULT_FAILURE;
+  return found_ptr ? KD_RESULT_SUCCESS : KD_RESULT_FAILURE;
 }
 
 
@@ -343,272 +336,129 @@ kdGenMemOpsCat(void* dst, kd_usize_t sz, void* src1, kd_usize_t sz1, void* src2,
 
 
 void*
-kdGenMemOpsBytesCompSpn(void* ptr, kd_usize_t sz, void* keys, kd_usize_t num)
+kdGenMemOpsBytesCompSpn(void* ptr, kd_usize_t sz, void* keys, kd_usize_t keys_sz)
 {
-  kd_byte_t *src_ptr, *keys_ptr;
-  kd_usize_t i;
-
-  if (!ptr || !sz || !keys || !num)
+  if (!ptr || !sz || !keys || !keys_sz)
   {
     return kd_null;
   }
 
-  src_ptr = ptr;
-
-  while (sz--)
-  {
-    keys_ptr = keys;
-    i        = num;
-
-    while (i--)
-    {
-      if (*keys_ptr == *src_ptr)
-      {
-        return src_ptr;
-      }
-      ++keys_ptr;
-    }
-
-    ++src_ptr;
-  }
-
-  return kd_null;
+  return kdi_GenMemOpsBlocksCompSpnWithIndex_S8(kd_null, ptr, sz, keys, keys_sz);
 }
 
 
 kd_bool_t
-kdGenMemOpsBytesCompSpnIndex(kd_usize_t* idx_ptr, void* ptr, kd_usize_t sz, void* keys, kd_usize_t num)
+kdGenMemOpsBytesCompSpnIndex(kd_usize_t* idx_ptr, void* ptr, kd_usize_t sz, void* keys, kd_usize_t keys_sz)
 {
-  kd_byte_t *src_ptr, *keys_ptr;
-  kd_usize_t i, idx;
+  kd_byte_t* found_ptr;
 
-  if (!idx_ptr || !ptr || !sz || !keys || !num)
+  if (!idx_ptr || !ptr || !sz || !keys || !keys_sz)
   {
     return KD_RESULT_FAILURE;
   }
 
-  idx     = 0;
-  src_ptr = ptr;
+  found_ptr = kdi_GenMemOpsBlocksCompSpnWithIndex_S8(idx_ptr, ptr, sz, keys, keys_sz);
 
-  while (sz--)
-  {
-    keys_ptr = keys;
-    i        = num;
-
-    while (i--)
-    {
-      if (*keys_ptr == *src_ptr)
-      {
-        *idx_ptr = idx;
-        return KD_RESULT_SUCCESS;
-      }
-      ++keys_ptr;
-    }
-
-    ++idx;
-    ++src_ptr;
-  }
-
-  return KD_RESULT_FAILURE;
+  return found_ptr ? KD_RESULT_SUCCESS : KD_RESULT_FAILURE;
 }
 
 
 void*
-kdGenMemOpsBlocksCompSpn(void* ptr, kd_usize_t sz, void* key_blocks, kd_usize_t key_block_sz, kd_usize_t num)
+kdGenMemOpsBlocksCompSpn(void* ptr, kd_usize_t sz, void* key_blocks, kd_usize_t key_block_sz, kd_usize_t key_blocks_sz)
 {
-  kd_byte_t *src_ptr, *search_ptr, *key_blocks_ptr;
-  kd_usize_t n, i, match_cnt;
-
-  if (!ptr || !sz || !key_blocks || !key_block_sz || !num)
+  if (!ptr || !sz || !key_blocks || !key_block_sz || !key_blocks_sz)
   {
     return kd_null;
   }
 
-  src_ptr = ptr;
-
-  while (sz--)
+  switch (key_block_sz)
   {
-    key_blocks_ptr = key_blocks;
-    n              = num;
-
-    while (n--)
-    {
-      i          = 0;
-      match_cnt  = 0;
-      search_ptr = src_ptr;
-
-      while (i < key_block_sz)
-      {
-        match_cnt += *search_ptr == *(key_blocks_ptr + i++);
-        ++search_ptr;
-      }
-
-      if (match_cnt == key_block_sz)
-      {
-        return src_ptr;
-      }
-
-      key_blocks_ptr += key_block_sz;
-    }
-
-    src_ptr += key_block_sz;
+    case 1:
+      return kdi_GenMemOpsBlocksCompSpnWithIndex_S8(kd_null, ptr, sz, key_blocks, key_blocks_sz);
+    case 2:
+      return kdi_GenMemOpsBlocksCompSpnWithIndex_S16(kd_null, ptr, sz, key_blocks, key_blocks_sz);
+    case 4:
+      return kdi_GenMemOpsBlocksCompSpnWithIndex_S32(kd_null, ptr, sz, key_blocks, key_blocks_sz);
+#if defined KD_ARCH_64BIT_INT
+    case 8:
+      return kdi_GenMemOpsBlocksCompSpnWithIndex_S64(kd_null, ptr, sz, key_blocks, key_blocks_sz);
+#endif
+    default:;
   }
 
-  return kd_null;
+  return kdi_GenMemOpsBlocksCompSpnWithIndex_Sn(kd_null, ptr, sz, key_blocks, key_block_sz, key_blocks_sz);
 }
 
 
 kd_bool_t
 kdGenMemOpsBlocksCompSpnIndex(kd_usize_t* idx_ptr, void* ptr, kd_usize_t sz, void* key_blocks, kd_usize_t key_block_sz,
-                              kd_usize_t num)
+                              kd_usize_t key_blocks_sz)
 {
-  kd_byte_t *src_ptr, *search_ptr, *key_blocks_ptr;
-  kd_usize_t n, i, match_cnt, idx;
+  kd_byte_t* found_ptr;
 
-  if (!idx_ptr || !ptr || !sz || !key_blocks || !key_block_sz || !num)
+  if (!idx_ptr || !ptr || !sz || !key_blocks || !key_block_sz || !key_blocks_sz)
   {
     return KD_RESULT_FAILURE;
   }
 
-  idx     = 0;
-  src_ptr = ptr;
-
-  while (sz--)
+  switch (key_block_sz)
   {
-    key_blocks_ptr = key_blocks;
-    n              = num;
-
-    while (n--)
-    {
-      i          = 0;
-      match_cnt  = 0;
-      search_ptr = src_ptr;
-
-      while (i < key_block_sz)
-      {
-        match_cnt += *search_ptr == *(key_blocks_ptr + i++);
-        ++search_ptr;
-      }
-
-      if (match_cnt == key_block_sz)
-      {
-        *idx_ptr = idx;
-        return KD_RESULT_SUCCESS;
-      }
-
-      key_blocks_ptr += key_block_sz;
-    }
-
-    src_ptr += key_block_sz;
-    idx += key_block_sz;
+    case 1:
+      found_ptr = kdi_GenMemOpsBlocksCompSpnWithIndex_S8(idx_ptr, ptr, sz, key_blocks, key_blocks_sz);
+      break;
+    case 2:
+      found_ptr = kdi_GenMemOpsBlocksCompSpnWithIndex_S16(idx_ptr, ptr, sz, key_blocks, key_blocks_sz);
+      break;
+    case 4:
+      found_ptr = kdi_GenMemOpsBlocksCompSpnWithIndex_S32(idx_ptr, ptr, sz, key_blocks, key_blocks_sz);
+      break;
+#if defined KD_ARCH_64BIT_INT
+    case 8:
+      found_ptr = kdi_GenMemOpsBlocksCompSpnWithIndex_S64(idx_ptr, ptr, sz, key_blocks, key_blocks_sz);
+      break;
+#endif
+    default:
+      found_ptr = kdi_GenMemOpsBlocksCompSpnWithIndex_Sn(idx_ptr, ptr, sz, key_blocks, key_block_sz, key_blocks_sz);
   }
 
-  return KD_RESULT_FAILURE;
+  return found_ptr ? KD_RESULT_SUCCESS : KD_RESULT_FAILURE;
 }
 
 
 kd_usize_t
-kdGenMemOpsBytesSpn(void* ptr, kd_usize_t sz, void* keys, kd_usize_t num)
+kdGenMemOpsBytesSpn(void* ptr, kd_usize_t sz, void* keys, kd_usize_t keys_sz)
 {
-  kd_byte_t *src_ptr, *keys_ptr;
-  kd_usize_t i, count;
-  kd_bool_t  match;
-
-  if (!ptr || !sz || !keys || !num)
+  if (!ptr || !sz || !keys || !keys_sz)
   {
     return 0;
   }
 
-  src_ptr = ptr;
-  count   = 0;
-
-  while (sz--)
-  {
-    keys_ptr = keys;
-    i        = num;
-    match    = KD_RESULT_FAILURE;
-
-    while (i--)
-    {
-      if (*keys_ptr == *src_ptr)
-      {
-        match = KD_RESULT_SUCCESS;
-        break;
-      }
-      ++keys_ptr;
-    }
-
-    if (!match)
-    {
-      if (src_ptr == (kd_byte_t*)ptr)
-      {
-        return 0;
-      }
-      break;
-    }
-
-    count += match;
-    ++src_ptr;
-  }
-
-  return count;
+  return kdi_GenMemOpsBlocksSpn_S8(ptr, sz, keys, keys_sz);
 }
 
 
 kd_usize_t
-kdGenMemOpsBlocksSpn(void* ptr, kd_usize_t sz, void* key_blocks, kd_usize_t key_block_sz, kd_usize_t num)
+kdGenMemOpsBlocksSpn(void* ptr, kd_usize_t sz, void* key_blocks, kd_usize_t key_block_sz, kd_usize_t key_blocks_sz)
 {
-  kd_byte_t *src_ptr, *search_ptr, *key_blocks_ptr;
-  kd_usize_t n, i, match_cnt, count;
-  kd_bool_t  match;
-
-  if (!ptr || !sz || !key_blocks || !key_block_sz || !num)
+  if (!ptr || !sz || !key_blocks || !key_block_sz || !key_blocks_sz)
   {
     return 0;
   }
 
-  src_ptr = ptr;
-  count   = 0;
-
-  while (sz--)
+  switch (key_block_sz)
   {
-    key_blocks_ptr = key_blocks;
-    n              = num;
-    match          = KD_RESULT_FAILURE;
-
-    while (n--)
-    {
-      i          = 0;
-      match_cnt  = 0;
-      search_ptr = src_ptr;
-
-      while (i < key_block_sz)
-      {
-        match_cnt += *search_ptr == *(key_blocks_ptr + i++);
-        ++search_ptr;
-      }
-
-      if (match_cnt == key_block_sz)
-      {
-        match = KD_RESULT_SUCCESS;
-        break;
-      }
-
-      key_blocks_ptr += key_block_sz;
-    }
-
-    if (!match)
-    {
-      if (src_ptr == (kd_byte_t*)ptr)
-      {
-        return 0;
-      }
-      break;
-    }
-
-    count += key_block_sz;
-    src_ptr += key_block_sz;
+    case 1:
+      return kdi_GenMemOpsBlocksSpn_S8(ptr, sz, key_blocks, key_blocks_sz);
+    case 2:
+      return kdi_GenMemOpsBlocksSpn_S16(ptr, sz, key_blocks, key_blocks_sz);
+    case 4:
+      return kdi_GenMemOpsBlocksSpn_S32(ptr, sz, key_blocks, key_blocks_sz);
+#if defined KD_ARCH_64BIT_INT
+    case 8:
+      return kdi_GenMemOpsBlocksSpn_S64(ptr, sz, key_blocks, key_blocks_sz);
+#endif
+    default:;
   }
 
-  return count;
+  return kdi_GenMemOpsBlocksSpn_Sn(ptr, sz, key_blocks, key_block_sz, key_blocks_sz);
 }

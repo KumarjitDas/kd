@@ -49,13 +49,11 @@ TEST(GenMemOpsBlocksCompSpnIndexTest, ReturnsCorrectMatchIndex)
   kd_i16_t   keys1[] = {'1', '2', '3', '4', '5', '6', '7', '8', '9', '0'};
   kd_i16_t   keys2[] = {'!', '@', '#', '$', '%', '^', '&', '*', '-', '+'};
 
-  EXPECT_EQ(
-    kdGenMemOpsBlocksCompSpnIndex(&idx, ptr, sizeof(ptr), keys1, sizeof(*keys1), sizeof(keys1) / sizeof(*keys1)),
-    KD_RESULT_SUCCESS);
+  EXPECT_EQ(kdGenMemOpsBlocksCompSpnIndex(&idx, ptr, sizeof(ptr), keys1, sizeof(*keys1), sizeof(keys1)),
+            KD_RESULT_SUCCESS);
   EXPECT_EQ(idx, 4 * sizeof(*ptr));
-  EXPECT_EQ(
-    kdGenMemOpsBlocksCompSpnIndex(&idx, ptr, sizeof(ptr), keys2, sizeof(*keys2), sizeof(keys2) / sizeof(*keys2)),
-    KD_RESULT_SUCCESS);
+  EXPECT_EQ(kdGenMemOpsBlocksCompSpnIndex(&idx, ptr, sizeof(ptr), keys2, sizeof(*keys2), sizeof(keys2)),
+            KD_RESULT_SUCCESS);
   EXPECT_EQ(idx, 7 * sizeof(*ptr));
 }
 
@@ -65,7 +63,7 @@ TEST(GenMemOpsBlocksCompSpnIndexTest, ReturnsFalseIfAllBlocksMismatch)
   kd_i16_t   ptr[]  = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k'};
   kd_i16_t   keys[] = {'1', '2', '3', '4', '5', '6', '7', '8', '9', '0'};
 
-  EXPECT_EQ(kdGenMemOpsBlocksCompSpnIndex(&idx, ptr, sizeof(ptr), keys, sizeof(*keys), sizeof(keys) / sizeof(*keys)),
+  EXPECT_EQ(kdGenMemOpsBlocksCompSpnIndex(&idx, ptr, sizeof(ptr), keys, sizeof(*keys), sizeof(keys)),
             KD_RESULT_FAILURE);
 }
 
@@ -73,13 +71,12 @@ TEST(GenMemOpsBlocksCompSpnIndexTest, HandlesZeroBlockSize)
 {
   kd_usize_t idx;
   kd_i16_t   ptr[16], keys[8];
-  kd_usize_t num_keys = sizeof(keys) / sizeof(*keys);
 
   EXPECT_EQ(kdGenMemOpsBlocksCompSpnIndex(&idx, ptr, 0, keys, 0, 0), KD_RESULT_FAILURE);
-  EXPECT_EQ(kdGenMemOpsBlocksCompSpnIndex(&idx, ptr, 0, keys, 0, num_keys), KD_RESULT_FAILURE);
+  EXPECT_EQ(kdGenMemOpsBlocksCompSpnIndex(&idx, ptr, 0, keys, 0, sizeof(keys)), KD_RESULT_FAILURE);
   EXPECT_EQ(kdGenMemOpsBlocksCompSpnIndex(&idx, ptr, 0, keys, sizeof(*keys), 0), KD_RESULT_FAILURE);
   EXPECT_EQ(kdGenMemOpsBlocksCompSpnIndex(&idx, ptr, sizeof(ptr), keys, 0, 0), KD_RESULT_FAILURE);
-  EXPECT_EQ(kdGenMemOpsBlocksCompSpnIndex(&idx, ptr, sizeof(ptr), keys, 0, num_keys), KD_RESULT_FAILURE);
+  EXPECT_EQ(kdGenMemOpsBlocksCompSpnIndex(&idx, ptr, sizeof(ptr), keys, 0, sizeof(keys)), KD_RESULT_FAILURE);
   EXPECT_EQ(kdGenMemOpsBlocksCompSpnIndex(&idx, ptr, sizeof(ptr), keys, sizeof(*keys), 0), KD_RESULT_FAILURE);
 }
 
@@ -87,17 +84,19 @@ TEST(GenMemOpsBlocksCompSpnIndexTest, HandlesNullPointers)
 {
   kd_usize_t idx;
   kd_i16_t   ptr[16], keys[8];
-  kd_usize_t num_keys = sizeof(keys) / sizeof(*keys);
 
-  EXPECT_EQ(kdGenMemOpsBlocksCompSpnIndex((kd_usize_t*)kd_null, kd_null, sizeof(ptr), kd_null, sizeof(*keys), num_keys),
+  EXPECT_EQ(
+    kdGenMemOpsBlocksCompSpnIndex((kd_usize_t*)kd_null, kd_null, sizeof(ptr), kd_null, sizeof(*keys), sizeof(keys)),
+    KD_RESULT_FAILURE);
+  EXPECT_EQ(
+    kdGenMemOpsBlocksCompSpnIndex((kd_usize_t*)kd_null, kd_null, sizeof(ptr), keys, sizeof(*keys), sizeof(keys)),
+    KD_RESULT_FAILURE);
+  EXPECT_EQ(kdGenMemOpsBlocksCompSpnIndex((kd_usize_t*)kd_null, ptr, sizeof(ptr), kd_null, sizeof(*keys), sizeof(keys)),
             KD_RESULT_FAILURE);
-  EXPECT_EQ(kdGenMemOpsBlocksCompSpnIndex((kd_usize_t*)kd_null, kd_null, sizeof(ptr), keys, sizeof(*keys), num_keys),
+  EXPECT_EQ(kdGenMemOpsBlocksCompSpnIndex(&idx, kd_null, sizeof(ptr), kd_null, sizeof(*keys), sizeof(keys)),
             KD_RESULT_FAILURE);
-  EXPECT_EQ(kdGenMemOpsBlocksCompSpnIndex((kd_usize_t*)kd_null, ptr, sizeof(ptr), kd_null, sizeof(*keys), num_keys),
+  EXPECT_EQ(kdGenMemOpsBlocksCompSpnIndex(&idx, kd_null, sizeof(ptr), keys, sizeof(*keys), sizeof(keys)),
             KD_RESULT_FAILURE);
-  EXPECT_EQ(kdGenMemOpsBlocksCompSpnIndex(&idx, kd_null, sizeof(ptr), kd_null, sizeof(*keys), num_keys),
+  EXPECT_EQ(kdGenMemOpsBlocksCompSpnIndex(&idx, ptr, sizeof(ptr), kd_null, sizeof(*keys), sizeof(keys)),
             KD_RESULT_FAILURE);
-  EXPECT_EQ(kdGenMemOpsBlocksCompSpnIndex(&idx, kd_null, sizeof(ptr), keys, sizeof(*keys), num_keys),
-            KD_RESULT_FAILURE);
-  EXPECT_EQ(kdGenMemOpsBlocksCompSpnIndex(&idx, ptr, sizeof(ptr), kd_null, sizeof(*keys), num_keys), KD_RESULT_FAILURE);
 }
