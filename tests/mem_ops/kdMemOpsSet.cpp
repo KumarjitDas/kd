@@ -1,9 +1,8 @@
 /**
- * @file kd.h
+ * @file kdMemOpsSet.cpp
  * @author Kumarjit Das
- * @date 2025-05-28
- * @since 0.0.4
- * @brief KD library public common header.
+ * @date 2025-06-03
+ * @brief kdMemOpsSet test file.
  */
 /**
  * LICENSE: BSD 3-Clause License
@@ -38,17 +37,39 @@
  */
 
 
-#ifndef KD_H_
-#define KD_H_
+#include "kd.h"
+#include "gtest/gtest.h"
 
 
-#include "kd/version.h"
-#include "kd/defs.h"
-#include "kd/types/fw.h"
-#include "kd/mem.h"
-#include "kd/mem_algn.h"
-#include "kd/gen_mem_ops.h"
-#include "kd/mem_ops.h"
+TEST(MemOpsSetTest, SetsAllBytesCorrectly)
+{
+  const kd_usize_t len = 16;
+  kd_i16_t         ptr_i16[len];
+  kd_i32_t         ptr_i32[len];
 
+  EXPECT_EQ(kdMemOpsSetI16(ptr_i16, len, 69), KD_RESULT_SUCCESS);
+  EXPECT_EQ(kdMemOpsSetI32(ptr_i32, len, 420), KD_RESULT_SUCCESS);
 
-#endif /* KD_H_ */
+  for (kd_usize_t i = 0; i < len; ++i)
+  {
+    EXPECT_EQ(ptr_i16[i], 69);
+    EXPECT_EQ(ptr_i32[i], 420);
+  }
+}
+
+TEST(MemOpsSetTest, ZeroSizeReturnsFalse)
+{
+  kd_i16_t ptr_i16[16];
+  kd_i32_t ptr_i32[16];
+
+  EXPECT_EQ(kdMemOpsSetI16(kd_null, 0, 69), KD_RESULT_FAILURE);
+  EXPECT_EQ(kdMemOpsSetI16(ptr_i16, 0, 69), KD_RESULT_FAILURE);
+  EXPECT_EQ(kdMemOpsSetI32(kd_null, 0, 420), KD_RESULT_FAILURE);
+  EXPECT_EQ(kdMemOpsSetI32(ptr_i32, 0, 420), KD_RESULT_FAILURE);
+}
+
+TEST(MemOpsSetTest, NullPointerReturnsFalse)
+{
+  EXPECT_EQ(kdMemOpsSetI16(kd_null, 32, 69), KD_RESULT_FAILURE);
+  EXPECT_EQ(kdMemOpsSetI32(kd_null, 16, 420), KD_RESULT_FAILURE);
+}

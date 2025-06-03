@@ -48,6 +48,267 @@
 KD_EXTERN_BEGIN
 
 
+#define kdi_GenMemOpsSetBlocks_Byte(ptr, sz, val)                                                                      \
+  kdi_GenMemOpsSetBlocks_S8((kd_u8_t*)(ptr), (kd_usize_t)(sz), (kd_u8_t)(val))
+#define kdi_GenMemOpsSetBlocks_I8(ptr, sz, val)                                                                        \
+  kdi_GenMemOpsSetBlocks_S8((kd_u8_t*)(ptr), (kd_usize_t)(sz), (kd_u8_t)(val))
+#define kdi_GenMemOpsSetBlocks_U8(ptr, sz, val)                                                                        \
+  kdi_GenMemOpsSetBlocks_S8((kd_u8_t*)(ptr), (kd_usize_t)(sz), (kd_u8_t)(val))
+
+#define kdi_GenMemOpsSetBlocks_I16(ptr, sz, val)                                                                       \
+  kdi_GenMemOpsSetBlocks_S16((kd_u16_t*)(ptr), (kd_usize_t)(sz), (kd_u16_t)(val))
+#define kdi_GenMemOpsSetBlocks_U16(ptr, sz, val)                                                                       \
+  kdi_GenMemOpsSetBlocks_S16((kd_u16_t*)(ptr), (kd_usize_t)(sz), (kd_u16_t)(val))
+
+#define kdi_GenMemOpsSetBlocks_I32(ptr, sz, val)                                                                       \
+  kdi_GenMemOpsSetBlocks_S32((kd_u32_t*)(ptr), (kd_usize_t)(sz), (kd_u32_t)(val))
+#define kdi_GenMemOpsSetBlocks_U32(ptr, sz, val)                                                                       \
+  kdi_GenMemOpsSetBlocks_S32((kd_u32_t*)(ptr), (kd_usize_t)(sz), (kd_u32_t)(val))
+
+#if defined KD_ARCH_64BIT_INT
+  #define kdi_GenMemOpsSetBlocks_I64(ptr, sz, val)                                                                     \
+    kdi_GenMemOpsSetBlocks_S64((kd_u64_t*)(ptr), (kd_usize_t)(sz), (kd_u64_t)(val))
+  #define kdi_GenMemOpsSetBlocks_U64(ptr, sz, val)                                                                     \
+    kdi_GenMemOpsSetBlocks_S64((kd_u64_t*)(ptr), (kd_usize_t)(sz), (kd_u64_t)(val))
+#endif /* KD_ARCH_64BIT_INT */
+
+#define kdi_GenMemOpsSetBlocks_Imin(ptr, sz, val)                                                                      \
+  kdi_GenMemOpsSetBlocks_S8((kd_u8_t*)(ptr), (kd_usize_t)(sz), (kd_u8_t)(val))
+#define kdi_GenMemOpsSetBlocks_Umin(ptr, sz, val)                                                                      \
+  kdi_GenMemOpsSetBlocks_S8((kd_u8_t*)(ptr), (kd_usize_t)(sz), (kd_u8_t)(val))
+
+#if defined KD_ARCH_64BIT_INT
+  #define kdi_GenMemOpsSetBlocks_Imax(ptr, sz, val)                                                                    \
+    kdi_GenMemOpsSetBlocks_S64((kd_u64_t*)(ptr), (kd_usize_t)(sz), (kd_u64_t)(val))
+  #define kdi_GenMemOpsSetBlocks_Umax(ptr, sz, val)                                                                    \
+    kdi_GenMemOpsSetBlocks_S64((kd_u64_t*)(ptr), (kd_usize_t)(sz), (kd_u64_t)(val))
+  #define kdi_GenMemOpsSetBlocks_Usize(ptr, sz, val)                                                                   \
+    kdi_GenMemOpsSetBlocks_S64((kd_u64_t*)(ptr), (kd_usize_t)(sz), (kd_u64_t)(val))
+#else
+  #define kdi_GenMemOpsSetBlocks_Imax(ptr, sz, val)                                                                    \
+    kdi_GenMemOpsSetBlocks_S32((kd_u32_t*)(ptr), (kd_usize_t)(sz), (kd_u32_t)(val))
+  #define kdi_GenMemOpsSetBlocks_Umax(ptr, sz, val)                                                                    \
+    kdi_GenMemOpsSetBlocks_S32((kd_u32_t*)(ptr), (kd_usize_t)(sz), (kd_u32_t)(val))
+  #define kdi_GenMemOpsSetBlocks_Usize(ptr, sz, val)                                                                   \
+    kdi_GenMemOpsSetBlocks_S32((kd_u32_t*)(ptr), (kd_usize_t)(sz), (kd_u32_t)(val))
+#endif /* KD_ARCH_64BIT_INT */
+
+#define kdi_GenMemOpsSetBlocks_Bool(ptr, sz, val)                                                                      \
+  kdi_GenMemOpsSetBlocks_S32((kd_u32_t*)(ptr), (kd_usize_t)(sz), (kd_u32_t)(val))
+
+#define kdi_GenMemOpsSetBlocks_Chr(ptr, sz, val)                                                                       \
+  kdi_GenMemOpsSetBlocks_S32((kd_u32_t*)(ptr), (kd_usize_t)(sz), (kd_u32_t)(val))
+
+#if defined KD_ARCH_64BIT_PTR
+  #define kdi_GenMemOpsSetBlocks_Ptr(ptr, sz, val)                                                                     \
+    kdi_GenMemOpsSetBlocks_S64((kd_u64_t*)(ptr), (kd_usize_t)(sz), (kd_u64_t)(val))
+#else
+  #define kdi_GenMemOpsSetBlocks_Ptr(ptr, sz, val)                                                                     \
+    kdi_GenMemOpsSetBlocks_S32((kd_u32_t*)(ptr), (kd_usize_t)(sz), (kd_u32_t)(val))
+#endif /* KD_ARCH_64BIT_PTR */
+
+
+#define kdi_GenMemOpsFindBlockWithIndex_Byte(idx_ptr, ptr, sz, val)                                                    \
+  kdi_GenMemOpsFindBlockWithIndex_S8((kd_usize_t*)(idx_ptr), (kd_u8_t*)(ptr), (kd_usize_t)(sz), (kd_u8_t)(val))
+#define kdi_GenMemOpsFindBlockWithIndex_I8(idx_ptr, ptr, sz, val)                                                      \
+  kdi_GenMemOpsFindBlockWithIndex_S8((kd_usize_t*)(idx_ptr), (kd_u8_t*)(ptr), (kd_usize_t)(sz), (kd_u8_t)(val))
+#define kdi_GenMemOpsFindBlockWithIndex_U8(idx_ptr, ptr, sz, val)                                                      \
+  kdi_GenMemOpsFindBlockWithIndex_S8((kd_usize_t*)(idx_ptr), (kd_u8_t*)(ptr), (kd_usize_t)(sz), (kd_u8_t)(val))
+
+#define kdi_GenMemOpsFindBlockWithIndex_I16(idx_ptr, ptr, sz, val)                                                     \
+  kdi_GenMemOpsFindBlockWithIndex_S16((kd_usize_t*)(idx_ptr), (kd_u16_t*)(ptr), (kd_usize_t)(sz), (kd_u16_t)(val))
+#define kdi_GenMemOpsFindBlockWithIndex_U16(idx_ptr, ptr, sz, val)                                                     \
+  kdi_GenMemOpsFindBlockWithIndex_S16((kd_usize_t*)(idx_ptr), (kd_u16_t*)(ptr), (kd_usize_t)(sz), (kd_u16_t)(val))
+
+#define kdi_GenMemOpsFindBlockWithIndex_I32(idx_ptr, ptr, sz, val)                                                     \
+  kdi_GenMemOpsFindBlockWithIndex_S32((kd_usize_t*)(idx_ptr), (kd_u32_t*)(ptr), (kd_usize_t)(sz), (kd_u32_t)(val))
+#define kdi_GenMemOpsFindBlockWithIndex_U32(idx_ptr, ptr, sz, val)                                                     \
+  kdi_GenMemOpsFindBlockWithIndex_S32((kd_usize_t*)(idx_ptr), (kd_u32_t*)(ptr), (kd_usize_t)(sz), (kd_u32_t)(val))
+
+#if defined KD_ARCH_64BIT_INT
+  #define kdi_GenMemOpsFindBlockWithIndex_I64(idx_ptr, ptr, sz, val)                                                   \
+    kdi_GenMemOpsFindBlockWithIndex_S64((kd_usize_t*)(idx_ptr), (kd_u64_t*)(ptr), (kd_usize_t)(sz), (kd_u64_t)(val))
+  #define kdi_GenMemOpsFindBlockWithIndex_U64(idx_ptr, ptr, sz, val)                                                   \
+    kdi_GenMemOpsFindBlockWithIndex_S64((kd_usize_t*)(idx_ptr), (kd_u64_t*)(ptr), (kd_usize_t)(sz), (kd_u64_t)(val))
+#endif /* KD_ARCH_64BIT_INT */
+
+#define kdi_GenMemOpsFindBlockWithIndex_Imin(idx_ptr, ptr, sz, val)                                                    \
+  kdi_GenMemOpsFindBlockWithIndex_S8((kd_usize_t*)(idx_ptr), (kd_u8_t*)(ptr), (kd_usize_t)(sz), (kd_u8_t)(val))
+#define kdi_GenMemOpsFindBlockWithIndex_Umin(idx_ptr, ptr, sz, val)                                                    \
+  kdi_GenMemOpsFindBlockWithIndex_S8((kd_usize_t*)(idx_ptr), (kd_u8_t*)(ptr), (kd_usize_t)(sz), (kd_u8_t)(val))
+
+#if defined KD_ARCH_64BIT_INT
+  #define kdi_GenMemOpsFindBlockWithIndex_Imax(idx_ptr, ptr, sz, val)                                                  \
+    kdi_GenMemOpsFindBlockWithIndex_S64((kd_usize_t*)(idx_ptr), (kd_u64_t*)(ptr), (kd_usize_t)(sz), (kd_u64_t)(val))
+  #define kdi_GenMemOpsFindBlockWithIndex_Umax(idx_ptr, ptr, sz, val)                                                  \
+    kdi_GenMemOpsFindBlockWithIndex_S64((kd_usize_t*)(idx_ptr), (kd_u64_t*)(ptr), (kd_usize_t)(sz), (kd_u64_t)(val))
+  #define kdi_GenMemOpsFindBlockWithIndex_Usize(idx_ptr, ptr, sz, val)                                                 \
+    kdi_GenMemOpsFindBlockWithIndex_S64((kd_usize_t*)(idx_ptr), (kd_u64_t*)(ptr), (kd_usize_t)(sz), (kd_u64_t)(val))
+#else
+  #define kdi_GenMemOpsFindBlockWithIndex_Imax(idx_ptr, ptr, sz, val)                                                  \
+    kdi_GenMemOpsFindBlockWithIndex_S32((kd_usize_t*)(idx_ptr), (kd_u32_t*)(ptr), (kd_usize_t)(sz), (kd_u32_t)(val))
+  #define kdi_GenMemOpsFindBlockWithIndex_Umax(idx_ptr, ptr, sz, val)                                                  \
+    kdi_GenMemOpsFindBlockWithIndex_S32((kd_usize_t*)(idx_ptr), (kd_u32_t*)(ptr), (kd_usize_t)(sz), (kd_u32_t)(val))
+  #define kdi_GenMemOpsFindBlockWithIndex_Usize(idx_ptr, ptr, sz, val)                                                 \
+    kdi_GenMemOpsFindBlockWithIndex_S32((kd_usize_t*)(idx_ptr), (kd_u32_t*)(ptr), (kd_usize_t)(sz), (kd_u32_t)(val))
+#endif /* KD_ARCH_64BIT_INT */
+
+#define kdi_GenMemOpsFindBlockWithIndex_Bool(idx_ptr, ptr, sz, val)                                                    \
+  kdi_GenMemOpsFindBlockWithIndex_S32((kd_usize_t*)(idx_ptr), (kd_u32_t*)(ptr), (kd_usize_t)(sz), (kd_u32_t)(val))
+
+#define kdi_GenMemOpsFindBlockWithIndex_Chr(idx_ptr, ptr, sz, val)                                                     \
+  kdi_GenMemOpsFindBlockWithIndex_S32((kd_usize_t*)(idx_ptr), (kd_u32_t*)(ptr), (kd_usize_t)(sz), (kd_u32_t)(val))
+
+#if defined KD_ARCH_64BIT_PTR
+  #define kdi_GenMemOpsFindBlockWithIndex_Ptr(idx_ptr, ptr, sz, val)                                                   \
+    kdi_GenMemOpsFindBlockWithIndex_S64((kd_usize_t*)(idx_ptr), (kd_u64_t*)(ptr), (kd_usize_t)(sz), (kd_u64_t)(val))
+#else
+  #define kdi_GenMemOpsFindBlockWithIndex_Ptr(idx_ptr, ptr, sz, val)                                                   \
+    kdi_GenMemOpsFindBlockWithIndex_S32((kd_usize_t*)(idx_ptr), (kd_u32_t*)(ptr), (kd_usize_t)(sz), (kd_u32_t)(val))
+#endif /* KD_ARCH_64BIT_PTR */
+
+
+#define kdi_GenMemOpsBlocksCompSpnWithIndex_Byte(idx_ptr, ptr, sz, keys, keys_sz)                                      \
+  kdi_GenMemOpsBlocksCompSpnWithIndex_S8(                                                                              \
+    (kd_usize_t*)(idx_ptr), (kd_u8_t*)(ptr), (kd_usize_t)(sz), (kd_u8_t*)(keys), (kd_usize_t)(keys_sz))
+#define kdi_GenMemOpsBlocksCompSpnWithIndex_I8(idx_ptr, ptr, sz, keys, keys_sz)                                        \
+  kdi_GenMemOpsBlocksCompSpnWithIndex_S8(                                                                              \
+    (kd_usize_t*)(idx_ptr), (kd_u8_t*)(ptr), (kd_usize_t)(sz), (kd_u8_t*)(keys), (kd_usize_t)(keys_sz))
+#define kdi_GenMemOpsBlocksCompSpnWithIndex_U8(idx_ptr, ptr, sz, keys, keys_sz)                                        \
+  kdi_GenMemOpsBlocksCompSpnWithIndex_S8(                                                                              \
+    (kd_usize_t*)(idx_ptr), (kd_u8_t*)(ptr), (kd_usize_t)(sz), (kd_u8_t*)(keys), (kd_usize_t)(keys_sz))
+
+#define kdi_GenMemOpsBlocksCompSpnWithIndex_I16(idx_ptr, ptr, sz, keys, keys_sz)                                       \
+  kdi_GenMemOpsBlocksCompSpnWithIndex_S16(                                                                             \
+    (kd_usize_t*)(idx_ptr), (kd_u16_t*)(ptr), (kd_usize_t)(sz), (kd_u16_t*)(keys), (kd_usize_t)(keys_sz))
+#define kdi_GenMemOpsBlocksCompSpnWithIndex_U16(idx_ptr, ptr, sz, keys, keys_sz)                                       \
+  kdi_GenMemOpsBlocksCompSpnWithIndex_S16(                                                                             \
+    (kd_usize_t*)(idx_ptr), (kd_u16_t*)(ptr), (kd_usize_t)(sz), (kd_u16_t*)(keys), (kd_usize_t)(keys_sz))
+
+#define kdi_GenMemOpsBlocksCompSpnWithIndex_I32(idx_ptr, ptr, sz, keys, keys_sz)                                       \
+  kdi_GenMemOpsBlocksCompSpnWithIndex_S32(                                                                             \
+    (kd_usize_t*)(idx_ptr), (kd_u32_t*)(ptr), (kd_usize_t)(sz), (kd_u32_t*)(keys), (kd_usize_t)(keys_sz))
+#define kdi_GenMemOpsBlocksCompSpnWithIndex_U32(idx_ptr, ptr, sz, keys, keys_sz)                                       \
+  kdi_GenMemOpsBlocksCompSpnWithIndex_S32(                                                                             \
+    (kd_usize_t*)(idx_ptr), (kd_u32_t*)(ptr), (kd_usize_t)(sz), (kd_u32_t*)(keys), (kd_usize_t)(keys_sz))
+
+#if defined KD_ARCH_64BIT_INT
+  #define kdi_GenMemOpsBlocksCompSpnWithIndex_I64(idx_ptr, ptr, sz, keys, keys_sz)                                     \
+    kdi_GenMemOpsBlocksCompSpnWithIndex_S64(                                                                           \
+      (kd_usize_t*)(idx_ptr), (kd_u64_t*)(ptr), (kd_usize_t)(sz), (kd_u64_t*)(keys), (kd_usize_t)(keys_sz))
+  #define kdi_GenMemOpsBlocksCompSpnWithIndex_U64(idx_ptr, ptr, sz, keys, keys_sz)                                     \
+    kdi_GenMemOpsBlocksCompSpnWithIndex_S64(                                                                           \
+      (kd_usize_t*)(idx_ptr), (kd_u64_t*)(ptr), (kd_usize_t)(sz), (kd_u64_t*)(keys), (kd_usize_t)(keys_sz))
+#endif /* KD_ARCH_64BIT_INT */
+
+#define kdi_GenMemOpsBlocksCompSpnWithIndex_Imin(idx_ptr, ptr, sz, keys, keys_sz)                                      \
+  kdi_GenMemOpsBlocksCompSpnWithIndex_S8(                                                                              \
+    (kd_usize_t*)(idx_ptr), (kd_u8_t*)(ptr), (kd_usize_t)(sz), (kd_u8_t*)(keys), (kd_usize_t)(keys_sz))
+#define kdi_GenMemOpsBlocksCompSpnWithIndex_Umin(idx_ptr, ptr, sz, keys, keys_sz)                                      \
+  kdi_GenMemOpsBlocksCompSpnWithIndex_S8(                                                                              \
+    (kd_usize_t*)(idx_ptr), (kd_u8_t*)(ptr), (kd_usize_t)(sz), (kd_u8_t*)(keys), (kd_usize_t)(keys_sz))
+
+#if defined KD_ARCH_64BIT_INT
+  #define kdi_GenMemOpsBlocksCompSpnWithIndex_Imax(idx_ptr, ptr, sz, keys, keys_sz)                                    \
+    kdi_GenMemOpsBlocksCompSpnWithIndex_S64(                                                                           \
+      (kd_usize_t*)(idx_ptr), (kd_u64_t*)(ptr), (kd_usize_t)(sz), (kd_u64_t*)(keys), (kd_usize_t)(keys_sz))
+  #define kdi_GenMemOpsBlocksCompSpnWithIndex_Umax(idx_ptr, ptr, sz, keys, keys_sz)                                    \
+    kdi_GenMemOpsBlocksCompSpnWithIndex_S64(                                                                           \
+      (kd_usize_t*)(idx_ptr), (kd_u64_t*)(ptr), (kd_usize_t)(sz), (kd_u64_t*)(keys), (kd_usize_t)(keys_sz))
+  #define kdi_GenMemOpsBlocksCompSpnWithIndex_Usize(idx_ptr, ptr, sz, keys, keys_sz)                                   \
+    kdi_GenMemOpsBlocksCompSpnWithIndex_S64(                                                                           \
+      (kd_usize_t*)(idx_ptr), (kd_u64_t*)(ptr), (kd_usize_t)(sz), (kd_u64_t*)(keys), (kd_usize_t)(keys_sz))
+#else
+  #define kdi_GenMemOpsBlocksCompSpnWithIndex_Imax(idx_ptr, ptr, sz, keys, keys_sz)                                    \
+    kdi_GenMemOpsBlocksCompSpnWithIndex_S32(                                                                           \
+      (kd_usize_t*)(idx_ptr), (kd_u32_t*)(ptr), (kd_usize_t)(sz), (kd_u32_t*)(keys), (kd_usize_t)(keys_sz))
+  #define kdi_GenMemOpsBlocksCompSpnWithIndex_Umax(idx_ptr, ptr, sz, keys, keys_sz)                                    \
+    kdi_GenMemOpsBlocksCompSpnWithIndex_S32(                                                                           \
+      (kd_usize_t*)(idx_ptr), (kd_u32_t*)(ptr), (kd_usize_t)(sz), (kd_u32_t*)(keys), (kd_usize_t)(keys_sz))
+  #define kdi_GenMemOpsBlocksCompSpnWithIndex_Usize(idx_ptr, ptr, sz, keys, keys_sz)                                   \
+    kdi_GenMemOpsBlocksCompSpnWithIndex_S32(                                                                           \
+      (kd_usize_t*)(idx_ptr), (kd_u32_t*)(ptr), (kd_usize_t)(sz), (kd_u32_t*)(keys), (kd_usize_t)(keys_sz))
+#endif /* KD_ARCH_64BIT_INT */
+
+#define kdi_GenMemOpsBlocksCompSpnWithIndex_Bool(idx_ptr, ptr, sz, keys, keys_sz)                                      \
+  kdi_GenMemOpsBlocksCompSpnWithIndex_S32(                                                                             \
+    (kd_usize_t*)(idx_ptr), (kd_u32_t*)(ptr), (kd_usize_t)(sz), (kd_u32_t*)(keys), (kd_usize_t)(keys_sz))
+
+#define kdi_GenMemOpsBlocksCompSpnWithIndex_Chr(idx_ptr, ptr, sz, keys, keys_sz)                                       \
+  kdi_GenMemOpsBlocksCompSpnWithIndex_S32(                                                                             \
+    (kd_usize_t*)(idx_ptr), (kd_u32_t*)(ptr), (kd_usize_t)(sz), (kd_u32_t*)(keys), (kd_usize_t)(keys_sz))
+
+#if defined KD_ARCH_64BIT_PTR
+  #define kdi_GenMemOpsBlocksCompSpnWithIndex_Ptr(idx_ptr, ptr, sz, keys, keys_sz)                                     \
+    kdi_GenMemOpsBlocksCompSpnWithIndex_S64(                                                                           \
+      (kd_usize_t*)(idx_ptr), (kd_u64_t*)(ptr), (kd_usize_t)(sz), (kd_u64_t*)(keys), (kd_usize_t)(keys_sz))
+#else
+  #define kdi_GenMemOpsBlocksCompSpnWithIndex_Ptr(idx_ptr, ptr, sz, keys, keys_sz)                                     \
+    kdi_GenMemOpsBlocksCompSpnWithIndex_S32(                                                                           \
+      (kd_usize_t*)(idx_ptr), (kd_u32_t*)(ptr), (kd_usize_t)(sz), (kd_u32_t*)(keys), (kd_usize_t)(keys_sz))
+#endif /* KD_ARCH_64BIT_PTR */
+
+
+#define kdi_GenMemOpsBlocksSpn_Byte(ptr, sz, keys, keys_sz)                                                            \
+  kdi_GenMemOpsBlocksSpn_S8((kd_u8_t*)(ptr), (kd_usize_t)(sz), (kd_u8_t*)(keys), (kd_usize_t)(keys_sz))
+#define kdi_GenMemOpsBlocksSpn_I8(ptr, sz, keys, keys_sz)                                                              \
+  kdi_GenMemOpsBlocksSpn_S8((kd_u8_t*)(ptr), (kd_usize_t)(sz), (kd_u8_t*)(keys), (kd_usize_t)(keys_sz))
+#define kdi_GenMemOpsBlocksSpn_U8(ptr, sz, keys, keys_sz)                                                              \
+  kdi_GenMemOpsBlocksSpn_S8((kd_u8_t*)(ptr), (kd_usize_t)(sz), (kd_u8_t*)(keys), (kd_usize_t)(keys_sz))
+
+#define kdi_GenMemOpsBlocksSpn_I16(ptr, sz, keys, keys_sz)                                                             \
+  kdi_GenMemOpsBlocksSpn_S16((kd_u16_t*)(ptr), (kd_usize_t)(sz), (kd_u16_t*)(keys), (kd_usize_t)(keys_sz))
+#define kdi_GenMemOpsBlocksSpn_U16(ptr, sz, keys, keys_sz)                                                             \
+  kdi_GenMemOpsBlocksSpn_S16((kd_u16_t*)(ptr), (kd_usize_t)(sz), (kd_u16_t*)(keys), (kd_usize_t)(keys_sz))
+
+#define kdi_GenMemOpsBlocksSpn_I32(ptr, sz, keys, keys_sz)                                                             \
+  kdi_GenMemOpsBlocksSpn_S32((kd_u32_t*)(ptr), (kd_usize_t)(sz), (kd_u32_t*)(keys), (kd_usize_t)(keys_sz))
+#define kdi_GenMemOpsBlocksSpn_U32(ptr, sz, keys, keys_sz)                                                             \
+  kdi_GenMemOpsBlocksSpn_S32((kd_u32_t*)(ptr), (kd_usize_t)(sz), (kd_u32_t*)(keys), (kd_usize_t)(keys_sz))
+
+#if defined KD_ARCH_64BIT_INT
+  #define kdi_GenMemOpsBlocksSpn_I64(ptr, sz, keys, keys_sz)                                                           \
+    kdi_GenMemOpsBlocksSpn_S64((kd_u64_t*)(ptr), (kd_usize_t)(sz), (kd_u64_t*)(keys), (kd_usize_t)(keys_sz))
+  #define kdi_GenMemOpsBlocksSpn_U64(ptr, sz, keys, keys_sz)                                                           \
+    kdi_GenMemOpsBlocksSpn_S64((kd_u64_t*)(ptr), (kd_usize_t)(sz), (kd_u64_t*)(keys), (kd_usize_t)(keys_sz))
+#endif /* KD_ARCH_64BIT_INT */
+
+#define kdi_GenMemOpsBlocksSpn_Imin(ptr, sz, keys, keys_sz)                                                            \
+  kdi_GenMemOpsBlocksSpn_S8((kd_u8_t*)(ptr), (kd_usize_t)(sz), (kd_u8_t*)(keys), (kd_usize_t)(keys_sz))
+#define kdi_GenMemOpsBlocksSpn_Umin(ptr, sz, keys, keys_sz)                                                            \
+  kdi_GenMemOpsBlocksSpn_S8((kd_u8_t*)(ptr), (kd_usize_t)(sz), (kd_u8_t*)(keys), (kd_usize_t)(keys_sz))
+
+#if defined KD_ARCH_64BIT_INT
+  #define kdi_GenMemOpsBlocksSpn_Imax(ptr, sz, keys, keys_sz)                                                          \
+    kdi_GenMemOpsBlocksSpn_S64((kd_u64_t*)(ptr), (kd_usize_t)(sz), (kd_u64_t*)(keys), (kd_usize_t)(keys_sz))
+  #define kdi_GenMemOpsBlocksSpn_Umax(ptr, sz, keys, keys_sz)                                                          \
+    kdi_GenMemOpsBlocksSpn_S64((kd_u64_t*)(ptr), (kd_usize_t)(sz), (kd_u64_t*)(keys), (kd_usize_t)(keys_sz))
+  #define kdi_GenMemOpsBlocksSpn_Usize(ptr, sz, keys, keys_sz)                                                         \
+    kdi_GenMemOpsBlocksSpn_S64((kd_u64_t*)(ptr), (kd_usize_t)(sz), (kd_u64_t*)(keys), (kd_usize_t)(keys_sz))
+#else
+  #define kdi_GenMemOpsBlocksSpn_Imax(ptr, sz, keys, keys_sz)                                                          \
+    kdi_GenMemOpsBlocksSpn_S32((kd_u32_t*)(ptr), (kd_usize_t)(sz), (kd_u32_t*)(keys), (kd_usize_t)(keys_sz))
+  #define kdi_GenMemOpsBlocksSpn_Umax(ptr, sz, keys, keys_sz)                                                          \
+    kdi_GenMemOpsBlocksSpn_S32((kd_u32_t*)(ptr), (kd_usize_t)(sz), (kd_u32_t*)(keys), (kd_usize_t)(keys_sz))
+  #define kdi_GenMemOpsBlocksSpn_Usize(ptr, sz, keys, keys_sz)                                                         \
+    kdi_GenMemOpsBlocksSpn_S32((kd_u32_t*)(ptr), (kd_usize_t)(sz), (kd_u32_t*)(keys), (kd_usize_t)(keys_sz))
+#endif /* KD_ARCH_64BIT_INT */
+
+#define kdi_GenMemOpsBlocksSpn_Bool(ptr, sz, keys, keys_sz)                                                            \
+  kdi_GenMemOpsBlocksSpn_S32((kd_u32_t*)(ptr), (kd_usize_t)(sz), (kd_u32_t*)(keys), (kd_usize_t)(keys_sz))
+
+#define kdi_GenMemOpsBlocksSpn_Chr(ptr, sz, keys, keys_sz)                                                             \
+  kdi_GenMemOpsBlocksSpn_S32((kd_u32_t*)(ptr), (kd_usize_t)(sz), (kd_u32_t*)(keys), (kd_usize_t)(keys_sz))
+
+#if defined KD_ARCH_64BIT_PTR
+  #define kdi_GenMemOpsBlocksSpn_Ptr(ptr, sz, keys, keys_sz)                                                           \
+    kdi_GenMemOpsBlocksSpn_S64((kd_u64_t*)(ptr), (kd_usize_t)(sz), (kd_u64_t*)(keys), (kd_usize_t)(keys_sz))
+#else
+  #define kdi_GenMemOpsBlocksSpn_Ptr(ptr, sz, keys, keys_sz)                                                           \
+    kdi_GenMemOpsBlocksSpn_S32((kd_u32_t*)(ptr), (kd_usize_t)(sz), (kd_u32_t*)(keys), (kd_usize_t)(keys_sz))
+#endif /* KD_ARCH_64BIT_PTR */
+
+
 KDAPI(void) kdi_GenMemOpsSetBlocks_S8(kd_u8_t* ptr, kd_usize_t sz, kd_u8_t val);
 KDAPI(void) kdi_GenMemOpsSetBlocks_S16(kd_u16_t* ptr, kd_usize_t sz, kd_u16_t val);
 KDAPI(void) kdi_GenMemOpsSetBlocks_S32(kd_u32_t* ptr, kd_usize_t sz, kd_u32_t val);

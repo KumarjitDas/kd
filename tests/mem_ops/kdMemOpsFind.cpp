@@ -1,9 +1,8 @@
 /**
- * @file kd.h
+ * @file kdMemOpsFind.cpp
  * @author Kumarjit Das
- * @date 2025-05-28
- * @since 0.0.4
- * @brief KD library public common header.
+ * @date 2025-06-03
+ * @brief kdMemOpsFind test file.
  */
 /**
  * LICENSE: BSD 3-Clause License
@@ -38,17 +37,45 @@
  */
 
 
-#ifndef KD_H_
-#define KD_H_
+#include "kd.h"
+#include "gtest/gtest.h"
 
 
-#include "kd/version.h"
-#include "kd/defs.h"
-#include "kd/types/fw.h"
-#include "kd/mem.h"
-#include "kd/mem_algn.h"
-#include "kd/gen_mem_ops.h"
-#include "kd/mem_ops.h"
+TEST(MemOpsFindTest, FindsFirstOccurrence)
+{
+  kd_i16_t ptr_i16[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+  kd_i32_t ptr_i32[] = {11, 12, 13, 14, 15, 16, 17, 18, 19, 20};
 
+  EXPECT_EQ(kdMemOpsFindI16(ptr_i16, sizeof(ptr_i16) / sizeof(*ptr_i16), 3), ptr_i16 + 2);
+  EXPECT_EQ(kdMemOpsFindI16(ptr_i16, sizeof(ptr_i16) / sizeof(*ptr_i16), 8), ptr_i16 + 7);
+  EXPECT_EQ(kdMemOpsFindI32(ptr_i32, sizeof(ptr_i32) / sizeof(*ptr_i32), 14), ptr_i32 + 3);
+  EXPECT_EQ(kdMemOpsFindI32(ptr_i32, sizeof(ptr_i32) / sizeof(*ptr_i32), 17), ptr_i32 + 6);
+}
 
-#endif /* KD_H_ */
+TEST(MemOpsFindTest, ReturnsNullIfNotFound)
+{
+  kd_i16_t ptr_i16[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+  kd_i32_t ptr_i32[] = {11, 12, 13, 14, 15, 16, 17, 18, 19, 20};
+
+  EXPECT_EQ(kdMemOpsFindI16(ptr_i16, sizeof(ptr_i16) / sizeof(*ptr_i16), 0), kd_null);
+  EXPECT_EQ(kdMemOpsFindI16(ptr_i16, sizeof(ptr_i16) / sizeof(*ptr_i16), 69), kd_null);
+  EXPECT_EQ(kdMemOpsFindI32(ptr_i32, sizeof(ptr_i32) / sizeof(*ptr_i32), 0), kd_null);
+  EXPECT_EQ(kdMemOpsFindI32(ptr_i32, sizeof(ptr_i32) / sizeof(*ptr_i32), 420), kd_null);
+}
+
+TEST(MemOpsFindTest, HandlesZeroSize)
+{
+  kd_i16_t ptr_i16[16];
+  kd_i32_t ptr_i32[16];
+
+  EXPECT_EQ(kdMemOpsFindI16(kd_null, 0, 69), kd_null);
+  EXPECT_EQ(kdMemOpsFindI16(ptr_i16, 0, 69), kd_null);
+  EXPECT_EQ(kdMemOpsFindI32(kd_null, 0, 420), kd_null);
+  EXPECT_EQ(kdMemOpsFindI32(ptr_i32, 0, 420), kd_null);
+}
+
+TEST(MemOpsFindTest, HandlesNullPointer)
+{
+  EXPECT_EQ(kdMemOpsFindI16(kd_null, 32, 69), kd_null);
+  EXPECT_EQ(kdMemOpsFindI32(kd_null, 16, 420), kd_null);
+}

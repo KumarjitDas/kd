@@ -43,18 +43,24 @@ set(INCLUDE_FILES
     "${INCLUDE_DIR}/kd/types/fp.h"
     "${INCLUDE_DIR}/kd/mem.h"
     "${INCLUDE_DIR}/kd/mem_algn.h"
-    "${INCLUDE_DIR}/kd/gen_mem_ops.h")
+    "${INCLUDE_DIR}/kd/gen_mem_ops.h"
+    "${INCLUDE_DIR}/kd/mem_ops.h")
+
 set(INTERNAL_INCLUDE_FILES
     "${INCLUDE_DIR}/_internal/gen_mem_ops_sn.h")
+
 target_sources(${KD_LIBRARY_NAME} PRIVATE ${INTERNAL_INCLUDE_FILES} ${INCLUDE_FILES})
 
 # Adding the source files to the main target
 set(SRC_FILES
     "${SRC_DIR}/kd/mem.c"
     "${SRC_DIR}/kd/mem_algn.c"
-    "${SRC_DIR}/kd/gen_mem_ops.c")
+    "${SRC_DIR}/kd/gen_mem_ops.c"
+    "${SRC_DIR}/kd/mem_ops.c")
+
 set(INTERNAL_SRC_FILES
     "${SRC_DIR}/_internal/gen_mem_ops_sn.c")
+
 target_sources(${KD_LIBRARY_NAME} PRIVATE ${INTERNAL_SRC_FILES} ${SRC_FILES})
 
 # Setting the install destination for include and source file

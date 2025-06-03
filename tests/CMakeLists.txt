@@ -43,7 +43,7 @@ set(TEST_SUBDIRS
     "mem"
     "mem_algn"
     "gen_mem_ops"
-    )
+    "mem_ops")
 
 # Get all .cpp files in the directory
 file(GLOB ALL_CPP_FILES "")
