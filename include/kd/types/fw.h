@@ -74,13 +74,15 @@ KD_EXTERN_BEGIN
  */
 
 #ifndef KD_CPLUSPLUS
-enum kd_enum_bool_t
+enum kdi_enum_bool_t
 {
   kd_false,
   kd_true
 };
-typedef enum kd_enum_bool_t kd_bool_t;
+typedef enum kdi_enum_bool_t kd_bool_t;
 #else
+  #define kd_false false
+  #define kd_true  true
 typedef bool kd_bool_t;
 #endif
 
@@ -184,6 +186,34 @@ typedef kd_u32_t kd_chr_t;
 
 /**
  * ---------------------------------------------------------------------------------------------------------------------
+ *  Type Casts
+ * ---------------------------------------------------------------------------------------------------------------------
+ */
+
+#define KD_BOOL_C(X)  ((kd_bool_t)(X))
+#define KD_I8_C(X)    ((kd_i8_t)(X))
+#define KD_I16_C(X)   ((kd_i16_t)(X))
+#define KD_I32_C(X)   ((kd_i32_t)(X))
+#define KD_IMIN_C(X)  ((kd_imin_t)(X))
+#define KD_IMAX_C(X)  ((kd_imax_t)(X))
+#define KD_U8_C(X)    ((kd_u8_t)(X))
+#define KD_U16_C(X)   ((kd_u16_t)(X))
+#define KD_U32_C(X)   ((kd_u32_t)(X))
+#define KD_UMIN_C(X)  ((kd_umin_t)(X))
+#define KD_UMAX_C(X)  ((kd_umax_t)(X))
+#define KD_USIZE_C(X) ((kd_usize_t)(X))
+#define KD_BYTE_C(X)  ((kd_byte_t)(X))
+#define KD_CHR_C(X)   ((kd_chr_t)(X))
+#define KD_PTR_C(X)   ((void*)(X))
+
+#if defined KD_ARCH_64BIT_INT
+  #define KD_I64_C(X) ((kd_i64_t)(X))
+  #define KD_U64_C(X) ((kd_u64_t)(X))
+#endif
+
+
+/**
+ * ---------------------------------------------------------------------------------------------------------------------
  *  Minimum Values Of Defined Types
  * ---------------------------------------------------------------------------------------------------------------------
  */
@@ -277,7 +307,7 @@ typedef kd_u32_t kd_chr_t;
  * ---------------------------------------------------------------------------------------------------------------------
  */
 
-#define KD_SZ_BOOL  sizeof(kd_bool_t)
+#define KD_SZ_BOOL  sizeof(kd_i32_t) /* sizeof(kd_bool_t) */
 #define KD_SZ_I8    sizeof(kd_i8_t)
 #define KD_SZ_I16   sizeof(kd_i16_t)
 #define KD_SZ_I32   sizeof(kd_i32_t)
@@ -407,6 +437,23 @@ typedef kd_u32_t kd_chr_t;
   #define KD_FSBTC_UMAX(x)  KD_FSBTC_U32(x)
   #define KD_FSBTC_USIZE(x) KD_FSBTC_U32(x)
 #endif /* KD_ARCH_64BIT_INT */
+
+
+/**
+ * ---------------------------------------------------------------------------------------------------------------------
+ *  Constant Values/Macros
+ * ---------------------------------------------------------------------------------------------------------------------
+ */
+
+#if defined KD_RESULT_SUCCESS
+  #undef KD_RESULT_SUCCESS
+#endif
+#if defined KD_RESULT_FAILURE
+  #undef KD_RESULT_FAILURE
+#endif
+
+#define KD_RESULT_SUCCESS kd_true
+#define KD_RESULT_FAILURE kd_false
 
 
 /**
