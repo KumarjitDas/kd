@@ -11,11 +11,20 @@
       <w>fmin</w>
       <w>fmtsp</w>
       <w>fsbtc</w>
+      <w>idxs</w>
       <w>kdapi</w>
       <w>kumarjit</w>
       <w>libkd</w>
       <w>libtypes</w>
       <w>memalgn</w>
+      <w>pbool</w>
+      <w>pbyte</w>
+      <w>pchr</w>
+      <w>pimax</w>
+      <w>pimin</w>
+      <w>pumax</w>
+      <w>pumin</w>
+      <w>pusize</w>
       <w>toks</w>
       <w>tval</w>
       <w>umax</w>

@@ -108,8 +108,10 @@ typedef unsigned int   kd_u32_t;
     (defined KD_OS_MINGW64 && defined KD_C_STD_89)
 typedef __int64          kd_i64_t;
 typedef unsigned __int64 kd_u64_t;
-  #elif (defined __GNUC__ || defined __MWERKS__ || defined __SUNPRO_C || defined __SUNPRO_CC ||                        \
-         defined __APPLE_CC__ || defined KD_OS_IRIX || defined _LONG_LONG || defined _CRAYC) &&                        \
+  #elif (                                                                                                              \
+    defined __GNUC__ || defined __MWERKS__ || defined __SUNPRO_C || defined __SUNPRO_CC || defined __APPLE_CC__ ||     \
+    defined KD_OS_IRIX || defined _LONG_LONG || defined _CRAYC                                                         \
+  ) &&                                                                                                                 \
     __SIZEOF_LONG__ == 8
 typedef long          kd_i64_t;
 typedef unsigned long kd_u64_t;
@@ -209,6 +211,26 @@ typedef kd_u32_t kd_chr_t;
 #if defined KD_ARCH_64BIT_INT
   #define KD_I64_C(X) ((kd_i64_t)(X))
   #define KD_U64_C(X) ((kd_u64_t)(X))
+#endif
+
+#define KD_PBOOL_C(X)  ((kd_bool_t*)(X))
+#define KD_PI8_C(X)    ((kd_i8_t*)(X))
+#define KD_PI16_C(X)   ((kd_i16_t*)(X))
+#define KD_PI32_C(X)   ((kd_i32_t*)(X))
+#define KD_PIMIN_C(X)  ((kd_imin_t*)(X))
+#define KD_PIMAX_C(X)  ((kd_imax_t*)(X))
+#define KD_PU8_C(X)    ((kd_u8_t*)(X))
+#define KD_PU16_C(X)   ((kd_u16_t*)(X))
+#define KD_PU32_C(X)   ((kd_u32_t*)(X))
+#define KD_PUMIN_C(X)  ((kd_umin_t*)(X))
+#define KD_PUMAX_C(X)  ((kd_umax_t*)(X))
+#define KD_PUSIZE_C(X) ((kd_usize_t*)(X))
+#define KD_PBYTE_C(X)  ((kd_byte_t*)(X))
+#define KD_PCHR_C(X)   ((kd_chr_t*)(X))
+
+#if defined KD_ARCH_64BIT_INT
+  #define KD_PI64_C(X) ((kd_i64_t*)(X))
+  #define KD_PU64_C(X) ((kd_u64_t*)(X))
 #endif
 
 

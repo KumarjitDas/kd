@@ -1,9 +1,8 @@
 /**
- * @file mem_algn.h
+ * @file kdGenMemOpsFindAllBytesIndex.cpp
  * @author Kumarjit Das
- * @date 2025-06-01
- * @since 0.0.6
- * @brief Main header file of the MEM_ALGN library.
+ * @date 2025-06-06
+ * @brief kdGenMemOpsFindAllBytesIndex test file.
  */
 /**
  * LICENSE: BSD 3-Clause License
@@ -38,35 +37,50 @@
  */
 
 
-#ifndef KD_MEM_ALGN_H_
-#define KD_MEM_ALGN_H_
+#define KD_USE_SIMPLIFIED_TYPES
+#include "kd.h"
+#include "gtest/gtest.h"
 
 
-#include "kd/defs.h"
-#include "kd/types/fw.h"
+TEST(GenMemOpsFindAllBytesIndexTest, FindsAllOccurrences)
+{
+  kd_byte_t  ptr[] = {1, 2, 3, 2, 5, 2, 7, 3, 9, 10};
+  kd_usize_t idxs[8];
 
-KD_EXTERN_BEGIN
+  EXPECT_EQ(kdGenMemOpsFindAllBytesIndex(idxs, sizeof(idxs), ptr, sizeof(ptr), 2), 3);
+  EXPECT_EQ(idxs[0], 1);
+  EXPECT_EQ(idxs[1], 3);
+  EXPECT_EQ(idxs[2], 5);
+  EXPECT_EQ(kdGenMemOpsFindAllBytesIndex(idxs, sizeof(idxs), ptr, sizeof(ptr), 3), 2);
+  EXPECT_EQ(idxs[0], 2);
+  EXPECT_EQ(idxs[1], 7);
+}
 
+TEST(GenMemOpsFindAllBytesIndexTest, ReturnsZeroIfNotFound)
+{
+  kd_byte_t  ptr[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+  kd_usize_t idxs[8];
 
-#define KD_MEM_ALGN_MAX_ALGN_SIZE  128
-#define KD_MEM_ALGN_DEFAULT_OFFSET KD_SZ_U8
-#define KD_MEM_ALGN_MAX_OFFSET     KD_SZ_UMAX
+  EXPECT_EQ(kdGenMemOpsFindAllBytesIndex(idxs, sizeof(idxs), ptr, sizeof(ptr), 0), 0);
+  EXPECT_EQ(kdGenMemOpsFindAllBytesIndex(idxs, sizeof(idxs), ptr, sizeof(ptr), 69), 0);
+}
 
+TEST(GenMemOpsFindAllBytesIndexTest, HandlesZeroSize)
+{
+  kd_byte_t  ptr[16];
+  kd_usize_t idxs[8];
 
-#define kdMemAlgnGetDefaultAllocSize(usable_size, algn_sz)                                                             \
-  kdMemAlgnGetAllocSize(usable_size, algn_sz, KD_MEM_ALGN_DEFAULT_OFFSET)
-#define kdMemAlgnGetDefaultOffsetPtr(head_ptr, algn_sz)                                                                \
-  kdMemAlgnGetOffsetPtr(head_ptr, algn_sz, KD_MEM_ALGN_DEFAULT_OFFSET)
-#define kdMemAlgnGetDefaultHeadPtr(off_ptr) kdMemAlgnGetHeadPtr(off_ptr, KD_MEM_ALGN_DEFAULT_OFFSET)
+  EXPECT_EQ(kdGenMemOpsFindAllBytesIndex(idxs, 0, ptr, 0, 69), 0);
+  EXPECT_EQ(kdGenMemOpsFindAllBytesIndex(idxs, 0, ptr, sizeof(ptr), 69), 0);
+  EXPECT_EQ(kdGenMemOpsFindAllBytesIndex(idxs, sizeof(idxs), ptr, 0, 69), 0);
+}
 
+TEST(GenMemOpsFindAllBytesIndexTest, HandlesNullPointer)
+{
+  kd_byte_t  ptr[16];
+  kd_usize_t idxs[8];
 
-KDAPI(kd_usize_t) kdMemAlgnGetAllocSize(kd_usize_t usable_size, kd_u8_t algn_sz, kd_u8_t offset);
-KDAPI(void*) kdMemAlgnGetForwardPtr(void* head_ptr, kd_u8_t algn_sz, kd_u8_t offset);
-KDAPI(void*) kdMemAlgnGetBackwardPtr(void* head_ptr, kd_u8_t algn_sz, kd_u8_t offset);
-KDAPI(void*) kdMemAlgnGetOffsetPtr(void* head_ptr, kd_u8_t algn_sz, kd_u8_t offset);
-KDAPI(void*) kdMemAlgnGetHeadPtr(void* off_ptr, kd_u8_t offset);
-
-
-KD_EXTERN_END
-
-#endif /* KD_MEM_ALGN_H_ */
+  EXPECT_EQ(kdGenMemOpsFindAllBytesIndex((kd_usize_t*)kd_null, 8, kd_null, 16, 69), 0);
+  EXPECT_EQ(kdGenMemOpsFindAllBytesIndex((kd_usize_t*)kd_null, 8, ptr, 16, 69), 0);
+  EXPECT_EQ(kdGenMemOpsFindAllBytesIndex(idxs, 8, kd_null, 16, 69), 0);
+}

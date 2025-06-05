@@ -1,9 +1,8 @@
 /**
- * @file mem_algn.h
+ * @file kdGenMemOpsReverseBlocks.cpp
  * @author Kumarjit Das
- * @date 2025-06-01
- * @since 0.0.6
- * @brief Main header file of the MEM_ALGN library.
+ * @date 2025-06-06
+ * @brief kdGenMemOpsReverseBlocks test file.
  */
 /**
  * LICENSE: BSD 3-Clause License
@@ -38,35 +37,33 @@
  */
 
 
-#ifndef KD_MEM_ALGN_H_
-#define KD_MEM_ALGN_H_
+#define KD_USE_SIMPLIFIED_TYPES
+#include "kd.h"
+#include "gtest/gtest.h"
 
 
-#include "kd/defs.h"
-#include "kd/types/fw.h"
+TEST(GenMemOpsReverseBlocks, ReversesAllBytesCorrectly)
+{
+  kd_i32_t ptr[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
+  kd_i32_t res[] = {16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1};
 
-KD_EXTERN_BEGIN
+  EXPECT_EQ(kdGenMemOpsReverseBlocks(ptr, sizeof(ptr), KD_SZ_I32), KD_RESULT_SUCCESS);
 
+  for (kd_usize_t i = 0; i < sizeof(ptr) / KD_SZ_I32; ++i)
+  {
+    EXPECT_EQ(ptr[i], res[i]);
+  }
+}
 
-#define KD_MEM_ALGN_MAX_ALGN_SIZE  128
-#define KD_MEM_ALGN_DEFAULT_OFFSET KD_SZ_U8
-#define KD_MEM_ALGN_MAX_OFFSET     KD_SZ_UMAX
+TEST(GenMemOpsReverseBlocks, ZeroSizeReturnsFalse)
+{
+  kd_i32_t ptr[16];
 
+  EXPECT_EQ(kdGenMemOpsReverseBlocks(kd_null, 0, KD_SZ_I32), KD_RESULT_FAILURE);
+  EXPECT_EQ(kdGenMemOpsReverseBlocks(ptr, 0, KD_SZ_I32), KD_RESULT_FAILURE);
+}
 
-#define kdMemAlgnGetDefaultAllocSize(usable_size, algn_sz)                                                             \
-  kdMemAlgnGetAllocSize(usable_size, algn_sz, KD_MEM_ALGN_DEFAULT_OFFSET)
-#define kdMemAlgnGetDefaultOffsetPtr(head_ptr, algn_sz)                                                                \
-  kdMemAlgnGetOffsetPtr(head_ptr, algn_sz, KD_MEM_ALGN_DEFAULT_OFFSET)
-#define kdMemAlgnGetDefaultHeadPtr(off_ptr) kdMemAlgnGetHeadPtr(off_ptr, KD_MEM_ALGN_DEFAULT_OFFSET)
-
-
-KDAPI(kd_usize_t) kdMemAlgnGetAllocSize(kd_usize_t usable_size, kd_u8_t algn_sz, kd_u8_t offset);
-KDAPI(void*) kdMemAlgnGetForwardPtr(void* head_ptr, kd_u8_t algn_sz, kd_u8_t offset);
-KDAPI(void*) kdMemAlgnGetBackwardPtr(void* head_ptr, kd_u8_t algn_sz, kd_u8_t offset);
-KDAPI(void*) kdMemAlgnGetOffsetPtr(void* head_ptr, kd_u8_t algn_sz, kd_u8_t offset);
-KDAPI(void*) kdMemAlgnGetHeadPtr(void* off_ptr, kd_u8_t offset);
-
-
-KD_EXTERN_END
-
-#endif /* KD_MEM_ALGN_H_ */
+TEST(GenMemOpsReverseBlocks, NullPointerReturnsFalse)
+{
+  EXPECT_EQ(kdGenMemOpsReverseBlocks(kd_null, 16, 4), KD_RESULT_FAILURE);
+}

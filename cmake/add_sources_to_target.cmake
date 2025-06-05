@@ -47,6 +47,7 @@ set(INCLUDE_FILES
     "${INCLUDE_DIR}/kd/mem_ops.h")
 
 set(INTERNAL_INCLUDE_FILES
+    "${INCLUDE_DIR}/_internal/common.h"
     "${INCLUDE_DIR}/_internal/gen_mem_ops_sn.h")
 
 target_sources(${KD_LIBRARY_NAME} PRIVATE ${INTERNAL_INCLUDE_FILES} ${INCLUDE_FILES})

@@ -46,6 +46,98 @@
 
 
 kd_bool_t
+kdGenMemOpsSwapBytes(void* ptr, kd_usize_t sz, kd_usize_t idx1, kd_usize_t idx2)
+{
+  if (!ptr || !sz || idx1 >= sz || idx2 >= sz)
+  {
+    return KD_RESULT_FAILURE;
+  }
+
+  kdi_GenMemOpsSwapBlocks_S8(ptr, idx1, idx2);
+
+  return KD_RESULT_SUCCESS;
+}
+
+
+kd_bool_t
+kdGenMemOpsSwapBlocks(void* ptr, kd_usize_t sz, kd_usize_t block_sz, kd_usize_t idx1, kd_usize_t idx2)
+{
+  if (!ptr || !sz || !block_sz || idx1 >= sz || idx2 >= sz)
+  {
+    return KD_RESULT_FAILURE;
+  }
+
+  switch (block_sz)
+  {
+    case 1:
+      kdi_GenMemOpsSwapBlocks_S8(ptr, idx1, idx2);
+      break;
+    case 2:
+      kdi_GenMemOpsSwapBlocks_S16(ptr, idx1, idx2);
+      break;
+    case 4:
+      kdi_GenMemOpsSwapBlocks_S32(ptr, idx1, idx2);
+      break;
+#if defined KD_ARCH_64BIT_INT
+    case 8:
+      kdi_GenMemOpsSwapBlocks_S64(ptr, idx1, idx2);
+      break;
+#endif
+    default:
+      kdi_GenMemOpsSwapBlocks_Sn(ptr, block_sz, idx1, idx2);
+  }
+
+  return KD_RESULT_SUCCESS;
+}
+
+
+kd_bool_t
+kdGenMemOpsReverseBytes(void* ptr, kd_usize_t sz)
+{
+  if (!ptr || !sz)
+  {
+    return KD_RESULT_FAILURE;
+  }
+
+  kdi_GenMemOpsReverseBlocks_S8(ptr, sz);
+
+  return KD_RESULT_SUCCESS;
+}
+
+
+kd_bool_t
+kdGenMemOpsReverseBlocks(void* ptr, kd_usize_t sz, kd_usize_t block_sz)
+{
+  if (!ptr || !sz || !block_sz)
+  {
+    return KD_RESULT_FAILURE;
+  }
+
+  switch (block_sz)
+  {
+    case 1:
+      kdi_GenMemOpsReverseBlocks_S8(ptr, sz);
+      break;
+    case 2:
+      kdi_GenMemOpsReverseBlocks_S16(ptr, sz);
+      break;
+    case 4:
+      kdi_GenMemOpsReverseBlocks_S32(ptr, sz);
+      break;
+#if defined KD_ARCH_64BIT_INT
+    case 8:
+      kdi_GenMemOpsReverseBlocks_S64(ptr, sz);
+      break;
+#endif
+    default:
+      kdi_GenMemOpsReverseBlocks_Sn(ptr, sz, block_sz);
+  }
+
+  return KD_RESULT_SUCCESS;
+}
+
+
+kd_bool_t
 kdGenMemOpsSetBytes(void* ptr, kd_usize_t sz, kd_byte_t val)
 {
   if (!ptr || !sz)
@@ -194,6 +286,99 @@ kdGenMemOpsFindByteIndex(kd_usize_t* idx_ptr, void* ptr, kd_usize_t sz, kd_byte_
 
 
 void*
+kdGenMemOpsFindLastByte(void* ptr, kd_usize_t sz, kd_byte_t item)
+{
+  if (!ptr || !sz)
+  {
+    return kd_null;
+  }
+
+  return kdi_GenMemOpsFindLastBlockWithIndex_S8(kd_null, ptr, sz, item);
+}
+
+
+kd_bool_t
+kdGenMemOpsFindLastByteIndex(kd_usize_t* idx_ptr, void* ptr, kd_usize_t sz, kd_byte_t item)
+{
+  void* found_ptr;
+
+  if (!idx_ptr || !ptr || !sz)
+  {
+    return KD_RESULT_FAILURE;
+  }
+
+  found_ptr = kdi_GenMemOpsFindLastBlockWithIndex_S8(idx_ptr, ptr, sz, item);
+
+  return found_ptr ? KD_RESULT_SUCCESS : KD_RESULT_FAILURE;
+}
+
+
+kd_usize_t
+kdGenMemOpsFindAllBytes(void* dst, kd_usize_t dst_sz, void* ptr, kd_usize_t ptr_sz, kd_byte_t item)
+{
+  kd_byte_t** dst_ptr  = dst;
+  kd_usize_t *idxs_ptr = dst, found_cnt, temp_found_cnt, idxs_sz;
+
+  if (!dst || !ptr || !dst_sz || !ptr_sz)
+  {
+    return 0;
+  }
+
+  if (KD_SZ_PTR > KD_SZ_USIZE)
+  {
+    idxs_sz = dst_sz / (KD_SZ_PTR / KD_SZ_USIZE);
+  }
+  else if (KD_SZ_USIZE > KD_SZ_PTR)
+  {
+    idxs_sz = dst_sz / (KD_SZ_USIZE / KD_SZ_PTR);
+  }
+  else
+  {
+    idxs_sz = dst_sz;
+  }
+
+  found_cnt = kdi_GenMemOpsFindAllBlocksWithIndex_S8(idxs_ptr, idxs_sz, ptr, ptr_sz, item);
+
+  temp_found_cnt = found_cnt;
+
+  if (KD_SZ_PTR > KD_SZ_USIZE)
+  {
+    dst_ptr += found_cnt;
+    idxs_ptr += found_cnt;
+
+    while (temp_found_cnt--)
+    {
+      --dst_ptr;
+      --idxs_ptr;
+      *dst_ptr = (kd_byte_t*)ptr + *idxs_ptr;
+    }
+  }
+  else
+  {
+    while (temp_found_cnt--)
+    {
+      *dst_ptr = (kd_byte_t*)ptr + *idxs_ptr;
+      ++dst_ptr;
+      ++idxs_ptr;
+    }
+  }
+
+  return found_cnt;
+}
+
+
+kd_usize_t
+kdGenMemOpsFindAllBytesIndex(kd_usize_t* idxs, kd_usize_t idxs_sz, void* ptr, kd_usize_t ptr_sz, kd_byte_t item)
+{
+  if (!idxs || !ptr || !idxs_sz || !ptr_sz)
+  {
+    return 0;
+  }
+  return kdi_GenMemOpsFindAllBlocksWithIndex_S8(idxs, idxs_sz, ptr, ptr_sz, item);
+}
+
+
+void*
 kdGenMemOpsFindBlock(void* ptr, kd_usize_t sz, void* block, kd_usize_t block_sz)
 {
   kd_u8_t  block_val_u8;
@@ -267,11 +452,220 @@ kdGenMemOpsFindBlockIndex(kd_usize_t* idx_ptr, void* ptr, kd_usize_t sz, void* b
       found_ptr     = kdi_GenMemOpsFindBlockWithIndex_S64(idx_ptr, ptr, sz, block_val_u64);
       break;
 #endif
-    default:;
+    default:
       found_ptr = kdi_GenMemOpsFindBlockWithIndex_Sn(idx_ptr, ptr, sz, block, block_sz);
   }
 
   return found_ptr ? KD_RESULT_SUCCESS : KD_RESULT_FAILURE;
+}
+
+
+void*
+kdGenMemOpsFindLastBlock(void* ptr, kd_usize_t sz, void* block, kd_usize_t block_sz)
+{
+  kd_u8_t  block_val_u8;
+  kd_u16_t block_val_u16;
+  kd_u32_t block_val_u32;
+#if defined KD_ARCH_64BIT_INT
+  kd_u64_t block_val_u64;
+#endif
+
+  if (!ptr || !sz || !block || !block_sz)
+  {
+    return kd_null;
+  }
+
+  switch (block_sz)
+  {
+    case 1:
+      block_val_u8 = *(kd_u8_t*)block;
+      return kdi_GenMemOpsFindLastBlockWithIndex_S8(kd_null, ptr, sz, block_val_u8);
+    case 2:
+      block_val_u16 = *(kd_u16_t*)block;
+      return kdi_GenMemOpsFindLastBlockWithIndex_S16(kd_null, ptr, sz, block_val_u16);
+    case 4:
+      block_val_u32 = *(kd_u32_t*)block;
+      return kdi_GenMemOpsFindLastBlockWithIndex_S32(kd_null, ptr, sz, block_val_u32);
+#if defined KD_ARCH_64BIT_INT
+    case 8:
+      block_val_u64 = *(kd_u64_t*)block;
+      return kdi_GenMemOpsFindLastBlockWithIndex_S64(kd_null, ptr, sz, block_val_u64);
+#endif
+    default:;
+  }
+
+  return kdi_GenMemOpsFindLastBlockWithIndex_Sn(kd_null, ptr, sz, block, block_sz);
+}
+
+
+kd_bool_t
+kdGenMemOpsFindLastBlockIndex(kd_usize_t* idx_ptr, void* ptr, kd_usize_t sz, void* block, kd_usize_t block_sz)
+{
+  void*    found_ptr;
+  kd_u8_t  block_val_u8;
+  kd_u16_t block_val_u16;
+  kd_u32_t block_val_u32;
+#if defined KD_ARCH_64BIT_INT
+  kd_u64_t block_val_u64;
+#endif
+
+  if (!idx_ptr || !ptr || !sz || !block || !block_sz)
+  {
+    return KD_RESULT_FAILURE;
+  }
+
+  switch (block_sz)
+  {
+    case 1:
+      block_val_u8 = *(kd_u8_t*)block;
+      found_ptr    = kdi_GenMemOpsFindLastBlockWithIndex_S8(idx_ptr, ptr, sz, block_val_u8);
+      break;
+    case 2:
+      block_val_u16 = *(kd_u16_t*)block;
+      found_ptr     = kdi_GenMemOpsFindLastBlockWithIndex_S16(idx_ptr, ptr, sz, block_val_u16);
+      break;
+    case 4:
+      block_val_u32 = *(kd_u32_t*)block;
+      found_ptr     = kdi_GenMemOpsFindLastBlockWithIndex_S32(idx_ptr, ptr, sz, block_val_u32);
+      break;
+#if defined KD_ARCH_64BIT_INT
+    case 8:
+      block_val_u64 = *(kd_u64_t*)block;
+      found_ptr     = kdi_GenMemOpsFindLastBlockWithIndex_S64(idx_ptr, ptr, sz, block_val_u64);
+      break;
+#endif
+    default:
+      found_ptr = kdi_GenMemOpsFindLastBlockWithIndex_Sn(idx_ptr, ptr, sz, block, block_sz);
+  }
+
+  return found_ptr ? KD_RESULT_SUCCESS : KD_RESULT_FAILURE;
+}
+
+
+kd_usize_t
+kdGenMemOpsFindAllBlocks(void* dst, kd_usize_t dst_sz, void* ptr, kd_usize_t ptr_sz, void* block, kd_usize_t block_sz)
+{
+  kd_u8_t  block_val_u8;
+  kd_u16_t block_val_u16;
+  kd_u32_t block_val_u32;
+#if defined KD_ARCH_64BIT_INT
+  kd_u64_t block_val_u64;
+#endif
+  kd_byte_t** dst_ptr  = dst;
+  kd_usize_t *idxs_ptr = dst, found_cnt, temp_found_cnt, idxs_sz;
+
+  if (!dst || !ptr || !block || !dst_sz || !ptr_sz || !block_sz)
+  {
+    return 0;
+  }
+
+  if (KD_SZ_PTR > KD_SZ_USIZE)
+  {
+    idxs_sz = dst_sz / (KD_SZ_PTR / KD_SZ_USIZE);
+  }
+  else if (KD_SZ_USIZE > KD_SZ_PTR)
+  {
+    idxs_sz = dst_sz / (KD_SZ_USIZE / KD_SZ_PTR);
+  }
+  else
+  {
+    idxs_sz = dst_sz;
+  }
+
+  switch (block_sz)
+  {
+    case 1:
+      block_val_u8 = *(kd_u8_t*)block;
+      found_cnt    = kdi_GenMemOpsFindAllBlocksWithIndex_S8(idxs_ptr, idxs_sz, ptr, ptr_sz, block_val_u8);
+      break;
+    case 2:
+      block_val_u16 = *(kd_u16_t*)block;
+      found_cnt     = kdi_GenMemOpsFindAllBlocksWithIndex_S16(idxs_ptr, idxs_sz, ptr, ptr_sz, block_val_u16);
+      break;
+    case 4:
+      block_val_u32 = *(kd_u32_t*)block;
+      found_cnt     = kdi_GenMemOpsFindAllBlocksWithIndex_S32(idxs_ptr, idxs_sz, ptr, ptr_sz, block_val_u32);
+      break;
+#if defined KD_ARCH_64BIT_INT
+    case 8:
+      block_val_u64 = *(kd_u64_t*)block;
+      found_cnt     = kdi_GenMemOpsFindAllBlocksWithIndex_S64(idxs_ptr, idxs_sz, ptr, ptr_sz, block_val_u64);
+      break;
+#endif
+    default:
+      found_cnt = kdi_GenMemOpsFindAllBlocksWithIndex_Sn(idxs_ptr, idxs_sz, ptr, ptr_sz, block, block_sz);
+  }
+
+  temp_found_cnt = found_cnt;
+
+  if (KD_SZ_PTR > KD_SZ_USIZE)
+  {
+    dst_ptr += found_cnt;
+    idxs_ptr += found_cnt;
+
+    while (temp_found_cnt--)
+    {
+      --dst_ptr;
+      --idxs_ptr;
+      *dst_ptr = (kd_byte_t*)ptr + *idxs_ptr;
+    }
+  }
+  else
+  {
+    while (temp_found_cnt--)
+    {
+      *dst_ptr = (kd_byte_t*)ptr + *idxs_ptr;
+      ++dst_ptr;
+      ++idxs_ptr;
+    }
+  }
+
+  return found_cnt;
+}
+
+
+kd_usize_t
+kdGenMemOpsFindAllBlocksIndex(
+  kd_usize_t* idxs,
+  kd_usize_t  idxs_sz,
+  void*       ptr,
+  kd_usize_t  ptr_sz,
+  void*       block,
+  kd_usize_t  block_sz
+)
+{
+  kd_u8_t  block_val_u8;
+  kd_u16_t block_val_u16;
+  kd_u32_t block_val_u32;
+#if defined KD_ARCH_64BIT_INT
+  kd_u64_t block_val_u64;
+#endif
+
+  if (!idxs || !idxs_sz || !ptr || !ptr_sz || !block || !block_sz)
+  {
+    return 0;
+  }
+
+  switch (block_sz)
+  {
+    case 1:
+      block_val_u8 = *(kd_u8_t*)block;
+      return kdi_GenMemOpsFindAllBlocksWithIndex_S8(idxs, idxs_sz, ptr, ptr_sz, block_val_u8);
+    case 2:
+      block_val_u16 = *(kd_u16_t*)block;
+      return kdi_GenMemOpsFindAllBlocksWithIndex_S16(idxs, idxs_sz, ptr, ptr_sz, block_val_u16);
+    case 4:
+      block_val_u32 = *(kd_u32_t*)block;
+      return kdi_GenMemOpsFindAllBlocksWithIndex_S32(idxs, idxs_sz, ptr, ptr_sz, block_val_u32);
+#if defined KD_ARCH_64BIT_INT
+    case 8:
+      block_val_u64 = *(kd_u64_t*)block;
+      return kdi_GenMemOpsFindAllBlocksWithIndex_S64(idxs, idxs_sz, ptr, ptr_sz, block_val_u64);
+#endif
+    default:;
+  }
+
+  return kdi_GenMemOpsFindAllBlocksWithIndex_Sn(idxs, idxs_sz, ptr, ptr_sz, block, block_sz);
 }
 
 
@@ -391,8 +785,14 @@ kdGenMemOpsBlocksCompSpn(void* ptr, kd_usize_t sz, void* key_blocks, kd_usize_t 
 
 
 kd_bool_t
-kdGenMemOpsBlocksCompSpnIndex(kd_usize_t* idx_ptr, void* ptr, kd_usize_t sz, void* key_blocks, kd_usize_t key_block_sz,
-                              kd_usize_t key_blocks_sz)
+kdGenMemOpsBlocksCompSpnIndex(
+  kd_usize_t* idx_ptr,
+  void*       ptr,
+  kd_usize_t  sz,
+  void*       key_blocks,
+  kd_usize_t  key_block_sz,
+  kd_usize_t  key_blocks_sz
+)
 {
   kd_byte_t* found_ptr;
 

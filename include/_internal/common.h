@@ -1,9 +1,9 @@
 /**
- * @file mem_algn.h
+ * @file common.h
  * @author Kumarjit Das
- * @date 2025-06-01
- * @since 0.0.6
- * @brief Main header file of the MEM_ALGN library.
+ * @date 2025-06-06
+ * @since 0.0.10
+ * @brief Common header file for all internal libraries.
  */
 /**
  * LICENSE: BSD 3-Clause License
@@ -38,9 +38,8 @@
  */
 
 
-#ifndef KD_MEM_ALGN_H_
-#define KD_MEM_ALGN_H_
-
+#ifndef KD__INTERNAL_COMMON_H_
+#define KD__INTERNAL_COMMON_H_
 
 #include "kd/defs.h"
 #include "kd/types/fw.h"
@@ -48,25 +47,34 @@
 KD_EXTERN_BEGIN
 
 
-#define KD_MEM_ALGN_MAX_ALGN_SIZE  128
-#define KD_MEM_ALGN_DEFAULT_OFFSET KD_SZ_U8
-#define KD_MEM_ALGN_MAX_OFFSET     KD_SZ_UMAX
+/**
+ * ---------------------------------------------------------------------------------------------------------------------
+ *  Sizes Of Primitive Storage Types (In Bytes)
+ * ---------------------------------------------------------------------------------------------------------------------
+ */
+
+#define KD_SZ_S8  KD_SZ_U8
+#define KD_SZ_S16 KD_SZ_U16
+#define KD_SZ_S32 KD_SZ_U32
+#if defined KD_ARCH_64BIT_INT
+  #define KD_SZ_S64 KD_SZ_U64
+#endif
 
 
-#define kdMemAlgnGetDefaultAllocSize(usable_size, algn_sz)                                                             \
-  kdMemAlgnGetAllocSize(usable_size, algn_sz, KD_MEM_ALGN_DEFAULT_OFFSET)
-#define kdMemAlgnGetDefaultOffsetPtr(head_ptr, algn_sz)                                                                \
-  kdMemAlgnGetOffsetPtr(head_ptr, algn_sz, KD_MEM_ALGN_DEFAULT_OFFSET)
-#define kdMemAlgnGetDefaultHeadPtr(off_ptr) kdMemAlgnGetHeadPtr(off_ptr, KD_MEM_ALGN_DEFAULT_OFFSET)
+/**
+ * ---------------------------------------------------------------------------------------------------------------------
+ *  Type Definitions
+ * ---------------------------------------------------------------------------------------------------------------------
+ */
 
-
-KDAPI(kd_usize_t) kdMemAlgnGetAllocSize(kd_usize_t usable_size, kd_u8_t algn_sz, kd_u8_t offset);
-KDAPI(void*) kdMemAlgnGetForwardPtr(void* head_ptr, kd_u8_t algn_sz, kd_u8_t offset);
-KDAPI(void*) kdMemAlgnGetBackwardPtr(void* head_ptr, kd_u8_t algn_sz, kd_u8_t offset);
-KDAPI(void*) kdMemAlgnGetOffsetPtr(void* head_ptr, kd_u8_t algn_sz, kd_u8_t offset);
-KDAPI(void*) kdMemAlgnGetHeadPtr(void* off_ptr, kd_u8_t offset);
+typedef kd_u8_t  kdi_s8_t;
+typedef kd_u16_t kdi_s16_t;
+typedef kd_u32_t kdi_s32_t;
+#if defined KD_ARCH_64BIT_INT
+typedef kd_u64_t kdi_s64_t;
+#endif
 
 
 KD_EXTERN_END
 
-#endif /* KD_MEM_ALGN_H_ */
+#endif /* KD__INTERNAL_COMMON_H_ */

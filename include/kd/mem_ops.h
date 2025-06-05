@@ -54,23 +54,32 @@ KD_EXTERN_BEGIN
 #define kdMemOpsSetI8(ptr, len, val)   kdMemOpsSet(ptr, len, val)
 #define kdMemOpsSetU8(ptr, len, val)   kdMemOpsSet(ptr, len, val)
 #define kdMemOpsSetByte(ptr, len, val) kdMemOpsSet(ptr, len, val)
-#define kdMemOpsSetI16(ptr, len, val)  kdMemOpsSetU16((void*)(ptr), (kd_i64_t)(len), (kd_u16_t)(val))
-#define kdMemOpsSetI32(ptr, len, val)  kdMemOpsSetU32((void*)(ptr), (kd_i64_t)(len), (kd_u32_t)(val))
-#define kdMemOpsSetI64(ptr, len, val)  kdMemOpsSetU64((void*)(ptr), (kd_i64_t)(len), (kd_u64_t)(val))
-#define kdMemOpsSetImin(ptr, len, val) kdMemOpsSetUmin((void*)(ptr), (kd_i64_t)(len), (kd_umin_t)(val))
-#define kdMemOpsSetImax(ptr, len, val) kdMemOpsSetUmax((void*)(ptr), (kd_i64_t)(len), (kd_umax_t)(val))
+#if defined KD_ARCH_64BIT_INT
+  #define kdMemOpsSetI16(ptr, len, val)  kdMemOpsSetU16((void*)(ptr), (kd_i64_t)(len), (kd_u16_t)(val))
+  #define kdMemOpsSetI32(ptr, len, val)  kdMemOpsSetU32((void*)(ptr), (kd_i64_t)(len), (kd_u32_t)(val))
+  #define kdMemOpsSetI64(ptr, len, val)  kdMemOpsSetU64((void*)(ptr), (kd_i64_t)(len), (kd_u64_t)(val))
+  #define kdMemOpsSetImin(ptr, len, val) kdMemOpsSetUmin((void*)(ptr), (kd_i64_t)(len), (kd_umin_t)(val))
+  #define kdMemOpsSetImax(ptr, len, val) kdMemOpsSetUmax((void*)(ptr), (kd_i64_t)(len), (kd_umax_t)(val))
+#else /* !defined KD_ARCH_64BIT_INT */
+  #define kdMemOpsSetI16(ptr, len, val)  kdMemOpsSetU16((void*)(ptr), (kd_i32_t)(len), (kd_u16_t)(val))
+  #define kdMemOpsSetI32(ptr, len, val)  kdMemOpsSetU32((void*)(ptr), (kd_i32_t)(len), (kd_u32_t)(val))
+  #define kdMemOpsSetImin(ptr, len, val) kdMemOpsSetUmin((void*)(ptr), (kd_i32_t)(len), (kd_umin_t)(val))
+  #define kdMemOpsSetImax(ptr, len, val) kdMemOpsSetUmax((void*)(ptr), (kd_i32_t)(len), (kd_umax_t)(val))
+#endif /* KD_ARCH_64BIT_INT */
 
 
-#define kdMemOpsCpy(dst, src, len)      kdGenMemOpsCpy((void*)(dst), (void*)(src), (kd_usize_t)(len))
-#define kdMemOpsCpyByte(dst, src, len)  kdMemOpsCpy(dst, src, len)
-#define kdMemOpsCpyI8(dst, src, len)    kdMemOpsCpy(dst, src, len)
-#define kdMemOpsCpyU8(dst, src, len)    kdMemOpsCpy(dst, src, len)
-#define kdMemOpsCpyI16(dst, src, len)   kdMemOpsCpy(dst, src, (len) * KD_SZ_I16)
-#define kdMemOpsCpyU16(dst, src, len)   kdMemOpsCpy(dst, src, (len) * KD_SZ_U16)
-#define kdMemOpsCpyI32(dst, src, len)   kdMemOpsCpy(dst, src, (len) * KD_SZ_I32)
-#define kdMemOpsCpyU32(dst, src, len)   kdMemOpsCpy(dst, src, (len) * KD_SZ_U32)
-#define kdMemOpsCpyI64(dst, src, len)   kdMemOpsCpy(dst, src, (len) * KD_SZ_I64)
-#define kdMemOpsCpyU64(dst, src, len)   kdMemOpsCpy(dst, src, (len) * KD_SZ_U64)
+#define kdMemOpsCpy(dst, src, len)     kdGenMemOpsCpy((void*)(dst), (void*)(src), (kd_usize_t)(len))
+#define kdMemOpsCpyByte(dst, src, len) kdMemOpsCpy(dst, src, len)
+#define kdMemOpsCpyI8(dst, src, len)   kdMemOpsCpy(dst, src, len)
+#define kdMemOpsCpyU8(dst, src, len)   kdMemOpsCpy(dst, src, len)
+#define kdMemOpsCpyI16(dst, src, len)  kdMemOpsCpy(dst, src, (len) * KD_SZ_I16)
+#define kdMemOpsCpyU16(dst, src, len)  kdMemOpsCpy(dst, src, (len) * KD_SZ_U16)
+#define kdMemOpsCpyI32(dst, src, len)  kdMemOpsCpy(dst, src, (len) * KD_SZ_I32)
+#define kdMemOpsCpyU32(dst, src, len)  kdMemOpsCpy(dst, src, (len) * KD_SZ_U32)
+#if defined KD_ARCH_64BIT_INT
+  #define kdMemOpsCpyI64(dst, src, len) kdMemOpsCpy(dst, src, (len) * KD_SZ_I64)
+  #define kdMemOpsCpyU64(dst, src, len) kdMemOpsCpy(dst, src, (len) * KD_SZ_U64)
+#endif /* KD_ARCH_64BIT_INT */
 #define kdMemOpsCpyImin(dst, src, len)  kdMemOpsCpy(dst, src, (len) * KD_SZ_IMIN)
 #define kdMemOpsCpyUmin(dst, src, len)  kdMemOpsCpy(dst, src, (len) * KD_SZ_UMIN)
 #define kdMemOpsCpyImax(dst, src, len)  kdMemOpsCpy(dst, src, (len) * KD_SZ_IMAX)
@@ -81,16 +90,18 @@ KD_EXTERN_BEGIN
 #define kdMemOpsCpyPtr(dst, src, len)   kdMemOpsCpy(dst, src, (len) * KD_SZ_PTR)
 
 
-#define kdMemOpsMove(dst, src, len)      kdGenMemOpsMove((void*)(dst), (void*)(src), (kd_usize_t)(len))
-#define kdMemOpsMoveByte(dst, src, len)  kdMemOpsMove(dst, src, len)
-#define kdMemOpsMoveI8(dst, src, len)    kdMemOpsMove(dst, src, len)
-#define kdMemOpsMoveU8(dst, src, len)    kdMemOpsMove(dst, src, len)
-#define kdMemOpsMoveI16(dst, src, len)   kdMemOpsMove(dst, src, (len) * KD_SZ_I16)
-#define kdMemOpsMoveU16(dst, src, len)   kdMemOpsMove(dst, src, (len) * KD_SZ_U16)
-#define kdMemOpsMoveI32(dst, src, len)   kdMemOpsMove(dst, src, (len) * KD_SZ_I32)
-#define kdMemOpsMoveU32(dst, src, len)   kdMemOpsMove(dst, src, (len) * KD_SZ_U32)
-#define kdMemOpsMoveI64(dst, src, len)   kdMemOpsMove(dst, src, (len) * KD_SZ_I64)
-#define kdMemOpsMoveU64(dst, src, len)   kdMemOpsMove(dst, src, (len) * KD_SZ_U64)
+#define kdMemOpsMove(dst, src, len)     kdGenMemOpsMove((void*)(dst), (void*)(src), (kd_usize_t)(len))
+#define kdMemOpsMoveByte(dst, src, len) kdMemOpsMove(dst, src, len)
+#define kdMemOpsMoveI8(dst, src, len)   kdMemOpsMove(dst, src, len)
+#define kdMemOpsMoveU8(dst, src, len)   kdMemOpsMove(dst, src, len)
+#define kdMemOpsMoveI16(dst, src, len)  kdMemOpsMove(dst, src, (len) * KD_SZ_I16)
+#define kdMemOpsMoveU16(dst, src, len)  kdMemOpsMove(dst, src, (len) * KD_SZ_U16)
+#define kdMemOpsMoveI32(dst, src, len)  kdMemOpsMove(dst, src, (len) * KD_SZ_I32)
+#define kdMemOpsMoveU32(dst, src, len)  kdMemOpsMove(dst, src, (len) * KD_SZ_U32)
+#if defined KD_ARCH_64BIT_INT
+  #define kdMemOpsMoveI64(dst, src, len) kdMemOpsMove(dst, src, (len) * KD_SZ_I64)
+  #define kdMemOpsMoveU64(dst, src, len) kdMemOpsMove(dst, src, (len) * KD_SZ_U64)
+#endif /* KD_ARCH_64BIT_INT */
 #define kdMemOpsMoveImin(dst, src, len)  kdMemOpsMove(dst, src, (len) * KD_SZ_IMIN)
 #define kdMemOpsMoveUmin(dst, src, len)  kdMemOpsMove(dst, src, (len) * KD_SZ_UMIN)
 #define kdMemOpsMoveImax(dst, src, len)  kdMemOpsMove(dst, src, (len) * KD_SZ_IMAX)
@@ -105,33 +116,52 @@ KD_EXTERN_BEGIN
 #define kdMemOpsFindI8(ptr, len, item)   kdMemOpsFind(ptr, len, item)
 #define kdMemOpsFindU8(ptr, len, item)   kdMemOpsFind(ptr, len, item)
 #define kdMemOpsFindByte(ptr, len, item) kdMemOpsFind(ptr, len, item)
-#define kdMemOpsFindI16(ptr, len, item)  kdMemOpsFindU16((void*)(ptr), (kd_i64_t)(len), (kd_u16_t)(item))
-#define kdMemOpsFindI32(ptr, len, item)  kdMemOpsFindU32((void*)(ptr), (kd_i64_t)(len), (kd_u32_t)(item))
-#define kdMemOpsFindI64(ptr, len, item)  kdMemOpsFindU64((void*)(ptr), (kd_i64_t)(len), (kd_u64_t)(item))
-#define kdMemOpsFindImin(ptr, len, item) kdMemOpsFindUmin((void*)(ptr), (kd_i64_t)(len), (kd_umin_t)(item))
-#define kdMemOpsFindImax(ptr, len, item) kdMemOpsFindUmax((void*)(ptr), (kd_i64_t)(len), (kd_umax_t)(item))
+#if defined KD_ARCH_64BIT_INT
+  #define kdMemOpsFindI16(ptr, len, item)  kdMemOpsFindU16((void*)(ptr), (kd_i64_t)(len), (kd_u16_t)(item))
+  #define kdMemOpsFindI32(ptr, len, item)  kdMemOpsFindU32((void*)(ptr), (kd_i64_t)(len), (kd_u32_t)(item))
+  #define kdMemOpsFindI64(ptr, len, item)  kdMemOpsFindU64((void*)(ptr), (kd_i64_t)(len), (kd_u64_t)(item))
+  #define kdMemOpsFindImin(ptr, len, item) kdMemOpsFindUmin((void*)(ptr), (kd_i64_t)(len), (kd_umin_t)(item))
+  #define kdMemOpsFindImax(ptr, len, item) kdMemOpsFindUmax((void*)(ptr), (kd_i64_t)(len), (kd_umax_t)(item))
+#else /* !defined KD_ARCH_64BIT_INT */
+  #define kdMemOpsFindI16(ptr, len, item)  kdMemOpsFindU16((void*)(ptr), (kd_i32_t)(len), (kd_u16_t)(item))
+  #define kdMemOpsFindI32(ptr, len, item)  kdMemOpsFindU32((void*)(ptr), (kd_i32_t)(len), (kd_u32_t)(item))
+  #define kdMemOpsFindImin(ptr, len, item) kdMemOpsFindUmin((void*)(ptr), (kd_i32_t)(len), (kd_umin_t)(item))
+  #define kdMemOpsFindImax(ptr, len, item) kdMemOpsFindUmax((void*)(ptr), (kd_i32_t)(len), (kd_umax_t)(item))
+#endif /* KD_ARCH_64BIT_INT */
 
 
-#define kdMemOpsFindIndexI8(ptr, len, item)   kdMemOpsFindIndex((void*)(ptr), (kd_i64_t)(len), (kd_byte_t)(item))
-#define kdMemOpsFindIndexU8(ptr, len, item)   kdMemOpsFindIndex((void*)(ptr), (kd_i64_t)(len), (kd_byte_t)(item))
-#define kdMemOpsFindIndexByte(ptr, len, item) kdMemOpsFindIndex((void*)(ptr), (kd_i64_t)(len), (kd_byte_t)(item))
-#define kdMemOpsFindIndexI16(ptr, len, item)  kdMemOpsFindIndexU16((void*)(ptr), (kd_i64_t)(len), (kd_u16_t)(item))
-#define kdMemOpsFindIndexI32(ptr, len, item)  kdMemOpsFindIndexU32((void*)(ptr), (kd_i64_t)(len), (kd_u32_t)(item))
-#define kdMemOpsFindIndexI64(ptr, len, item)  kdMemOpsFindIndexU64((void*)(ptr), (kd_i64_t)(len), (kd_u64_t)(item))
-#define kdMemOpsFindIndexImin(ptr, len, item) kdMemOpsFindIndexUmin((void*)(ptr), (kd_i64_t)(len), (kd_umin_t)(item))
-#define kdMemOpsFindIndexImax(ptr, len, item) kdMemOpsFindIndexUmax((void*)(ptr), (kd_i64_t)(len), (kd_umax_t)(item))
+#if defined KD_ARCH_64BIT_INT
+  #define kdMemOpsFindIndexI8(ptr, len, item)   kdMemOpsFindIndex((void*)(ptr), (kd_i64_t)(len), (kd_byte_t)(item))
+  #define kdMemOpsFindIndexU8(ptr, len, item)   kdMemOpsFindIndex((void*)(ptr), (kd_i64_t)(len), (kd_byte_t)(item))
+  #define kdMemOpsFindIndexByte(ptr, len, item) kdMemOpsFindIndex((void*)(ptr), (kd_i64_t)(len), (kd_byte_t)(item))
+  #define kdMemOpsFindIndexI16(ptr, len, item)  kdMemOpsFindIndexU16((void*)(ptr), (kd_i64_t)(len), (kd_u16_t)(item))
+  #define kdMemOpsFindIndexI32(ptr, len, item)  kdMemOpsFindIndexU32((void*)(ptr), (kd_i64_t)(len), (kd_u32_t)(item))
+  #define kdMemOpsFindIndexI64(ptr, len, item)  kdMemOpsFindIndexU64((void*)(ptr), (kd_i64_t)(len), (kd_u64_t)(item))
+  #define kdMemOpsFindIndexImin(ptr, len, item) kdMemOpsFindIndexUmin((void*)(ptr), (kd_i64_t)(len), (kd_umin_t)(item))
+  #define kdMemOpsFindIndexImax(ptr, len, item) kdMemOpsFindIndexUmax((void*)(ptr), (kd_i64_t)(len), (kd_umax_t)(item))
+#else /* !defined KD_ARCH_64BIT_INT */
+  #define kdMemOpsFindIndexI8(ptr, len, item)   kdMemOpsFindIndex((void*)(ptr), (kd_i32_t)(len), (kd_byte_t)(item))
+  #define kdMemOpsFindIndexU8(ptr, len, item)   kdMemOpsFindIndex((void*)(ptr), (kd_i32_t)(len), (kd_byte_t)(item))
+  #define kdMemOpsFindIndexByte(ptr, len, item) kdMemOpsFindIndex((void*)(ptr), (kd_i32_t)(len), (kd_byte_t)(item))
+  #define kdMemOpsFindIndexI16(ptr, len, item)  kdMemOpsFindIndexU16((void*)(ptr), (kd_i32_t)(len), (kd_u16_t)(item))
+  #define kdMemOpsFindIndexI32(ptr, len, item)  kdMemOpsFindIndexU32((void*)(ptr), (kd_i32_t)(len), (kd_u32_t)(item))
+  #define kdMemOpsFindIndexImin(ptr, len, item) kdMemOpsFindIndexUmin((void*)(ptr), (kd_i32_t)(len), (kd_umin_t)(item))
+  #define kdMemOpsFindIndexImax(ptr, len, item) kdMemOpsFindIndexUmax((void*)(ptr), (kd_i32_t)(len), (kd_umax_t)(item))
+#endif /* KD_ARCH_64BIT_INT */
 
 
-#define kdMemOpsCmp(ptr1, ptr2, len)      kdGenMemOpsCmp((void*)(ptr1), (void*)(ptr2), (kd_usize_t)(len))
-#define kdMemOpsCmpByte(ptr1, ptr2, len)  kdMemOpsCmp(ptr1, ptr2, len)
-#define kdMemOpsCmpI8(ptr1, ptr2, len)    kdMemOpsCmp(ptr1, ptr2, len)
-#define kdMemOpsCmpU8(ptr1, ptr2, len)    kdMemOpsCmp(ptr1, ptr2, len)
-#define kdMemOpsCmpI16(ptr1, ptr2, len)   kdMemOpsCmp(ptr1, ptr2, (len) * KD_SZ_I16)
-#define kdMemOpsCmpU16(ptr1, ptr2, len)   kdMemOpsCmp(ptr1, ptr2, (len) * KD_SZ_U16)
-#define kdMemOpsCmpI32(ptr1, ptr2, len)   kdMemOpsCmp(ptr1, ptr2, (len) * KD_SZ_I32)
-#define kdMemOpsCmpU32(ptr1, ptr2, len)   kdMemOpsCmp(ptr1, ptr2, (len) * KD_SZ_U32)
-#define kdMemOpsCmpI64(ptr1, ptr2, len)   kdMemOpsCmp(ptr1, ptr2, (len) * KD_SZ_I64)
-#define kdMemOpsCmpU64(ptr1, ptr2, len)   kdMemOpsCmp(ptr1, ptr2, (len) * KD_SZ_U64)
+#define kdMemOpsCmp(ptr1, ptr2, len)     kdGenMemOpsCmp((void*)(ptr1), (void*)(ptr2), (kd_usize_t)(len))
+#define kdMemOpsCmpByte(ptr1, ptr2, len) kdMemOpsCmp(ptr1, ptr2, len)
+#define kdMemOpsCmpI8(ptr1, ptr2, len)   kdMemOpsCmp(ptr1, ptr2, len)
+#define kdMemOpsCmpU8(ptr1, ptr2, len)   kdMemOpsCmp(ptr1, ptr2, len)
+#define kdMemOpsCmpI16(ptr1, ptr2, len)  kdMemOpsCmp(ptr1, ptr2, (len) * KD_SZ_I16)
+#define kdMemOpsCmpU16(ptr1, ptr2, len)  kdMemOpsCmp(ptr1, ptr2, (len) * KD_SZ_U16)
+#define kdMemOpsCmpI32(ptr1, ptr2, len)  kdMemOpsCmp(ptr1, ptr2, (len) * KD_SZ_I32)
+#define kdMemOpsCmpU32(ptr1, ptr2, len)  kdMemOpsCmp(ptr1, ptr2, (len) * KD_SZ_U32)
+#if defined KD_ARCH_64BIT_INT
+  #define kdMemOpsCmpI64(ptr1, ptr2, len) kdMemOpsCmp(ptr1, ptr2, (len) * KD_SZ_I64)
+  #define kdMemOpsCmpU64(ptr1, ptr2, len) kdMemOpsCmp(ptr1, ptr2, (len) * KD_SZ_U64)
+#endif /* KD_ARCH_64BIT_INT */
 #define kdMemOpsCmpImin(ptr1, ptr2, len)  kdMemOpsCmp(ptr1, ptr2, (len) * KD_SZ_IMIN)
 #define kdMemOpsCmpUmin(ptr1, ptr2, len)  kdMemOpsCmp(ptr1, ptr2, (len) * KD_SZ_UMIN)
 #define kdMemOpsCmpImax(ptr1, ptr2, len)  kdMemOpsCmp(ptr1, ptr2, (len) * KD_SZ_IMAX)
@@ -155,10 +185,12 @@ KD_EXTERN_BEGIN
   kdMemOpsCat(dst, (len) * KD_SZ_I32, src1, (len1) * KD_SZ_I32, src2, (len2) * KD_SZ_I32)
 #define kdMemOpsCatU32(dst, len, src1, len1, src2, len2)                                                               \
   kdMemOpsCat(dst, (len) * KD_SZ_U32, src1, (len1) * KD_SZ_U32, src2, (len2) * KD_SZ_U32)
-#define kdMemOpsCatI64(dst, len, src1, len1, src2, len2)                                                               \
-  kdMemOpsCat(dst, (len) * KD_SZ_I64, src1, (len1) * KD_SZ_I64, src2, (len2) * KD_SZ_I64)
-#define kdMemOpsCatU64(dst, len, src1, len1, src2, len2)                                                               \
-  kdMemOpsCat(dst, (len) * KD_SZ_U64, src1, (len1) * KD_SZ_U64, src2, (len2) * KD_SZ_U64)
+#if defined KD_ARCH_64BIT_INT
+  #define kdMemOpsCatI64(dst, len, src1, len1, src2, len2)                                                             \
+    kdMemOpsCat(dst, (len) * KD_SZ_I64, src1, (len1) * KD_SZ_I64, src2, (len2) * KD_SZ_I64)
+  #define kdMemOpsCatU64(dst, len, src1, len1, src2, len2)                                                             \
+    kdMemOpsCat(dst, (len) * KD_SZ_U64, src1, (len1) * KD_SZ_U64, src2, (len2) * KD_SZ_U64)
+#endif /* KD_ARCH_64BIT_INT */
 #define kdMemOpsCatImin(dst, len, src1, len1, src2, len2)                                                              \
   kdMemOpsCat(dst, (len) * KD_SZ_IMIN, src1, (len1) * KD_SZ_IMIN, src2, (len2) * KD_SZ_IMIN)
 #define kdMemOpsCatUmin(dst, len, src1, len1, src2, len2)                                                              \
@@ -182,177 +214,132 @@ KD_EXTERN_BEGIN
 #define kdMemOpsCompSpnI8(ptr, len, keys, keys_len)   kdMemOpsCompSpn(ptr, len, keys, keys_len)
 #define kdMemOpsCompSpnU8(ptr, len, keys, keys_len)   kdMemOpsCompSpn(ptr, len, keys, keys_len)
 #define kdMemOpsCompSpnByte(ptr, len, keys, keys_len) kdMemOpsCompSpn(ptr, len, keys, keys_len)
-#define kdMemOpsCompSpnI16(ptr, len, keys, keys_len)                                                                   \
-  kdMemOpsCompSpnU16((void*)(ptr), (kd_i64_t)(len), (void*)(keys), (kd_i64_t)(keys_len))
-#define kdMemOpsCompSpnI32(ptr, len, keys, keys_len)                                                                   \
-  kdMemOpsCompSpnU32((void*)(ptr), (kd_i64_t)(len), (void*)(keys), (kd_i64_t)(keys_len))
-#define kdMemOpsCompSpnI64(ptr, len, keys, keys_len)                                                                   \
-  kdMemOpsCompSpnU64((void*)(ptr), (kd_i64_t)(len), (void*)(keys), (kd_i64_t)(keys_len))
-#define kdMemOpsCompSpnImin(ptr, len, keys, keys_len)                                                                  \
-  kdMemOpsCompSpnUmin((void*)(ptr), (kd_i64_t)(len), (void*)(keys), (kd_i64_t)(keys_len))
-#define kdMemOpsCompSpnImax(ptr, len, keys, keys_len)                                                                  \
-  kdMemOpsCompSpnUmax((void*)(ptr), (kd_i64_t)(len), (void*)(keys), (kd_i64_t)(keys_len))
+#if defined KD_ARCH_64BIT_INT
+  #define kdMemOpsCompSpnI16(ptr, len, keys, keys_len)                                                                 \
+    kdMemOpsCompSpnU16((void*)(ptr), (kd_i64_t)(len), (void*)(keys), (kd_i64_t)(keys_len))
+  #define kdMemOpsCompSpnI32(ptr, len, keys, keys_len)                                                                 \
+    kdMemOpsCompSpnU32((void*)(ptr), (kd_i64_t)(len), (void*)(keys), (kd_i64_t)(keys_len))
+  #define kdMemOpsCompSpnI64(ptr, len, keys, keys_len)                                                                 \
+    kdMemOpsCompSpnU64((void*)(ptr), (kd_i64_t)(len), (void*)(keys), (kd_i64_t)(keys_len))
+  #define kdMemOpsCompSpnImin(ptr, len, keys, keys_len)                                                                \
+    kdMemOpsCompSpnUmin((void*)(ptr), (kd_i64_t)(len), (void*)(keys), (kd_i64_t)(keys_len))
+  #define kdMemOpsCompSpnImax(ptr, len, keys, keys_len)                                                                \
+    kdMemOpsCompSpnUmax((void*)(ptr), (kd_i64_t)(len), (void*)(keys), (kd_i64_t)(keys_len))
+#else /* !defined KD_ARCH_64BIT_INT */
+  #define kdMemOpsCompSpnI16(ptr, len, keys, keys_len)                                                                 \
+    kdMemOpsCompSpnU16((void*)(ptr), (kd_i32_t)(len), (void*)(keys), (kd_i32_t)(keys_len))
+  #define kdMemOpsCompSpnI32(ptr, len, keys, keys_len)                                                                 \
+    kdMemOpsCompSpnU32((void*)(ptr), (kd_i32_t)(len), (void*)(keys), (kd_i32_t)(keys_len))
+  #define kdMemOpsCompSpnImin(ptr, len, keys, keys_len)                                                                \
+    kdMemOpsCompSpnUmin((void*)(ptr), (kd_i32_t)(len), (void*)(keys), (kd_i32_t)(keys_len))
+  #define kdMemOpsCompSpnImax(ptr, len, keys, keys_len)                                                                \
+    kdMemOpsCompSpnUmax((void*)(ptr), (kd_i32_t)(len), (void*)(keys), (kd_i32_t)(keys_len))
+#endif /* KD_ARCH_64BIT_INT */
 
 
-#define kdMemOpsCompSpnIndexI8(ptr, len, keys, keys_len)                                                               \
-  kdMemOpsCompSpnIndex((void*)(ptr), (kd_i64_t)(len), (void*)(keys), (kd_i64_t)(keys_len))
-#define kdMemOpsCompSpnIndexU8(ptr, len, keys, keys_len)                                                               \
-  kdMemOpsCompSpnIndex((void*)(ptr), (kd_i64_t)(len), (void*)(keys), (kd_i64_t)(keys_len))
-#define kdMemOpsCompSpnIndexByte(ptr, len, keys, keys_len)                                                             \
-  kdMemOpsCompSpnIndex((void*)(ptr), (kd_i64_t)(len), (void*)(keys), (kd_i64_t)(keys_len))
-#define kdMemOpsCompSpnIndexI16(ptr, len, keys, keys_len)                                                              \
-  kdMemOpsCompSpnIndexU16((void*)(ptr), (kd_i64_t)(len), (void*)(keys), (kd_i64_t)(keys_len))
-#define kdMemOpsCompSpnIndexI32(ptr, len, keys, keys_len)                                                              \
-  kdMemOpsCompSpnIndexU32((void*)(ptr), (kd_i64_t)(len), (void*)(keys), (kd_i64_t)(keys_len))
-#define kdMemOpsCompSpnIndexI64(ptr, len, keys, keys_len)                                                              \
-  kdMemOpsCompSpnIndexU64((void*)(ptr), (kd_i64_t)(len), (void*)(keys), (kd_i64_t)(keys_len))
-#define kdMemOpsCompSpnIndexImin(ptr, len, keys, keys_len)                                                             \
-  kdMemOpsCompSpnIndexUmin((void*)(ptr), (kd_i64_t)(len), (void*)(keys), (kd_i64_t)(keys_len))
-#define kdMemOpsCompSpnIndexImax(ptr, len, keys, keys_len)                                                             \
-  kdMemOpsCompSpnIndexUmax((void*)(ptr), (kd_i64_t)(len), (void*)(keys), (kd_i64_t)(keys_len))
+#if defined KD_ARCH_64BIT_INT
+  #define kdMemOpsCompSpnIndexI8(ptr, len, keys, keys_len)                                                             \
+    kdMemOpsCompSpnIndex((void*)(ptr), (kd_i64_t)(len), (void*)(keys), (kd_i64_t)(keys_len))
+  #define kdMemOpsCompSpnIndexU8(ptr, len, keys, keys_len)                                                             \
+    kdMemOpsCompSpnIndex((void*)(ptr), (kd_i64_t)(len), (void*)(keys), (kd_i64_t)(keys_len))
+  #define kdMemOpsCompSpnIndexByte(ptr, len, keys, keys_len)                                                           \
+    kdMemOpsCompSpnIndex((void*)(ptr), (kd_i64_t)(len), (void*)(keys), (kd_i64_t)(keys_len))
+  #define kdMemOpsCompSpnIndexI16(ptr, len, keys, keys_len)                                                            \
+    kdMemOpsCompSpnIndexU16((void*)(ptr), (kd_i64_t)(len), (void*)(keys), (kd_i64_t)(keys_len))
+  #define kdMemOpsCompSpnIndexI32(ptr, len, keys, keys_len)                                                            \
+    kdMemOpsCompSpnIndexU32((void*)(ptr), (kd_i64_t)(len), (void*)(keys), (kd_i64_t)(keys_len))
+  #define kdMemOpsCompSpnIndexI64(ptr, len, keys, keys_len)                                                            \
+    kdMemOpsCompSpnIndexU64((void*)(ptr), (kd_i64_t)(len), (void*)(keys), (kd_i64_t)(keys_len))
+  #define kdMemOpsCompSpnIndexImin(ptr, len, keys, keys_len)                                                           \
+    kdMemOpsCompSpnIndexUmin((void*)(ptr), (kd_i64_t)(len), (void*)(keys), (kd_i64_t)(keys_len))
+  #define kdMemOpsCompSpnIndexImax(ptr, len, keys, keys_len)                                                           \
+    kdMemOpsCompSpnIndexUmax((void*)(ptr), (kd_i64_t)(len), (void*)(keys), (kd_i64_t)(keys_len))
+#else /* !defined KD_ARCH_64BIT_INT */
+  #define kdMemOpsCompSpnIndexI8(ptr, len, keys, keys_len)                                                             \
+    kdMemOpsCompSpnIndex((void*)(ptr), (kd_i32_t)(len), (void*)(keys), (kd_i32_t)(keys_len))
+  #define kdMemOpsCompSpnIndexU8(ptr, len, keys, keys_len)                                                             \
+    kdMemOpsCompSpnIndex((void*)(ptr), (kd_i32_t)(len), (void*)(keys), (kd_i32_t)(keys_len))
+  #define kdMemOpsCompSpnIndexByte(ptr, len, keys, keys_len)                                                           \
+    kdMemOpsCompSpnIndex((void*)(ptr), (kd_i32_t)(len), (void*)(keys), (kd_i32_t)(keys_len))
+  #define kdMemOpsCompSpnIndexI16(ptr, len, keys, keys_len)                                                            \
+    kdMemOpsCompSpnIndexU16((void*)(ptr), (kd_i32_t)(len), (void*)(keys), (kd_i32_t)(keys_len))
+  #define kdMemOpsCompSpnIndexI32(ptr, len, keys, keys_len)                                                            \
+    kdMemOpsCompSpnIndexU32((void*)(ptr), (kd_i32_t)(len), (void*)(keys), (kd_i32_t)(keys_len))
+  #define kdMemOpsCompSpnIndexImin(ptr, len, keys, keys_len)                                                           \
+    kdMemOpsCompSpnIndexUmin((void*)(ptr), (kd_i32_t)(len), (void*)(keys), (kd_i32_t)(keys_len))
+  #define kdMemOpsCompSpnIndexImax(ptr, len, keys, keys_len)                                                           \
+    kdMemOpsCompSpnIndexUmax((void*)(ptr), (kd_i32_t)(len), (void*)(keys), (kd_i32_t)(keys_len))
+#endif /* KD_ARCH_64BIT_INT */
 
 
-#define kdMemOpsSpn(ptr, len, keys, keys_len)                                                                          \
-  (kd_i64_t) kdGenMemOpsBytesSpn((void*)(ptr), (kd_usize_t)(len), (void*)(keys), (kd_usize_t)(keys_len))
-#define kdMemOpsSpnByte(ptr, len, keys, keys_len) (kd_i64_t)(kdMemOpsSpn(ptr, len, keys, keys_len))
-#define kdMemOpsSpnI8(ptr, len, keys, keys_len)   (kd_i64_t)(kdMemOpsSpn(ptr, len, keys, keys_len))
-#define kdMemOpsSpnU8(ptr, len, keys, keys_len)   (kd_i64_t)(kdMemOpsSpn(ptr, len, keys, keys_len))
-#define kdMemOpsSpnI16(ptr, len, keys, keys_len)                                                                       \
-  (kd_i64_t)(kdMemOpsSpn(ptr, (len) * KD_SZ_I16, keys, (keys_len) * KD_SZ_I16) / KD_SZ_I16)
-#define kdMemOpsSpnU16(ptr, len, keys, keys_len)                                                                       \
-  (kd_i64_t)(kdMemOpsSpn(ptr, (len) * KD_SZ_U16, keys, (keys_len) * KD_SZ_U16) / KD_SZ_U16)
-#define kdMemOpsSpnI32(ptr, len, keys, keys_len)                                                                       \
-  (kd_i64_t)(kdMemOpsSpn(ptr, (len) * KD_SZ_I32, keys, (keys_len) * KD_SZ_I32) / KD_SZ_I32)
-#define kdMemOpsSpnU32(ptr, len, keys, keys_len)                                                                       \
-  (kd_i64_t)(kdMemOpsSpn(ptr, (len) * KD_SZ_U32, keys, (keys_len) * KD_SZ_U32) / KD_SZ_U32)
-#define kdMemOpsSpnI64(ptr, len, keys, keys_len)                                                                       \
-  (kd_i64_t)(kdMemOpsSpn(ptr, (len) * KD_SZ_I64, keys, (keys_len) * KD_SZ_I64) / KD_SZ_I64)
-#define kdMemOpsSpnU64(ptr, len, keys, keys_len)                                                                       \
-  (kd_i64_t)(kdMemOpsSpn(ptr, (len) * KD_SZ_U64, keys, (keys_len) * KD_SZ_U64) / KD_SZ_U64)
-#define kdMemOpsSpnImin(ptr, len, keys, keys_len)                                                                      \
-  (kd_i64_t)(kdMemOpsSpn(ptr, (len) * KD_SZ_IMIN, keys, (keys_len) * KD_SZ_IMIN) / KD_SZ_IMIN)
-#define kdMemOpsSpnUmin(ptr, len, keys, keys_len)                                                                      \
-  (kd_i64_t)(kdMemOpsSpn(ptr, (len) * KD_SZ_UMIN, keys, (keys_len) * KD_SZ_UMIN) / KD_SZ_UMIN)
-#define kdMemOpsSpnImax(ptr, len, keys, keys_len)                                                                      \
-  (kd_i64_t)(kdMemOpsSpn(ptr, (len) * KD_SZ_IMAX, keys, (keys_len) * KD_SZ_IMAX) / KD_SZ_IMAX)
-#define kdMemOpsSpnUmax(ptr, len, keys, keys_len)                                                                      \
-  (kd_i64_t)(kdMemOpsSpn(ptr, (len) * KD_SZ_UMAX, keys, (keys_len) * KD_SZ_UMAX) / KD_SZ_UMAX)
-#define kdMemOpsSpnUsize(ptr, len, keys, keys_len)                                                                     \
-  (kd_i64_t)(kdMemOpsSpn(ptr, (len) * KD_SZ_USIZE, keys, (keys_len) * KD_SZ_USIZE) / KD_SZ_USIZE)
-#define kdMemOpsSpnChr(ptr, len, keys, keys_len)                                                                       \
-  (kd_i64_t)(kdMemOpsSpn(ptr, (len) * KD_SZ_CHR, keys, (keys_len) * KD_SZ_CHR) / KD_SZ_CHR)
-#define kdMemOpsSpnBool(ptr, len, keys, keys_len)                                                                      \
-  (kd_i64_t)(kdMemOpsSpn(ptr, (len) * KD_SZ_BOOL, keys, (keys_len) * KD_SZ_BOOL) / KD_SZ_BOOL)
-#define kdMemOpsSpnPtr(ptr, len, keys, keys_len)                                                                       \
-  (kd_i64_t)(kdMemOpsSpn(ptr, (len) * KD_SZ_PTR, keys, (keys_len) * KD_SZ_PTR) / KD_SZ_PTR)
+#if defined KD_ARCH_64BIT_INT
+  #define kdMemOpsSpn(ptr, len, keys, keys_len)                                                                        \
+    (kd_i64_t) kdGenMemOpsBytesSpn((void*)(ptr), (kd_usize_t)(len), (void*)(keys), (kd_usize_t)(keys_len))
+  #define kdMemOpsSpnByte(ptr, len, keys, keys_len) (kd_i64_t)(kdMemOpsSpn(ptr, len, keys, keys_len))
+  #define kdMemOpsSpnI8(ptr, len, keys, keys_len)   (kd_i64_t)(kdMemOpsSpn(ptr, len, keys, keys_len))
+  #define kdMemOpsSpnU8(ptr, len, keys, keys_len)   (kd_i64_t)(kdMemOpsSpn(ptr, len, keys, keys_len))
+  #define kdMemOpsSpnI16(ptr, len, keys, keys_len)                                                                     \
+    (kd_i64_t)(kdMemOpsSpn(ptr, (len) * KD_SZ_I16, keys, (keys_len) * KD_SZ_I16) / KD_SZ_I16)
+  #define kdMemOpsSpnU16(ptr, len, keys, keys_len)                                                                     \
+    (kd_i64_t)(kdMemOpsSpn(ptr, (len) * KD_SZ_U16, keys, (keys_len) * KD_SZ_U16) / KD_SZ_U16)
+  #define kdMemOpsSpnI32(ptr, len, keys, keys_len)                                                                     \
+    (kd_i64_t)(kdMemOpsSpn(ptr, (len) * KD_SZ_I32, keys, (keys_len) * KD_SZ_I32) / KD_SZ_I32)
+  #define kdMemOpsSpnU32(ptr, len, keys, keys_len)                                                                     \
+    (kd_i64_t)(kdMemOpsSpn(ptr, (len) * KD_SZ_U32, keys, (keys_len) * KD_SZ_U32) / KD_SZ_U32)
+  #define kdMemOpsSpnI64(ptr, len, keys, keys_len)                                                                     \
+    (kd_i64_t)(kdMemOpsSpn(ptr, (len) * KD_SZ_I64, keys, (keys_len) * KD_SZ_I64) / KD_SZ_I64)
+  #define kdMemOpsSpnU64(ptr, len, keys, keys_len)                                                                     \
+    (kd_i64_t)(kdMemOpsSpn(ptr, (len) * KD_SZ_U64, keys, (keys_len) * KD_SZ_U64) / KD_SZ_U64)
+  #define kdMemOpsSpnImin(ptr, len, keys, keys_len)                                                                    \
+    (kd_i64_t)(kdMemOpsSpn(ptr, (len) * KD_SZ_IMIN, keys, (keys_len) * KD_SZ_IMIN) / KD_SZ_IMIN)
+  #define kdMemOpsSpnUmin(ptr, len, keys, keys_len)                                                                    \
+    (kd_i64_t)(kdMemOpsSpn(ptr, (len) * KD_SZ_UMIN, keys, (keys_len) * KD_SZ_UMIN) / KD_SZ_UMIN)
+  #define kdMemOpsSpnImax(ptr, len, keys, keys_len)                                                                    \
+    (kd_i64_t)(kdMemOpsSpn(ptr, (len) * KD_SZ_IMAX, keys, (keys_len) * KD_SZ_IMAX) / KD_SZ_IMAX)
+  #define kdMemOpsSpnUmax(ptr, len, keys, keys_len)                                                                    \
+    (kd_i64_t)(kdMemOpsSpn(ptr, (len) * KD_SZ_UMAX, keys, (keys_len) * KD_SZ_UMAX) / KD_SZ_UMAX)
+  #define kdMemOpsSpnUsize(ptr, len, keys, keys_len)                                                                   \
+    (kd_i64_t)(kdMemOpsSpn(ptr, (len) * KD_SZ_USIZE, keys, (keys_len) * KD_SZ_USIZE) / KD_SZ_USIZE)
+  #define kdMemOpsSpnChr(ptr, len, keys, keys_len)                                                                     \
+    (kd_i64_t)(kdMemOpsSpn(ptr, (len) * KD_SZ_CHR, keys, (keys_len) * KD_SZ_CHR) / KD_SZ_CHR)
+  #define kdMemOpsSpnBool(ptr, len, keys, keys_len)                                                                    \
+    (kd_i64_t)(kdMemOpsSpn(ptr, (len) * KD_SZ_BOOL, keys, (keys_len) * KD_SZ_BOOL) / KD_SZ_BOOL)
+  #define kdMemOpsSpnPtr(ptr, len, keys, keys_len)                                                                     \
+    (kd_i64_t)(kdMemOpsSpn(ptr, (len) * KD_SZ_PTR, keys, (keys_len) * KD_SZ_PTR) / KD_SZ_PTR)
+#else /* !defined KD_ARCH_64BIT_INT */
+  #define kdMemOpsSpn(ptr, len, keys, keys_len)                                                                        \
+    (kd_i32_t) kdGenMemOpsBytesSpn((void*)(ptr), (kd_usize_t)(len), (void*)(keys), (kd_usize_t)(keys_len))
+  #define kdMemOpsSpnByte(ptr, len, keys, keys_len) (kd_i32_t)(kdMemOpsSpn(ptr, len, keys, keys_len))
+  #define kdMemOpsSpnI8(ptr, len, keys, keys_len)   (kd_i32_t)(kdMemOpsSpn(ptr, len, keys, keys_len))
+  #define kdMemOpsSpnU8(ptr, len, keys, keys_len)   (kd_i32_t)(kdMemOpsSpn(ptr, len, keys, keys_len))
+  #define kdMemOpsSpnI16(ptr, len, keys, keys_len)                                                                     \
+    (kd_i32_t)(kdMemOpsSpn(ptr, (len) * KD_SZ_I16, keys, (keys_len) * KD_SZ_I16) / KD_SZ_I16)
+  #define kdMemOpsSpnU16(ptr, len, keys, keys_len)                                                                     \
+    (kd_i32_t)(kdMemOpsSpn(ptr, (len) * KD_SZ_U16, keys, (keys_len) * KD_SZ_U16) / KD_SZ_U16)
+  #define kdMemOpsSpnI32(ptr, len, keys, keys_len)                                                                     \
+    (kd_i32_t)(kdMemOpsSpn(ptr, (len) * KD_SZ_I32, keys, (keys_len) * KD_SZ_I32) / KD_SZ_I32)
+  #define kdMemOpsSpnU32(ptr, len, keys, keys_len)                                                                     \
+    (kd_i32_t)(kdMemOpsSpn(ptr, (len) * KD_SZ_U32, keys, (keys_len) * KD_SZ_U32) / KD_SZ_U32)
+  #define kdMemOpsSpnImin(ptr, len, keys, keys_len)                                                                    \
+    (kd_i32_t)(kdMemOpsSpn(ptr, (len) * KD_SZ_IMIN, keys, (keys_len) * KD_SZ_IMIN) / KD_SZ_IMIN)
+  #define kdMemOpsSpnUmin(ptr, len, keys, keys_len)                                                                    \
+    (kd_i32_t)(kdMemOpsSpn(ptr, (len) * KD_SZ_UMIN, keys, (keys_len) * KD_SZ_UMIN) / KD_SZ_UMIN)
+  #define kdMemOpsSpnImax(ptr, len, keys, keys_len)                                                                    \
+    (kd_i32_t)(kdMemOpsSpn(ptr, (len) * KD_SZ_IMAX, keys, (keys_len) * KD_SZ_IMAX) / KD_SZ_IMAX)
+  #define kdMemOpsSpnUmax(ptr, len, keys, keys_len)                                                                    \
+    (kd_i32_t)(kdMemOpsSpn(ptr, (len) * KD_SZ_UMAX, keys, (keys_len) * KD_SZ_UMAX) / KD_SZ_UMAX)
+  #define kdMemOpsSpnUsize(ptr, len, keys, keys_len)                                                                   \
+    (kd_i32_t)(kdMemOpsSpn(ptr, (len) * KD_SZ_USIZE, keys, (keys_len) * KD_SZ_USIZE) / KD_SZ_USIZE)
+  #define kdMemOpsSpnChr(ptr, len, keys, keys_len)                                                                     \
+    (kd_i32_t)(kdMemOpsSpn(ptr, (len) * KD_SZ_CHR, keys, (keys_len) * KD_SZ_CHR) / KD_SZ_CHR)
+  #define kdMemOpsSpnBool(ptr, len, keys, keys_len)                                                                    \
+    (kd_i32_t)(kdMemOpsSpn(ptr, (len) * KD_SZ_BOOL, keys, (keys_len) * KD_SZ_BOOL) / KD_SZ_BOOL)
+  #define kdMemOpsSpnPtr(ptr, len, keys, keys_len)                                                                     \
+    (kd_i32_t)(kdMemOpsSpn(ptr, (len) * KD_SZ_PTR, keys, (keys_len) * KD_SZ_PTR) / KD_SZ_PTR)
+#endif /* KD_ARCH_64BIT_INT */
 
 
-#if defined KD_USE_SIMPLIFIED_TYPES
-
-  #if defined KD_ARCH_64BIT_INT
-KDAPI(bool) kdMemOpsSetU16(void* ptr, i64 len, u16 val);
-KDAPI(bool) kdMemOpsSetU32(void* ptr, i64 len, u32 val);
-KDAPI(bool) kdMemOpsSetU64(void* ptr, i64 len, u64 val);
-KDAPI(bool) kdMemOpsSetUmin(void* ptr, i64 len, umin val);
-KDAPI(bool) kdMemOpsSetUmax(void* ptr, i64 len, umax val);
-KDAPI(bool) kdMemOpsSetUsize(void* ptr, i64 len, usize val);
-KDAPI(bool) kdMemOpsSetChr(void* ptr, i64 len, chr val);
-KDAPI(bool) kdMemOpsSetBool(void* ptr, i64 len, bool val);
-KDAPI(bool) kdMemOpsSetPtr(void* ptr, i64 len, void* val);
-
-KDAPI(void*) kdMemOpsFindU16(void* ptr, i64 len, u16 item);
-KDAPI(void*) kdMemOpsFindU32(void* ptr, i64 len, u32 item);
-KDAPI(void*) kdMemOpsFindU64(void* ptr, i64 len, u64 item);
-KDAPI(void*) kdMemOpsFindUmin(void* ptr, i64 len, umin item);
-KDAPI(void*) kdMemOpsFindUmax(void* ptr, i64 len, umax item);
-KDAPI(void*) kdMemOpsFindUsize(void* ptr, i64 len, usize item);
-KDAPI(void*) kdMemOpsFindChr(void* ptr, i64 len, chr item);
-KDAPI(void*) kdMemOpsFindBool(void* ptr, i64 len, bool item);
-KDAPI(void*) kdMemOpsFindPtr(void* ptr, i64 len, void* item);
-
-KDAPI(i64) kdMemOpsFindIndex(void* ptr, i64 len, byte item);
-KDAPI(i64) kdMemOpsFindIndexU16(void* ptr, i64 len, u16 item);
-KDAPI(i64) kdMemOpsFindIndexU32(void* ptr, i64 len, u32 item);
-KDAPI(i64) kdMemOpsFindIndexU64(void* ptr, i64 len, u64 item);
-KDAPI(i64) kdMemOpsFindIndexUmin(void* ptr, i64 len, umin item);
-KDAPI(i64) kdMemOpsFindIndexUmax(void* ptr, i64 len, umax item);
-KDAPI(i64) kdMemOpsFindIndexUsize(void* ptr, i64 len, usize item);
-KDAPI(i64) kdMemOpsFindIndexChr(void* ptr, i64 len, chr item);
-KDAPI(i64) kdMemOpsFindIndexBool(void* ptr, i64 len, bool item);
-KDAPI(i64) kdMemOpsFindIndexPtr(void* ptr, i64 len, void* item);
-
-KDAPI(void*) kdMemOpsCompSpnU16(void* ptr, i64 len, void* keys, i64 keys_len);
-KDAPI(void*) kdMemOpsCompSpnU32(void* ptr, i64 len, void* keys, i64 keys_len);
-KDAPI(void*) kdMemOpsCompSpnU64(void* ptr, i64 len, void* keys, i64 keys_len);
-KDAPI(void*) kdMemOpsCompSpnUmin(void* ptr, i64 len, void* keys, i64 keys_len);
-KDAPI(void*) kdMemOpsCompSpnUmax(void* ptr, i64 len, void* keys, i64 keys_len);
-KDAPI(void*) kdMemOpsCompSpnUsize(void* ptr, i64 len, void* keys, i64 keys_len);
-KDAPI(void*) kdMemOpsCompSpnChr(void* ptr, i64 len, void* keys, i64 keys_len);
-KDAPI(void*) kdMemOpsCompSpnBool(void* ptr, i64 len, void* keys, i64 keys_len);
-KDAPI(void*) kdMemOpsCompSpnPtr(void* ptr, i64 len, void* keys, i64 keys_len);
-
-KDAPI(i64) kdMemOpsCompSpnIndex(void* ptr, i64 len, void* keys, i64 keys_len);
-KDAPI(i64) kdMemOpsCompSpnIndexU16(void* ptr, i64 len, void* keys, i64 keys_len);
-KDAPI(i64) kdMemOpsCompSpnIndexU32(void* ptr, i64 len, void* keys, i64 keys_len);
-KDAPI(i64) kdMemOpsCompSpnIndexU64(void* ptr, i64 len, void* keys, i64 keys_len);
-KDAPI(i64) kdMemOpsCompSpnIndexUmin(void* ptr, i64 len, void* keys, i64 keys_len);
-KDAPI(i64) kdMemOpsCompSpnIndexUmax(void* ptr, i64 len, void* keys, i64 keys_len);
-KDAPI(i64) kdMemOpsCompSpnIndexUsize(void* ptr, i64 len, void* keys, i64 keys_len);
-KDAPI(i64) kdMemOpsCompSpnIndexChr(void* ptr, i64 len, void* keys, i64 keys_len);
-KDAPI(i64) kdMemOpsCompSpnIndexBool(void* ptr, i64 len, void* keys, i64 keys_len);
-KDAPI(i64) kdMemOpsCompSpnIndexPtr(void* ptr, i64 len, void* keys, i64 keys_len);
-  #else  /* !defined KD_ARCH_64BIT_INT */
-KDAPI(bool) kdMemOpsSetU16(void* ptr, i32 len, u16 val);
-KDAPI(bool) kdMemOpsSetU32(void* ptr, i32 len, u32 val);
-KDAPI(bool) kdMemOpsSetUmin(void* ptr, i32 len, umin val);
-KDAPI(bool) kdMemOpsSetUmax(void* ptr, i32 len, umax val);
-KDAPI(bool) kdMemOpsSetUsize(void* ptr, i32 len, usize val);
-KDAPI(bool) kdMemOpsSetChr(void* ptr, i32 len, chr val);
-KDAPI(bool) kdMemOpsSetBool(void* ptr, i32 len, bool val);
-KDAPI(bool) kdMemOpsSetPtr(void* ptr, i32 len, void* val);
-
-KDAPI(void*) kdMemOpsFindU16(void* ptr, i32 len, u16 item);
-KDAPI(void*) kdMemOpsFindU32(void* ptr, i32 len, u32 item);
-KDAPI(void*) kdMemOpsFindUmin(void* ptr, i32 len, umin item);
-KDAPI(void*) kdMemOpsFindUmax(void* ptr, i32 len, umax item);
-KDAPI(void*) kdMemOpsFindUsize(void* ptr, i32 len, usize item);
-KDAPI(void*) kdMemOpsFindChr(void* ptr, i32 len, chr item);
-KDAPI(void*) kdMemOpsFindBool(void* ptr, i32 len, bool item);
-KDAPI(void*) kdMemOpsFindPtr(void* ptr, i32 len, void* item);
-
-KDAPI(i32) kdMemOpsFindIndex(void* ptr, i32 len, byte item);
-KDAPI(i32) kdMemOpsFindIndexU16(void* ptr, i32 len, u16 item);
-KDAPI(i32) kdMemOpsFindIndexU32(void* ptr, i32 len, u32 item);
-KDAPI(i32) kdMemOpsFindIndexUmin(void* ptr, i32 len, umin item);
-KDAPI(i32) kdMemOpsFindIndexUmax(void* ptr, i32 len, umax item);
-KDAPI(i32) kdMemOpsFindIndexUsize(void* ptr, i32 len, usize item);
-KDAPI(i32) kdMemOpsFindIndexChr(void* ptr, i32 len, chr item);
-KDAPI(i32) kdMemOpsFindIndexBool(void* ptr, i32 len, bool item);
-KDAPI(i32) kdMemOpsFindIndexPtr(void* ptr, i32 len, void* item);
-
-KDAPI(void*) kdMemOpsCompSpnU16(void* ptr, i32 len, void* keys, i32 keys_len);
-KDAPI(void*) kdMemOpsCompSpnU32(void* ptr, i32 len, void* keys, i32 keys_len);
-KDAPI(void*) kdMemOpsCompSpnUmin(void* ptr, i32 len, void* keys, i32 keys_len);
-KDAPI(void*) kdMemOpsCompSpnUmax(void* ptr, i32 len, void* keys, i32 keys_len);
-KDAPI(void*) kdMemOpsCompSpnUsize(void* ptr, i32 len, void* keys, i32 keys_len);
-KDAPI(void*) kdMemOpsCompSpnChr(void* ptr, i32 len, void* keys, i32 keys_len);
-KDAPI(void*) kdMemOpsCompSpnBool(void* ptr, i32 len, void* keys, i32 keys_len);
-KDAPI(void*) kdMemOpsCompSpnPtr(void* ptr, i32 len, void* keys, i32 keys_len);
-
-KDAPI(i32) kdMemOpsCompSpnIndex(void* ptr, i32 len, void* keys, i32 keys_len);
-KDAPI(i32) kdMemOpsCompSpnIndexU16(void* ptr, i32 len, void* keys, i32 keys_len);
-KDAPI(i32) kdMemOpsCompSpnIndexU32(void* ptr, i32 len, void* keys, i32 keys_len);
-KDAPI(i32) kdMemOpsCompSpnIndexUmin(void* ptr, i32 len, void* keys, i32 keys_len);
-KDAPI(i32) kdMemOpsCompSpnIndexUmax(void* ptr, i32 len, void* keys, i32 keys_len);
-KDAPI(i32) kdMemOpsCompSpnIndexUsize(void* ptr, i32 len, void* keys, i32 keys_len);
-KDAPI(i32) kdMemOpsCompSpnIndexChr(void* ptr, i32 len, void* keys, i32 keys_len);
-KDAPI(i32) kdMemOpsCompSpnIndexBool(void* ptr, i32 len, void* keys, i32 keys_len);
-KDAPI(i32) kdMemOpsCompSpnIndexPtr(void* ptr, i32 len, void* keys, i32 keys_len);
-  #endif /* KD_ARCH_64BIT_INT */
-
-#else
-
-  #if defined KD_ARCH_64BIT_INT
+#if defined KD_ARCH_64BIT_INT
 KDAPI(kd_bool_t) kdMemOpsSetU16(void* ptr, kd_i64_t len, kd_u16_t val);
 KDAPI(kd_bool_t) kdMemOpsSetU32(void* ptr, kd_i64_t len, kd_u32_t val);
 KDAPI(kd_bool_t) kdMemOpsSetU64(void* ptr, kd_i64_t len, kd_u64_t val);
@@ -404,7 +391,7 @@ KDAPI(kd_i64_t) kdMemOpsCompSpnIndexUsize(void* ptr, kd_i64_t len, void* keys, k
 KDAPI(kd_i64_t) kdMemOpsCompSpnIndexChr(void* ptr, kd_i64_t len, void* keys, kd_i64_t keys_len);
 KDAPI(kd_i64_t) kdMemOpsCompSpnIndexBool(void* ptr, kd_i64_t len, void* keys, kd_i64_t keys_len);
 KDAPI(kd_i64_t) kdMemOpsCompSpnIndexPtr(void* ptr, kd_i64_t len, void* keys, kd_i64_t keys_len);
-  #else  /* !defined KD_ARCH_64BIT_INT */
+#else  /* !defined KD_ARCH_64BIT_INT */
 KDAPI(kd_bool_t) kdMemOpsSetU16(void* ptr, kd_i32_t len, kd_u16_t val);
 KDAPI(kd_bool_t) kdMemOpsSetU32(void* ptr, kd_i32_t len, kd_u32_t val);
 KDAPI(kd_bool_t) kdMemOpsSetUmin(void* ptr, kd_i32_t len, kd_umin_t val);
@@ -451,9 +438,7 @@ KDAPI(kd_i32_t) kdMemOpsCompSpnIndexUsize(void* ptr, kd_i32_t len, void* keys, k
 KDAPI(kd_i32_t) kdMemOpsCompSpnIndexChr(void* ptr, kd_i32_t len, void* keys, kd_i32_t keys_len);
 KDAPI(kd_i32_t) kdMemOpsCompSpnIndexBool(void* ptr, kd_i32_t len, void* keys, kd_i32_t keys_len);
 KDAPI(kd_i32_t) kdMemOpsCompSpnIndexPtr(void* ptr, kd_i32_t len, void* keys, kd_i32_t keys_len);
-  #endif /* KD_ARCH_64BIT_INT */
-
-#endif /* KD_USE_SIMPLIFIED_TYPES */
+#endif /* KD_ARCH_64BIT_INT */
 
 
 KD_EXTERN_END

@@ -41,7 +41,180 @@
 #define KD_BUILDING_LIB 1
 #include "kd/defs.h"
 #include "kd/types/fw.h"
+#include "_internal/common.h"
 #include "_internal/gen_mem_ops_sn.h"
+
+
+void
+kdi_GenMemOpsSwapBlocks_S8(kd_u8_t* ptr, kd_usize_t idx1, kd_usize_t idx2)
+{
+  kd_u8_t* ptr1 = ptr + idx1;
+  kd_u8_t  temp = *ptr1;
+
+  ptr += idx2;
+  *ptr1 = *ptr;
+  *ptr  = temp;
+}
+
+
+void
+kdi_GenMemOpsSwapBlocks_S16(kd_u16_t* ptr, kd_usize_t idx1, kd_usize_t idx2)
+{
+  kd_u16_t* ptr1 = (kd_u16_t*)((kd_u8_t*)ptr + idx1);
+  kd_u16_t  temp = *ptr1;
+
+  ptr   = (kd_u16_t*)((kd_u8_t*)ptr + idx2);
+  *ptr1 = *ptr;
+  *ptr  = temp;
+}
+
+
+void
+kdi_GenMemOpsSwapBlocks_S32(kd_u32_t* ptr, kd_usize_t idx1, kd_usize_t idx2)
+{
+  kd_u32_t* ptr1 = (kd_u32_t*)((kd_u8_t*)ptr + idx1);
+  kd_u32_t  temp = *ptr1;
+
+  ptr   = (kd_u32_t*)((kd_u8_t*)ptr + idx2);
+  *ptr1 = *ptr;
+  *ptr  = temp;
+}
+
+
+#if defined KD_ARCH_64BIT_INT
+void
+kdi_GenMemOpsSwapBlocks_S64(kd_u64_t* ptr, kd_usize_t idx1, kd_usize_t idx2)
+{
+  kd_u64_t* ptr1 = (kd_u64_t*)((kd_u8_t*)ptr + idx1);
+  kd_u64_t  temp = *ptr1;
+
+  ptr   = (kd_u64_t*)((kd_u8_t*)ptr + idx2);
+  *ptr1 = *ptr;
+  *ptr  = temp;
+}
+#endif
+
+
+void
+kdi_GenMemOpsSwapBlocks_Sn(void* ptr, kd_usize_t block_sz, kd_usize_t idx1, kd_usize_t idx2)
+{
+  kd_u8_t* ptr1 = (kd_byte_t*)ptr + idx1;
+  kd_u8_t* ptr2 = (kd_byte_t*)ptr + idx2;
+  kd_u8_t  temp;
+
+  while (block_sz--)
+  {
+    temp  = *ptr1;
+    *ptr1 = *ptr2;
+    *ptr2 = temp;
+
+    ++ptr1;
+    ++ptr2;
+  }
+}
+
+
+void
+kdi_GenMemOpsReverseBlocks_S8(kd_u8_t* ptr, kd_usize_t sz)
+{
+  kd_u8_t* end = ptr + sz;
+  kd_u8_t  temp;
+
+  while (sz-- && ptr < end)
+  {
+    --end;
+
+    temp = *ptr;
+    *ptr = *end;
+    *end = temp;
+
+    ++ptr;
+  }
+}
+
+
+void
+kdi_GenMemOpsReverseBlocks_S16(kd_u16_t* ptr, kd_usize_t sz)
+{
+  kd_u16_t* end = (kd_u16_t*)((kd_u8_t*)ptr + sz);
+  kd_u16_t  temp;
+
+  while (sz-- && ptr < end)
+  {
+    --end;
+
+    temp = *ptr;
+    *ptr = *end;
+    *end = temp;
+
+    ++ptr;
+  }
+}
+
+
+void
+kdi_GenMemOpsReverseBlocks_S32(kd_u32_t* ptr, kd_usize_t sz)
+{
+  kd_u32_t* end = (kd_u32_t*)((kd_u8_t*)ptr + sz);
+  kd_u32_t  temp;
+
+  while (sz-- && ptr < end)
+  {
+    --end;
+
+    temp = *ptr;
+    *ptr = *end;
+    *end = temp;
+
+    ++ptr;
+  }
+}
+
+
+#if defined KD_ARCH_64BIT_INT
+void
+kdi_GenMemOpsReverseBlocks_S64(kd_u64_t* ptr, kd_usize_t sz)
+{
+  kd_u64_t* end = (kd_u64_t*)((kd_u8_t*)ptr + sz);
+  kd_u64_t  temp;
+
+  while (sz-- && ptr < end)
+  {
+    --end;
+
+    temp = *ptr;
+    *ptr = *end;
+    *end = temp;
+
+    ++ptr;
+  }
+}
+#endif
+
+
+void
+kdi_GenMemOpsReverseBlocks_Sn(void* ptr, kd_usize_t sz, kd_usize_t block_sz)
+{
+  kd_u8_t *  begin = ptr, *end = begin + sz, *temp_end, temp;
+  kd_usize_t temp_block_sz;
+
+  while (sz-- && begin < end)
+  {
+    end -= block_sz;
+    temp_end      = end;
+    temp_block_sz = block_sz;
+
+    while (temp_block_sz--)
+    {
+      temp      = *begin;
+      *begin    = *temp_end;
+      *temp_end = temp;
+
+      ++begin;
+      ++temp_end;
+    }
+  }
+}
 
 
 void
@@ -62,7 +235,7 @@ kdi_GenMemOpsSetBlocks_S16(kd_u16_t* ptr, kd_usize_t sz, kd_u16_t val)
   {
     *ptr = val;
     ++ptr;
-    sz -= sizeof(kd_u16_t);
+    sz -= KD_SZ_S16;
   }
 }
 
@@ -74,7 +247,7 @@ kdi_GenMemOpsSetBlocks_S32(kd_u32_t* ptr, kd_usize_t sz, kd_u32_t val)
   {
     *ptr = val;
     ++ptr;
-    sz -= sizeof(kd_u32_t);
+    sz -= KD_SZ_S32;
   }
 }
 
@@ -87,7 +260,7 @@ kdi_GenMemOpsSetBlocks_S64(kd_u64_t* ptr, kd_usize_t sz, kd_u64_t val)
   {
     *ptr = val;
     ++ptr;
-    sz -= sizeof(kd_u64_t);
+    sz -= KD_SZ_S64;
   }
 }
 #endif
@@ -157,8 +330,8 @@ kdi_GenMemOpsFindBlockWithIndex_S16(kd_usize_t* idx_ptr, kd_u16_t* ptr, kd_usize
     }
 
     ++ptr;
-    idx += sizeof(kd_u16_t);
-    sz -= sizeof(kd_u16_t);
+    idx += KD_SZ_S16;
+    sz -= KD_SZ_S16;
   }
 
   return kd_null;
@@ -182,8 +355,8 @@ kdi_GenMemOpsFindBlockWithIndex_S32(kd_usize_t* idx_ptr, kd_u32_t* ptr, kd_usize
     }
 
     ++ptr;
-    idx += sizeof(kd_u32_t);
-    sz -= sizeof(kd_u32_t);
+    idx += KD_SZ_S32;
+    sz -= KD_SZ_S32;
   }
 
   return kd_null;
@@ -208,32 +381,39 @@ kdi_GenMemOpsFindBlockWithIndex_S64(kd_usize_t* idx_ptr, kd_u64_t* ptr, kd_usize
     }
 
     ++ptr;
-    idx += sizeof(kd_u64_t);
-    sz -= sizeof(kd_u64_t);
+    idx += KD_SZ_S64;
+    sz -= KD_SZ_S64;
   }
 
   return kd_null;
 }
-
-
 #endif
+
+
 void*
 kdi_GenMemOpsFindBlockWithIndex_Sn(kd_usize_t* idx_ptr, void* ptr, kd_usize_t sz, void* block, kd_usize_t block_sz)
 {
-  kd_byte_t *src_ptr = ptr, *block_ptr;
-  kd_usize_t i, idx = 0, match_cnt;
+  kd_byte_t *src_ptr = ptr, *temp_src_ptr, *block_ptr;
+  kd_usize_t i, idx = 0, temp_sz, match_cnt;
 
   while (sz)
   {
-    block_ptr = block;
-    i         = 0;
-    match_cnt = 0;
+    temp_src_ptr = src_ptr;
+    block_ptr    = block;
+    temp_sz      = sz;
+    i            = block_sz;
+    match_cnt    = 0;
 
-    while (i-- && sz--)
+    while (i-- && temp_sz--)
     {
-      match_cnt += *src_ptr == *block_ptr;
-      ++src_ptr;
+      if (*temp_src_ptr != *block_ptr)
+      {
+        break;
+      }
+
+      ++temp_src_ptr;
       ++block_ptr;
+      ++match_cnt;
     }
 
     if (match_cnt == block_sz)
@@ -242,10 +422,12 @@ kdi_GenMemOpsFindBlockWithIndex_Sn(kd_usize_t* idx_ptr, void* ptr, kd_usize_t sz
       {
         *idx_ptr = idx;
       }
-      return src_ptr - block_sz;
+      return src_ptr;
     }
 
     idx += block_sz;
+    src_ptr += block_sz;
+    sz -= block_sz;
   }
 
   return kd_null;
@@ -253,20 +435,332 @@ kdi_GenMemOpsFindBlockWithIndex_Sn(kd_usize_t* idx_ptr, void* ptr, kd_usize_t sz
 
 
 void*
-kdi_GenMemOpsBlocksCompSpnWithIndex_S8(kd_usize_t* idx_ptr, kd_u8_t* ptr, kd_usize_t sz, kd_u8_t* keys,
-                                       kd_usize_t keys_sz)
+kdi_GenMemOpsFindLastBlockWithIndex_S8(kd_usize_t* idx_ptr, kd_u8_t* ptr, kd_usize_t sz, kd_u8_t val)
 {
-  kd_u8_t*   tmp_keys;
+  ptr += sz;
+
+  while (sz--)
+  {
+    --ptr;
+
+    if (*ptr == val)
+    {
+      if (idx_ptr)
+      {
+        *idx_ptr = sz;
+      }
+      return ptr;
+    }
+  }
+
+  return kd_null;
+}
+
+
+void*
+kdi_GenMemOpsFindLastBlockWithIndex_S16(kd_usize_t* idx_ptr, kd_u16_t* ptr, kd_usize_t sz, kd_u16_t val)
+{
+  ptr = (kd_u16_t*)((kd_byte_t*)ptr + sz);
+
+  while (sz)
+  {
+    --ptr;
+    sz -= KD_SZ_S16;
+
+    if (*ptr == val)
+    {
+      if (idx_ptr)
+      {
+        *idx_ptr = sz;
+      }
+      return ptr;
+    }
+  }
+
+  return kd_null;
+}
+
+
+void*
+kdi_GenMemOpsFindLastBlockWithIndex_S32(kd_usize_t* idx_ptr, kd_u32_t* ptr, kd_usize_t sz, kd_u32_t val)
+{
+  ptr += sz;
+
+  while (sz)
+  {
+    ptr = (kd_u32_t*)((kd_byte_t*)ptr + sz);
+    sz -= KD_SZ_S32;
+
+    if (*ptr == val)
+    {
+      if (idx_ptr)
+      {
+        *idx_ptr = sz;
+      }
+      return ptr;
+    }
+  }
+
+  return kd_null;
+}
+
+
+#if defined KD_ARCH_64BIT_INT
+void*
+kdi_GenMemOpsFindLastBlockWithIndex_S64(kd_usize_t* idx_ptr, kd_u64_t* ptr, kd_usize_t sz, kd_u64_t val)
+{
+  ptr += sz;
+
+  while (sz)
+  {
+    ptr = (kd_u64_t*)((kd_byte_t*)ptr + sz);
+    sz -= KD_SZ_S64;
+
+    if (*ptr == val)
+    {
+      if (idx_ptr)
+      {
+        *idx_ptr = sz;
+      }
+      return ptr;
+    }
+  }
+
+  return kd_null;
+}
+#endif
+
+
+void*
+kdi_GenMemOpsFindLastBlockWithIndex_Sn(kd_usize_t* idx_ptr, void* ptr, kd_usize_t sz, void* block, kd_usize_t block_sz)
+{
+  kd_byte_t *src_ptr = (kd_byte_t*)ptr + sz, *temp_src_ptr, *block_ptr;
+  kd_usize_t i, temp_sz, match_cnt;
+
+  while (sz)
+  {
+    src_ptr -= block_sz;
+    sz -= block_sz;
+
+    temp_src_ptr = src_ptr;
+    block_ptr    = block;
+    temp_sz      = sz;
+    i            = block_sz;
+    match_cnt    = 0;
+
+    while (i-- && temp_sz--)
+    {
+      if (*temp_src_ptr != *block_ptr)
+      {
+        break;
+      }
+
+      ++temp_src_ptr;
+      ++block_ptr;
+      ++match_cnt;
+    }
+
+    if (match_cnt == block_sz)
+    {
+      if (idx_ptr)
+      {
+        *idx_ptr = sz;
+      }
+      return src_ptr;
+    }
+  }
+
+  return kd_null;
+}
+
+
+kd_usize_t
+kdi_GenMemOpsFindAllBlocksWithIndex_S8(
+  kd_usize_t* idxs,
+  kd_usize_t  idxs_sz,
+  kd_u8_t*    ptr,
+  kd_usize_t  ptr_sz,
+  kd_u8_t     val
+)
+{
+  kd_usize_t idx = 0, found_cnt = 0;
+
+  while (ptr_sz-- && idxs_sz)
+  {
+    if (*ptr == val)
+    {
+      *idxs = idx;
+      ++idxs;
+      ++found_cnt;
+      --idxs_sz;
+    }
+
+    ++ptr;
+    ++idx;
+  }
+
+  return found_cnt;
+}
+
+
+kd_usize_t
+kdi_GenMemOpsFindAllBlocksWithIndex_S16(
+  kd_usize_t* idxs,
+  kd_usize_t  idxs_sz,
+  kd_u16_t*   ptr,
+  kd_usize_t  ptr_sz,
+  kd_u16_t    val
+)
+{
+  kd_usize_t idx = 0, found_cnt = 0;
+
+  while (ptr_sz && idxs_sz)
+  {
+    ptr_sz -= KD_SZ_S16;
+
+    if (*ptr == val)
+    {
+      *idxs = idx;
+      idxs  = (kd_usize_t*)((kd_byte_t*)idxs + KD_SZ_USIZE);
+      idxs_sz -= KD_SZ_USIZE;
+      ++found_cnt;
+    }
+
+    ptr = (kd_u16_t*)((kd_byte_t*)ptr + KD_SZ_S16);
+    idx += KD_SZ_S16;
+  }
+
+  return found_cnt;
+}
+
+
+kd_usize_t
+kdi_GenMemOpsFindAllBlocksWithIndex_S32(
+  kd_usize_t* idxs,
+  kd_usize_t  idxs_sz,
+  kd_u32_t*   ptr,
+  kd_usize_t  ptr_sz,
+  kd_u32_t    val
+)
+{
+  kd_usize_t idx = 0, found_cnt = 0;
+
+  while (ptr_sz && idxs_sz)
+  {
+    ptr_sz -= KD_SZ_S32;
+
+    if (*ptr == val)
+    {
+      *idxs = idx;
+      idxs  = (kd_usize_t*)((kd_byte_t*)idxs + KD_SZ_USIZE);
+      idxs_sz -= KD_SZ_USIZE;
+      ++found_cnt;
+    }
+
+    ptr = (kd_u32_t*)((kd_byte_t*)ptr + KD_SZ_S32);
+    idx += KD_SZ_S32;
+  }
+
+  return found_cnt;
+}
+
+
+#if defined KD_ARCH_64BIT_INT
+kd_usize_t
+kdi_GenMemOpsFindAllBlocksWithIndex_S64(
+  kd_usize_t* idxs,
+  kd_usize_t  idxs_sz,
+  kd_u64_t*   ptr,
+  kd_usize_t  ptr_sz,
+  kd_u64_t    val
+)
+{
+  kd_usize_t idx = 0, found_cnt = 0;
+
+  while (ptr_sz && idxs_sz)
+  {
+    ptr_sz -= KD_SZ_S64;
+
+    if (*ptr == val)
+    {
+      *idxs = idx;
+      idxs  = (kd_usize_t*)((kd_byte_t*)idxs + KD_SZ_USIZE);
+      idxs_sz -= KD_SZ_USIZE;
+      ++found_cnt;
+    }
+
+    ptr = (kd_u64_t*)((kd_byte_t*)ptr + KD_SZ_S64);
+    idx += KD_SZ_S64;
+  }
+
+  return found_cnt;
+}
+
+
+#endif
+kd_usize_t
+kdi_GenMemOpsFindAllBlocksWithIndex_Sn(
+  kd_usize_t* idxs,
+  kd_usize_t  idxs_sz,
+  void*       ptr,
+  kd_usize_t  ptr_sz,
+  void*       block,
+  kd_usize_t  block_sz
+)
+{
+  kd_byte_t *temp_ptr = ptr, *block_ptr;
+  kd_usize_t idx = 0, found_cnt = 0, match_cnt, temp_block_sz;
+
+  while (ptr_sz && idxs_sz)
+  {
+    ptr_sz -= block_sz;
+
+    block_ptr     = block;
+    temp_block_sz = block_sz;
+    match_cnt     = 0;
+
+    while (temp_block_sz--)
+    {
+      match_cnt += *temp_ptr == *block_ptr;
+      ++temp_ptr;
+      ++block_ptr;
+    }
+
+    if (match_cnt == block_sz)
+    {
+      *idxs = idx;
+      idxs  = (kd_usize_t*)((kd_byte_t*)idxs + KD_SZ_USIZE);
+      idxs_sz -= KD_SZ_USIZE;
+      ++found_cnt;
+    }
+
+    idx += block_sz;
+  }
+
+  return found_cnt;
+}
+
+
+void*
+kdi_GenMemOpsBlocksCompSpnWithIndex_S8(
+  kd_usize_t* idx_ptr,
+  kd_u8_t*    ptr,
+  kd_usize_t  sz,
+  kd_u8_t*    keys,
+  kd_usize_t  keys_sz
+)
+{
+  kd_u8_t*   temp_keys;
   kd_usize_t i, idx = 0;
 
   while (sz--)
   {
-    tmp_keys = keys;
-    i        = keys_sz;
+    temp_keys = keys;
+    i         = keys_sz;
 
     while (i--)
     {
-      if (*tmp_keys == *ptr)
+      if (*temp_keys == *ptr)
       {
         if (idx_ptr)
         {
@@ -274,7 +768,7 @@ kdi_GenMemOpsBlocksCompSpnWithIndex_S8(kd_usize_t* idx_ptr, kd_u8_t* ptr, kd_usi
         }
         return ptr;
       }
-      ++tmp_keys;
+      ++temp_keys;
     }
 
     ++ptr;
@@ -286,20 +780,25 @@ kdi_GenMemOpsBlocksCompSpnWithIndex_S8(kd_usize_t* idx_ptr, kd_u8_t* ptr, kd_usi
 
 
 void*
-kdi_GenMemOpsBlocksCompSpnWithIndex_S16(kd_usize_t* idx_ptr, kd_u16_t* ptr, kd_usize_t sz, kd_u16_t* keys,
-                                        kd_usize_t keys_sz)
+kdi_GenMemOpsBlocksCompSpnWithIndex_S16(
+  kd_usize_t* idx_ptr,
+  kd_u16_t*   ptr,
+  kd_usize_t  sz,
+  kd_u16_t*   keys,
+  kd_usize_t  keys_sz
+)
 {
-  kd_u16_t*  tmp_keys;
+  kd_u16_t*  temp_keys;
   kd_usize_t i, idx = 0;
 
   while (sz)
   {
-    tmp_keys = keys;
-    i        = keys_sz;
+    temp_keys = keys;
+    i         = keys_sz;
 
     while (i)
     {
-      if (*tmp_keys == *ptr)
+      if (*temp_keys == *ptr)
       {
         if (idx_ptr)
         {
@@ -307,13 +806,13 @@ kdi_GenMemOpsBlocksCompSpnWithIndex_S16(kd_usize_t* idx_ptr, kd_u16_t* ptr, kd_u
         }
         return ptr;
       }
-      ++tmp_keys;
-      i -= sizeof(kd_u16_t);
+      ++temp_keys;
+      i -= KD_SZ_S16;
     }
 
     ++ptr;
-    idx += sizeof(kd_u16_t);
-    sz -= sizeof(kd_u16_t);
+    idx += KD_SZ_S16;
+    sz -= KD_SZ_S16;
   }
 
   return kd_null;
@@ -321,20 +820,25 @@ kdi_GenMemOpsBlocksCompSpnWithIndex_S16(kd_usize_t* idx_ptr, kd_u16_t* ptr, kd_u
 
 
 void*
-kdi_GenMemOpsBlocksCompSpnWithIndex_S32(kd_usize_t* idx_ptr, kd_u32_t* ptr, kd_usize_t sz, kd_u32_t* keys,
-                                        kd_usize_t keys_sz)
+kdi_GenMemOpsBlocksCompSpnWithIndex_S32(
+  kd_usize_t* idx_ptr,
+  kd_u32_t*   ptr,
+  kd_usize_t  sz,
+  kd_u32_t*   keys,
+  kd_usize_t  keys_sz
+)
 {
-  kd_u32_t*  tmp_keys;
+  kd_u32_t*  temp_keys;
   kd_usize_t i, idx = 0;
 
   while (sz)
   {
-    tmp_keys = keys;
-    i        = keys_sz;
+    temp_keys = keys;
+    i         = keys_sz;
 
     while (i)
     {
-      if (*tmp_keys == *ptr)
+      if (*temp_keys == *ptr)
       {
         if (idx_ptr)
         {
@@ -342,13 +846,13 @@ kdi_GenMemOpsBlocksCompSpnWithIndex_S32(kd_usize_t* idx_ptr, kd_u32_t* ptr, kd_u
         }
         return ptr;
       }
-      ++tmp_keys;
-      i -= sizeof(kd_u32_t);
+      ++temp_keys;
+      i -= KD_SZ_S32;
     }
 
     ++ptr;
-    idx += sizeof(kd_u32_t);
-    sz -= sizeof(kd_u32_t);
+    idx += KD_SZ_S32;
+    sz -= KD_SZ_S32;
   }
 
   return kd_null;
@@ -357,20 +861,25 @@ kdi_GenMemOpsBlocksCompSpnWithIndex_S32(kd_usize_t* idx_ptr, kd_u32_t* ptr, kd_u
 
 #if defined KD_ARCH_64BIT_INT
 void*
-kdi_GenMemOpsBlocksCompSpnWithIndex_S64(kd_usize_t* idx_ptr, kd_u64_t* ptr, kd_usize_t sz, kd_u64_t* keys,
-                                        kd_usize_t keys_sz)
+kdi_GenMemOpsBlocksCompSpnWithIndex_S64(
+  kd_usize_t* idx_ptr,
+  kd_u64_t*   ptr,
+  kd_usize_t  sz,
+  kd_u64_t*   keys,
+  kd_usize_t  keys_sz
+)
 {
-  kd_u64_t*  tmp_keys;
+  kd_u64_t*  temp_keys;
   kd_usize_t i, idx = 0;
 
   while (sz)
   {
-    tmp_keys = keys;
-    i        = keys_sz;
+    temp_keys = keys;
+    i         = keys_sz;
 
     while (i)
     {
-      if (*tmp_keys == *ptr)
+      if (*temp_keys == *ptr)
       {
         if (idx_ptr)
         {
@@ -378,13 +887,13 @@ kdi_GenMemOpsBlocksCompSpnWithIndex_S64(kd_usize_t* idx_ptr, kd_u64_t* ptr, kd_u
         }
         return ptr;
       }
-      ++tmp_keys;
-      i -= sizeof(kd_u64_t);
+      ++temp_keys;
+      i -= KD_SZ_S64;
     }
 
     ++ptr;
-    idx += sizeof(kd_u64_t);
-    sz -= sizeof(kd_u64_t);
+    idx += KD_SZ_S64;
+    sz -= KD_SZ_S64;
   }
 
   return kd_null;
@@ -393,8 +902,14 @@ kdi_GenMemOpsBlocksCompSpnWithIndex_S64(kd_usize_t* idx_ptr, kd_u64_t* ptr, kd_u
 
 
 void*
-kdi_GenMemOpsBlocksCompSpnWithIndex_Sn(kd_usize_t* idx_ptr, void* ptr, kd_usize_t sz, void* key_blocks,
-                                       kd_usize_t key_block_sz, kd_usize_t key_blocks_sz)
+kdi_GenMemOpsBlocksCompSpnWithIndex_Sn(
+  kd_usize_t* idx_ptr,
+  void*       ptr,
+  kd_usize_t  sz,
+  void*       key_blocks,
+  kd_usize_t  key_block_sz,
+  kd_usize_t  key_blocks_sz
+)
 {
   kd_byte_t *src_ptr = ptr, *search_ptr, *key_blocks_ptr;
   kd_usize_t n, i, idx = 0, match_cnt;
@@ -439,29 +954,29 @@ kdi_GenMemOpsBlocksCompSpnWithIndex_Sn(kd_usize_t* idx_ptr, void* ptr, kd_usize_
 kd_usize_t
 kdi_GenMemOpsBlocksSpn_S8(kd_u8_t* ptr, kd_usize_t sz, kd_u8_t* keys, kd_usize_t keys_sz)
 {
-  kd_u8_t *  tmp_ptr = ptr, *tmp_keys;
+  kd_u8_t *  temp_ptr = ptr, *temp_keys;
   kd_usize_t i, count = 0;
   kd_bool_t  match;
 
   while (sz--)
   {
-    tmp_keys = keys;
-    i        = keys_sz;
-    match    = KD_RESULT_FAILURE;
+    temp_keys = keys;
+    i         = keys_sz;
+    match     = KD_RESULT_FAILURE;
 
     while (i--)
     {
-      if (*tmp_keys == *tmp_ptr)
+      if (*temp_keys == *temp_ptr)
       {
         match = KD_RESULT_SUCCESS;
         break;
       }
-      ++tmp_keys;
+      ++temp_keys;
     }
 
     if (!match)
     {
-      if (tmp_ptr == ptr)
+      if (temp_ptr == ptr)
       {
         return 0;
       }
@@ -469,7 +984,7 @@ kdi_GenMemOpsBlocksSpn_S8(kd_u8_t* ptr, kd_usize_t sz, kd_u8_t* keys, kd_usize_t
     }
 
     count += match;
-    ++tmp_ptr;
+    ++temp_ptr;
   }
 
   return count;
@@ -479,39 +994,39 @@ kdi_GenMemOpsBlocksSpn_S8(kd_u8_t* ptr, kd_usize_t sz, kd_u8_t* keys, kd_usize_t
 kd_usize_t
 kdi_GenMemOpsBlocksSpn_S16(kd_u16_t* ptr, kd_usize_t sz, kd_u16_t* keys, kd_usize_t keys_sz)
 {
-  kd_u16_t * tmp_ptr = ptr, *tmp_keys;
+  kd_u16_t * temp_ptr = ptr, *temp_keys;
   kd_usize_t i, count = 0;
   kd_bool_t  match;
 
   while (sz)
   {
-    tmp_keys = keys;
-    i        = keys_sz;
-    match    = KD_RESULT_FAILURE;
+    temp_keys = keys;
+    i         = keys_sz;
+    match     = KD_RESULT_FAILURE;
 
     while (i)
     {
-      if (*tmp_keys == *tmp_ptr)
+      if (*temp_keys == *temp_ptr)
       {
         match = KD_RESULT_SUCCESS;
         break;
       }
-      ++tmp_keys;
-      i -= sizeof(kd_u16_t);
+      ++temp_keys;
+      i -= KD_SZ_S16;
     }
 
     if (!match)
     {
-      if (tmp_ptr == ptr)
+      if (temp_ptr == ptr)
       {
         return 0;
       }
       break;
     }
 
-    ++tmp_ptr;
-    count += sizeof(kd_u16_t);
-    sz -= sizeof(kd_u16_t);
+    ++temp_ptr;
+    count += KD_SZ_S16;
+    sz -= KD_SZ_S16;
   }
 
   return count;
@@ -521,39 +1036,39 @@ kdi_GenMemOpsBlocksSpn_S16(kd_u16_t* ptr, kd_usize_t sz, kd_u16_t* keys, kd_usiz
 kd_usize_t
 kdi_GenMemOpsBlocksSpn_S32(kd_u32_t* ptr, kd_usize_t sz, kd_u32_t* keys, kd_usize_t keys_sz)
 {
-  kd_u32_t * tmp_ptr = ptr, *tmp_keys;
+  kd_u32_t * temp_ptr = ptr, *temp_keys;
   kd_usize_t i, count = 0;
   kd_bool_t  match;
 
   while (sz)
   {
-    tmp_keys = keys;
-    i        = keys_sz;
-    match    = KD_RESULT_FAILURE;
+    temp_keys = keys;
+    i         = keys_sz;
+    match     = KD_RESULT_FAILURE;
 
     while (i)
     {
-      if (*tmp_keys == *tmp_ptr)
+      if (*temp_keys == *temp_ptr)
       {
         match = KD_RESULT_SUCCESS;
         break;
       }
-      ++tmp_keys;
-      i -= sizeof(kd_u32_t);
+      ++temp_keys;
+      i -= KD_SZ_S32;
     }
 
     if (!match)
     {
-      if (tmp_ptr == ptr)
+      if (temp_ptr == ptr)
       {
         return 0;
       }
       break;
     }
 
-    ++tmp_ptr;
-    count += sizeof(kd_u32_t);
-    sz -= sizeof(kd_u32_t);
+    ++temp_ptr;
+    count += KD_SZ_S32;
+    sz -= KD_SZ_S32;
   }
 
   return count;
@@ -564,39 +1079,39 @@ kdi_GenMemOpsBlocksSpn_S32(kd_u32_t* ptr, kd_usize_t sz, kd_u32_t* keys, kd_usiz
 kd_usize_t
 kdi_GenMemOpsBlocksSpn_S64(kd_u64_t* ptr, kd_usize_t sz, kd_u64_t* keys, kd_usize_t keys_sz)
 {
-  kd_u64_t * tmp_ptr = ptr, *tmp_keys;
+  kd_u64_t * temp_ptr = ptr, *temp_keys;
   kd_usize_t i, count = 0;
   kd_bool_t  match;
 
   while (sz)
   {
-    tmp_keys = keys;
-    i        = keys_sz;
-    match    = KD_RESULT_FAILURE;
+    temp_keys = keys;
+    i         = keys_sz;
+    match     = KD_RESULT_FAILURE;
 
     while (i)
     {
-      if (*tmp_keys == *tmp_ptr)
+      if (*temp_keys == *temp_ptr)
       {
         match = KD_RESULT_SUCCESS;
         break;
       }
-      ++tmp_keys;
-      i -= sizeof(kd_u64_t);
+      ++temp_keys;
+      i -= KD_SZ_S64;
     }
 
     if (!match)
     {
-      if (tmp_ptr == ptr)
+      if (temp_ptr == ptr)
       {
         return 0;
       }
       break;
     }
 
-    ++tmp_ptr;
-    count += sizeof(kd_u64_t);
-    sz -= sizeof(kd_u64_t);
+    ++temp_ptr;
+    count += KD_SZ_S64;
+    sz -= KD_SZ_S64;
   }
 
   return count;

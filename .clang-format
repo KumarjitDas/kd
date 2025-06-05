@@ -1,13 +1,11 @@
 ---
 Language: Cpp
 BasedOnStyle: LLVM
-AlignAfterOpenBracket: Align
 AlignConsecutiveAssignments: true
 AlignConsecutiveDeclarations: true
 AlignOperands: false
 AlignTrailingComments: true
 AllowShortIfStatementsOnASingleLine: false
-AlwaysBreakAfterDefinitionReturnType: All
 AlwaysBreakTemplateDeclarations: Yes
 BinPackArguments: false
 BraceWrapping:
@@ -60,4 +58,10 @@ SpacesInConditionalStatement: false
 SpacesInCStyleCastParentheses: false
 SpacesInParentheses: false
 TabWidth: 2
+BinPackParameters: false
+AllowAllParametersOfDeclarationOnNextLine: false
+AlignAfterOpenBracket: BlockIndent
+BreakAfterReturnType: None
+AlwaysBreakAfterDefinitionReturnType: All
+PenaltyReturnTypeOnItsOwnLine: 0
 ...
