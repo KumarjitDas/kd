@@ -464,7 +464,7 @@ kdi_GenMemOpsFindLastBlockWithIndex_S16(kd_usize_t* idx_ptr, kd_u16_t* ptr, kd_u
 
   while (sz)
   {
-    --ptr;
+    ptr = (kd_u16_t*)((kd_byte_t*)ptr - KD_SZ_S16);
     sz -= KD_SZ_S16;
 
     if (*ptr == val)
@@ -484,11 +484,11 @@ kdi_GenMemOpsFindLastBlockWithIndex_S16(kd_usize_t* idx_ptr, kd_u16_t* ptr, kd_u
 void*
 kdi_GenMemOpsFindLastBlockWithIndex_S32(kd_usize_t* idx_ptr, kd_u32_t* ptr, kd_usize_t sz, kd_u32_t val)
 {
-  ptr += sz;
+  ptr = (kd_u32_t*)((kd_byte_t*)ptr + sz);
 
   while (sz)
   {
-    ptr = (kd_u32_t*)((kd_byte_t*)ptr + sz);
+    ptr = (kd_u32_t*)((kd_byte_t*)ptr - KD_SZ_S32);
     sz -= KD_SZ_S32;
 
     if (*ptr == val)
@@ -509,11 +509,11 @@ kdi_GenMemOpsFindLastBlockWithIndex_S32(kd_usize_t* idx_ptr, kd_u32_t* ptr, kd_u
 void*
 kdi_GenMemOpsFindLastBlockWithIndex_S64(kd_usize_t* idx_ptr, kd_u64_t* ptr, kd_usize_t sz, kd_u64_t val)
 {
-  ptr += sz;
+  ptr = (kd_u64_t*)((kd_byte_t*)ptr + sz);
 
   while (sz)
   {
-    ptr = (kd_u64_t*)((kd_byte_t*)ptr + sz);
+    ptr = (kd_u64_t*)((kd_byte_t*)ptr - KD_SZ_S64);
     sz -= KD_SZ_S64;
 
     if (*ptr == val)

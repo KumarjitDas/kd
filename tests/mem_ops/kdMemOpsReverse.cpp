@@ -1,8 +1,8 @@
 /**
- * @file kdGenMemOpsMove.cpp
+ * @file kdMemOpsReverse.cpp
  * @author Kumarjit Das
- * @date 2025-06-02
- * @brief kdGenMemOpsMove test file.
+ * @date 2025-06-09
+ * @brief kdMemOpsReverse test file.
  */
 /**
  * LICENSE: BSD 3-Clause License
@@ -42,60 +42,25 @@
 #include "gtest/gtest.h"
 
 
-TEST(GenMemOpsMoveTest, MovesBytesCorrectly)
+TEST(MemOpsReverse, ReversesAllBytesCorrectly)
 {
-  kd_byte_t ptr1[] = {1, 2, 3, 4, 5};
-  kd_byte_t ptr2[sizeof(ptr1)];
+  kd_i32_t ptr[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
+  kd_i32_t res[] = {16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1};
 
-  EXPECT_EQ(kdGenMemOpsMove(ptr2, ptr1, sizeof(ptr1)), KD_RESULT_SUCCESS);
+  EXPECT_EQ(kdMemOpsReverseI32(ptr, sizeof(ptr) / KD_SZ_I32), KD_RESULT_SUCCESS);
 
-  for (kd_usize_t i = 0; i < sizeof(ptr1); ++i)
+  for (kd_usize_t i = 0; i < sizeof(ptr) / KD_SZ_I32; ++i)
   {
-    EXPECT_EQ(ptr1[i], ptr2[i]);
+    EXPECT_EQ(ptr[i], res[i]);
   }
 }
 
-TEST(GenMemOpsMoveTest, OverlappingRegionsHandledProperly)
+TEST(MemOpsReverse, ZeroSizeReturnsFalse)
 {
-  kd_byte_t  main_ptr[] = {69, 69, 1, 2, 3, 4, 5, 69, 69, 69, 69};
-  kd_byte_t* ptr1       = main_ptr + 2;
-  kd_byte_t* ptr2       = main_ptr + 4;
-  kd_byte_t  res1[]     = {69, 69, 1, 2, 1, 2, 3, 4, 5, 69, 69};
-  kd_byte_t  res2[]     = {69, 69, 1, 2, 3, 4, 5, 4, 5, 69, 69};
+  kd_i32_t ptr[16];
 
-  EXPECT_EQ(kdGenMemOpsMove(ptr2, ptr1, 5), KD_RESULT_SUCCESS);
-
-  for (kd_usize_t i = 0; i < sizeof(main_ptr); ++i)
-  {
-    EXPECT_EQ(main_ptr[i], res1[i]);
-  }
-
-  ptr1 = main_ptr + 4;
-  ptr2 = main_ptr + 2;
-
-  EXPECT_EQ(kdGenMemOpsMove(ptr2, ptr1, 5), KD_RESULT_SUCCESS);
-
-  for (kd_usize_t i = 0; i < sizeof(main_ptr); ++i)
-  {
-    EXPECT_EQ(main_ptr[i], res2[i]);
-  }
+  EXPECT_EQ(kdMemOpsReverseI32(kd_null, 0), KD_RESULT_FAILURE);
+  EXPECT_EQ(kdMemOpsReverseI32(ptr, 0), KD_RESULT_FAILURE);
 }
 
-TEST(GenMemOpsMoveTest, HandlesZeroSize)
-{
-  kd_byte_t ptr[32];
-
-  EXPECT_EQ(kdGenMemOpsMove(kd_null, kd_null, 0), KD_RESULT_FAILURE);
-  EXPECT_EQ(kdGenMemOpsMove(kd_null, ptr, 0), KD_RESULT_FAILURE);
-  EXPECT_EQ(kdGenMemOpsMove(ptr, kd_null, 0), KD_RESULT_FAILURE);
-  EXPECT_EQ(kdGenMemOpsMove(ptr, ptr, 0), KD_RESULT_FAILURE);
-}
-
-TEST(GenMemOpsMoveTest, HandlesNullPointers)
-{
-  kd_byte_t ptr[32];
-
-  EXPECT_EQ(kdGenMemOpsMove(kd_null, kd_null, 32), KD_RESULT_FAILURE);
-  EXPECT_EQ(kdGenMemOpsMove(kd_null, ptr, 32), KD_RESULT_FAILURE);
-  EXPECT_EQ(kdGenMemOpsMove(ptr, kd_null, 32), KD_RESULT_FAILURE);
-}
+TEST(MemOpsReverse, NullPointerReturnsFalse) { EXPECT_EQ(kdMemOpsReverseI32(kd_null, 16), KD_RESULT_FAILURE); }

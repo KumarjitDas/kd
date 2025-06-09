@@ -47,7 +47,7 @@ TEST(GenMemOpsCpyTest, CopiesBytesCorrectly)
   kd_byte_t ptr1[] = {1, 2, 3, 4, 5};
   kd_byte_t ptr2[sizeof(ptr1)];
 
-  EXPECT_EQ(kdGenMemOpsCpy(ptr1, ptr2, sizeof(ptr1)), KD_RESULT_SUCCESS);
+  EXPECT_EQ(kdGenMemOpsCpy(ptr2, ptr1, sizeof(ptr1)), KD_RESULT_SUCCESS);
 
   for (kd_usize_t i = 0; i < sizeof(ptr1); ++i)
   {

@@ -1,8 +1,8 @@
 /**
- * @file kdGenMemOpsMove.cpp
+ * @file kdMemOpsFindLast.cpp
  * @author Kumarjit Das
- * @date 2025-06-02
- * @brief kdGenMemOpsMove test file.
+ * @date 2025-06-09
+ * @brief kdMemOpsFindLast test file.
  */
 /**
  * LICENSE: BSD 3-Clause License
@@ -37,65 +37,45 @@
  */
 
 
-#define KD_USE_SIMPLIFIED_TYPES
 #include "kd.h"
 #include "gtest/gtest.h"
 
 
-TEST(GenMemOpsMoveTest, MovesBytesCorrectly)
+TEST(MemOpsFindLastTest, FindsFirstOccurrence)
 {
-  kd_byte_t ptr1[] = {1, 2, 3, 4, 5};
-  kd_byte_t ptr2[sizeof(ptr1)];
+  kd_i16_t ptr_i16[] = {1, 2, 3, 8, 5, 6, 3, 8, 9, 10};
+  kd_i32_t ptr_i32[] = {11, 33, 22, 55, 88, 66, 33, 88, 99, 44};
 
-  EXPECT_EQ(kdGenMemOpsMove(ptr2, ptr1, sizeof(ptr1)), KD_RESULT_SUCCESS);
-
-  for (kd_usize_t i = 0; i < sizeof(ptr1); ++i)
-  {
-    EXPECT_EQ(ptr1[i], ptr2[i]);
-  }
+  EXPECT_EQ(kdMemOpsFindLastI16(ptr_i16, sizeof(ptr_i16) / sizeof(*ptr_i16), 3), ptr_i16 + 6);
+  EXPECT_EQ(kdMemOpsFindLastI16(ptr_i16, sizeof(ptr_i16) / sizeof(*ptr_i16), 8), ptr_i16 + 7);
+  EXPECT_EQ(kdMemOpsFindLastI32(ptr_i32, sizeof(ptr_i32) / sizeof(*ptr_i32), 88), ptr_i32 + 7);
+  EXPECT_EQ(kdMemOpsFindLastI32(ptr_i32, sizeof(ptr_i32) / sizeof(*ptr_i32), 33), ptr_i32 + 6);
 }
 
-TEST(GenMemOpsMoveTest, OverlappingRegionsHandledProperly)
+TEST(MemOpsFindLastTest, ReturnsNullIfNotFound)
 {
-  kd_byte_t  main_ptr[] = {69, 69, 1, 2, 3, 4, 5, 69, 69, 69, 69};
-  kd_byte_t* ptr1       = main_ptr + 2;
-  kd_byte_t* ptr2       = main_ptr + 4;
-  kd_byte_t  res1[]     = {69, 69, 1, 2, 1, 2, 3, 4, 5, 69, 69};
-  kd_byte_t  res2[]     = {69, 69, 1, 2, 3, 4, 5, 4, 5, 69, 69};
+  kd_i16_t ptr_i16[] = {1, 2, 3, 8, 5, 6, 3, 8, 9, 10};
+  kd_i32_t ptr_i32[] = {11, 33, 22, 55, 88, 66, 33, 88, 99, 44};
 
-  EXPECT_EQ(kdGenMemOpsMove(ptr2, ptr1, 5), KD_RESULT_SUCCESS);
-
-  for (kd_usize_t i = 0; i < sizeof(main_ptr); ++i)
-  {
-    EXPECT_EQ(main_ptr[i], res1[i]);
-  }
-
-  ptr1 = main_ptr + 4;
-  ptr2 = main_ptr + 2;
-
-  EXPECT_EQ(kdGenMemOpsMove(ptr2, ptr1, 5), KD_RESULT_SUCCESS);
-
-  for (kd_usize_t i = 0; i < sizeof(main_ptr); ++i)
-  {
-    EXPECT_EQ(main_ptr[i], res2[i]);
-  }
+  EXPECT_EQ(kdMemOpsFindLastI16(ptr_i16, sizeof(ptr_i16) / sizeof(*ptr_i16), 0), kd_null);
+  EXPECT_EQ(kdMemOpsFindLastI16(ptr_i16, sizeof(ptr_i16) / sizeof(*ptr_i16), 69), kd_null);
+  EXPECT_EQ(kdMemOpsFindLastI32(ptr_i32, sizeof(ptr_i32) / sizeof(*ptr_i32), 0), kd_null);
+  EXPECT_EQ(kdMemOpsFindLastI32(ptr_i32, sizeof(ptr_i32) / sizeof(*ptr_i32), 420), kd_null);
 }
 
-TEST(GenMemOpsMoveTest, HandlesZeroSize)
+TEST(MemOpsFindLastTest, HandlesZeroSize)
 {
-  kd_byte_t ptr[32];
+  kd_i16_t ptr_i16[16];
+  kd_i32_t ptr_i32[16];
 
-  EXPECT_EQ(kdGenMemOpsMove(kd_null, kd_null, 0), KD_RESULT_FAILURE);
-  EXPECT_EQ(kdGenMemOpsMove(kd_null, ptr, 0), KD_RESULT_FAILURE);
-  EXPECT_EQ(kdGenMemOpsMove(ptr, kd_null, 0), KD_RESULT_FAILURE);
-  EXPECT_EQ(kdGenMemOpsMove(ptr, ptr, 0), KD_RESULT_FAILURE);
+  EXPECT_EQ(kdMemOpsFindLastI16(kd_null, 0, 69), kd_null);
+  EXPECT_EQ(kdMemOpsFindLastI16(ptr_i16, 0, 69), kd_null);
+  EXPECT_EQ(kdMemOpsFindLastI32(kd_null, 0, 420), kd_null);
+  EXPECT_EQ(kdMemOpsFindLastI32(ptr_i32, 0, 420), kd_null);
 }
 
-TEST(GenMemOpsMoveTest, HandlesNullPointers)
+TEST(MemOpsFindLastTest, HandlesNullPointer)
 {
-  kd_byte_t ptr[32];
-
-  EXPECT_EQ(kdGenMemOpsMove(kd_null, kd_null, 32), KD_RESULT_FAILURE);
-  EXPECT_EQ(kdGenMemOpsMove(kd_null, ptr, 32), KD_RESULT_FAILURE);
-  EXPECT_EQ(kdGenMemOpsMove(ptr, kd_null, 32), KD_RESULT_FAILURE);
+  EXPECT_EQ(kdMemOpsFindLastI16(kd_null, 32, 69), kd_null);
+  EXPECT_EQ(kdMemOpsFindLastI32(kd_null, 16, 420), kd_null);
 }
