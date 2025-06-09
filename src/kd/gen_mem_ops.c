@@ -669,8 +669,13 @@ kdGenMemOpsFindAllBlocksIndex(
 }
 
 
+#if defined KD_ARCH_64BIT_INT
+kd_i64_t
+kdGenMemOpsCmp(void* ptr1, void* ptr2, kd_usize_t sz)
+#else  /* !defined KD_ARCH_64BIT_INT */
 kd_i32_t
 kdGenMemOpsCmp(void* ptr1, void* ptr2, kd_usize_t sz)
+#endif /* KD_ARCH_64BIT_INT */
 {
   kd_byte_t *src1_ptr, *src2_ptr;
 

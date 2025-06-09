@@ -17,6 +17,8 @@
       <w>libkd</w>
       <w>libtypes</w>
       <w>memalgn</w>
+      <w>nitem</w>
+      <w>nval</w>
       <w>pbool</w>
       <w>pbyte</w>
       <w>pchr</w>

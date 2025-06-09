@@ -82,7 +82,13 @@ kdGenMemOpsFindAllBlocksIndex(
   void*       block,
   kd_usize_t  block_sz
 );
+
+#if defined KD_ARCH_64BIT_INT
+KDAPI(kd_i64_t) kdGenMemOpsCmp(void* ptr1, void* ptr2, kd_usize_t sz);
+#else  /* !defined KD_ARCH_64BIT_INT */
 KDAPI(kd_i32_t) kdGenMemOpsCmp(void* ptr1, void* ptr2, kd_usize_t sz);
+#endif /* KD_ARCH_64BIT_INT */
+
 KDAPI(kd_bool_t) kdGenMemOpsCat(void* dst, kd_usize_t sz, void* src1, kd_usize_t sz1, void* src2, kd_usize_t sz2);
 KDAPI(void*) kdGenMemOpsBytesCompSpn(void* ptr, kd_usize_t sz, void* keys, kd_usize_t keys_sz);
 KDAPI(kd_bool_t)

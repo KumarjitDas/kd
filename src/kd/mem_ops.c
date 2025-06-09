@@ -47,7 +47,11 @@
 
 
 kd_bool_t
+#if defined KD_ARCH_64BIT_INT
 kdMemOpsSwap(void* ptr, kd_i64_t len, kd_i64_t idx1, kd_i64_t idx2)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdMemOpsSwap(void* ptr, kd_i32_t len, kd_i32_t idx1, kd_i32_t idx2)
+#endif /* KD_ARCH_64BIT_INT */
 {
   if (!ptr || len <= 0 || idx1 < 0 || idx2 < 0 || idx1 >= len || idx2 >= len)
   {
@@ -61,7 +65,11 @@ kdMemOpsSwap(void* ptr, kd_i64_t len, kd_i64_t idx1, kd_i64_t idx2)
 
 
 kd_bool_t
+#if defined KD_ARCH_64BIT_INT
 kdMemOpsSwapU16(void* ptr, kd_i64_t len, kd_i64_t idx1, kd_i64_t idx2)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdMemOpsSwapU16(void* ptr, kd_i32_t len, kd_i32_t idx1, kd_i32_t idx2)
+#endif /* KD_ARCH_64BIT_INT */
 {
   if (!ptr || len <= 0 || idx1 < 0 || idx2 < 0 || idx1 >= len || idx2 >= len)
   {
@@ -75,7 +83,11 @@ kdMemOpsSwapU16(void* ptr, kd_i64_t len, kd_i64_t idx1, kd_i64_t idx2)
 
 
 kd_bool_t
+#if defined KD_ARCH_64BIT_INT
 kdMemOpsSwapU32(void* ptr, kd_i64_t len, kd_i64_t idx1, kd_i64_t idx2)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdMemOpsSwapU32(void* ptr, kd_i32_t len, kd_i32_t idx1, kd_i32_t idx2)
+#endif /* KD_ARCH_64BIT_INT */
 {
   if (!ptr || len <= 0 || idx1 < 0 || idx2 < 0 || idx1 >= len || idx2 >= len)
   {
@@ -105,7 +117,26 @@ kdMemOpsSwapU64(void* ptr, kd_i64_t len, kd_i64_t idx1, kd_i64_t idx2)
 
 
 kd_bool_t
+#if defined KD_ARCH_64BIT_INT
+kdMemOpsSwapN(void* ptr, kd_i64_t len, kd_i64_t n, kd_i64_t idx1, kd_i64_t idx2)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdMemOpsSwapN(void* ptr, kd_i32_t len, kd_i32_t n, kd_i32_t idx1, kd_i32_t idx2)
+#endif /* KD_ARCH_64BIT_INT */
+{
+  if (len < 0 || n <= 0 || idx1 < 0 || idx2 < 0)
+  {
+    return KD_RESULT_FAILURE;
+  }
+  return kdGenMemOpsSwapBlocks(ptr, len * n, n, idx1 * n, idx2 * n);
+}
+
+
+kd_bool_t
+#if defined KD_ARCH_64BIT_INT
 kdMemOpsReverse(void* ptr, kd_i64_t len)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdMemOpsReverse(void* ptr, kd_i32_t len)
+#endif /* KD_ARCH_64BIT_INT */
 {
   if (!ptr || len <= 0)
   {
@@ -119,7 +150,11 @@ kdMemOpsReverse(void* ptr, kd_i64_t len)
 
 
 kd_bool_t
+#if defined KD_ARCH_64BIT_INT
 kdMemOpsReverseU16(void* ptr, kd_i64_t len)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdMemOpsReverseU16(void* ptr, kd_i32_t len)
+#endif /* KD_ARCH_64BIT_INT */
 {
   if (!ptr || len <= 0)
   {
@@ -133,7 +168,11 @@ kdMemOpsReverseU16(void* ptr, kd_i64_t len)
 
 
 kd_bool_t
+#if defined KD_ARCH_64BIT_INT
 kdMemOpsReverseU32(void* ptr, kd_i64_t len)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdMemOpsReverseU32(void* ptr, kd_i32_t len)
+#endif /* KD_ARCH_64BIT_INT */
 {
   if (!ptr || len <= 0)
   {
@@ -163,7 +202,26 @@ kdMemOpsReverseU64(void* ptr, kd_i64_t len)
 
 
 kd_bool_t
+#if defined KD_ARCH_64BIT_INT
+kdMemOpsReverseN(void* ptr, kd_i64_t len, kd_i64_t n)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdMemOpsReverseN(void* ptr, kd_i32_t len, kd_i32_t n)
+#endif /* KD_ARCH_64BIT_INT */
+{
+  if (len < 0 || n <= 0)
+  {
+    return KD_RESULT_FAILURE;
+  }
+  return kdGenMemOpsReverseBlocks(ptr, len * n, n);
+}
+
+
+kd_bool_t
+#if defined KD_ARCH_64BIT_INT
 kdMemOpsSet(void* ptr, kd_i64_t len, kd_byte_t val)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdMemOpsSet(void* ptr, kd_i32_t len, kd_byte_t val)
+#endif /* KD_ARCH_64BIT_INT */
 {
   if (!ptr || len <= 0)
   {
@@ -177,7 +235,11 @@ kdMemOpsSet(void* ptr, kd_i64_t len, kd_byte_t val)
 
 
 kd_bool_t
+#if defined KD_ARCH_64BIT_INT
 kdMemOpsSetU16(void* ptr, kd_i64_t len, kd_u16_t val)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdMemOpsSetU16(void* ptr, kd_i32_t len, kd_u16_t val)
+#endif /* KD_ARCH_64BIT_INT */
 {
   if (!ptr || len <= 0)
   {
@@ -191,7 +253,11 @@ kdMemOpsSetU16(void* ptr, kd_i64_t len, kd_u16_t val)
 
 
 kd_bool_t
+#if defined KD_ARCH_64BIT_INT
 kdMemOpsSetU32(void* ptr, kd_i64_t len, kd_u32_t val)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdMemOpsSetU32(void* ptr, kd_i32_t len, kd_u32_t val)
+#endif /* KD_ARCH_64BIT_INT */
 {
   if (!ptr || len <= 0)
   {
@@ -221,21 +287,48 @@ kdMemOpsSetU64(void* ptr, kd_i64_t len, kd_u64_t val)
 
 
 kd_bool_t
+#if defined KD_ARCH_64BIT_INT
+kdMemOpsSetN(void* ptr, kd_i64_t len, void* nval, kd_i64_t n)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdMemOpsSetN(void* ptr, kd_i32_t len, void* nval, kd_i32_t n)
+#endif /* KD_ARCH_64BIT_INT */
+{
+  if (len < 0 || n <= 0)
+  {
+    return KD_RESULT_FAILURE;
+  }
+  return kdGenMemOpsSetBlocks(ptr, len * n, nval, n);
+}
+
+
+kd_bool_t
+#if defined KD_ARCH_64BIT_INT
 kdMemOpsCpy(void* dst, void* src, kd_i64_t len)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdMemOpsCpy(void* dst, void* src, kd_i32_t len)
+#endif /* KD_ARCH_64BIT_INT */
 {
   return len < 0 ? KD_RESULT_FAILURE : kdGenMemOpsCpy(dst, src, len);
 }
 
 
 kd_bool_t
+#if defined KD_ARCH_64BIT_INT
 kdMemOpsCpyU16(void* dst, void* src, kd_i64_t len)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdMemOpsCpyU16(void* dst, void* src, kd_i32_t len)
+#endif /* KD_ARCH_64BIT_INT */
 {
   return len < 0 ? KD_RESULT_FAILURE : kdGenMemOpsCpy(dst, src, KD_USIZE_C(len) * KD_SZ_U16);
 }
 
 
 kd_bool_t
+#if defined KD_ARCH_64BIT_INT
 kdMemOpsCpyU32(void* dst, void* src, kd_i64_t len)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdMemOpsCpyU32(void* dst, void* src, kd_i32_t len)
+#endif /* KD_ARCH_64BIT_INT */
 {
   return len < 0 ? KD_RESULT_FAILURE : kdGenMemOpsCpy(dst, src, KD_USIZE_C(len) * KD_SZ_U32);
 }
@@ -251,21 +344,48 @@ kdMemOpsCpyU64(void* dst, void* src, kd_i64_t len)
 
 
 kd_bool_t
+#if defined KD_ARCH_64BIT_INT
+kdMemOpsCpyN(void* dst, void* src, kd_i64_t len, kd_i64_t n)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdMemOpsCpyN(void* dst, void* src, kd_i32_t len, kd_i32_t n)
+#endif /* KD_ARCH_64BIT_INT */
+{
+  if (len < 0 || n <= 0)
+  {
+    return KD_RESULT_FAILURE;
+  }
+  return kdGenMemOpsCpy(dst, src, len * n);
+}
+
+
+kd_bool_t
+#if defined KD_ARCH_64BIT_INT
 kdMemOpsMove(void* dst, void* src, kd_i64_t len)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdMemOpsMove(void* dst, void* src, kd_i32_t len)
+#endif /* KD_ARCH_64BIT_INT */
 {
   return len < 0 ? KD_RESULT_FAILURE : kdGenMemOpsMove(dst, src, len);
 }
 
 
 kd_bool_t
+#if defined KD_ARCH_64BIT_INT
 kdMemOpsMoveU16(void* dst, void* src, kd_i64_t len)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdMemOpsMoveU16(void* dst, void* src, kd_i32_t len)
+#endif /* KD_ARCH_64BIT_INT */
 {
   return len < 0 ? KD_RESULT_FAILURE : kdGenMemOpsMove(dst, src, KD_USIZE_C(len) * KD_SZ_U16);
 }
 
 
 kd_bool_t
+#if defined KD_ARCH_64BIT_INT
 kdMemOpsMoveU32(void* dst, void* src, kd_i64_t len)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdMemOpsMoveU32(void* dst, void* src, kd_i32_t len)
+#endif /* KD_ARCH_64BIT_INT */
 {
   return len < 0 ? KD_RESULT_FAILURE : kdGenMemOpsMove(dst, src, KD_USIZE_C(len) * KD_SZ_U32);
 }
@@ -280,8 +400,43 @@ kdMemOpsMoveU64(void* dst, void* src, kd_i64_t len)
 #endif /* KD_ARCH_64BIT_INT */
 
 
+kd_bool_t
+#if defined KD_ARCH_64BIT_INT
+kdMemOpsMoveN(void* dst, void* src, kd_i64_t len, kd_i64_t n)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdMemOpsMoveN(void* dst, void* src, kd_i32_t len, kd_i32_t n)
+#endif /* KD_ARCH_64BIT_INT */
+{
+  if (len < 0 || n <= 0)
+  {
+    return KD_RESULT_FAILURE;
+  }
+  return kdGenMemOpsMove(dst, src, len * n);
+}
+
+
 void*
+#if defined KD_ARCH_64BIT_INT
+kdMemOpsFind(void* ptr, kd_i64_t len, kd_byte_t item)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdMemOpsFind(void* ptr, kd_i32_t len, kd_byte_t item)
+#endif /* KD_ARCH_64BIT_INT */
+{
+  if (!ptr || len <= 0)
+  {
+    return kd_null;
+  }
+
+  return kdi_GenMemOpsFindBlockWithIndex_Byte(kd_null, ptr, len, item);
+}
+
+
+void*
+#if defined KD_ARCH_64BIT_INT
 kdMemOpsFindU16(void* ptr, kd_i64_t len, kd_u16_t item)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdMemOpsFindU16(void* ptr, kd_i32_t len, kd_u16_t item)
+#endif /* KD_ARCH_64BIT_INT */
 {
   if (!ptr || len <= 0)
   {
@@ -293,7 +448,11 @@ kdMemOpsFindU16(void* ptr, kd_i64_t len, kd_u16_t item)
 
 
 void*
+#if defined KD_ARCH_64BIT_INT
 kdMemOpsFindU32(void* ptr, kd_i64_t len, kd_u32_t item)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdMemOpsFindU32(void* ptr, kd_i32_t len, kd_u32_t item)
+#endif /* KD_ARCH_64BIT_INT */
 {
   if (!ptr || len <= 0)
   {
@@ -318,8 +477,28 @@ kdMemOpsFindU64(void* ptr, kd_i64_t len, kd_u64_t item)
 #endif /* KD_ARCH_64BIT_INT */
 
 
+void*
+#if defined KD_ARCH_64BIT_INT
+kdMemOpsFindN(void* ptr, kd_i64_t len, void* nitem, kd_i64_t n)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdMemOpsFindN(void* ptr, kd_i32_t len, void* nitem, kd_i32_t n)
+#endif /* KD_ARCH_64BIT_INT */
+{
+  if (len < 0 || n <= 0)
+  {
+    return kd_null;
+  }
+  return kdGenMemOpsFindBlock(ptr, len * n, nitem, n);
+}
+
+
+#if defined KD_ARCH_64BIT_INT
 kd_i64_t
 kdMemOpsFindIndex(void* ptr, kd_i64_t len, kd_byte_t item)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kd_i32_t
+kdMemOpsFindIndex(void* ptr, kd_i32_t len, kd_byte_t item)
+#endif /* KD_ARCH_64BIT_INT */
 {
   kd_usize_t idx;
   void*      found_ptr;
@@ -331,12 +510,21 @@ kdMemOpsFindIndex(void* ptr, kd_i64_t len, kd_byte_t item)
 
   found_ptr = kdi_GenMemOpsFindBlockWithIndex_Byte(&idx, ptr, len, item);
 
+#if defined KD_ARCH_64BIT_INT
   return found_ptr ? KD_I64_C(idx) : -1;
+#else  /* !defined KD_ARCH_64BIT_INT */
+  return found_ptr ? KD_I32_C(idx) : -1;
+#endif /* KD_ARCH_64BIT_INT */
 }
 
 
+#if defined KD_ARCH_64BIT_INT
 kd_i64_t
 kdMemOpsFindIndexU16(void* ptr, kd_i64_t len, kd_u16_t item)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kd_i32_t
+kdMemOpsFindIndexU16(void* ptr, kd_i32_t len, kd_u16_t item)
+#endif /* KD_ARCH_64BIT_INT */
 {
   kd_usize_t idx;
   void*      found_ptr;
@@ -348,12 +536,21 @@ kdMemOpsFindIndexU16(void* ptr, kd_i64_t len, kd_u16_t item)
 
   found_ptr = kdi_GenMemOpsFindBlockWithIndex_U16(&idx, ptr, len * KD_SZ_U16, item);
 
+#if defined KD_ARCH_64BIT_INT
   return found_ptr ? KD_I64_C(idx / KD_SZ_U16) : -1;
+#else  /* !defined KD_ARCH_64BIT_INT */
+  return found_ptr ? KD_I32_C(idx / KD_SZ_U16) : -1;
+#endif /* KD_ARCH_64BIT_INT */
 }
 
 
+#if defined KD_ARCH_64BIT_INT
 kd_i64_t
 kdMemOpsFindIndexU32(void* ptr, kd_i64_t len, kd_u32_t item)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kd_i32_t
+kdMemOpsFindIndexU32(void* ptr, kd_i32_t len, kd_u32_t item)
+#endif /* KD_ARCH_64BIT_INT */
 {
   kd_usize_t idx;
   void*      found_ptr;
@@ -365,7 +562,11 @@ kdMemOpsFindIndexU32(void* ptr, kd_i64_t len, kd_u32_t item)
 
   found_ptr = kdi_GenMemOpsFindBlockWithIndex_U32(&idx, ptr, len * KD_SZ_U32, item);
 
+#if defined KD_ARCH_64BIT_INT
   return found_ptr ? KD_I64_C(idx / KD_SZ_U32) : -1;
+#else  /* !defined KD_ARCH_64BIT_INT */
+  return found_ptr ? KD_I32_C(idx / KD_SZ_U32) : -1;
+#endif /* KD_ARCH_64BIT_INT */
 }
 
 
@@ -388,8 +589,53 @@ kdMemOpsFindIndexU64(void* ptr, kd_i64_t len, kd_u64_t item)
 #endif /* KD_ARCH_64BIT_INT */
 
 
+#if defined KD_ARCH_64BIT_INT
+kd_i64_t
+kdMemOpsFindIndexN(void* ptr, kd_i64_t len, void* nitem, kd_i64_t n)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kd_i32_t
+kdMemOpsFindIndexN(void* ptr, kd_i32_t len, void* nitem, kd_i32_t n)
+#endif /* KD_ARCH_64BIT_INT */
+{
+  kd_usize_t idx;
+
+  if (len < 0 || n <= 0)
+  {
+    return -1;
+  }
+
+  return kdGenMemOpsFindBlockIndex(&idx, ptr, len * n, nitem, n) ?
+#if defined KD_ARCH_64BIT_INT
+                                                                 KD_I64_C(idx / n)
+#else  /* !defined KD_ARCH_64BIT_INT */
+                                                                 KD_I32_C(idx / n)
+#endif /* KD_ARCH_64BIT_INT */
+                                                                 : -1;
+}
+
+
 void*
+#if defined KD_ARCH_64BIT_INT
+kdMemOpsFindLast(void* ptr, kd_i64_t len, kd_byte_t item)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdMemOpsFindLast(void* ptr, kd_i32_t len, kd_byte_t item)
+#endif /* KD_ARCH_64BIT_INT */
+{
+  if (!ptr || len <= 0)
+  {
+    return kd_null;
+  }
+
+  return kdi_GenMemOpsFindLastBlockWithIndex_Byte(kd_null, ptr, len, item);
+}
+
+
+void*
+#if defined KD_ARCH_64BIT_INT
 kdMemOpsFindLastU16(void* ptr, kd_i64_t len, kd_u16_t item)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdMemOpsFindLastU16(void* ptr, kd_i32_t len, kd_u16_t item)
+#endif /* KD_ARCH_64BIT_INT */
 {
   if (!ptr || len <= 0)
   {
@@ -401,7 +647,11 @@ kdMemOpsFindLastU16(void* ptr, kd_i64_t len, kd_u16_t item)
 
 
 void*
+#if defined KD_ARCH_64BIT_INT
 kdMemOpsFindLastU32(void* ptr, kd_i64_t len, kd_u32_t item)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdMemOpsFindLastU32(void* ptr, kd_i32_t len, kd_u32_t item)
+#endif /* KD_ARCH_64BIT_INT */
 {
   if (!ptr || len <= 0)
   {
@@ -426,8 +676,28 @@ kdMemOpsFindLastU64(void* ptr, kd_i64_t len, kd_u64_t item)
 #endif /* KD_ARCH_64BIT_INT */
 
 
+void*
+#if defined KD_ARCH_64BIT_INT
+kdMemOpsFindLastN(void* ptr, kd_i64_t len, void* nitem, kd_i64_t n)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdMemOpsFindLastN(void* ptr, kd_i32_t len, void* nitem, kd_i32_t n)
+#endif /* KD_ARCH_64BIT_INT */
+{
+  if (len < 0 || n <= 0)
+  {
+    return kd_null;
+  }
+  return kdGenMemOpsFindLastBlock(ptr, len * n, nitem, n);
+}
+
+
+#if defined KD_ARCH_64BIT_INT
 kd_i64_t
 kdMemOpsFindLastIndex(void* ptr, kd_i64_t len, kd_byte_t item)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kd_i32_t
+kdMemOpsFindLastIndex(void* ptr, kd_i32_t len, kd_byte_t item)
+#endif /* KD_ARCH_64BIT_INT */
 {
   kd_usize_t idx;
   void*      found_ptr;
@@ -439,12 +709,21 @@ kdMemOpsFindLastIndex(void* ptr, kd_i64_t len, kd_byte_t item)
 
   found_ptr = kdi_GenMemOpsFindLastBlockWithIndex_Byte(&idx, ptr, len, item);
 
+#if defined KD_ARCH_64BIT_INT
   return found_ptr ? KD_I64_C(idx) : -1;
+#else  /* !defined KD_ARCH_64BIT_INT */
+  return found_ptr ? KD_I32_C(idx) : -1;
+#endif /* KD_ARCH_64BIT_INT */
 }
 
 
+#if defined KD_ARCH_64BIT_INT
 kd_i64_t
 kdMemOpsFindLastIndexU16(void* ptr, kd_i64_t len, kd_u16_t item)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kd_i32_t
+kdMemOpsFindLastIndexU16(void* ptr, kd_i32_t len, kd_u16_t item)
+#endif /* KD_ARCH_64BIT_INT */
 {
   kd_usize_t idx;
   void*      found_ptr;
@@ -456,12 +735,21 @@ kdMemOpsFindLastIndexU16(void* ptr, kd_i64_t len, kd_u16_t item)
 
   found_ptr = kdi_GenMemOpsFindLastBlockWithIndex_U16(&idx, ptr, len * KD_SZ_U16, item);
 
+#if defined KD_ARCH_64BIT_INT
   return found_ptr ? KD_I64_C(idx / KD_SZ_U16) : -1;
+#else  /* !defined KD_ARCH_64BIT_INT */
+  return found_ptr ? KD_I32_C(idx / KD_SZ_U16) : -1;
+#endif /* KD_ARCH_64BIT_INT */
 }
 
 
+#if defined KD_ARCH_64BIT_INT
 kd_i64_t
 kdMemOpsFindLastIndexU32(void* ptr, kd_i64_t len, kd_u32_t item)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kd_i32_t
+kdMemOpsFindLastIndexU32(void* ptr, kd_i32_t len, kd_u32_t item)
+#endif /* KD_ARCH_64BIT_INT */
 {
   kd_usize_t idx;
   void*      found_ptr;
@@ -473,7 +761,11 @@ kdMemOpsFindLastIndexU32(void* ptr, kd_i64_t len, kd_u32_t item)
 
   found_ptr = kdi_GenMemOpsFindLastBlockWithIndex_U32(&idx, ptr, len * KD_SZ_U32, item);
 
+#if defined KD_ARCH_64BIT_INT
   return found_ptr ? KD_I64_C(idx / KD_SZ_U32) : -1;
+#else  /* !defined KD_ARCH_64BIT_INT */
+  return found_ptr ? KD_I32_C(idx / KD_SZ_U32) : -1;
+#endif /* KD_ARCH_64BIT_INT */
 }
 
 
@@ -496,36 +788,149 @@ kdMemOpsFindLastIndexU64(void* ptr, kd_i64_t len, kd_u64_t item)
 #endif /* KD_ARCH_64BIT_INT */
 
 
+#if defined KD_ARCH_64BIT_INT
+kd_i64_t
+kdMemOpsFindLastIndexN(void* ptr, kd_i64_t len, void* nitem, kd_i64_t n)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kd_i32_t
+kdMemOpsFindLastIndexN(void* ptr, kd_i32_t len, void* nitem, kd_i32_t n)
+#endif /* KD_ARCH_64BIT_INT */
+{
+  kd_usize_t idx;
+
+  if (len < 0 || n <= 0)
+  {
+    return -1;
+  }
+
+  return kdGenMemOpsFindLastBlockIndex(&idx, ptr, len * n, nitem, n) ?
+#if defined KD_ARCH_64BIT_INT
+                                                                     KD_I64_C(idx / n)
+#else  /* !defined KD_ARCH_64BIT_INT */
+                                                                     KD_I32_C(idx / n)
+#endif /* KD_ARCH_64BIT_INT */
+                                                                     : -1;
+}
+
+
+#if defined KD_ARCH_64BIT_INT
 kd_i64_t
 kdMemOpsFindAll(void* dst, kd_i64_t dst_len, void* ptr, kd_i64_t ptr_len, kd_byte_t item)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kd_i32_t
+kdMemOpsFindAll(void* dst, kd_i32_t dst_len, void* ptr, kd_i32_t ptr_len, kd_byte_t item)
+#endif /* KD_ARCH_64BIT_INT */
 {
-  if (dst_len < 0 || ptr_len < 0)
+  if (!dst || dst_len <= 0 || !ptr || ptr_len <= 0)
   {
     return 0;
   }
-  return KD_I64_C(kdGenMemOpsFindAllBytes(dst, dst_len, ptr, ptr_len, item));
+  return
+#if defined KD_ARCH_64BIT_INT
+    KD_I64_C(kdi_GenMemOpsFindAllBlocksWithIndex_Byte(dst, dst_len, ptr, ptr_len, item));
+#else  /* !defined KD_ARCH_64BIT_INT */
+    KD_I64_C(kdi_GenMemOpsFindAllBlocksWithIndex_Byte(dst, dst_len, ptr, ptr_len, item));
+#endif /* KD_ARCH_64BIT_INT */
 }
 
 
+#if defined KD_ARCH_64BIT_INT
 kd_i64_t
 kdMemOpsFindAllU16(void* dst, kd_i64_t dst_len, void* ptr, kd_i64_t ptr_len, kd_u16_t item)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kd_i32_t
+kdMemOpsFindAllU16(void* dst, kd_i32_t dst_len, void* ptr, kd_i32_t ptr_len, kd_u16_t item)
+#endif /* KD_ARCH_64BIT_INT */
 {
-  if (dst_len < 0 || ptr_len < 0)
+  kd_byte_t** dst_ptr  = dst;
+  kd_usize_t *idxs_ptr = dst, found_cnt, temp_found_cnt;
+
+  if (!dst || dst_len <= 0 || !ptr || ptr_len <= 0)
   {
     return 0;
   }
-  return KD_I64_C(kdGenMemOpsFindAllBlocks(dst, dst_len * KD_SZ_U16, ptr, ptr_len * KD_SZ_U16, &item, KD_SZ_U16));
+
+  found_cnt      = kdi_GenMemOpsFindAllBlocksWithIndex_U16(dst, dst_len * KD_SZ_U16, ptr, ptr_len * KD_SZ_U16, item);
+  temp_found_cnt = found_cnt;
+
+  if (KD_SZ_PTR > KD_SZ_USIZE)
+  {
+    dst_ptr += found_cnt;
+    idxs_ptr += found_cnt;
+
+    while (temp_found_cnt--)
+    {
+      --dst_ptr;
+      --idxs_ptr;
+      *dst_ptr = KD_PBYTE_C(ptr) + *idxs_ptr;
+    }
+  }
+  else
+  {
+    while (temp_found_cnt--)
+    {
+      *dst_ptr = KD_PBYTE_C(ptr) + *idxs_ptr;
+      ++dst_ptr;
+      ++idxs_ptr;
+    }
+  }
+
+  return
+#if defined KD_ARCH_64BIT_INT
+    KD_I64_C(found_cnt);
+#else  /* !defined KD_ARCH_64BIT_INT */
+    KD_I32_C(found_cnt);
+#endif /* KD_ARCH_64BIT_INT */
 }
 
 
+#if defined KD_ARCH_64BIT_INT
 kd_i64_t
 kdMemOpsFindAllU32(void* dst, kd_i64_t dst_len, void* ptr, kd_i64_t ptr_len, kd_u32_t item)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kd_i32_t
+kdMemOpsFindAllU32(void* dst, kd_i32_t dst_len, void* ptr, kd_i32_t ptr_len, kd_u32_t item)
+#endif /* KD_ARCH_64BIT_INT */
 {
-  if (dst_len < 0 || ptr_len < 0)
+  kd_byte_t** dst_ptr  = dst;
+  kd_usize_t *idxs_ptr = dst, found_cnt, temp_found_cnt;
+
+  if (!dst || dst_len <= 0 || !ptr || ptr_len <= 0)
   {
     return 0;
   }
-  return KD_I64_C(kdGenMemOpsFindAllBlocks(dst, dst_len * KD_SZ_U32, ptr, ptr_len * KD_SZ_U32, &item, KD_SZ_U32));
+
+  found_cnt      = kdi_GenMemOpsFindAllBlocksWithIndex_U32(dst, dst_len * KD_SZ_U32, ptr, ptr_len * KD_SZ_U32, item);
+  temp_found_cnt = found_cnt;
+
+  if (KD_SZ_PTR > KD_SZ_USIZE)
+  {
+    dst_ptr += found_cnt;
+    idxs_ptr += found_cnt;
+
+    while (temp_found_cnt--)
+    {
+      --dst_ptr;
+      --idxs_ptr;
+      *dst_ptr = KD_PBYTE_C(ptr) + *idxs_ptr;
+    }
+  }
+  else
+  {
+    while (temp_found_cnt--)
+    {
+      *dst_ptr = KD_PBYTE_C(ptr) + *idxs_ptr;
+      ++dst_ptr;
+      ++idxs_ptr;
+    }
+  }
+
+  return
+#if defined KD_ARCH_64BIT_INT
+    KD_I64_C(found_cnt);
+#else  /* !defined KD_ARCH_64BIT_INT */
+    KD_I32_C(found_cnt);
+#endif /* KD_ARCH_64BIT_INT */
 }
 
 
@@ -533,28 +938,93 @@ kdMemOpsFindAllU32(void* dst, kd_i64_t dst_len, void* ptr, kd_i64_t ptr_len, kd_
 kd_i64_t
 kdMemOpsFindAllU64(void* dst, kd_i64_t dst_len, void* ptr, kd_i64_t ptr_len, kd_u64_t item)
 {
-  if (dst_len < 0 || ptr_len < 0)
+  kd_byte_t** dst_ptr  = dst;
+  kd_usize_t *idxs_ptr = dst, found_cnt, temp_found_cnt;
+
+  if (!dst || dst_len <= 0 || !ptr || ptr_len <= 0)
   {
     return 0;
   }
-  return KD_I64_C(kdGenMemOpsFindAllBlocks(dst, dst_len * KD_SZ_U64, ptr, ptr_len * KD_SZ_U64, &item, KD_SZ_U64));
+
+  found_cnt      = kdi_GenMemOpsFindAllBlocksWithIndex_U64(dst, dst_len * KD_SZ_U64, ptr, ptr_len * KD_SZ_U64, item);
+  temp_found_cnt = found_cnt;
+
+  if (KD_SZ_PTR > KD_SZ_USIZE)
+  {
+    dst_ptr += found_cnt;
+    idxs_ptr += found_cnt;
+
+    while (temp_found_cnt--)
+    {
+      --dst_ptr;
+      --idxs_ptr;
+      *dst_ptr = KD_PBYTE_C(ptr) + *idxs_ptr;
+    }
+  }
+  else
+  {
+    while (temp_found_cnt--)
+    {
+      *dst_ptr = KD_PBYTE_C(ptr) + *idxs_ptr;
+      ++dst_ptr;
+      ++idxs_ptr;
+    }
+  }
+
+  return KD_I64_C(found_cnt);
 }
 #endif /* KD_ARCH_64BIT_INT */
 
 
+#if defined KD_ARCH_64BIT_INT
+kd_i64_t
+kdMemOpsFindAllN(void* dst, kd_i64_t dst_len, void* ptr, kd_i64_t ptr_len, void* nitem, kd_i64_t n)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kd_i32_t
+kdMemOpsFindAllN(void* dst, kd_i32_t dst_len, void* ptr, kd_i32_t ptr_len, void* nitem, kd_i32_t n)
+#endif /* KD_ARCH_64BIT_INT */
+{
+  if (dst_len < 0 || ptr_len < 0 || n <= 0)
+  {
+    return 0;
+  }
+  return
+#if defined KD_ARCH_64BIT_INT
+    KD_I64_C(kdGenMemOpsFindAllBlocks(dst, dst_len * n, ptr, ptr_len * n, nitem, n));
+#else  /* !defined KD_ARCH_64BIT_INT */
+    KD_I32_C(kdGenMemOpsFindAllBlocks(dst, dst_len * n, ptr, ptr_len * n, nitem, n));
+#endif /* KD_ARCH_64BIT_INT */
+}
+
+
+#if defined KD_ARCH_64BIT_INT
 kd_i64_t
 kdMemOpsFindAllIndex(kd_i64_t* idxs, kd_i64_t idxs_len, void* ptr, kd_i64_t ptr_len, kd_byte_t item)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kd_i32_t
+kdMemOpsFindAllIndex(kd_i32_t* idxs, kd_i32_t idxs_len, void* ptr, kd_i32_t ptr_len, kd_byte_t item)
+#endif /* KD_ARCH_64BIT_INT */
 {
   if (!idxs || idxs_len <= 0 || !ptr || ptr_len <= 0)
   {
     return 0;
   }
-  return KD_I64_C(kdi_GenMemOpsFindAllBlocksWithIndex_Byte(idxs, idxs_len, ptr, ptr_len, item));
+  return
+#if defined KD_ARCH_64BIT_INT
+    KD_I64_C(kdi_GenMemOpsFindAllBlocksWithIndex_Byte(idxs, idxs_len, ptr, ptr_len, item));
+#else  /* !defined KD_ARCH_64BIT_INT */
+    KD_I32_C(kdi_GenMemOpsFindAllBlocksWithIndex_Byte(idxs, idxs_len, ptr, ptr_len, item));
+#endif /* KD_ARCH_64BIT_INT */
 }
 
 
+#if defined KD_ARCH_64BIT_INT
 kd_i64_t
 kdMemOpsFindAllIndexU16(kd_i64_t* idxs, kd_i64_t idxs_len, void* ptr, kd_i64_t ptr_len, kd_u16_t item)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kd_i32_t
+kdMemOpsFindAllIndexU16(kd_i32_t* idxs, kd_i32_t idxs_len, void* ptr, kd_i32_t ptr_len, kd_u16_t item)
+#endif /* KD_ARCH_64BIT_INT */
 {
   kd_usize_t found_cnt, temp_found_cnt;
 
@@ -569,15 +1039,30 @@ kdMemOpsFindAllIndexU16(kd_i64_t* idxs, kd_i64_t idxs_len, void* ptr, kd_i64_t p
   while (temp_found_cnt--)
   {
     *idxs /= KD_SZ_U16;
-    idxs = (kd_i64_t*)((kd_byte_t*)idxs + KD_SZ_USIZE);
+    idxs =
+#if defined KD_ARCH_64BIT_INT
+      KD_PI64_C((kd_byte_t*)idxs + KD_SZ_USIZE);
+#else  /* !defined KD_ARCH_64BIT_INT */
+      KD_PI32_C((kd_byte_t*)idxs + KD_SZ_USIZE);
+#endif /* KD_ARCH_64BIT_INT */
   }
 
-  return KD_I64_C(found_cnt);
+  return
+#if defined KD_ARCH_64BIT_INT
+    KD_I64_C(found_cnt);
+#else  /* !defined KD_ARCH_64BIT_INT */
+    KD_I32_C(found_cnt);
+#endif /* KD_ARCH_64BIT_INT */
 }
 
 
+#if defined KD_ARCH_64BIT_INT
 kd_i64_t
 kdMemOpsFindAllIndexU32(kd_i64_t* idxs, kd_i64_t idxs_len, void* ptr, kd_i64_t ptr_len, kd_u32_t item)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kd_i32_t
+kdMemOpsFindAllIndexU32(kd_i32_t* idxs, kd_i32_t idxs_len, void* ptr, kd_i32_t ptr_len, kd_u32_t item)
+#endif /* KD_ARCH_64BIT_INT */
 {
   kd_usize_t found_cnt, temp_found_cnt;
 
@@ -592,10 +1077,20 @@ kdMemOpsFindAllIndexU32(kd_i64_t* idxs, kd_i64_t idxs_len, void* ptr, kd_i64_t p
   while (temp_found_cnt--)
   {
     *idxs /= KD_SZ_U32;
-    idxs = (kd_i64_t*)((kd_byte_t*)idxs + KD_SZ_USIZE);
+    idxs =
+#if defined KD_ARCH_64BIT_INT
+      KD_PI64_C((kd_byte_t*)idxs + KD_SZ_USIZE);
+#else  /* !defined KD_ARCH_64BIT_INT */
+      KD_PI32_C((kd_byte_t*)idxs + KD_SZ_USIZE);
+#endif /* KD_ARCH_64BIT_INT */
   }
 
-  return KD_I64_C(found_cnt);
+  return
+#if defined KD_ARCH_64BIT_INT
+    KD_I64_C(found_cnt);
+#else  /* !defined KD_ARCH_64BIT_INT */
+    KD_I32_C(found_cnt);
+#endif /* KD_ARCH_64BIT_INT */
 }
 
 
@@ -616,7 +1111,7 @@ kdMemOpsFindAllIndexU64(kd_i64_t* idxs, kd_i64_t idxs_len, void* ptr, kd_i64_t p
   while (temp_found_cnt--)
   {
     *idxs /= KD_SZ_U64;
-    idxs = (kd_i64_t*)((kd_byte_t*)idxs + KD_SZ_USIZE);
+    idxs = KD_PI64_C((kd_byte_t*)idxs + KD_SZ_USIZE);
   }
 
   return KD_I64_C(found_cnt);
@@ -624,22 +1119,56 @@ kdMemOpsFindAllIndexU64(kd_i64_t* idxs, kd_i64_t idxs_len, void* ptr, kd_i64_t p
 #endif /* KD_ARCH_64BIT_INT */
 
 
+#if defined KD_ARCH_64BIT_INT
+kd_i64_t
+kdMemOpsFindAllIndexN(kd_i64_t* idxs, kd_i64_t idxs_len, void* ptr, kd_i64_t ptr_len, void* nitem, kd_i64_t n)
+#else  /* !defined KD_ARCH_64BIT_INT */
 kd_i32_t
+kdMemOpsFindAllIndexN(kd_i32_t* idxs, kd_i32_t idxs_len, void* ptr, kd_i32_t ptr_len, void* nitem, kd_i32_t n)
+#endif /* KD_ARCH_64BIT_INT */
+{
+  if (idxs_len < 0 || ptr_len < 0 || n <= 0)
+  {
+    return 0;
+  }
+  return
+#if defined KD_ARCH_64BIT_INT
+    KD_I64_C(kdGenMemOpsFindAllBlocksIndex(KD_PUSIZE_C(idxs), idxs_len * KD_SZ_USIZE, ptr, ptr_len * n, nitem, n));
+#else  /* !defined KD_ARCH_64BIT_INT */
+    KD_I32_C(kdGenMemOpsFindAllBlocksIndex(KD_PUSIZE_C(idxs), idxs_len * KD_SZ_USIZE, ptr, ptr_len * n, nitem, n));
+#endif /* KD_ARCH_64BIT_INT */
+}
+
+
+#if defined KD_ARCH_64BIT_INT
+kd_i64_t
 kdMemOpsCmp(void* ptr1, void* ptr2, kd_i64_t len)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kd_i32_t
+kdMemOpsCmp(void* ptr1, void* ptr2, kd_i32_t len)
+#endif /* KD_ARCH_64BIT_INT */
 {
   return len < 0 ? 0 : kdGenMemOpsCmp(ptr1, ptr2, len);
 }
 
 
 kd_bool_t
+#if defined KD_ARCH_64BIT_INT
 kdMemOpsCat(void* dst, kd_i64_t dst_len, void* src1, kd_i64_t src1_len, void* src2, kd_i64_t src2_len)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdMemOpsCat(void* dst, kd_i32_t dst_len, void* src1, kd_i32_t src1_len, void* src2, kd_i32_t src2_len)
+#endif /* KD_ARCH_64BIT_INT */
 {
   return dst_len < 0 || src1_len < 0 || src2_len < 0 ? 0 : kdGenMemOpsCat(dst, dst_len, src1, src1_len, src2, src2_len);
 }
 
 
 void*
+#if defined KD_ARCH_64BIT_INT
 kdMemOpsCompSpn(void* ptr, kd_i64_t len, void* keys, kd_i64_t keys_len)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdMemOpsCompSpn(void* ptr, kd_i32_t len, void* keys, kd_i32_t keys_len)
+#endif /* KD_ARCH_64BIT_INT */
 {
   if (!ptr || !keys || len <= 0 || keys_len <= 0)
   {
@@ -650,7 +1179,11 @@ kdMemOpsCompSpn(void* ptr, kd_i64_t len, void* keys, kd_i64_t keys_len)
 
 
 void*
+#if defined KD_ARCH_64BIT_INT
 kdMemOpsCompSpnU16(void* ptr, kd_i64_t len, void* keys, kd_i64_t keys_len)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdMemOpsCompSpnU16(void* ptr, kd_i32_t len, void* keys, kd_i32_t keys_len)
+#endif /* KD_ARCH_64BIT_INT */
 {
   if (!ptr || !keys || len <= 0 || keys_len <= 0)
   {
@@ -661,7 +1194,11 @@ kdMemOpsCompSpnU16(void* ptr, kd_i64_t len, void* keys, kd_i64_t keys_len)
 
 
 void*
+#if defined KD_ARCH_64BIT_INT
 kdMemOpsCompSpnU32(void* ptr, kd_i64_t len, void* keys, kd_i64_t keys_len)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdMemOpsCompSpnU32(void* ptr, kd_i32_t len, void* keys, kd_i32_t keys_len)
+#endif /* KD_ARCH_64BIT_INT */
 {
   if (!ptr || !keys || len <= 0 || keys_len <= 0)
   {
@@ -684,8 +1221,28 @@ kdMemOpsCompSpnU64(void* ptr, kd_i64_t len, void* keys, kd_i64_t keys_len)
 #endif /* KD_ARCH_64BIT_INT */
 
 
+void*
+#if defined KD_ARCH_64BIT_INT
+kdMemOpsCompSpnN(void* ptr, kd_i64_t len, void* keys, kd_i64_t keys_len, kd_i64_t n)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdMemOpsCompSpnN(void* ptr, kd_i32_t len, void* keys, kd_i32_t keys_len, kd_i32_t n)
+#endif /* KD_ARCH_64BIT_INT */
+{
+  if (len < 0 || keys_len < 0 || n <= 0)
+  {
+    return kd_null;
+  }
+  return kdGenMemOpsBlocksCompSpn(ptr, len * n, keys, n, keys_len * n);
+}
+
+
+#if defined KD_ARCH_64BIT_INT
 kd_i64_t
 kdMemOpsCompSpnIndex(void* ptr, kd_i64_t len, void* keys, kd_i64_t keys_len)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kd_i32_t
+kdMemOpsCompSpnIndex(void* ptr, kd_i32_t len, void* keys, kd_i32_t keys_len)
+#endif /* KD_ARCH_64BIT_INT */
 {
   kd_usize_t idx;
   void*      found_ptr;
@@ -697,12 +1254,23 @@ kdMemOpsCompSpnIndex(void* ptr, kd_i64_t len, void* keys, kd_i64_t keys_len)
 
   found_ptr = kdi_GenMemOpsBlocksCompSpnWithIndex_Byte(&idx, ptr, len, keys, keys_len);
 
-  return found_ptr ? (kd_i64_t)idx : -1;
+  return found_ptr ?
+#if defined KD_ARCH_64BIT_INT
+                   KD_I64_C(idx)
+#else  /* !defined KD_ARCH_64BIT_INT */
+                   KD_I32_C(idx)
+#endif /* KD_ARCH_64BIT_INT */
+                   : -1;
 }
 
 
+#if defined KD_ARCH_64BIT_INT
 kd_i64_t
 kdMemOpsCompSpnIndexU16(void* ptr, kd_i64_t len, void* keys, kd_i64_t keys_len)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kd_i32_t
+kdMemOpsCompSpnIndexU16(void* ptr, kd_i32_t len, void* keys, kd_i32_t keys_len)
+#endif /* KD_ARCH_64BIT_INT */
 {
   kd_usize_t idx;
   void*      found_ptr;
@@ -714,12 +1282,23 @@ kdMemOpsCompSpnIndexU16(void* ptr, kd_i64_t len, void* keys, kd_i64_t keys_len)
 
   found_ptr = kdi_GenMemOpsBlocksCompSpnWithIndex_U16(&idx, ptr, len * KD_SZ_U16, keys, keys_len * KD_SZ_U16);
 
-  return found_ptr ? (kd_i64_t)(idx / KD_SZ_U16) : -1;
+  return found_ptr ?
+#if defined KD_ARCH_64BIT_INT
+                   KD_I64_C(idx / KD_SZ_U16)
+#else  /* !defined KD_ARCH_64BIT_INT */
+                   KD_I32_C(idx / KD_SZ_U16)
+#endif /* KD_ARCH_64BIT_INT */
+                   : -1;
 }
 
 
+#if defined KD_ARCH_64BIT_INT
 kd_i64_t
 kdMemOpsCompSpnIndexU32(void* ptr, kd_i64_t len, void* keys, kd_i64_t keys_len)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kd_i32_t
+kdMemOpsCompSpnIndexU32(void* ptr, kd_i32_t len, void* keys, kd_i32_t keys_len)
+#endif /* KD_ARCH_64BIT_INT */
 {
   kd_usize_t idx;
   void*      found_ptr;
@@ -731,7 +1310,13 @@ kdMemOpsCompSpnIndexU32(void* ptr, kd_i64_t len, void* keys, kd_i64_t keys_len)
 
   found_ptr = kdi_GenMemOpsBlocksCompSpnWithIndex_U32(&idx, ptr, len * KD_SZ_U32, keys, keys_len * KD_SZ_U32);
 
-  return found_ptr ? (kd_i64_t)(idx / KD_SZ_U32) : -1;
+  return found_ptr ?
+#if defined KD_ARCH_64BIT_INT
+                   KD_I64_C(idx / KD_SZ_U32)
+#else  /* !defined KD_ARCH_64BIT_INT */
+                   KD_I32_C(idx / KD_SZ_U32)
+#endif /* KD_ARCH_64BIT_INT */
+                   : -1;
 }
 
 
@@ -749,13 +1334,43 @@ kdMemOpsCompSpnIndexU64(void* ptr, kd_i64_t len, void* keys, kd_i64_t keys_len)
 
   found_ptr = kdi_GenMemOpsBlocksCompSpnWithIndex_U64(&idx, ptr, len * KD_SZ_U64, keys, keys_len * KD_SZ_U64);
 
-  return found_ptr ? (kd_i64_t)(idx / KD_SZ_U64) : -1;
+  return found_ptr ? KD_I64_C(idx / KD_SZ_U64) : -1;
 }
 #endif /* KD_ARCH_64BIT_INT */
 
 
+#if defined KD_ARCH_64BIT_INT
+kd_i64_t
+kdMemOpsCompSpnIndexN(void* ptr, kd_i64_t len, void* keys, kd_i64_t keys_len, kd_i64_t n)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kd_i32_t
+kdMemOpsCompSpnIndexN(void* ptr, kd_i32_t len, void* keys, kd_i32_t keys_len, kd_i32_t n)
+#endif /* KD_ARCH_64BIT_INT */
+{
+  kd_usize_t idx;
+
+  if (len < 0 || keys_len < 0 || n <= 0)
+  {
+    return -1;
+  }
+
+  return kdGenMemOpsBlocksCompSpnIndex(&idx, ptr, len * n, keys, n, keys_len * n) ?
+#if defined KD_ARCH_64BIT_INT
+                                                                                  KD_I64_C(idx / n)
+#else  /* !defined KD_ARCH_64BIT_INT */
+                                                                                  KD_I32_C(idx / n)
+#endif /* KD_ARCH_64BIT_INT */
+                                                                                  : -1;
+}
+
+
+#if defined KD_ARCH_64BIT_INT
 kd_i64_t
 kdMemOpsSpn(void* ptr, kd_i64_t len, void* keys, kd_i64_t keys_len)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kd_i32_t
+kdMemOpsSpn(void* ptr, kd_i32_t len, void* keys, kd_i32_t keys_len)
+#endif /* KD_ARCH_64BIT_INT */
 {
   if (!ptr || !keys || len <= 0 || keys_len <= 0)
   {
@@ -765,8 +1380,13 @@ kdMemOpsSpn(void* ptr, kd_i64_t len, void* keys, kd_i64_t keys_len)
 }
 
 
+#if defined KD_ARCH_64BIT_INT
 kd_i64_t
 kdMemOpsSpnU16(void* ptr, kd_i64_t len, void* keys, kd_i64_t keys_len)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kd_i32_t
+kdMemOpsSpnU16(void* ptr, kd_i32_t len, void* keys, kd_i32_t keys_len)
+#endif /* KD_ARCH_64BIT_INT */
 {
   if (!ptr || !keys || len <= 0 || keys_len <= 0)
   {
@@ -776,8 +1396,13 @@ kdMemOpsSpnU16(void* ptr, kd_i64_t len, void* keys, kd_i64_t keys_len)
 }
 
 
+#if defined KD_ARCH_64BIT_INT
 kd_i64_t
 kdMemOpsSpnU32(void* ptr, kd_i64_t len, void* keys, kd_i64_t keys_len)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kd_i32_t
+kdMemOpsSpnU32(void* ptr, kd_i32_t len, void* keys, kd_i32_t keys_len)
+#endif /* KD_ARCH_64BIT_INT */
 {
   if (!ptr || !keys || len <= 0 || keys_len <= 0)
   {
@@ -798,3 +1423,24 @@ kdMemOpsSpnU64(void* ptr, kd_i64_t len, void* keys, kd_i64_t keys_len)
   return kdi_GenMemOpsBlocksSpn_U64(ptr, len * KD_SZ_U64, keys, keys_len * KD_SZ_U64) / KD_SZ_U64;
 }
 #endif /* KD_ARCH_64BIT_INT */
+
+
+#if defined KD_ARCH_64BIT_INT
+kd_i64_t
+kdMemOpsSpnN(void* ptr, kd_i64_t len, void* keys, kd_i64_t keys_len, kd_i64_t n)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kd_i32_t
+kdMemOpsSpnN(void* ptr, kd_i32_t len, void* keys, kd_i32_t keys_len, kd_i32_t n)
+#endif /* KD_ARCH_64BIT_INT */
+{
+  if (len < 0 || keys_len < 0 || n <= 0)
+  {
+    return 0;
+  }
+  return
+#if defined KD_ARCH_64BIT_INT
+    KD_I64_C(kdGenMemOpsBlocksSpn(ptr, len * n, keys, n, keys_len * n) / n);
+#else  /* !defined KD_ARCH_64BIT_INT */
+    KD_I32_C(kdGenMemOpsBlocksSpn(ptr, len * n, keys, n, keys_len * n) / n);
+#endif /* KD_ARCH_64BIT_INT */
+}

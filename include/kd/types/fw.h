@@ -136,6 +136,14 @@ typedef kd_u32_t kd_usize_t;
 typedef kd_u8_t  kd_byte_t;
 typedef kd_u32_t kd_chr_t;
 
+#if defined KD_ARCH_64BIT_INT
+  #define KD_BASE_INT_T  kd_i64_t
+  #define KD_BASE_UINT_T kd_u64_t
+#else
+  #define KD_BASE_INT_T  kd_i32_t
+  #define KD_BASE_UINT_T kd_u32_t
+#endif /* KD_ARCH_64BIT_INT */
+
 
 /**
  * ---------------------------------------------------------------------------------------------------------------------
