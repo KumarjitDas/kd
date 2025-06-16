@@ -1,9 +1,9 @@
 /**
- * @file kd.h
+ * @file gen_arr_sn.c
  * @author Kumarjit Das
- * @date 2025-05-28
- * @since 0.0.4
- * @brief KD library public common header.
+ * @date 2025-06-16
+ * @since 0.0.11
+ * @brief Main source file of the GEN_ARR_SN library (internal).
  */
 /**
  * LICENSE: BSD 3-Clause License
@@ -38,18 +38,42 @@
  */
 
 
-#ifndef KD_H_
-#define KD_H_
-
-
-#include "kd/version.h"
-#include "kd/defs.h"
-#include "kd/types/fw.h"
-#include "kd/mem.h"
-#include "kd/mem_algn.h"
-#include "kd/gen_mem_ops.h"
-#include "kd/mem_ops.h"
+#define KD_BUILDING_LIB 1
+#include "_internal/common.h"
+#include "_internal/gen_mem_ops_sn.h"
+#include "_internal/gen_arr_sn.h"
 #include "kd/gen_arr.h"
 
 
-#endif /* KD_H_ */
+void*
+kdi_GenArrCreate(kd_u32_t el_sz, kd_usize_t sz, kd_bool_t (*allocator)(void*, kd_usize_t))
+{
+  kd_byte_t* mem;
+
+  if (!allocator((void*)&mem, sz + KDI_GEN_ARR_HEAD_OFFSET))
+  {
+    return kd_null;
+  }
+
+#if defined KD_ENDIAN_BIG
+  *KD_PU32_C(mem) =
+  #if defined KD_ARCH_32BIT_INT
+    KDI_GEN_ARR_ARC_32BIT_BITMASK |
+  #endif
+    KDI_GEN_ARR_BE_BITMASK | KDI_GEN_ARR_ID_BITMASK | KD_U32_C(el_sz & KDI_GEN_ARR_EL_SIZE_MASK);
+#else /* !defined KD_ENDIAN_BIG */
+  *KD_PU32_C(mem) = (
+  #if defined KD_ARCH_32BIT_INT
+                      KDI_GEN_ARR_ARC_32BIT_BITMASK |
+  #endif
+                      KDI_GEN_ARR_ID_BITMASK
+                    ) &
+    0xFFFFFFFF;
+
+  *KD_PU32_C(mem + KD_SZ_BYTE) = el_sz;
+#endif /* #if defined KD_ENDIAN_BIG */
+
+  *KD_PUSIZE_C(mem + KDI_GEN_ARR_EL_SIZE_SZ) = sz;
+
+  return KD_PTR_C(mem + KDI_GEN_ARR_HEAD_OFFSET);
+}

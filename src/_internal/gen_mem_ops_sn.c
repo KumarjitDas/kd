@@ -289,6 +289,37 @@ kdi_GenMemOpsSetBlocks_Sn(void* ptr, kd_usize_t sz, void* block, kd_usize_t bloc
 }
 
 
+void
+kdi_GenMemOpsMove(kd_byte_t* dst, kd_byte_t* src, kd_usize_t sz)
+{
+  if (dst == src)
+  {
+    return;
+  }
+
+  if (dst < src)
+  {
+    while (sz--)
+    {
+      *dst = *src;
+      ++dst;
+      ++src;
+    }
+    return;
+  }
+
+  dst += sz;
+  src += sz;
+
+  while (sz--)
+  {
+    --dst;
+    --src;
+    *dst = *src;
+  }
+}
+
+
 void*
 kdi_GenMemOpsFindBlockWithIndex_S8(kd_usize_t* idx_ptr, kd_u8_t* ptr, kd_usize_t sz, kd_u8_t val)
 {

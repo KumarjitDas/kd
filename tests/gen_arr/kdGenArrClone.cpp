@@ -1,9 +1,8 @@
 /**
- * @file kd.h
+ * @file kdGenArrClone.cpp
  * @author Kumarjit Das
- * @date 2025-05-28
- * @since 0.0.4
- * @brief KD library public common header.
+ * @date 2025-06-16
+ * @brief kdGenArrClone test file.
  */
 /**
  * LICENSE: BSD 3-Clause License
@@ -38,18 +37,46 @@
  */
 
 
-#ifndef KD_H_
-#define KD_H_
+#define KD_USE_SIMPLIFIED_TYPES
+#include "kd.h"
+#include "gtest/gtest.h"
 
 
-#include "kd/version.h"
-#include "kd/defs.h"
-#include "kd/types/fw.h"
-#include "kd/mem.h"
-#include "kd/mem_algn.h"
-#include "kd/gen_mem_ops.h"
-#include "kd/mem_ops.h"
-#include "kd/gen_arr.h"
+TEST(GenArrCloneTest, AllocatesMemoryCorrectly)
+{
+  kd_i64_t len = 16;
+  kd_i32_t val = 69;
+  auto*    arr = static_cast<kd_i32_t*>(kdGenArrCreateInit(KD_SZ_I32, len, &val, kdMemAlloc));
+  ASSERT_NE(arr, kd_null);
 
+  auto* cloned_arr = static_cast<kd_i32_t*>(kdGenArrClone(arr, kdMemAlloc));
+  ASSERT_NE(cloned_arr, kd_null);
+  EXPECT_EQ(kdGenArrGetElemSize(cloned_arr), kdGenArrGetElemSize(arr));
+  EXPECT_EQ(kdGenArrGetMemSize(cloned_arr), kdGenArrGetMemSize(arr));
+  EXPECT_EQ(kdGenArrGetLen(cloned_arr), kdGenArrGetLen(arr));
+#ifdef KD_ENDIAN_BIG
+  EXPECT_EQ(kdGenArrIsLE(cloned_arr), kdGenArrIsLE(arr));
+  EXPECT_EQ(kdGenArrIsBE(cloned_arr), kdGenArrIsBE(arr));
+#else
+  EXPECT_EQ(kdGenArrIsLE(cloned_arr), kdGenArrIsLE(arr));
+  EXPECT_EQ(kdGenArrIsBE(cloned_arr), kdGenArrIsBE(arr));
+#endif /* KD_ENDIAN_BIG */
+  EXPECT_EQ(kdGenArrGetEnd(cloned_arr), cloned_arr + (len - 1));
 
-#endif /* KD_H_ */
+  for (kd_i64_t i = 0; i < len; ++i)
+  {
+    EXPECT_EQ(arr[i], cloned_arr[i]);
+  }
+
+  EXPECT_EQ(kdGenArrDestroy(arr, kdMemFree), kd_true);
+  EXPECT_EQ(kdGenArrDestroy(cloned_arr, kdMemFree), kd_true);
+}
+
+TEST(GenArrCloneTest, HandlesNullPointers)
+{
+  kd_i32_t* arr = KD_PI32_C(0x69420);
+
+  EXPECT_EQ(kdGenArrClone(kd_null, nullptr), kd_null);
+  EXPECT_EQ(kdGenArrClone(kd_null, kdMemAlloc), kd_null);
+  EXPECT_EQ(kdGenArrClone(arr, nullptr), kd_null);
+}

@@ -611,6 +611,8 @@ KDAPI(void) kdi_GenMemOpsSetBlocks_S64(kd_u64_t* ptr, kd_usize_t sz, kd_u64_t va
 #endif
 KDAPI(void) kdi_GenMemOpsSetBlocks_Sn(void* ptr, kd_usize_t sz, void* block, kd_usize_t block_sz);
 
+KDAPI(void) kdi_GenMemOpsMove(kd_byte_t* dst, kd_byte_t* src, kd_usize_t sz);
+
 KDAPI(void*)
 kdi_GenMemOpsFindBlockWithIndex_S8(kd_usize_t* idx_ptr, kd_u8_t* ptr, kd_usize_t sz, kd_u8_t val);
 KDAPI(void*)

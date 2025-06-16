@@ -1,9 +1,9 @@
 /**
- * @file kd.h
+ * @file gen_arr_sn.h
  * @author Kumarjit Das
- * @date 2025-05-28
- * @since 0.0.4
- * @brief KD library public common header.
+ * @date 2025-06-16
+ * @since 0.0.11
+ * @brief Main header file of the GEN_ARR_SN library (internal).
  */
 /**
  * LICENSE: BSD 3-Clause License
@@ -38,18 +38,38 @@
  */
 
 
-#ifndef KD_H_
-#define KD_H_
+#ifndef KD__INTERNAL_GEN_ARR_H_
+#define KD__INTERNAL_GEN_ARR_H_
+
+#include "common.h"
+
+KD_EXTERN_BEGIN
 
 
-#include "kd/version.h"
-#include "kd/defs.h"
-#include "kd/types/fw.h"
-#include "kd/mem.h"
-#include "kd/mem_algn.h"
-#include "kd/gen_mem_ops.h"
-#include "kd/mem_ops.h"
-#include "kd/gen_arr.h"
+#define KDI_GEN_ARR_DS_TYPE_MASK (0xFF000000)
+#define KDI_GEN_ARR_EL_SIZE_MASK (0x00FFFFFF)
+
+#define KDI_GEN_ARR_ID_BITMASK        (0x01000000)
+#define KDI_GEN_ARR_DYN_BITMASK       (0x20000000)
+#define KDI_GEN_ARR_BE_BITMASK        (0x40000000)
+#define KDI_GEN_ARR_ARC_32BIT_BITMASK (0x80000000)
+
+#define KDI_GEN_ARR_EL_SIZE_SZ  (KD_SZ_U32)
+#define KDI_GEN_ARR_MEM_SIZE_SZ (KD_SZ_USIZE)
+#define KDI_GEN_ARR_HEAD_OFFSET (KDI_GEN_ARR_EL_SIZE_SZ + KDI_GEN_ARR_MEM_SIZE_SZ)
+
+#if defined KD_ENDIAN_BIG
+  #define kdi_GenArrGetElemSize(arr) (*KD_PI32_C(KD_PBYTE_C(arr) - KDI_GEN_ARR_HEAD_OFFSET) & KDI_GEN_ARR_EL_SIZE_MASK)
+#else /* !defined KD_ENDIAN_BIG */
+  #define kdi_GenArrGetElemSize(arr)                                                                                   \
+    ((*KD_PI32_C(KD_PBYTE_C(arr) - KDI_GEN_ARR_HEAD_OFFSET) & KDI_GEN_ARR_EL_SIZE_MASK) >> 8)
+#endif /* KD_ENDIAN_BIG */
+
+#define kdi_GenArrGetMemSize(arr) (*KD_PUSIZE_C(KD_PBYTE_C(arr) - KDI_GEN_ARR_MEM_SIZE_SZ))
+
+KDAPI(void*) kdi_GenArrCreate(kd_u32_t el_sz, kd_usize_t sz, kd_bool_t (*allocator)(void*, kd_usize_t));
 
 
-#endif /* KD_H_ */
+KD_EXTERN_END
+
+#endif /* KD__INTERNAL_GEN_ARR_H_ */

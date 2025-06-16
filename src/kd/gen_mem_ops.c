@@ -221,13 +221,14 @@ kdGenMemOpsCpy(void* dst, void* src, kd_usize_t sz)
 kd_bool_t
 kdGenMemOpsMove(void* dst, void* src, kd_usize_t sz)
 {
-  kd_byte_t *dst_ptr, *src_ptr;
-
   if (!dst || !src || !sz)
   {
     return KD_RESULT_FAILURE;
   }
 
+  kdi_GenMemOpsMove(dst, src, sz);
+
+  /*
   if ((kd_byte_t*)dst <= (kd_byte_t*)src)
   {
     dst_ptr = dst;
@@ -252,6 +253,7 @@ kdGenMemOpsMove(void* dst, void* src, kd_usize_t sz)
     --dst_ptr;
     --src_ptr;
   }
+  */
 
   return KD_RESULT_SUCCESS;
 }

@@ -1,9 +1,8 @@
 /**
- * @file kd.h
+ * @file kdGenArrFill.cpp
  * @author Kumarjit Das
- * @date 2025-05-28
- * @since 0.0.4
- * @brief KD library public common header.
+ * @date 2025-06-16
+ * @brief kdGenArrFill test file.
  */
 /**
  * LICENSE: BSD 3-Clause License
@@ -38,18 +37,33 @@
  */
 
 
-#ifndef KD_H_
-#define KD_H_
+#define KD_USE_SIMPLIFIED_TYPES
+#include "kd.h"
+#include "gtest/gtest.h"
 
 
-#include "kd/version.h"
-#include "kd/defs.h"
-#include "kd/types/fw.h"
-#include "kd/mem.h"
-#include "kd/mem_algn.h"
-#include "kd/gen_mem_ops.h"
-#include "kd/mem_ops.h"
-#include "kd/gen_arr.h"
+TEST(GenArrFillTest, AllocatesMemoryCorrectly)
+{
+  kd_i64_t len = 16;
+  kd_i32_t val = 420;
+  auto*    arr = static_cast<kd_i32_t*>(kdGenArrCreate(KD_SZ_I32, len, kdMemAlloc));
+  ASSERT_NE(arr, kd_null);
 
+  EXPECT_EQ(kdGenArrFill(arr, &val), KD_RESULT_SUCCESS);
 
-#endif /* KD_H_ */
+  for (kd_usize_t i = 0; i < KD_USIZE_C(len); ++i)
+  {
+    EXPECT_EQ(arr[i], val);
+  }
+
+  EXPECT_EQ(kdGenArrDestroy(arr, kdMemFree), kd_true);
+}
+
+TEST(GenArrFillTest, HandlesNullPointers)
+{
+  kd_i32_t *arr = reinterpret_cast<kd_i32_t*>(0x696969), val = 420;
+
+  EXPECT_EQ(kdGenArrFill(kd_null, kd_null), KD_RESULT_FAILURE);
+  EXPECT_EQ(kdGenArrFill(kd_null, &val), KD_RESULT_FAILURE);
+  EXPECT_EQ(kdGenArrFill(arr, kd_null), KD_RESULT_FAILURE);
+}

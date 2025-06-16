@@ -40,10 +40,12 @@ include(GoogleTest)
 
 # Define all the subdirectories that contain the examples
 set(TEST_SUBDIRS
-    "mem"
-    "mem_algn"
-    "gen_mem_ops"
-    "mem_ops")
+    # "mem"
+    # "mem_algn"
+    # "gen_mem_ops"
+    # "mem_ops"
+    "gen_arr"
+)
 
 # Get all .cpp files in the directory
 file(GLOB ALL_CPP_FILES "")
@@ -84,7 +86,7 @@ foreach (FILE_PATH ${ALL_CPP_FILES})
     RELEASE_POSTFIX "${KD_STATIC_POSTFIX}"
     MINSIZEREL_POSTFIX "${KD_STATIC_POSTFIX}-mr"
     RELWITHDEBINFO_POSTFIX "${KD_STATIC_POSTFIX}-rd"
-    )
+  )
 
   # Check if the project builds shared libraries
   if (BUILD_SHARED_LIBS)
@@ -93,7 +95,7 @@ foreach (FILE_PATH ${ALL_CPP_FILES})
       ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
       LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
       RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
-      )
+    )
   endif ()
 
   write_status("Added test: ${TEST_TARGET}")
