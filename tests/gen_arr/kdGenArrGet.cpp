@@ -1,8 +1,8 @@
 /**
- * @file kdGenArrCloneRange.cpp
+ * @file kdGenArrGet.cpp
  * @author Kumarjit Das
  * @date 2025-06-16
- * @brief kdGenArrCloneRange test file.
+ * @brief kdGenArrGet test file.
  */
 /**
  * LICENSE: BSD 3-Clause License
@@ -42,42 +42,32 @@
 #include "gtest/gtest.h"
 
 
-TEST(GenArrCloneRangeTest, AllocatesMemoryCorrectly)
+TEST(GenArrGetTest, SetsElementCorrectly)
 {
-  kd_i64_t len = 16, from = 2, to = 7;
-  kd_i32_t src[]   = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
-  kd_i64_t src_len = sizeof(src) / sizeof(src[0]);
-  auto*    arr     = static_cast<kd_i32_t*>(kdGenArrCreateFrom(KD_SZ_I32, len, src, src_len, kdMemAlloc));
+  kd_i64_t len      = 16;
+  kd_i32_t init_val = 0, val = 69;
+  kd_i32_t res[] = {0, 0, 0, 0, 69, 0, 0, 0, 0, 0, 69, 0, 0, 0, 0, 0};
+  auto*    arr   = static_cast<kd_i32_t*>(kdGenArrCreateInit(KD_SZ_I32, len, &init_val, kdMemAlloc));
   ASSERT_NE(arr, kd_null);
 
-  auto* cloned_arr = static_cast<kd_i32_t*>(kdGenArrCloneRange(arr, from, to, kdMemAlloc));
-  ASSERT_NE(cloned_arr, kd_null);
-  EXPECT_EQ(kdGenArrGetElemSize(cloned_arr), kdGenArrGetElemSize(arr));
-  EXPECT_EQ(kdGenArrGetMemSize(cloned_arr), (to - from + 1) * KD_I64_C(KD_SZ_I32));
-  EXPECT_EQ(kdGenArrGetLen(cloned_arr), to - from + 1);
-#ifdef KD_ENDIAN_BIG
-  EXPECT_EQ(kdGenArrIsLE(cloned_arr), kdGenArrIsLE(arr));
-  EXPECT_EQ(kdGenArrIsBE(cloned_arr), kdGenArrIsBE(arr));
-#else
-  EXPECT_EQ(kdGenArrIsLE(cloned_arr), kdGenArrIsLE(arr));
-  EXPECT_EQ(kdGenArrIsBE(cloned_arr), kdGenArrIsBE(arr));
-#endif /* KD_ENDIAN_BIG */
-  EXPECT_EQ(kdGenArrGetEnd(cloned_arr), cloned_arr + to - from);
+  arr[4]  = val;
+  arr[10] = val;
+  EXPECT_EQ(kdGenArrGet(arr, 4), arr + 4);
+  EXPECT_EQ(kdGenArrGet(arr, 10), arr + 10);
 
-  for (kd_i64_t i = from; i <= to; ++i)
+  for (kd_usize_t i = 0; i < KD_USIZE_C(len); ++i)
   {
-    EXPECT_EQ(arr[i], cloned_arr[i - from]);
+    EXPECT_EQ(arr[i], res[i]);
   }
 
   EXPECT_EQ(kdGenArrDestroy(arr, kdMemFree), kd_true);
-  EXPECT_EQ(kdGenArrDestroy(cloned_arr, kdMemFree), kd_true);
 }
 
-TEST(GenArrCloneRangeTest, HandlesNullPointers)
+TEST(GenArrGetTest, HandlesInvalidArguments)
 {
-  kd_i32_t* arr = KD_PI32_C(0x69420);
+  kd_i32_t* arr = reinterpret_cast<kd_i32_t*>(0x696969);
 
-  EXPECT_EQ(kdGenArrCloneRange(kd_null, 2, 7, nullptr), kd_null);
-  EXPECT_EQ(kdGenArrCloneRange(kd_null, 2, 7, kdMemAlloc), kd_null);
-  EXPECT_EQ(kdGenArrCloneRange(arr, 2, 7, nullptr), kd_null);
+  EXPECT_EQ(kdGenArrGet(kd_null, -3), kd_null);
+  EXPECT_EQ(kdGenArrGet(kd_null, 3), kd_null);
+  EXPECT_EQ(kdGenArrGet(arr, -3), kd_null);
 }

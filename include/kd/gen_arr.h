@@ -79,11 +79,15 @@ KDAPI(void*) kdGenArrGetEnd(void* arr);
 
 KDAPI(kd_bool_t) kdGenArrFill(void* arr, void* val_ptr);
 KDAPI(kd_bool_t) kdGenArrFillRange(void* arr, kd_i64_t from, kd_i64_t to, void* val_ptr);
+
 KDAPI(kd_bool_t) kdGenArrSet(void* arr, kd_i64_t idx, void* val_ptr);
 KDAPI(void*) kdGenArrGet(void* arr, kd_i64_t idx);
+
 KDAPI(kd_bool_t) kdGenArrSwap(void* arr, kd_i64_t idx1, kd_i64_t idx2);
 KDAPI(kd_bool_t) kdGenArrEquals(void* arr1, void* arr2);
+
 KDAPI(kd_i64_t) kdGenArrGetCount(void* arr, void* val_ptr);
+KDAPI(kd_i64_t) kdGenArrGetCountRange(void* arr, kd_i64_t from, kd_i64_t to, void* val_ptr);
 
 KDAPI(kd_bool_t) kdGenArrReverse(void* arr);
 KDAPI(kd_bool_t) kdGenArrGetReversed(void* dst_arr, void* src_arr);
@@ -112,8 +116,8 @@ KDAPI(kd_i64_t) kdGenArrFindLastIndex(void* arr, void* val_ptr);
 
 KDAPI(kd_i64_t) kdGenArrFindAll(void* dst_arr, void* src_arr, void* val_ptr);
 KDAPI(kd_i64_t) kdGenArrFindAllTo(void* dst, kd_i64_t len, void* arr, void* val_ptr);
-KDAPI(kd_i64_t) kdGenArrFindAllIndex(void* idx_arr, void* arr, void* val_ptr);
-KDAPI(kd_i64_t) kdGenArrFindAllIndexTo(void* idxs, kd_i64_t len, void* arr, void* val_ptr);
+KDAPI(kd_i64_t) kdGenArrFindAllIndices(void* idx_arr, void* arr, void* val_ptr);
+KDAPI(kd_i64_t) kdGenArrFindAllIndicesTo(void* idxs, kd_i64_t len, void* arr, void* val_ptr);
 
 /*
 KDAPI(kd_bool_t) kdGenArrSort(void* arr, kd_i32_t (*comparator)(void*, void*));
