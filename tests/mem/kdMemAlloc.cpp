@@ -39,6 +39,7 @@
 
 #define KD_USE_SIMPLIFIED_TYPES
 #include "kd.h"
+#include "kd/mem.h"
 #include "gtest/gtest.h"
 
 

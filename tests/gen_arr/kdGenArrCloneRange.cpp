@@ -1,7 +1,7 @@
 /**
  * @file kdGenArrCloneRange.cpp
  * @author Kumarjit Das
- * @date 2025-06-16
+ * @date 2025-06-19
  * @brief kdGenArrCloneRange test file.
  */
 /**
@@ -39,6 +39,7 @@
 
 #define KD_USE_SIMPLIFIED_TYPES
 #include "kd.h"
+#include "kd/mem.h"
 #include "gtest/gtest.h"
 
 

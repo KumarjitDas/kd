@@ -38,6 +38,7 @@
 
 
 #include "kd.h"
+#include "kd/mem.h"
 #include "gtest/gtest.h"
 
 

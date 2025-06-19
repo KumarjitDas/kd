@@ -45,7 +45,6 @@
 #include "kd/version.h"
 #include "kd/defs.h"
 #include "kd/types/fw.h"
-#include "kd/mem.h"
 #include "kd/mem_algn.h"
 #include "kd/gen_mem_ops.h"
 #include "kd/mem_ops.h"
