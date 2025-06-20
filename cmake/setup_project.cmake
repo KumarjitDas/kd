@@ -102,8 +102,9 @@ if (${_KD_BUILD_LIBRARY_TYPE_EXISTS} EQUAL -1)
   set(KD_BUILD_DIRECTORY "${KD_BUILD_DIRECTORY}-${KD_BUILD_LIBRARY_TYPE}")
 endif ()
 
-# Set the C standard
+# Set the C & C++ standards
 set(KD_C_STANDARD 90)
+set(KD_CPP_STANDARD 14)
 
 # Setting the full path to sources directories
 set(INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")

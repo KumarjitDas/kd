@@ -47,60 +47,127 @@ set(TEST_SUBDIRS
     "gen_arr"
 )
 
+# Create groups
+foreach (TEST_SUBDIR IN LISTS TEST_SUBDIRS)
+  set(GROUP_${TEST_SUBDIR} "")
+endforeach ()
+
 # Get all .cpp files in the directory
 file(GLOB ALL_CPP_FILES "")
 foreach (TEST_SUBDIR IN LISTS TEST_SUBDIRS)
   file(GLOB TEST_CPP_FILES "${TEST_SUBDIR}/*.cpp")
+  list(APPEND "GROUP_${TEST_SUBDIR}" ${TEST_CPP_FILES})
   list(APPEND ALL_CPP_FILES ${TEST_CPP_FILES})
+  list(REMOVE_ITEM ALL_CPP_FILES "${CMAKE_CURRENT_SOURCE_DIR}/${TEST_SUBDIR}/${TEST_SUBDIR}.cpp")
 endforeach ()
 
-# Loop through each item in the examples list
-foreach (FILE_PATH ${ALL_CPP_FILES})
-  # Normalize slashes
-  file(TO_CMAKE_PATH "${FILE_PATH}" NORM_FILE_PATH)
+# Add group tests
+if (KD_GROUP_TESTING)
+  foreach (TEST_SUBDIR IN LISTS TEST_SUBDIRS)
+    set(GROUP_TEST_NAME "${KD_PROJECT_NAME_LOWER}_test_group-${TEST_SUBDIR}")
 
-  # Remove everything before and including 'examples/'
-  string(REGEX REPLACE ".*tests/" "" RELATIVE_FILE_PATH "${NORM_FILE_PATH}")
+    # Create the executable and link
+    add_executable(${GROUP_TEST_NAME} "${TEST_SUBDIR}/${TEST_SUBDIR}.cpp" ${GROUP_${TEST_SUBDIR}})
+    target_link_libraries(${GROUP_TEST_NAME} PRIVATE "KD::${KD_LIBRARY_NAME}" GTest::gtest_main)
 
-  # Remove file extension
-  string(REGEX REPLACE "\\.[^.]*$" "" RELATIVE_FILE_PATH "${RELATIVE_FILE_PATH}")
+    # Setting build postfixes for different build configurations
+    set_target_properties(
+      ${GROUP_TEST_NAME} PROPERTIES
+      CXX_STANDARD ${KD_CPP_STANDARD}
+      CXX_STANDARD_REQUIRED ON
+      DEBUG_POSTFIX "${KD_STATIC_POSTFIX}-d"
+      RELEASE_POSTFIX "${KD_STATIC_POSTFIX}"
+      MINSIZEREL_POSTFIX "${KD_STATIC_POSTFIX}-mr"
+      RELWITHDEBINFO_POSTFIX "${KD_STATIC_POSTFIX}-rd"
+    )
 
-  # Replace '/' with '-'
-  string(REPLACE "/" "-" TEST_ITEM "${RELATIVE_FILE_PATH}")
+    # Check if the project builds shared libraries
+    if (BUILD_SHARED_LIBS)
+      set_target_properties(
+        ${GROUP_TEST_NAME} PROPERTIES
+        ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+      )
+    endif ()
 
-  # Attaching library name in front of example item
-  set(TEST_TARGET "${KD_PROJECT_NAME_LOWER}_test-${TEST_ITEM}")
+    write_status("Added group test: ${GROUP_TEST_NAME}")
+  endforeach ()
+endif ()
 
-  # Build an executable from the `TEST_ITEM` source
-  add_executable(${TEST_TARGET} ${FILE_PATH})
+# Add individual tests
+if (KD_INDIVIDUAL_TESTING)
+  # Loop through each item in the test list
+  foreach (FILE_PATH ${ALL_CPP_FILES})
+    # Normalize slashes
+    file(TO_CMAKE_PATH "${FILE_PATH}" NORM_FILE_PATH)
 
-  # Link the built executable with the main library
-  target_link_libraries(${TEST_TARGET} PRIVATE "KD::${KD_LIBRARY_NAME}" GTest::gtest_main)
+    # Remove everything before and including 'tests/'
+    string(REGEX REPLACE ".*tests/" "" RELATIVE_FILE_PATH "${NORM_FILE_PATH}")
 
-  # Setting build postfixes for different build configurations
-  set_target_properties(
-    ${TEST_TARGET} PROPERTIES
-    CXX_STANDARD 11
-    CXX_STANDARD_REQUIRED ON
-    DEBUG_POSTFIX "${KD_STATIC_POSTFIX}-d"
-    RELEASE_POSTFIX "${KD_STATIC_POSTFIX}"
-    MINSIZEREL_POSTFIX "${KD_STATIC_POSTFIX}-mr"
-    RELWITHDEBINFO_POSTFIX "${KD_STATIC_POSTFIX}-rd"
-  )
+    # Remove file extension
+    string(REGEX REPLACE "\\.[^.]*$" "" RELATIVE_FILE_PATH "${RELATIVE_FILE_PATH}")
 
-  # Check if the project builds shared libraries
-  if (BUILD_SHARED_LIBS)
+    # Replace '/' with '-'
+    string(REPLACE "/" "-" TEST_ITEM "${RELATIVE_FILE_PATH}")
+
+    # Attaching library name in front of example item
+    set(TEST_TARGET "${KD_PROJECT_NAME_LOWER}_test-${TEST_ITEM}")
+
+    # Build an executable from the `TEST_ITEM` source
+    add_executable(${TEST_TARGET} ${FILE_PATH})
+
+    # Link the built executable with the main library
+    target_link_libraries(${TEST_TARGET} PRIVATE "KD::${KD_LIBRARY_NAME}" GTest::gtest_main)
+
+    # Setting build postfixes for different build configurations
     set_target_properties(
       ${TEST_TARGET} PROPERTIES
-      ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
-      LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
-      RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+      CXX_STANDARD ${KD_CPP_STANDARD}
+      CXX_STANDARD_REQUIRED ON
+      DEBUG_POSTFIX "${KD_STATIC_POSTFIX}-d"
+      RELEASE_POSTFIX "${KD_STATIC_POSTFIX}"
+      MINSIZEREL_POSTFIX "${KD_STATIC_POSTFIX}-mr"
+      RELWITHDEBINFO_POSTFIX "${KD_STATIC_POSTFIX}-rd"
     )
-  endif ()
 
-  write_status("Added test: ${TEST_TARGET}")
-endforeach ()
+    # Check if the project builds shared libraries
+    if (BUILD_SHARED_LIBS)
+      set_target_properties(
+        ${TEST_TARGET} PROPERTIES
+        ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+      )
+    endif ()
+
+    write_status("Added test: ${TEST_TARGET}")
+  endforeach ()
+endif ()
+
+set(ALL_TEST_NAME "${KD_PROJECT_NAME_LOWER}_test-all")
 
 # Adding the all tests target
-add_executable(${KD_PROJECT_NAME_LOWER}_test-all "all.cpp" ${ALL_CPP_FILES})
-target_link_libraries(${KD_PROJECT_NAME_LOWER}_test-all PRIVATE "KD::${KD_LIBRARY_NAME}" GTest::gtest_main)
+add_executable(${ALL_TEST_NAME} "all.cpp" ${ALL_CPP_FILES})
+target_link_libraries(${ALL_TEST_NAME} PRIVATE "KD::${KD_LIBRARY_NAME}" GTest::gtest_main)
+
+# Setting build postfixes for different build configurations
+set_target_properties(
+  ${ALL_TEST_NAME} PROPERTIES
+  CXX_STANDARD ${KD_CPP_STANDARD}
+  CXX_STANDARD_REQUIRED ON
+  DEBUG_POSTFIX "${KD_STATIC_POSTFIX}-d"
+  RELEASE_POSTFIX "${KD_STATIC_POSTFIX}"
+  MINSIZEREL_POSTFIX "${KD_STATIC_POSTFIX}-mr"
+  RELWITHDEBINFO_POSTFIX "${KD_STATIC_POSTFIX}-rd"
+)
+
+# Check if the project builds shared libraries
+if (BUILD_SHARED_LIBS)
+  set_target_properties(
+    ${ALL_TEST_NAME} PROPERTIES
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+  )
+endif ()

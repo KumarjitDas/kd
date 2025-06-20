@@ -36,13 +36,19 @@
 
 # Check if the parent project is this project or not
 if (${CMAKE_PROJECT_NAME} STREQUAL ${PROJECT_NAME})
-  write_status("Enabling testing.")
+  set(KD_TESTING ON CACHE BOOL "Enable testing.")
+  set(KD_GROUP_TESTING ON CACHE BOOL "Enable testing for function groups.")
+  set(KD_INDIVIDUAL_TESTING OFF CACHE BOOL "Enable testing for individual functions.")
 
-  # GoogleTest requires at least C++14
-  set(CMAKE_CXX_STANDARD 14)
-  set(CMAKE_CXX_STANDARD_REQUIRED ON)
+  if (KD_TESTING)
+    write_status("Enabling testing...")
 
-  # Enable testing in the tests directory
-  enable_testing()
-  add_subdirectory("tests")
+    # GoogleTest requires at least C++14
+    set(CMAKE_CXX_STANDARD ${KD_CPP_STANDARD})
+    set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+    # Enable testing in the tests directory
+    enable_testing()
+    add_subdirectory("tests")
+  endif ()
 endif ()
