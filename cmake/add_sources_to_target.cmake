@@ -36,37 +36,105 @@
 
 write_status("Adding sources to the main library target...")
 
-# Adding the include files to the main target
-set(INCLUDE_FILES
+# Common include files for all sublibraries
+set(COMMON_INCLUDE_FILES
+    "${CMAKE_CURRENT_BINARY_DIR}/include/kd/version.h"
     "${INCLUDE_DIR}/kd/defs.h"
     "${INCLUDE_DIR}/kd/types/fw.h"
-    "${INCLUDE_DIR}/kd/types/fp.h"
-    "${INCLUDE_DIR}/kd/mem.h"
-    "${INCLUDE_DIR}/kd/mem_algn.h"
-    "${INCLUDE_DIR}/kd/gen_mem_ops.h"
-    "${INCLUDE_DIR}/kd/mem_ops.h"
-    "${INCLUDE_DIR}/kd/gen_arr.h")
+    # "${INCLUDE_DIR}/kd/types/fp.h"
+)
 
-set(INTERNAL_INCLUDE_FILES
-    "${INCLUDE_DIR}/_internal/common.h"
-    "${INCLUDE_DIR}/_internal/gen_mem_ops_sn.h"
-    "${INCLUDE_DIR}/_internal/gen_arr_sn.h")
+# Common include files for all internal sublibraries
+set(INTERNAL_COMMON_INCLUDE_FILES ${COMMON_INCLUDE_FILES})
+list(APPEND INTERNAL_COMMON_INCLUDE_FILES
+     "${INCLUDE_DIR}/_internal/common.h"
+)
 
-target_sources(${KD_LIBRARY_NAME} PRIVATE ${INTERNAL_INCLUDE_FILES} ${INCLUDE_FILES})
+# Output object list
+set(OBJECT_LIBS "")
 
-# Adding the source files to the main target
-set(SRC_FILES
-    "${SRC_DIR}/kd/mem.c"
-    "${SRC_DIR}/kd/mem_algn.c"
-    "${SRC_DIR}/kd/gen_mem_ops.c"
-    "${SRC_DIR}/kd/mem_ops.c"
-    "${SRC_DIR}/kd/gen_arr.c")
+# List of individual libraries to be build from each source
+set(LIB_NAMES
+    "mem"
+    "mem_algn"
+    "gen_mem_ops"
+    "mem_ops"
+    "gen_arr"
+)
 
-set(INTERNAL_SRC_FILES
-    "${SRC_DIR}/_internal/gen_mem_ops_sn.c"
-    "${SRC_DIR}/_internal/gen_arr_sn.c")
+# List of individual internal libraries to be build from each source
+set(INTERNAL_LIB_NAMES
+    "gen_mem_ops_sn"
+    "gen_arr_sn"
+)
 
-target_sources(${KD_LIBRARY_NAME} PRIVATE ${INTERNAL_SRC_FILES} ${SRC_FILES})
+# Include and source file lists to be installed
+set(INCLUDE_FILES ${COMMON_INCLUDE_FILES})
+set(SRC_FILES "")
+
+# Build all the library objects
+foreach (LIB_NAME ${LIB_NAMES})
+  set(INCLUDE_FILE "${INCLUDE_DIR}/kd/${LIB_NAME}.h")
+  set(SRC_FILE "${SRC_DIR}/kd/${LIB_NAME}.c")
+
+  # Create the object
+  add_library(${LIB_NAME} OBJECT ${COMMON_INCLUDE_FILES} ${INCLUDE_FILE} ${SRC_FILE})
+  target_compile_definitions(${LIB_NAME} INTERFACE KD_DLL=1)
+
+  # Use the project C standard
+  set_target_properties(${LIB_NAME} PROPERTIES
+                        C_STANDARD ${KD_C_STANDARD}
+                        C_STANDARD_REQUIRED YES
+                        C_EXTENSIONS OFF
+  )
+
+  # Add the include dirs to the object target
+  target_include_directories(${LIB_NAME} PUBLIC
+                             $<BUILD_INTERFACE:${INCLUDE_DIR}>
+                             $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
+                             $<INSTALL_INTERFACE:include>
+  )
+
+  # Put the new object in the object list
+  list(APPEND OBJECT_LIBS $<TARGET_OBJECTS:${LIB_NAME}>)
+
+  # Put the include and sources to the install list
+  list(APPEND INCLUDE_FILES ${INCLUDE_FILE})
+  list(APPEND SRC_FILES ${SRC_FILE})
+endforeach ()
+
+# Build all the internal library objects
+foreach (INTERNAL_LIB_NAME ${INTERNAL_LIB_NAMES})
+  set(INCLUDE_FILE "${INCLUDE_DIR}/_internal/${INTERNAL_LIB_NAME}.h")
+  set(SRC_FILE "${SRC_DIR}/_internal/${INTERNAL_LIB_NAME}.c")
+
+  # Set the internal library name
+  set(LIB_NAME "_${INTERNAL_LIB_NAME}")
+
+  # Create the object
+  add_library(${LIB_NAME} OBJECT ${INTERNAL_COMMON_INCLUDE_FILES} ${INCLUDE_FILE} ${SRC_FILE})
+  target_compile_definitions(${LIB_NAME} INTERFACE KD_DLL=1)
+
+  # Use the project C standard
+  set_target_properties(${LIB_NAME} PROPERTIES
+                        C_STANDARD ${KD_C_STANDARD}
+                        C_STANDARD_REQUIRED YES
+                        C_EXTENSIONS OFF
+  )
+
+  # Add the include dirs to the object target
+  target_include_directories(${LIB_NAME} PUBLIC
+                             $<BUILD_INTERFACE:${INCLUDE_DIR}>
+                             $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
+                             $<INSTALL_INTERFACE:include>
+  )
+
+  # Put the new object in the object list
+  list(APPEND OBJECT_LIBS $<TARGET_OBJECTS:${LIB_NAME}>)
+endforeach ()
+
+# Link with the main library target
+target_link_libraries(${KD_LIBRARY_NAME} PRIVATE ${OBJECT_LIBS})
 
 # Setting the install destination for include and source file
 install(FILES ${INCLUDE_FILES} DESTINATION "include")

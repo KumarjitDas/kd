@@ -38,19 +38,22 @@
 add_library(_os_utils "")
 target_compile_definitions(_os_utils INTERFACE KD_DLL=1)
 
+# Use the project C standard
 set_target_properties(_os_utils PROPERTIES
-                      C_STANDARD 90
+                      C_STANDARD ${KD_C_STANDARD}
                       C_STANDARD_REQUIRED YES
                       C_EXTENSIONS OFF
-                      )
+)
 
+# Add the include dirs to the object target
 target_include_directories(
   _os_utils PUBLIC
   $<BUILD_INTERFACE:${INCLUDE_DIR}>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
   $<INSTALL_INTERFACE:include>
-  )
+)
 
+# Link with the main library target
 target_link_libraries(${KD_LIBRARY_NAME} PRIVATE _os_utils)
 
 # Adding the version header file to the _os_utils target

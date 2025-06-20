@@ -40,10 +40,10 @@ include(GoogleTest)
 
 # Define all the subdirectories that contain the examples
 set(TEST_SUBDIRS
-    # "mem"
-    # "mem_algn"
-    # "gen_mem_ops"
-    # "mem_ops"
+    "mem"
+    "mem_algn"
+    "gen_mem_ops"
+    "mem_ops"
     "gen_arr"
 )
 

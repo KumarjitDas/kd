@@ -36,6 +36,7 @@
 
 # Adding the main library
 add_library(${KD_LIBRARY_NAME} "")
+set_target_properties(${KD_LIBRARY_NAME} PROPERTIES LINKER_LANGUAGE C)
 write_status("Creating library: ${KD_LIBRARY_NAME}.")
 
 # Setting an alias in `KD` namespace
