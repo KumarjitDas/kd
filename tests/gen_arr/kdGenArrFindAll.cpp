@@ -45,10 +45,16 @@
 
 TEST(GenArrFindAllTest, FindsAllOccurrences)
 {
-  kd_i32_t       src[] = {1, 2, 3, 2, 5, 2, 7, 3, 9, 10};
-  const kd_i64_t len   = sizeof(src) / sizeof(src[0]);
-  kd_i32_t       val1  = 2;
-  kd_i32_t       val2  = 3;
+  kd_i32_t src[] = {1, 2, 3, 2, 5, 2, 7, 3, 9, 10};
+
+#if defined KD_ARCH_64BIT_INT
+  const kd_i64_t len = sizeof(src) / sizeof(src[0]);
+#else  /* !defined KD_ARCH_64BIT_INT */
+  const kd_i32_t len = sizeof(src) / sizeof(src[0]);
+#endif /* KD_ARCH_64BIT_INT */
+
+  kd_i32_t val1 = 2;
+  kd_i32_t val2 = 3;
 
   auto* arr        = static_cast<kd_i32_t*>(kdGenArrCreateFrom(KD_SZ_I32, len, src, len, kdMemAlloc));
   auto* found_ptrs = static_cast<kd_i32_t**>(kdGenArrCreate(KD_SZ_PTR, len, kdMemAlloc));
@@ -67,10 +73,16 @@ TEST(GenArrFindAllTest, FindsAllOccurrences)
 
 TEST(GenArrFindAllTest, ReturnsZeroIfNotFound)
 {
-  kd_i32_t       src[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-  const kd_i64_t len   = sizeof(src) / sizeof(src[0]);
-  kd_i32_t       val1  = 0;
-  kd_i32_t       val2  = 11;
+  kd_i32_t src[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+
+#if defined KD_ARCH_64BIT_INT
+  const kd_i64_t len = sizeof(src) / sizeof(src[0]);
+#else  /* !defined KD_ARCH_64BIT_INT */
+  const kd_i32_t len = sizeof(src) / sizeof(src[0]);
+#endif /* KD_ARCH_64BIT_INT */
+
+  kd_i32_t val1 = 0;
+  kd_i32_t val2 = 11;
 
   auto* arr        = static_cast<kd_i32_t*>(kdGenArrCreateFrom(KD_SZ_I32, len, src, len, kdMemAlloc));
   auto* found_ptrs = static_cast<kd_i32_t**>(kdGenArrCreate(KD_SZ_PTR, len, kdMemAlloc));

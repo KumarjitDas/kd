@@ -45,7 +45,12 @@
 
 TEST(GenArrEqualsTest, SetsElementCorrectly)
 {
-  kd_i64_t len      = 16;
+#if defined KD_ARCH_64BIT_INT
+  kd_i64_t len = 16;
+#else  /* !defined KD_ARCH_64BIT_INT */
+  kd_i32_t len = 16;
+#endif /* KD_ARCH_64BIT_INT */
+
   kd_i32_t init_val = 69;
 
   auto* arr1 = static_cast<kd_i32_t*>(kdGenArrCreateInit(KD_SZ_I32, len, &init_val, kdMemAlloc));
@@ -67,7 +72,7 @@ TEST(GenArrEqualsTest, SetsElementCorrectly)
 
 TEST(GenArrEqualsTest, HandlesInvalidArguments)
 {
-  kd_i32_t* arr = reinterpret_cast<kd_i32_t*>(0x696969);
+  auto* arr = reinterpret_cast<kd_i32_t*>(0x696969);
 
   EXPECT_EQ(kdGenArrEquals(kd_null, kd_null), kd_false);
   EXPECT_EQ(kdGenArrEquals(kd_null, arr), kd_false);

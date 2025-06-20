@@ -45,10 +45,20 @@
 
 TEST(GenArrCloneRangeTest, AllocatesMemoryCorrectly)
 {
+#if defined KD_ARCH_64BIT_INT
   kd_i64_t len = 16, from = 2, to = 7;
-  kd_i32_t src[]   = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
+#else  /* !defined KD_ARCH_64BIT_INT */
+  kd_i32_t len = 16, from = 2, to = 7;
+#endif /* KD_ARCH_64BIT_INT */
+
+  kd_i32_t src[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
+#if defined KD_ARCH_64BIT_INT
   kd_i64_t src_len = sizeof(src) / sizeof(src[0]);
-  auto*    arr     = static_cast<kd_i32_t*>(kdGenArrCreateFrom(KD_SZ_I32, len, src, src_len, kdMemAlloc));
+#else  /* !defined KD_ARCH_64BIT_INT */
+  kd_i32_t src_len = sizeof(src) / sizeof(src[0]);
+#endif /* KD_ARCH_64BIT_INT */
+
+  auto* arr = static_cast<kd_i32_t*>(kdGenArrCreateFrom(KD_SZ_I32, len, src, src_len, kdMemAlloc));
   ASSERT_NE(arr, kd_null);
 
   auto* cloned_arr = static_cast<kd_i32_t*>(kdGenArrCloneRange(arr, from, to, kdMemAlloc));
@@ -65,9 +75,9 @@ TEST(GenArrCloneRangeTest, AllocatesMemoryCorrectly)
 #endif /* KD_ENDIAN_BIG */
   EXPECT_EQ(kdGenArrGetEnd(cloned_arr), cloned_arr + to - from);
 
-  for (kd_i64_t i = from; i <= to; ++i)
+  for (kd_usize_t i = KD_USIZE_C(from); i <= KD_USIZE_C(to); ++i)
   {
-    EXPECT_EQ(arr[i], cloned_arr[i - from]);
+    EXPECT_EQ(arr[i], cloned_arr[i - KD_USIZE_C(from)]);
   }
 
   EXPECT_EQ(kdGenArrDestroy(arr, kdMemFree), kd_true);
@@ -76,7 +86,7 @@ TEST(GenArrCloneRangeTest, AllocatesMemoryCorrectly)
 
 TEST(GenArrCloneRangeTest, HandlesNullPointers)
 {
-  kd_i32_t* arr = KD_PI32_C(0x69420);
+  auto arr = KD_PI32_C(0x69420);
 
   EXPECT_EQ(kdGenArrCloneRange(kd_null, 2, 7, nullptr), kd_null);
   EXPECT_EQ(kdGenArrCloneRange(kd_null, 2, 7, kdMemAlloc), kd_null);

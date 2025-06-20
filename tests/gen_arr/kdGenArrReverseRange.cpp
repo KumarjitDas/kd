@@ -45,11 +45,22 @@
 
 TEST(GenArrReverseRangeTest, ReversesAllBytesCorrectly)
 {
-  kd_i64_t len     = 16;
-  kd_i32_t src[]   = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
+#if defined KD_ARCH_64BIT_INT
+  kd_i64_t len = 16;
+#else  /* !defined KD_ARCH_64BIT_INT */
+  kd_i64_t len = 16;
+#endif /* KD_ARCH_64BIT_INT */
+
+  kd_i32_t src[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
+
+#if defined KD_ARCH_64BIT_INT
+  kd_i64_t src_len = sizeof(src) / sizeof(src[0]);
+#else  /* !defined KD_ARCH_64BIT_INT */
   kd_i32_t src_len = sizeof(src) / sizeof(src[0]);
-  kd_i32_t res[]   = {1, 2, 8, 7, 6, 5, 4, 3, 9, 10, 11, 12, 13, 14, 15, 16};
-  auto*    arr     = static_cast<kd_i32_t*>(kdGenArrCreateFrom(KD_SZ_I32, len, src, src_len, kdMemAlloc));
+#endif /* KD_ARCH_64BIT_INT */
+
+  kd_i32_t res[] = {1, 2, 8, 7, 6, 5, 4, 3, 9, 10, 11, 12, 13, 14, 15, 16};
+  auto*    arr   = static_cast<kd_i32_t*>(kdGenArrCreateFrom(KD_SZ_I32, len, src, src_len, kdMemAlloc));
   ASSERT_NE(arr, kd_null);
 
   EXPECT_EQ(kdGenArrReverseRange(arr, 2, 7), KD_RESULT_SUCCESS);
@@ -64,7 +75,7 @@ TEST(GenArrReverseRangeTest, ReversesAllBytesCorrectly)
 
 TEST(GenArrReverseRangeTest, HandlesInvalidArguments)
 {
-  kd_i32_t* arr = reinterpret_cast<kd_i32_t*>(0x420420);
+  auto* arr = reinterpret_cast<kd_i32_t*>(0x420420);
 
   EXPECT_EQ(kdGenArrReverseRange(kd_null, -2, -7), KD_RESULT_FAILURE);
   EXPECT_EQ(kdGenArrReverseRange(kd_null, -2, 7), KD_RESULT_FAILURE);

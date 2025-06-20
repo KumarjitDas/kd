@@ -45,7 +45,12 @@
 
 TEST(GenArrCloneTest, AllocatesMemoryCorrectly)
 {
+#if defined KD_ARCH_64BIT_INT
   kd_i64_t len = 16;
+#else  /* !defined KD_ARCH_64BIT_INT */
+  kd_i32_t len = 16;
+#endif /* KD_ARCH_64BIT_INT */
+
   kd_i32_t val = 69;
   auto*    arr = static_cast<kd_i32_t*>(kdGenArrCreateInit(KD_SZ_I32, len, &val, kdMemAlloc));
   ASSERT_NE(arr, kd_null);
@@ -64,7 +69,7 @@ TEST(GenArrCloneTest, AllocatesMemoryCorrectly)
 #endif /* KD_ENDIAN_BIG */
   EXPECT_EQ(kdGenArrGetEnd(cloned_arr), cloned_arr + (len - 1));
 
-  for (kd_i64_t i = 0; i < len; ++i)
+  for (kd_usize_t i = 0; i < KD_USIZE_C(len); ++i)
   {
     EXPECT_EQ(arr[i], cloned_arr[i]);
   }

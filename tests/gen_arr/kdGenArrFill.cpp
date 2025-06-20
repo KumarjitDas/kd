@@ -45,7 +45,12 @@
 
 TEST(GenArrFillTest, AllocatesMemoryCorrectly)
 {
+#if defined KD_ARCH_64BIT_INT
   kd_i64_t len = 16;
+#else  /* !defined KD_ARCH_64BIT_INT */
+  kd_i32_t len = 16;
+#endif /* KD_ARCH_64BIT_INT */
+
   kd_i32_t val = 420;
   auto*    arr = static_cast<kd_i32_t*>(kdGenArrCreate(KD_SZ_I32, len, kdMemAlloc));
   ASSERT_NE(arr, kd_null);

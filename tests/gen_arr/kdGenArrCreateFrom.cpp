@@ -45,14 +45,31 @@
 
 TEST(GenArrCreateFromTest, AllocatesMemoryCorrectly)
 {
-  kd_i64_t len     = 16;
-  kd_i32_t src[]   = {1, 2, 3, 4, 5, 6, 7, 8};
+#if defined KD_ARCH_64BIT_INT
+  kd_i64_t len = 16;
+#else  /* !defined KD_ARCH_64BIT_INT */
+  kd_i32_t len = 16;
+#endif /* KD_ARCH_64BIT_INT */
+
+  kd_i32_t src[] = {1, 2, 3, 4, 5, 6, 7, 8};
+
+#if defined KD_ARCH_64BIT_INT
   kd_i64_t src_len = sizeof(src) / sizeof(src[0]);
-  auto*    arr     = static_cast<kd_i32_t*>(kdGenArrCreateFrom(KD_SZ_I32, len, src, src_len, kdMemAlloc));
+#else  /* !defined KD_ARCH_64BIT_INT */
+  kd_i32_t src_len = sizeof(src) / sizeof(src[0]);
+#endif /* KD_ARCH_64BIT_INT */
+
+  auto* arr = static_cast<kd_i32_t*>(kdGenArrCreateFrom(KD_SZ_I32, len, src, src_len, kdMemAlloc));
 
   ASSERT_NE(arr, kd_null);
   EXPECT_EQ(kdGenArrGetElemSize(arr), KD_SZ_I32);
+
+#if defined KD_ARCH_64BIT_INT
   EXPECT_EQ(kdGenArrGetMemSize(arr), KD_I64_C(KD_SZ_I32) * len);
+#else  /* !defined KD_ARCH_64BIT_INT */
+  EXPECT_EQ(kdGenArrGetMemSize(arr), KD_I32_C(KD_SZ_I32) * len);
+#endif /* KD_ARCH_64BIT_INT */
+
   EXPECT_EQ(kdGenArrGetLen(arr), len);
 #ifdef KD_ENDIAN_BIG
   EXPECT_EQ(kdGenArrIsLE(arr), kd_false);
@@ -63,7 +80,7 @@ TEST(GenArrCreateFromTest, AllocatesMemoryCorrectly)
 #endif /* KD_ENDIAN_BIG */
   EXPECT_EQ(kdGenArrGetEnd(arr), arr + (len - 1));
 
-  for (kd_i64_t i = 0; i < src_len; ++i)
+  for (kd_usize_t i = 0; i < KD_USIZE_C(src_len); ++i)
   {
     EXPECT_EQ(arr[i], src[i]);
   }
@@ -74,8 +91,13 @@ TEST(GenArrCreateFromTest, AllocatesMemoryCorrectly)
 TEST(GenArrCreateFromTest, ChecksBounds)
 {
   kd_i32_t* arr;
-  kd_i32_t  src[]   = {1, 2, 3, 4, 5, 6, 7, 8};
-  kd_i64_t  src_len = sizeof(src) / sizeof(src[0]);
+  kd_i32_t  src[] = {1, 2, 3, 4, 5, 6, 7, 8};
+
+#if defined KD_ARCH_64BIT_INT
+  kd_i64_t src_len = sizeof(src) / sizeof(src[0]);
+#else  /* !defined KD_ARCH_64BIT_INT */
+  kd_i32_t src_len = sizeof(src) / sizeof(src[0]);
+#endif /* KD_ARCH_64BIT_INT */
 
   arr = static_cast<kd_i32_t*>(kdGenArrCreateFrom(16777220, 16, src, src_len, kdMemAlloc));
   ASSERT_EQ(arr, kd_null);
@@ -86,8 +108,13 @@ TEST(GenArrCreateFromTest, ChecksBounds)
 
 TEST(GenArrCreateFromTest, HandlesNullPointers)
 {
-  kd_i32_t src[]   = {1, 2, 3, 4, 5, 6, 7, 8};
+  kd_i32_t src[] = {1, 2, 3, 4, 5, 6, 7, 8};
+
+#if defined KD_ARCH_64BIT_INT
   kd_i64_t src_len = sizeof(src) / sizeof(src[0]);
+#else  /* !defined KD_ARCH_64BIT_INT */
+  kd_i32_t src_len = sizeof(src) / sizeof(src[0]);
+#endif /* KD_ARCH_64BIT_INT */
 
   EXPECT_EQ(kdGenArrCreateFrom(4, 16, kd_null, src_len, nullptr), kd_null);
   EXPECT_EQ(kdGenArrCreateFrom(4, 16, kd_null, src_len, kdMemAlloc), kd_null);
@@ -96,8 +123,13 @@ TEST(GenArrCreateFromTest, HandlesNullPointers)
 
 TEST(GenArrCreateFromTest, HandlesZeorSizes)
 {
-  kd_i32_t src[]   = {1, 2, 3, 4, 5, 6, 7, 8};
+  kd_i32_t src[] = {1, 2, 3, 4, 5, 6, 7, 8};
+
+#if defined KD_ARCH_64BIT_INT
   kd_i64_t src_len = sizeof(src) / sizeof(src[0]);
+#else  /* !defined KD_ARCH_64BIT_INT */
+  kd_i32_t src_len = sizeof(src) / sizeof(src[0]);
+#endif /* KD_ARCH_64BIT_INT */
 
   EXPECT_EQ(kdGenArrCreateFrom(0, 0, src, 0, kdMemAlloc), kd_null);
   EXPECT_EQ(kdGenArrCreateFrom(0, 0, src, src_len, kdMemAlloc), kd_null);

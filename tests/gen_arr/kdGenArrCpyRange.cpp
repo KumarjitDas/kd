@@ -45,11 +45,22 @@
 
 TEST(GenArrCpyRangeTest, ReversesAllBytesCorrectly)
 {
+#if defined KD_ARCH_64BIT_INT
   kd_i64_t from = 5, to = 14, dst_from = 2;
+#else  /* !defined KD_ARCH_64BIT_INT */
+  kd_i32_t from = 5, to = 14, dst_from = 2;
+#endif /* KD_ARCH_64BIT_INT */
+
   kd_i32_t init_val = 0;
   kd_i32_t src[]    = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
-  kd_i32_t len      = sizeof(src) / sizeof(src[0]);
-  kd_i32_t res[]    = {0, 0, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0, 0, 0, 0};
+
+#if defined KD_ARCH_64BIT_INT
+  kd_i64_t len = sizeof(src) / sizeof(src[0]);
+#else  /* !defined KD_ARCH_64BIT_INT */
+  kd_i32_t len = sizeof(src) / sizeof(src[0]);
+#endif /* KD_ARCH_64BIT_INT */
+
+  kd_i32_t res[] = {0, 0, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0, 0, 0, 0};
 
   auto* arr1 = static_cast<kd_i32_t*>(kdGenArrCreateFrom(KD_SZ_I32, len, src, len, kdMemAlloc));
   ASSERT_NE(arr1, kd_null);
@@ -70,8 +81,8 @@ TEST(GenArrCpyRangeTest, ReversesAllBytesCorrectly)
 
 TEST(GenArrCpyRangeTest, HandlesInvalidIndices)
 {
-  kd_i32_t* dst = reinterpret_cast<kd_i32_t*>(0x420420);
-  kd_i32_t* src = reinterpret_cast<kd_i32_t*>(0x696969);
+  auto* dst = reinterpret_cast<kd_i32_t*>(0x420420);
+  auto* src = reinterpret_cast<kd_i32_t*>(0x696969);
 
   EXPECT_EQ(kdGenArrCpyRange(dst, -2, src, -3, -9), KD_RESULT_FAILURE);
   EXPECT_EQ(kdGenArrCpyRange(dst, -2, src, -3, 9), KD_RESULT_FAILURE);
@@ -84,7 +95,7 @@ TEST(GenArrCpyRangeTest, HandlesInvalidIndices)
 
 TEST(GenArrCpyRangeTest, NullPointerReturnsFalse)
 {
-  kd_i32_t* arr = reinterpret_cast<kd_i32_t*>(0x696969);
+  auto* arr = reinterpret_cast<kd_i32_t*>(0x696969);
 
   EXPECT_EQ(kdGenArrCpyRange(kd_null, 2, kd_null, 3, 9), KD_RESULT_FAILURE);
   EXPECT_EQ(kdGenArrCpyRange(kd_null, 2, arr, 3, 9), KD_RESULT_FAILURE);

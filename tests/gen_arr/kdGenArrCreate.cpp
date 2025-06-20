@@ -45,11 +45,22 @@
 
 TEST(GenArrCreateTest, AllocatesMemoryCorrectly)
 {
+#if defined KD_ARCH_64BIT_INT
   kd_i64_t len = 16;
-  auto*    arr = static_cast<kd_i32_t*>(kdGenArrCreate(KD_SZ_I32, len, kdMemAlloc));
+#else  /* !defined KD_ARCH_64BIT_INT */
+  kd_i32_t len = 16;
+#endif /* KD_ARCH_64BIT_INT */
+
+  auto* arr = static_cast<kd_i32_t*>(kdGenArrCreate(KD_SZ_I32, len, kdMemAlloc));
   ASSERT_NE(arr, kd_null);
   EXPECT_EQ(kdGenArrGetElemSize(arr), KD_SZ_I32);
+
+#if defined KD_ARCH_64BIT_INT
   EXPECT_EQ(kdGenArrGetMemSize(arr), KD_I64_C(KD_SZ_I32) * len);
+#else  /* !defined KD_ARCH_64BIT_INT */
+  EXPECT_EQ(kdGenArrGetMemSize(arr), KD_I32_C(KD_SZ_I32) * len);
+#endif /* KD_ARCH_64BIT_INT */
+
   EXPECT_EQ(kdGenArrGetLen(arr), len);
 #ifdef KD_ENDIAN_BIG
   EXPECT_EQ(kdGenArrIsLE(arr), kd_false);

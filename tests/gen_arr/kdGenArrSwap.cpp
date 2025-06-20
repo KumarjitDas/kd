@@ -45,7 +45,12 @@
 
 TEST(GenArrSwapTest, SetsElementCorrectly)
 {
-  kd_i64_t len      = 16;
+#if defined KD_ARCH_64BIT_INT
+  kd_i64_t len = 16;
+#else  /* !defined KD_ARCH_64BIT_INT */
+  kd_i32_t len = 16;
+#endif /* KD_ARCH_64BIT_INT */
+
   kd_i32_t init_val = 0;
   kd_i32_t res[]    = {1, 2, 10, 4, 5, 15, 7, 8, 9, 3, 11, 12, 13, 14, 6, 16};
   auto*    arr      = static_cast<kd_i32_t*>(kdGenArrCreateInit(KD_SZ_I32, len, &init_val, kdMemAlloc));
@@ -69,7 +74,7 @@ TEST(GenArrSwapTest, SetsElementCorrectly)
 
 TEST(GenArrSwapTest, HandlesInvalidArguments)
 {
-  kd_i32_t* arr = reinterpret_cast<kd_i32_t*>(0x696969);
+  auto* arr = reinterpret_cast<kd_i32_t*>(0x696969);
 
   EXPECT_EQ(kdGenArrSwap(kd_null, -3, -5), KD_RESULT_FAILURE);
   EXPECT_EQ(kdGenArrSwap(kd_null, -3, 5), KD_RESULT_FAILURE);

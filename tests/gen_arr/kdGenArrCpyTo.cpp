@@ -45,9 +45,15 @@
 
 TEST(GenArrCpyToTest, ReversesAllBytesCorrectly)
 {
-  kd_i32_t       src[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
-  const kd_i32_t len   = sizeof(src) / sizeof(src[0]);
-  kd_i32_t       dst[len];
+  kd_i32_t src[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
+
+#if defined KD_ARCH_64BIT_INT
+  const kd_i64_t len = sizeof(src) / sizeof(src[0]);
+#else  /* !defined KD_ARCH_64BIT_INT */
+  const kd_i32_t len = sizeof(src) / sizeof(src[0]);
+#endif /* KD_ARCH_64BIT_INT */
+
+  kd_i32_t dst[len];
 
   auto* arr = static_cast<kd_i32_t*>(kdGenArrCreateFrom(KD_SZ_I32, len, src, len, kdMemAlloc));
   ASSERT_NE(arr, kd_null);
@@ -64,8 +70,8 @@ TEST(GenArrCpyToTest, ReversesAllBytesCorrectly)
 
 TEST(GenArrCpyToTest, HandlesInvalidArguments)
 {
-  kd_i32_t* dst = reinterpret_cast<kd_i32_t*>(0x420420);
-  kd_i32_t* src = reinterpret_cast<kd_i32_t*>(0x696969);
+  auto* dst = reinterpret_cast<kd_i32_t*>(0x420420);
+  auto* src = reinterpret_cast<kd_i32_t*>(0x696969);
 
   EXPECT_EQ(kdGenArrCpyTo(kd_null, -16, kd_null), KD_RESULT_FAILURE);
   EXPECT_EQ(kdGenArrCpyTo(kd_null, -16, src), KD_RESULT_FAILURE);

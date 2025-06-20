@@ -44,13 +44,15 @@
 #include "_internal/common.h"
 #include "_internal/gen_arr_sn.h"
 #include "_internal/gen_mem_ops_sn.h"
-#include "kd/gen_mem_ops.h"
-#include "kd/mem_ops.h"
 #include "kd/gen_arr.h"
 
 
 void*
+#if defined KD_ARCH_64BIT_INT
 kdGenArrCreate(kd_i32_t el_sz, kd_i64_t len, kd_bool_t (*allocator)(void*, kd_usize_t))
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdGenArrCreate(kd_i32_t el_sz, kd_i32_t len, kd_bool_t (*allocator)(void*, kd_usize_t))
+#endif /* KD_ARCH_64BIT_INT */
 {
   kd_usize_t size = (kd_usize_t)len * el_sz;
 
@@ -65,7 +67,11 @@ kdGenArrCreate(kd_i32_t el_sz, kd_i64_t len, kd_bool_t (*allocator)(void*, kd_us
 
 
 void*
+#if defined KD_ARCH_64BIT_INT
 kdGenArrCreateInit(kd_i32_t el_sz, kd_i64_t len, void* val_ptr, kd_bool_t (*allocator)(void*, kd_usize_t))
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdGenArrCreateInit(kd_i32_t el_sz, kd_i32_t len, void* val_ptr, kd_bool_t (*allocator)(void*, kd_usize_t))
+#endif /* KD_ARCH_64BIT_INT */
 {
   kd_byte_t* mem;
   kd_usize_t size;
@@ -92,20 +98,20 @@ kdGenArrCreateInit(kd_i32_t el_sz, kd_i64_t len, void* val_ptr, kd_bool_t (*allo
   switch (el_sz)
   {
     case 1:
-      val_u8 = *(kd_u8_t*)val_ptr;
+      val_u8 = *KD_PU8_C(val_ptr);
       kdi_GenMemOpsSetBlocks_S8(KD_PU8_C(mem), size, val_u8);
       break;
     case 2:
-      val_u16 = *(kd_u16_t*)val_ptr;
+      val_u16 = *KD_PU16_C(val_ptr);
       kdi_GenMemOpsSetBlocks_S16(KD_PU16_C(mem), size, val_u16);
       break;
     case 4:
-      val_u32 = *(kd_u32_t*)val_ptr;
+      val_u32 = *KD_PU32_C(val_ptr);
       kdi_GenMemOpsSetBlocks_S32(KD_PU32_C(mem), size, val_u32);
       break;
 #if defined KD_ARCH_64BIT_INT
     case 8:
-      val_u64 = *(kd_u64_t*)val_ptr;
+      val_u64 = *KD_PU64_C(val_ptr);
       kdi_GenMemOpsSetBlocks_S64(KD_PU64_C(mem), size, val_u64);
       break;
 #endif
@@ -118,7 +124,11 @@ kdGenArrCreateInit(kd_i32_t el_sz, kd_i64_t len, void* val_ptr, kd_bool_t (*allo
 
 
 void*
+#if defined KD_ARCH_64BIT_INT
 kdGenArrCreateFrom(kd_i32_t el_sz, kd_i64_t len, void* src, kd_i64_t src_len, kd_bool_t (*allocator)(void*, kd_usize_t))
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdGenArrCreateFrom(kd_i32_t el_sz, kd_i32_t len, void* src, kd_i32_t src_len, kd_bool_t (*allocator)(void*, kd_usize_t))
+#endif /* KD_ARCH_64BIT_INT */
 {
   kd_byte_t *mem, *dst_ptr, *src_ptr;
   kd_usize_t dst_sz, src_sz;
@@ -184,7 +194,11 @@ kdGenArrClone(void* arr, kd_bool_t (*allocator)(void*, kd_usize_t))
 
 
 void*
+#if defined KD_ARCH_64BIT_INT
 kdGenArrCloneRange(void* arr, kd_i64_t from, kd_i64_t to, kd_bool_t (*allocator)(void*, kd_usize_t))
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdGenArrCloneRange(void* arr, kd_i32_t from, kd_i32_t to, kd_bool_t (*allocator)(void*, kd_usize_t))
+#endif /* KD_ARCH_64BIT_INT */
 {
   kd_byte_t *mem, *dst_ptr, *src_ptr;
   kd_u32_t   el_sz;
@@ -247,25 +261,43 @@ kdGenArrGetElemSize(void* arr)
 }
 
 
+#if defined KD_ARCH_64BIT_INT
 kd_i64_t
+#else  /* !defined KD_ARCH_64BIT_INT */
+kd_i32_t
+#endif /* KD_ARCH_64BIT_INT */
 kdGenArrGetMemSize(void* arr)
 {
   if (!arr)
   {
     return 0;
   }
+
+#if defined KD_ARCH_64BIT_INT
   return KD_I64_C(kdi_GenArrGetMemSize(arr));
+#else  /* !defined KD_ARCH_64BIT_INT */
+  return KD_I32_C(kdi_GenArrGetMemSize(arr));
+#endif /* KD_ARCH_64BIT_INT */
 }
 
 
+#if defined KD_ARCH_64BIT_INT
 kd_i64_t
+#else  /* !defined KD_ARCH_64BIT_INT */
+kd_i32_t
+#endif /* KD_ARCH_64BIT_INT */
 kdGenArrGetLen(void* arr)
 {
   if (!arr)
   {
     return 0;
   }
+
+#if defined KD_ARCH_64BIT_INT
   return KD_I64_C(kdi_GenArrGetMemSize(arr) / kdi_GenArrGetElemSize(arr));
+#else  /* !defined KD_ARCH_64BIT_INT */
+  return KD_I32_C(kdi_GenArrGetMemSize(arr) / kdi_GenArrGetElemSize(arr));
+#endif /* KD_ARCH_64BIT_INT */
 }
 
 
@@ -324,20 +356,20 @@ kdGenArrFill(void* arr, void* val_ptr)
   switch (el_sz)
   {
     case 1:
-      val_u8 = *(kd_u8_t*)val_ptr;
+      val_u8 = *KD_PU8_C(val_ptr);
       kdi_GenMemOpsSetBlocks_S8(KD_PU8_C(arr), mem_sz, val_u8);
       break;
     case 2:
-      val_u16 = *(kd_u16_t*)val_ptr;
+      val_u16 = *KD_PU16_C(val_ptr);
       kdi_GenMemOpsSetBlocks_S16(KD_PU16_C(arr), mem_sz, val_u16);
       break;
     case 4:
-      val_u32 = *(kd_u32_t*)val_ptr;
+      val_u32 = *KD_PU32_C(val_ptr);
       kdi_GenMemOpsSetBlocks_S32(KD_PU32_C(arr), mem_sz, val_u32);
       break;
 #if defined KD_ARCH_64BIT_INT
     case 8:
-      val_u64 = *(kd_u64_t*)val_ptr;
+      val_u64 = *KD_PU64_C(val_ptr);
       kdi_GenMemOpsSetBlocks_S64(KD_PU64_C(arr), mem_sz, val_u64);
       break;
 #endif
@@ -350,7 +382,11 @@ kdGenArrFill(void* arr, void* val_ptr)
 
 
 kd_bool_t
+#if defined KD_ARCH_64BIT_INT
 kdGenArrFillRange(void* arr, kd_i64_t from, kd_i64_t to, void* val_ptr)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdGenArrFillRange(void* arr, kd_i32_t from, kd_i32_t to, void* val_ptr)
+#endif /* KD_ARCH_64BIT_INT */
 {
   kd_usize_t mem_sz, el_sz, from_idx, to_idx;
   kd_byte_t* ptr;
@@ -381,20 +417,20 @@ kdGenArrFillRange(void* arr, kd_i64_t from, kd_i64_t to, void* val_ptr)
   switch (el_sz)
   {
     case 1:
-      val_u8 = *(kd_u8_t*)val_ptr;
+      val_u8 = *KD_PU8_C(val_ptr);
       kdi_GenMemOpsSetBlocks_S8(KD_PU8_C(ptr), mem_sz, val_u8);
       break;
     case 2:
-      val_u16 = *(kd_u16_t*)val_ptr;
+      val_u16 = *KD_PU16_C(val_ptr);
       kdi_GenMemOpsSetBlocks_S16(KD_PU16_C(ptr), mem_sz, val_u16);
       break;
     case 4:
-      val_u32 = *(kd_u32_t*)val_ptr;
+      val_u32 = *KD_PU32_C(val_ptr);
       kdi_GenMemOpsSetBlocks_S32(KD_PU32_C(ptr), mem_sz, val_u32);
       break;
 #if defined KD_ARCH_64BIT_INT
     case 8:
-      val_u64 = *(kd_u64_t*)val_ptr;
+      val_u64 = *KD_PU64_C(val_ptr);
       kdi_GenMemOpsSetBlocks_S64(KD_PU64_C(ptr), mem_sz, val_u64);
       break;
 #endif
@@ -407,7 +443,11 @@ kdGenArrFillRange(void* arr, kd_i64_t from, kd_i64_t to, void* val_ptr)
 
 
 kd_bool_t
+#if defined KD_ARCH_64BIT_INT
 kdGenArrSet(void* arr, kd_i64_t idx, void* val_ptr)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdGenArrSet(void* arr, kd_i32_t idx, void* val_ptr)
+#endif /* KD_ARCH_64BIT_INT */
 {
   kd_byte_t *dst_ptr, *src_ptr;
   kd_usize_t el_sz, actual_idx;
@@ -457,7 +497,11 @@ kdGenArrSet(void* arr, kd_i64_t idx, void* val_ptr)
 
 
 void*
+#if defined KD_ARCH_64BIT_INT
 kdGenArrGet(void* arr, kd_i64_t idx)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdGenArrGet(void* arr, kd_i32_t idx)
+#endif /* KD_ARCH_64BIT_INT */
 {
   kd_usize_t el_sz, actual_idx;
 
@@ -474,7 +518,11 @@ kdGenArrGet(void* arr, kd_i64_t idx)
 
 
 kd_bool_t
+#if defined KD_ARCH_64BIT_INT
 kdGenArrSwap(void* arr, kd_i64_t idx1, kd_i64_t idx2)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdGenArrSwap(void* arr, kd_i32_t idx1, kd_i32_t idx2)
+#endif /* KD_ARCH_64BIT_INT */
 {
   kd_byte_t *ptr1, *ptr2;
   kd_usize_t el_sz, mem_sz, actual_idx1, actual_idx2;
@@ -577,12 +625,20 @@ kdGenArrEquals(void* arr1, void* arr2)
 }
 
 
+#if defined KD_ARCH_64BIT_INT
 kd_i64_t
+#else  /* !defined KD_ARCH_64BIT_INT */
+kd_i32_t
+#endif /* KD_ARCH_64BIT_INT */
 kdGenArrGetCount(void* arr, void* val_ptr)
 {
   kd_byte_t *ptr, *block;
   kd_usize_t el_sz, temp_el_sz, mem_sz, match_cnt;
-  kd_i64_t   count = 0;
+#if defined KD_ARCH_64BIT_INT
+  kd_i64_t count = 0;
+#else  /* !defined KD_ARCH_64BIT_INT */
+  kd_i32_t count = 0;
+#endif /* KD_ARCH_64BIT_INT */
 
   if (!arr || !val_ptr)
   {
@@ -641,12 +697,21 @@ kdGenArrGetCount(void* arr, void* val_ptr)
 }
 
 
+#if defined KD_ARCH_64BIT_INT
 kd_i64_t
 kdGenArrGetCountRange(void* arr, kd_i64_t from, kd_i64_t to, void* val_ptr)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kd_i32_t
+kdGenArrGetCountRange(void* arr, kd_i32_t from, kd_i32_t to, void* val_ptr)
+#endif /* KD_ARCH_64BIT_INT */
 {
   kd_byte_t *ptr, *block;
   kd_usize_t el_sz, temp_el_sz, mem_sz, match_cnt, from_idx, to_idx;
-  kd_i64_t   count = 0;
+#if defined KD_ARCH_64BIT_INT
+  kd_i64_t count = 0;
+#else  /* !defined KD_ARCH_64BIT_INT */
+  kd_i32_t count = 0;
+#endif /* KD_ARCH_64BIT_INT */
 
   if (!arr || from < 0 || to < 0 || from > to || !val_ptr)
   {
@@ -814,7 +879,11 @@ kdGenArrGetReversed(void* dst_arr, void* src_arr)
 
 
 kd_bool_t
+#if defined KD_ARCH_64BIT_INT
 kdGenArrGetReversedTo(void* dst, kd_i64_t len, void* src_arr)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdGenArrGetReversedTo(void* dst, kd_i32_t len, void* src_arr)
+#endif /* KD_ARCH_64BIT_INT */
 {
   kd_usize_t el_sz, dst_sz, src_sz, mem_sz;
   kd_byte_t *dst_ptr, *src_ptr;
@@ -864,7 +933,11 @@ kdGenArrGetReversedTo(void* dst, kd_i64_t len, void* src_arr)
 
 
 kd_bool_t
+#if defined KD_ARCH_64BIT_INT
 kdGenArrGetReversedFrom(void* dst_arr, void* src, kd_i64_t len)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdGenArrGetReversedFrom(void* dst_arr, void* src, kd_i32_t len)
+#endif /* KD_ARCH_64BIT_INT */
 {
   kd_usize_t el_sz, dst_sz, src_sz;
   kd_byte_t *dst_ptr, *src_ptr;
@@ -923,7 +996,11 @@ kdGenArrGetReversedFrom(void* dst_arr, void* src, kd_i64_t len)
 
 
 kd_bool_t
+#if defined KD_ARCH_64BIT_INT
 kdGenArrReverseRange(void* arr, kd_i64_t from, kd_i64_t to)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdGenArrReverseRange(void* arr, kd_i32_t from, kd_i32_t to)
+#endif /* KD_ARCH_64BIT_INT */
 {
   kd_usize_t el_sz, mem_sz, from_idx, to_idx;
   kd_byte_t* ptr;
@@ -970,7 +1047,11 @@ kdGenArrReverseRange(void* arr, kd_i64_t from, kd_i64_t to)
 
 
 kd_bool_t
+#if defined KD_ARCH_64BIT_INT
 kdGenArrGetReversedRange(void* dst_arr, kd_i64_t dst_from, void* src_arr, kd_i64_t src_from, kd_i64_t src_to)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdGenArrGetReversedRange(void* dst_arr, kd_i32_t dst_from, void* src_arr, kd_i32_t src_from, kd_i32_t src_to)
+#endif /* KD_ARCH_64BIT_INT */
 {
   kd_byte_t *dst_ptr, *src_ptr, *temp_dst_ptr;
   kd_usize_t el_sz, mem_sz, dst_mem_sz, src_mem_sz, dst_from_idx, src_from_idx, src_to_idx;
@@ -1041,7 +1122,11 @@ kdGenArrGetReversedRange(void* dst_arr, kd_i64_t dst_from, void* src_arr, kd_i64
 
 
 kd_bool_t
+#if defined KD_ARCH_64BIT_INT
 kdGenArrGetReversedRangeFrom(void* dst_arr, kd_i64_t dst_from, void* src, kd_i64_t src_from, kd_i64_t src_to)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdGenArrGetReversedRangeFrom(void* dst_arr, kd_i32_t dst_from, void* src, kd_i32_t src_from, kd_i32_t src_to)
+#endif /* KD_ARCH_64BIT_INT */
 {
   kd_usize_t el_sz, dst_sz, src_sz, dst_from_idx, src_from_idx;
   kd_byte_t *dst_ptr, *src_ptr, *temp_dst_ptr;
@@ -1110,7 +1195,11 @@ kdGenArrGetReversedRangeFrom(void* dst_arr, kd_i64_t dst_from, void* src, kd_i64
 
 
 kd_bool_t
+#if defined KD_ARCH_64BIT_INT
 kdGenArrGetReversedRangeTo(void* dst, kd_i64_t len, void* src_arr, kd_i64_t from, kd_i64_t to)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdGenArrGetReversedRangeTo(void* dst, kd_i32_t len, void* src_arr, kd_i32_t from, kd_i32_t to)
+#endif /* KD_ARCH_64BIT_INT */
 {
   kd_usize_t el_sz, dst_sz, src_sz, mem_sz, from_idx, to_idx;
   kd_byte_t *dst_ptr, *src_ptr;
@@ -1187,7 +1276,11 @@ kdGenArrCpy(void* dst_arr, void* src_arr)
 
 
 kd_bool_t
+#if defined KD_ARCH_64BIT_INT
 kdGenArrCpyFrom(void* dst_arr, void* src, kd_i64_t len)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdGenArrCpyFrom(void* dst_arr, void* src, kd_i32_t len)
+#endif /* KD_ARCH_64BIT_INT */
 {
   kd_usize_t dst_sz, src_sz;
 
@@ -1206,7 +1299,11 @@ kdGenArrCpyFrom(void* dst_arr, void* src, kd_i64_t len)
 
 
 kd_bool_t
+#if defined KD_ARCH_64BIT_INT
 kdGenArrCpyTo(void* dst, kd_i64_t len, void* src_arr)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdGenArrCpyTo(void* dst, kd_i32_t len, void* src_arr)
+#endif /* KD_ARCH_64BIT_INT */
 {
   kd_usize_t dst_sz, src_sz;
 
@@ -1225,7 +1322,11 @@ kdGenArrCpyTo(void* dst, kd_i64_t len, void* src_arr)
 
 
 kd_bool_t
+#if defined KD_ARCH_64BIT_INT
 kdGenArrCpyRange(void* dst_arr, kd_i64_t dst_from, void* src_arr, kd_i64_t src_from, kd_i64_t src_to)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdGenArrCpyRange(void* dst_arr, kd_i32_t dst_from, void* src_arr, kd_i32_t src_from, kd_i32_t src_to)
+#endif /* KD_ARCH_64BIT_INT */
 {
   kd_usize_t el_sz, dst_sz, src_sz, dst_from_idx, src_from_idx, src_to_idx;
 
@@ -1268,7 +1369,11 @@ kdGenArrCpyRange(void* dst_arr, kd_i64_t dst_from, void* src_arr, kd_i64_t src_f
 
 
 kd_bool_t
+#if defined KD_ARCH_64BIT_INT
 kdGenArrCpyRangeFrom(void* dst_arr, kd_i64_t dst_from, void* src, kd_i64_t src_from, kd_i64_t src_to)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdGenArrCpyRangeFrom(void* dst_arr, kd_i32_t dst_from, void* src, kd_i32_t src_from, kd_i32_t src_to)
+#endif /* KD_ARCH_64BIT_INT */
 {
   kd_usize_t el_sz, dst_sz, src_sz, dst_from_idx, src_from_idx;
 
@@ -1297,7 +1402,11 @@ kdGenArrCpyRangeFrom(void* dst_arr, kd_i64_t dst_from, void* src, kd_i64_t src_f
 
 
 kd_bool_t
+#if defined KD_ARCH_64BIT_INT
 kdGenArrCpyRangeTo(void* dst, kd_i64_t len, void* src_arr, kd_i64_t from, kd_i64_t to)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kdGenArrCpyRangeTo(void* dst, kd_i32_t len, void* src_arr, kd_i32_t from, kd_i32_t to)
+#endif /* KD_ARCH_64BIT_INT */
 {
   kd_usize_t el_sz, dst_sz, src_sz, from_idx, to_idx;
 
@@ -1366,7 +1475,11 @@ kdGenArrFind(void* arr, void* val_ptr)
 }
 
 
+#if defined KD_ARCH_64BIT_INT
 kd_i64_t
+#else  /* !defined KD_ARCH_64BIT_INT */
+kd_i32_t
+#endif /* KD_ARCH_64BIT_INT */
 kdGenArrFindIndex(void* arr, void* val_ptr)
 {
   kd_usize_t el_sz, mem_sz, idx;
@@ -1410,7 +1523,13 @@ kdGenArrFindIndex(void* arr, void* val_ptr)
       found_ptr = kdi_GenMemOpsFindBlockWithIndex_Sn(&idx, arr, mem_sz, val_ptr, el_sz);
   }
 
-  return found_ptr ? KD_I64_C(idx / el_sz) : -1;
+  return found_ptr ?
+#if defined KD_ARCH_64BIT_INT
+                   KD_I64_C(idx / el_sz)
+#else  /* !defined KD_ARCH_64BIT_INT */
+                   KD_I32_C(idx / el_sz)
+#endif /* KD_ARCH_64BIT_INT */
+                   : -1;
 }
 
 
@@ -1456,7 +1575,11 @@ kdGenArrFindLast(void* arr, void* val_ptr)
 }
 
 
+#if defined KD_ARCH_64BIT_INT
 kd_i64_t
+#else  /* !defined KD_ARCH_64BIT_INT */
+kd_i32_t
+#endif /* KD_ARCH_64BIT_INT */
 kdGenArrFindLastIndex(void* arr, void* val_ptr)
 {
   kd_usize_t el_sz, mem_sz, idx;
@@ -1500,11 +1623,21 @@ kdGenArrFindLastIndex(void* arr, void* val_ptr)
       found_ptr = kdi_GenMemOpsFindLastBlockWithIndex_Sn(&idx, arr, mem_sz, val_ptr, el_sz);
   }
 
-  return found_ptr ? KD_I64_C(idx / el_sz) : -1;
+  return found_ptr ?
+#if defined KD_ARCH_64BIT_INT
+                   KD_I64_C(idx / el_sz)
+#else  /* !defined KD_ARCH_64BIT_INT */
+                   KD_I32_C(idx / el_sz)
+#endif /* KD_ARCH_64BIT_INT */
+                   : -1;
 }
 
 
+#if defined KD_ARCH_64BIT_INT
 kd_i64_t
+#else  /* !defined KD_ARCH_64BIT_INT */
+kd_i32_t
+#endif /* KD_ARCH_64BIT_INT */
 kdGenArrFindAll(void* dst_arr, void* src_arr, void* val_ptr)
 {
   kd_usize_t  el_sz, dst_sz, src_sz, found_cnt, temp_found_cnt, *idxs_ptr;
@@ -1571,8 +1704,13 @@ kdGenArrFindAll(void* dst_arr, void* src_arr, void* val_ptr)
 }
 
 
+#if defined KD_ARCH_64BIT_INT
 kd_i64_t
 kdGenArrFindAllTo(void* dst, kd_i64_t len, void* arr, void* val_ptr)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kd_i32_t
+kdGenArrFindAllTo(void* dst, kd_i32_t len, void* arr, void* val_ptr)
+#endif /* KD_ARCH_64BIT_INT */
 {
   kd_usize_t  el_sz, dst_sz, src_sz, found_cnt, temp_found_cnt, *idxs_ptr;
   kd_byte_t** dst_ptr;
@@ -1630,11 +1768,19 @@ kdGenArrFindAllTo(void* dst, kd_i64_t len, void* arr, void* val_ptr)
     ++idxs_ptr;
   }
 
+#if defined KD_ARCH_64BIT_INT
   return KD_I64_C(found_cnt);
+#else  /* !defined KD_ARCH_64BIT_INT */
+  return KD_I32_C(found_cnt);
+#endif /* KD_ARCH_64BIT_INT */
 }
 
 
+#if defined KD_ARCH_64BIT_INT
 kd_i64_t
+#else  /* !defined KD_ARCH_64BIT_INT */
+kd_i32_t
+#endif /* KD_ARCH_64BIT_INT */
 kdGenArrFindAllIndices(void* idx_arr, void* arr, void* val_ptr)
 {
   kd_usize_t el_sz, idx_sz, src_sz, found_cnt, temp_found_cnt, *idx_ptr;
@@ -1691,12 +1837,21 @@ kdGenArrFindAllIndices(void* idx_arr, void* arr, void* val_ptr)
     idx_ptr = KD_PUSIZE_C(KD_PBYTE_C(idx_ptr) + KD_SZ_USIZE);
   }
 
+#if defined KD_ARCH_64BIT_INT
   return KD_I64_C(found_cnt);
+#else  /* !defined KD_ARCH_64BIT_INT */
+  return KD_I32_C(found_cnt);
+#endif /* KD_ARCH_64BIT_INT */
 }
 
 
+#if defined KD_ARCH_64BIT_INT
 kd_i64_t
 kdGenArrFindAllIndicesTo(void* idxs, kd_i64_t len, void* arr, void* val_ptr)
+#else  /* !defined KD_ARCH_64BIT_INT */
+kd_i32_t
+kdGenArrFindAllIndicesTo(void* idxs, kd_i32_t len, void* arr, void* val_ptr)
+#endif /* KD_ARCH_64BIT_INT */
 {
   kd_usize_t el_sz, idx_sz, src_sz, found_cnt, temp_found_cnt, *idx_ptr;
   kd_u8_t    block_val_u8;
@@ -1752,5 +1907,9 @@ kdGenArrFindAllIndicesTo(void* idxs, kd_i64_t len, void* arr, void* val_ptr)
     idx_ptr = KD_PUSIZE_C(KD_PBYTE_C(idx_ptr) + KD_SZ_USIZE);
   }
 
+#if defined KD_ARCH_64BIT_INT
   return KD_I64_C(found_cnt);
+#else  /* !defined KD_ARCH_64BIT_INT */
+  return KD_I32_C(found_cnt);
+#endif /* KD_ARCH_64BIT_INT */
 }
