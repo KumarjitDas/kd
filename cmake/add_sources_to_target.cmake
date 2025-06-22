@@ -60,6 +60,7 @@ set(LIB_NAMES
     "gen_mem_ops"
     "mem_ops"
     "gen_arr"
+    "arr"
 )
 
 # List of individual internal libraries to be build from each source

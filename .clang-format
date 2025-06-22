@@ -1,10 +1,24 @@
 ---
 Language: Cpp
 BasedOnStyle: LLVM
-AlignConsecutiveAssignments: true
-AlignConsecutiveDeclarations: true
-AlignOperands: false
-AlignTrailingComments: true
+AlignConsecutiveAssignments:
+  Enabled: true
+  AcrossComments: true
+  AcrossEmptyLines: true
+  AlignCompound: true
+  AlignFunctionPointers: true
+  PadOperators: true
+AlignConsecutiveDeclarations:
+  Enabled: true
+  PadOperators: true
+  AlignFunctionPointers: true
+  AlignCompound: true
+  AcrossEmptyLines: true
+  AcrossComments: true
+AlignOperands: AlignAfterOperator
+AlignTrailingComments:
+  Kind: Always
+  OverEmptyLines: 2
 AllowShortIfStatementsOnASingleLine: false
 AlwaysBreakTemplateDeclarations: Yes
 BinPackArguments: false
@@ -29,7 +43,7 @@ BraceWrapping:
 BreakBeforeBraces: Custom
 BreakConstructorInitializers: AfterColon
 BreakConstructorInitializersBeforeComma: false
-ColumnLimit: 120
+ColumnLimit: 800
 ConstructorInitializerAllOnOneLineOrOnePerLine: false
 ContinuationIndentWidth: 2
 SortIncludes: Never
@@ -47,8 +61,15 @@ IndentPPDirectives: BeforeHash
 InsertNewlineAtEOF: true
 MacroBlockBegin: ''
 MacroBlockEnd: ''
-AlignConsecutiveMacros: true
+AlignConsecutiveMacros:
+  Enabled: true
+  AcrossComments: true
+  AcrossEmptyLines: true
+  AlignCompound: true
+  AlignFunctionPointers: true
+  PadOperators: true
 MaxEmptyLinesToKeep: 2
+AlignArrayOfStructures: Right
 NamespaceIndentation: All
 PointerAlignment: Left
 SpaceAfterCStyleCast: false

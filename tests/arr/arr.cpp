@@ -1,9 +1,8 @@
 /**
- * @file kd.h
+ * @file arr.cpp
  * @author Kumarjit Das
- * @date 2025-05-28
- * @since 0.0.4
- * @brief KD library public common header.
+ * @date 2025-06-23
+ * @brief arr test file.
  */
 /**
  * LICENSE: BSD 3-Clause License
@@ -38,18 +37,12 @@
  */
 
 
-#ifndef KD_H_
-#define KD_H_
+#include <gtest/gtest.h>
 
 
-#include "kd/version.h"
-#include "kd/defs.h"
-#include "kd/types/fw.h"
-#include "kd/mem_algn.h"
-#include "kd/gen_mem_ops.h"
-#include "kd/mem_ops.h"
-#include "kd/gen_arr.h"
-#include "kd/arr.h"
-
-
-#endif /* KD_H_ */
+int
+main(int argc, char** argv)
+{
+  ::testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
+}

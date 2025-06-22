@@ -241,6 +241,12 @@ typedef kd_u32_t kd_chr_t;
   #define KD_PU64_C(X) ((kd_u64_t*)(X))
 #endif
 
+#define KD_BASE_INT_C(X)  ((KD_BASE_INT_T)(X))
+#define KD_BASE_UINT_C(X) ((KD_BASE_UINT_T)(X))
+
+#define KD_BASE_PINT_C(X)  ((KD_BASE_INT_T*)(X))
+#define KD_BASE_PUINT_C(X) ((KD_BASE_UINT_T*)(X))
+
 
 /**
  * ---------------------------------------------------------------------------------------------------------------------

@@ -45,6 +45,7 @@ set(TEST_SUBDIRS
     "gen_mem_ops"
     "mem_ops"
     "gen_arr"
+    "arr"
 )
 
 # Create groups
