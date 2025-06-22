@@ -69,6 +69,7 @@ main(int argc, char** argv)
   printf("KD_SZ_I64 = %d,\n", (int)KD_SZ_I64);
   printf("KD_SZ_U64 = %d,\n", (int)KD_SZ_U64);
 #endif /* KD_FW_64BIT_INT */
+  printf("KD_SZ_WORD = %d,\n", (int)KD_SZ_WORD);
   printf("KD_SZ_USIZE = %d,\n", (int)KD_SZ_USIZE);
   printf("KD_SZ_BYTE = %d,\n", (int)KD_SZ_BYTE);
   printf("KD_SZ_CHR = %d,\n", (int)KD_SZ_CHR);
@@ -89,6 +90,7 @@ main(int argc, char** argv)
   printf("KD_MIN_I64 = " KD_FMTSP_I64 ",\n", KD_FSBTC_I64(KD_MIN_I64));
   printf("KD_MIN_U64 = " KD_FMTSP_U64 ",\n", KD_FSBTC_U64(KD_MIN_U64));
 #endif
+  printf("KD_MIN_WORD = " KD_FMTSP_WORD ",\n", KD_FSBTC_WORD(KD_MIN_WORD));
   printf("KD_MIN_USIZE = " KD_FMTSP_USIZE ",\n", KD_FSBTC_USIZE(KD_MIN_USIZE));
   printf("KD_MIN_BYTE = " KD_FMTSP_BYTE ",\n", KD_FSBTC_BYTE(KD_MIN_BYTE));
   printf("KD_MIN_CHR = " KD_FMTSP_CHR ",\n", KD_FSBTC_CHR(KD_MIN_CHR));
@@ -109,6 +111,7 @@ main(int argc, char** argv)
   printf("KD_MAX_I64 = " KD_FMTSP_I64 ",\n", KD_FSBTC_I64(KD_MAX_I64));
   printf("KD_MAX_U64 = " KD_FMTSP_U64 ",\n", KD_FSBTC_U64(KD_MAX_U64));
 #endif
+  printf("KD_MAX_WORD = " KD_FMTSP_WORD ",\n", KD_FSBTC_WORD(KD_MAX_WORD));
   printf("KD_MAX_USIZE = " KD_FMTSP_USIZE ",\n", KD_FSBTC_USIZE(KD_MAX_USIZE));
   printf("KD_MAX_BYTE = " KD_FMTSP_BYTE ",\n", KD_FSBTC_BYTE(KD_MAX_BYTE));
   printf("KD_MAX_CHR = " KD_FMTSP_CHR ",\n", KD_FSBTC_CHR(KD_MAX_CHR));
