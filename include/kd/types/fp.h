@@ -64,7 +64,7 @@ typedef double kd_f64_t;
  * ---------------------------------------------------------------------------------------------------------------------
  */
 
-#define KD_LIT_F32(x) x##F
+#define KD_LIT_F32(x) x## F
 #define KD_LIT_F64(x) (kd_f64_t)(x)
 
 #if !(defined KD_CPLUSPLUS && defined KD_GOOGLE_TEST && defined KD_OS_WINDOWS && defined KD_COMP_MSVC)
@@ -109,8 +109,8 @@ typedef double kd_f64_t;
  * ---------------------------------------------------------------------------------------------------------------------
  */
 
-#define KD_SZ_F32 sizeof(kd_f32_t)
-#define KD_SZ_F64 sizeof(kd_f64_t)
+#define KD_SZ_F32    sizeof(kd_f32_t)
+#define KD_SZ_F64    sizeof(kd_f64_t)
 
 
 /**

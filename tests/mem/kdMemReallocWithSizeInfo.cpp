@@ -37,7 +37,6 @@
  */
 
 
-#define KD_USE_SIMPLIFIED_TYPES
 #include "kd.h"
 #include "kd/mem.h"
 #include "gtest/gtest.h"
@@ -45,153 +44,153 @@
 
 TEST(MemoryReallocWithSizeInfoTest, BasicArguments)
 {
-  u8* ptr = static_cast<u8*>(null);
-  u8* dst = static_cast<u8*>(null);
+  auto *ptr = static_cast<kd_u8_t *>(kd_null);
+  auto *dst = static_cast<kd_u8_t *>(kd_null);
 
-  // All null
-  EXPECT_EQ(kdMemReallocWithSizeInfo(null, 0, null, 0), KD_RESULT_FAILURE);
-  EXPECT_EQ(kdMemReallocWithSizeInfo(null, 64, null, 0), KD_RESULT_FAILURE);
-  EXPECT_EQ(kdMemReallocWithSizeInfo(null, 0, &ptr, 0), KD_RESULT_FAILURE);
-  EXPECT_EQ(kdMemReallocWithSizeInfo(null, 128, &ptr, 0), KD_RESULT_FAILURE);
+  // All kd_null
+  EXPECT_EQ(kdMemReallocWithSizeInfo(kd_null, 0, kd_null, 0), KD_RESULT_FAILURE);
+  EXPECT_EQ(kdMemReallocWithSizeInfo(kd_null, 64, kd_null, 0), KD_RESULT_FAILURE);
+  EXPECT_EQ(kdMemReallocWithSizeInfo(kd_null, 0, &ptr, 0), KD_RESULT_FAILURE);
+  EXPECT_EQ(kdMemReallocWithSizeInfo(kd_null, 128, &ptr, 0), KD_RESULT_FAILURE);
 
   // Destination valid, source/destination data is junk
-  dst = reinterpret_cast<u8*>(69);
-  EXPECT_EQ(kdMemReallocWithSizeInfo(&dst, 0, null, 0), KD_RESULT_FAILURE);
-  EXPECT_EQ(dst, null);
+  dst = reinterpret_cast<kd_u8_t *>(69);
+  EXPECT_EQ(kdMemReallocWithSizeInfo(&dst, 0, kd_null, 0), KD_RESULT_FAILURE);
+  EXPECT_EQ(dst, kd_null);
 
-  dst = reinterpret_cast<u8*>(69);
-  EXPECT_EQ(kdMemReallocWithSizeInfo(&dst, 64, null, 0), KD_RESULT_SUCCESS);
-  EXPECT_EQ(dst != null, true);
+  dst = reinterpret_cast<kd_u8_t *>(69);
+  EXPECT_EQ(kdMemReallocWithSizeInfo(&dst, 64, kd_null, 0), KD_RESULT_SUCCESS);
+  EXPECT_EQ(dst != kd_null, KD_RESULT_SUCCESS);
   EXPECT_EQ(kdMemGetAllocSize(dst), 64);
   kdMemFreeWithSizeInfo(&dst);
 
-  dst = reinterpret_cast<u8*>(69);
+  dst = reinterpret_cast<kd_u8_t *>(69);
   EXPECT_EQ(kdMemReallocWithSizeInfo(&dst, 0, &ptr, 0), KD_RESULT_FAILURE);
-  EXPECT_EQ(dst, null);
+  EXPECT_EQ(dst, kd_null);
 }
 
 TEST(MemoryReallocWithSizeInfoTest, BasicAllocationBytes)
 {
-  u8 *ptr = static_cast<u8*>(null), *dst = static_cast<u8*>(null);
+  auto *ptr = static_cast<kd_u8_t *>(kd_null), *dst = static_cast<kd_u8_t *>(kd_null);
 
   // Reallocate from 1 byte → 64 → 128
   EXPECT_EQ(kdMemAllocWithSizeInfo(&ptr, 1), KD_RESULT_SUCCESS);
-  ASSERT_NE(ptr, null);
+  ASSERT_NE(ptr, kd_null);
   EXPECT_EQ(kdMemGetAllocSize(ptr), 1);
   EXPECT_EQ(kdMemReallocWithSizeInfo(&dst, 64, &ptr, 1), KD_RESULT_SUCCESS);
-  EXPECT_EQ(ptr, null);
-  ASSERT_NE(dst, null);
+  EXPECT_EQ(ptr, kd_null);
+  ASSERT_NE(dst, kd_null);
   EXPECT_EQ(kdMemGetAllocSize(dst), 64);
   EXPECT_EQ(kdMemReallocWithSizeInfo(&dst, 128, &ptr, 64), KD_RESULT_SUCCESS);
-  EXPECT_EQ(ptr, null);
-  ASSERT_NE(dst, null);
+  EXPECT_EQ(ptr, kd_null);
+  ASSERT_NE(dst, kd_null);
   EXPECT_EQ(kdMemGetAllocSize(dst), 128);
   kdMemFreeWithSizeInfo(&dst);
 
   // Reallocate 64 → 128 → 256
   EXPECT_EQ(kdMemAllocWithSizeInfo(&ptr, 64), KD_RESULT_SUCCESS);
-  ASSERT_NE(ptr, null);
+  ASSERT_NE(ptr, kd_null);
   EXPECT_EQ(kdMemGetAllocSize(ptr), 64);
   EXPECT_EQ(kdMemReallocWithSizeInfo(&dst, 128, &ptr, 64), KD_RESULT_SUCCESS);
-  EXPECT_EQ(ptr, null);
-  ASSERT_NE(dst, null);
+  EXPECT_EQ(ptr, kd_null);
+  ASSERT_NE(dst, kd_null);
   EXPECT_EQ(kdMemGetAllocSize(dst), 128);
   EXPECT_EQ(kdMemReallocWithSizeInfo(&dst, 256, &ptr, 128), KD_RESULT_SUCCESS);
-  EXPECT_EQ(ptr, null);
-  ASSERT_NE(dst, null);
+  EXPECT_EQ(ptr, kd_null);
+  ASSERT_NE(dst, kd_null);
   EXPECT_EQ(kdMemGetAllocSize(dst), 256);
   kdMemFreeWithSizeInfo(&dst);
 
   // Reallocate 128 → 256 → 512
   EXPECT_EQ(kdMemAllocWithSizeInfo(&ptr, 128), KD_RESULT_SUCCESS);
-  ASSERT_NE(ptr, null);
+  ASSERT_NE(ptr, kd_null);
   EXPECT_EQ(kdMemReallocWithSizeInfo(&dst, 256, &ptr, 128), KD_RESULT_SUCCESS);
-  EXPECT_EQ(ptr, null);
-  ASSERT_NE(dst, null);
+  EXPECT_EQ(ptr, kd_null);
+  ASSERT_NE(dst, kd_null);
   EXPECT_EQ(kdMemReallocWithSizeInfo(&dst, 512, &ptr, 256), KD_RESULT_SUCCESS);
-  EXPECT_EQ(ptr, null);
-  ASSERT_NE(dst, null);
+  EXPECT_EQ(ptr, kd_null);
+  ASSERT_NE(dst, kd_null);
   EXPECT_EQ(kdMemGetAllocSize(dst), 512);
   kdMemFreeWithSizeInfo(&dst);
 }
 
 TEST(MemoryReallocWithSizeInfoTest, BasicAllocationKiloBytes)
 {
-  u8 *ptr = static_cast<u8*>(null), *dst = static_cast<u8*>(null);
+  auto *ptr = static_cast<kd_u8_t *>(kd_null), *dst = static_cast<kd_u8_t *>(kd_null);
 
   // 1 KB → 64 KB → 128 KB
   EXPECT_EQ(kdMemAllocWithSizeInfo(&ptr, 1024 * 1), KD_RESULT_SUCCESS);
-  ASSERT_NE(ptr, null);
+  ASSERT_NE(ptr, kd_null);
   EXPECT_EQ(kdMemReallocWithSizeInfo(&dst, 1024 * 64, &ptr, 1024 * 1), KD_RESULT_SUCCESS);
-  EXPECT_EQ(ptr, null);
-  ASSERT_NE(dst, null);
+  EXPECT_EQ(ptr, kd_null);
+  ASSERT_NE(dst, kd_null);
   EXPECT_EQ(kdMemGetAllocSize(dst), 1024 * 64);
   EXPECT_EQ(kdMemReallocWithSizeInfo(&dst, 1024 * 128, &ptr, 1024 * 64), KD_RESULT_SUCCESS);
-  EXPECT_EQ(ptr, null);
-  ASSERT_NE(dst, null);
+  EXPECT_EQ(ptr, kd_null);
+  ASSERT_NE(dst, kd_null);
   EXPECT_EQ(kdMemGetAllocSize(dst), 1024 * 128);
   kdMemFreeWithSizeInfo(&dst);
 
   // 64 KB → 128 KB → 256 KB
   EXPECT_EQ(kdMemAllocWithSizeInfo(&ptr, 1024 * 64), KD_RESULT_SUCCESS);
-  ASSERT_NE(ptr, null);
+  ASSERT_NE(ptr, kd_null);
   EXPECT_EQ(kdMemReallocWithSizeInfo(&dst, 1024 * 128, &ptr, 1024 * 64), KD_RESULT_SUCCESS);
-  EXPECT_EQ(ptr, null);
-  ASSERT_NE(dst, null);
+  EXPECT_EQ(ptr, kd_null);
+  ASSERT_NE(dst, kd_null);
   EXPECT_EQ(kdMemGetAllocSize(dst), 1024 * 128);
   EXPECT_EQ(kdMemReallocWithSizeInfo(&dst, 1024 * 256, &ptr, 1024 * 128), KD_RESULT_SUCCESS);
-  EXPECT_EQ(ptr, null);
-  ASSERT_NE(dst, null);
+  EXPECT_EQ(ptr, kd_null);
+  ASSERT_NE(dst, kd_null);
   EXPECT_EQ(kdMemGetAllocSize(dst), 1024 * 256);
   kdMemFreeWithSizeInfo(&dst);
 
   // 256 KB → 512 KB → 1 MB
   EXPECT_EQ(kdMemAllocWithSizeInfo(&ptr, 1024 * 256), KD_RESULT_SUCCESS);
-  ASSERT_NE(ptr, null);
+  ASSERT_NE(ptr, kd_null);
   EXPECT_EQ(kdMemReallocWithSizeInfo(&dst, 1024 * 512, &ptr, 1024 * 256), KD_RESULT_SUCCESS);
-  EXPECT_EQ(ptr, null);
-  ASSERT_NE(dst, null);
+  EXPECT_EQ(ptr, kd_null);
+  ASSERT_NE(dst, kd_null);
   EXPECT_EQ(kdMemGetAllocSize(dst), 1024 * 512);
   EXPECT_EQ(kdMemReallocWithSizeInfo(&dst, 1024 * 1024, &ptr, 1024 * 512), KD_RESULT_SUCCESS);
-  EXPECT_EQ(ptr, null);
-  ASSERT_NE(dst, null);
+  EXPECT_EQ(ptr, kd_null);
+  ASSERT_NE(dst, kd_null);
   EXPECT_EQ(kdMemGetAllocSize(dst), 1024 * 1024);
   kdMemFreeWithSizeInfo(&dst);
 }
 
 TEST(MemoryReallocWithSizeInfoTest, BasicAllocationMegaBytes)
 {
-  u8 *ptr = static_cast<u8*>(null), *dst = static_cast<u8*>(null);
+  auto *ptr = static_cast<kd_u8_t *>(kd_null), *dst = static_cast<kd_u8_t *>(kd_null);
 
   // 1 MB → 64 MB → 128 MB
   EXPECT_EQ(kdMemAllocWithSizeInfo(&ptr, 1024 * 1024 * 1), KD_RESULT_SUCCESS);
-  ASSERT_NE(ptr, null);
+  ASSERT_NE(ptr, kd_null);
   EXPECT_EQ(kdMemGetAllocSize(ptr), 1024 * 1024 * 1);
 
   EXPECT_EQ(kdMemReallocWithSizeInfo(&dst, 1024 * 1024 * 64, &ptr, 1024 * 1024 * 1), KD_RESULT_SUCCESS);
-  EXPECT_EQ(ptr, null);
-  ASSERT_NE(dst, null);
+  EXPECT_EQ(ptr, kd_null);
+  ASSERT_NE(dst, kd_null);
   EXPECT_EQ(kdMemGetAllocSize(dst), 1024 * 1024 * 64);
 
   EXPECT_EQ(kdMemReallocWithSizeInfo(&dst, 1024 * 1024 * 128, &ptr, 1024 * 1024 * 64), KD_RESULT_SUCCESS);
-  EXPECT_EQ(ptr, null);
-  ASSERT_NE(dst, null);
+  EXPECT_EQ(ptr, kd_null);
+  ASSERT_NE(dst, kd_null);
   EXPECT_EQ(kdMemGetAllocSize(dst), 1024 * 1024 * 128);
 
   // Downscale back to 64 MB → 32 MB → 1 MB
   ptr = dst;
   EXPECT_EQ(kdMemReallocWithSizeInfo(&dst, 1024 * 1024 * 64, &ptr, 1024 * 1024 * 128), KD_RESULT_SUCCESS);
-  EXPECT_EQ(ptr, null);
+  EXPECT_EQ(ptr, kd_null);
   EXPECT_EQ(kdMemGetAllocSize(dst), 1024 * 1024 * 64);
 
   ptr = dst;
   EXPECT_EQ(kdMemReallocWithSizeInfo(&dst, 1024 * 1024 * 32, &ptr, 1024 * 1024 * 64), KD_RESULT_SUCCESS);
-  EXPECT_EQ(ptr, null);
+  EXPECT_EQ(ptr, kd_null);
   EXPECT_EQ(kdMemGetAllocSize(dst), 1024 * 1024 * 32);
 
   ptr = dst;
   EXPECT_EQ(kdMemReallocWithSizeInfo(&dst, 1024 * 1024 * 1, &ptr, 1024 * 1024 * 32), KD_RESULT_SUCCESS);
-  EXPECT_EQ(ptr, null);
+  EXPECT_EQ(ptr, kd_null);
   EXPECT_EQ(kdMemGetAllocSize(dst), 1024 * 1024 * 1);
 
   kdMemFreeWithSizeInfo(&dst);
@@ -199,38 +198,38 @@ TEST(MemoryReallocWithSizeInfoTest, BasicAllocationMegaBytes)
 
 TEST(MemoryReallocWithSizeInfoTest, BasicMultipleSequentialReallocationsBytes)
 {
-  u8 *ptr = static_cast<u8*>(null), *dst = static_cast<u8*>(null);
+  auto *ptr = static_cast<kd_u8_t *>(kd_null), *dst = static_cast<kd_u8_t *>(kd_null);
 
   // 64 → 128 → 256 → 512
   EXPECT_EQ(kdMemAllocWithSizeInfo(&ptr, 64), KD_RESULT_SUCCESS);
-  ASSERT_NE(ptr, null);
+  ASSERT_NE(ptr, kd_null);
   EXPECT_EQ(kdMemReallocWithSizeInfo(&dst, 128, &ptr, 64), KD_RESULT_SUCCESS);
-  EXPECT_EQ(ptr, null);
-  ASSERT_NE(dst, null);
+  EXPECT_EQ(ptr, kd_null);
+  ASSERT_NE(dst, kd_null);
   EXPECT_EQ(kdMemGetAllocSize(dst), 128);
 
   ptr = dst;
   EXPECT_EQ(kdMemReallocWithSizeInfo(&dst, 256, &ptr, 128), KD_RESULT_SUCCESS);
-  EXPECT_EQ(ptr, null);
-  ASSERT_NE(dst, null);
+  EXPECT_EQ(ptr, kd_null);
+  ASSERT_NE(dst, kd_null);
   EXPECT_EQ(kdMemGetAllocSize(dst), 256);
 
   ptr = dst;
   EXPECT_EQ(kdMemReallocWithSizeInfo(&dst, 512, &ptr, 256), KD_RESULT_SUCCESS);
-  EXPECT_EQ(ptr, null);
-  ASSERT_NE(dst, null);
+  EXPECT_EQ(ptr, kd_null);
+  ASSERT_NE(dst, kd_null);
   EXPECT_EQ(kdMemGetAllocSize(dst), 512);
 
   ptr = dst;
   EXPECT_EQ(kdMemReallocWithSizeInfo(&dst, 128, &ptr, 512), KD_RESULT_SUCCESS);
-  EXPECT_EQ(ptr, null);
-  ASSERT_NE(dst, null);
+  EXPECT_EQ(ptr, kd_null);
+  ASSERT_NE(dst, kd_null);
   EXPECT_EQ(kdMemGetAllocSize(dst), 128);
 
   ptr = dst;
   EXPECT_EQ(kdMemReallocWithSizeInfo(&dst, 64, &ptr, 128), KD_RESULT_SUCCESS);
-  EXPECT_EQ(ptr, null);
-  ASSERT_NE(dst, null);
+  EXPECT_EQ(ptr, kd_null);
+  ASSERT_NE(dst, kd_null);
   EXPECT_EQ(kdMemGetAllocSize(dst), 64);
 
   kdMemFreeWithSizeInfo(&dst);
@@ -238,50 +237,50 @@ TEST(MemoryReallocWithSizeInfoTest, BasicMultipleSequentialReallocationsBytes)
 
 TEST(MemoryReallocWithSizeInfoTest, BasicMultipleSequentialReallocationsKiloBytes)
 {
-  u8 *ptr = static_cast<u8*>(null), *dst = static_cast<u8*>(null);
+  auto *ptr = static_cast<kd_u8_t *>(kd_null), *dst = static_cast<kd_u8_t *>(kd_null);
 
   // 1 KB → 64 KB → 128 KB → 256 KB → 512 KB → 1 MB
   EXPECT_EQ(kdMemAllocWithSizeInfo(&ptr, 1024 * 1), KD_RESULT_SUCCESS);
-  ASSERT_NE(ptr, null);
+  ASSERT_NE(ptr, kd_null);
   EXPECT_EQ(kdMemReallocWithSizeInfo(&dst, 1024 * 64, &ptr, 1024 * 1), KD_RESULT_SUCCESS);
-  EXPECT_EQ(ptr, null);
-  ASSERT_NE(dst, null);
+  EXPECT_EQ(ptr, kd_null);
+  ASSERT_NE(dst, kd_null);
   EXPECT_EQ(kdMemGetAllocSize(dst), 1024 * 64);
 
   ptr = dst;
   EXPECT_EQ(kdMemReallocWithSizeInfo(&dst, 1024 * 128, &ptr, 1024 * 64), KD_RESULT_SUCCESS);
-  EXPECT_EQ(ptr, null);
+  EXPECT_EQ(ptr, kd_null);
   EXPECT_EQ(kdMemGetAllocSize(dst), 1024 * 128);
 
   ptr = dst;
   EXPECT_EQ(kdMemReallocWithSizeInfo(&dst, 1024 * 256, &ptr, 1024 * 128), KD_RESULT_SUCCESS);
-  EXPECT_EQ(ptr, null);
+  EXPECT_EQ(ptr, kd_null);
   EXPECT_EQ(kdMemGetAllocSize(dst), 1024 * 256);
 
   ptr = dst;
   EXPECT_EQ(kdMemReallocWithSizeInfo(&dst, 1024 * 512, &ptr, 1024 * 256), KD_RESULT_SUCCESS);
-  EXPECT_EQ(ptr, null);
+  EXPECT_EQ(ptr, kd_null);
   EXPECT_EQ(kdMemGetAllocSize(dst), 1024 * 512);
 
   ptr = dst;
   EXPECT_EQ(kdMemReallocWithSizeInfo(&dst, 1024 * 1024, &ptr, 1024 * 512), KD_RESULT_SUCCESS);
-  EXPECT_EQ(ptr, null);
+  EXPECT_EQ(ptr, kd_null);
   EXPECT_EQ(kdMemGetAllocSize(dst), 1024 * 1024);
 
   // Now shrink back down to 64 KB
   ptr = dst;
   EXPECT_EQ(kdMemReallocWithSizeInfo(&dst, 1024 * 512, &ptr, 1024 * 1024), KD_RESULT_SUCCESS);
-  EXPECT_EQ(ptr, null);
+  EXPECT_EQ(ptr, kd_null);
   EXPECT_EQ(kdMemGetAllocSize(dst), 1024 * 512);
 
   ptr = dst;
   EXPECT_EQ(kdMemReallocWithSizeInfo(&dst, 1024 * 128, &ptr, 1024 * 512), KD_RESULT_SUCCESS);
-  EXPECT_EQ(ptr, null);
+  EXPECT_EQ(ptr, kd_null);
   EXPECT_EQ(kdMemGetAllocSize(dst), 1024 * 128);
 
   ptr = dst;
   EXPECT_EQ(kdMemReallocWithSizeInfo(&dst, 1024 * 64, &ptr, 1024 * 128), KD_RESULT_SUCCESS);
-  EXPECT_EQ(ptr, null);
+  EXPECT_EQ(ptr, kd_null);
   EXPECT_EQ(kdMemGetAllocSize(dst), 1024 * 64);
 
   kdMemFreeWithSizeInfo(&dst);

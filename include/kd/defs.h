@@ -341,8 +341,7 @@
   #define KD_CPU_CSTR "MC68000"
 #endif
 
-#if defined __PPC__ || defined __POWERPC__ || defined powerpc || defined _POWER || defined __ppc__ ||                  \
-  defined __powerpc__
+#if defined __PPC__ || defined __POWERPC__ || defined powerpc || defined _POWER || defined __ppc__ || defined __powerpc__
   #define KD_CPU_PPC 1
 
   #if defined __powerpc64__
@@ -406,8 +405,7 @@
   #define KD_CPU_CSTR "IA64"
 #endif
 
-#if defined __X86__ || defined __i386__ || defined i386 || defined _M_IX86 || defined __386__ || defined __x86_64__ || \
-  defined _M_X64
+#if defined __X86__ || defined __i386__ || defined i386 || defined _M_IX86 || defined __386__ || defined __x86_64__ || defined _M_X64
   #define KD_CPU_X86 1
 
   #if defined __x86_64__ || defined _M_X64
@@ -549,8 +547,8 @@
 #endif
 
 #if defined KD_CPLUSPLUS
-  #define KD_EXTERN_BEGIN                                                                                              \
-    extern "C"                                                                                                         \
+  #define KD_EXTERN_BEGIN                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      \
+    extern "C"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 \
     {
   #define KD_EXTERN_END }
 #else
@@ -565,8 +563,7 @@
  * ---------------------------------------------------------------------------------------------------------------------
  */
 
-#if defined KD_CPU_X86 || defined KD_CPU_AXP || defined KD_CPU_STRONGARM || defined KD_OS_WIN32 ||                     \
-  defined                                                                           KD_OS_WINCE || defined __MIPSEL__
+#if defined KD_CPU_X86 || defined KD_CPU_AXP || defined KD_CPU_STRONGARM || defined KD_OS_WIN32 || defined KD_OS_WINCE || defined __MIPSEL__
   #define KD_ENDIAN_LITTLE 1
   #define KD_ENDIAN_CSTR   "little"
 #else
@@ -583,10 +580,8 @@
 
 #if defined _MSC_VER || defined __BORLANDC__ || defined __WATCOMC__ || (defined __alpha && defined __DECC)
   #define KD_ARCH_64BIT_INT 1
-#elif defined __GNUC__ || defined __MWERKS__ || defined __SUNPRO_C || defined __SUNPRO_CC || defined __APPLE_CC__ ||   \
-  defined KD_OS_IRIX || defined _LONG_LONG || defined _CRAYC
-  #if defined __x86_64__ || defined __ppc64__ || defined __aarch64__ || defined __LP64__ || defined _WIN64 ||          \
-    __SIZEOF_POINTER__ == 8 || __SIZEOF_LONG__ == 8
+#elif defined __GNUC__ || defined __MWERKS__ || defined __SUNPRO_C || defined __SUNPRO_CC || defined __APPLE_CC__ || defined KD_OS_IRIX || defined _LONG_LONG || defined _CRAYC
+  #if defined __x86_64__ || defined __ppc64__ || defined __aarch64__ || defined __LP64__ || defined _WIN64 || __SIZEOF_POINTER__ == 8 || __SIZEOF_LONG__ == 8
     #define KD_ARCH_64BIT_INT 1
   #endif
 #elif defined __LP64__ || defined __powerpc64__ || defined KD_CPU_SPARC64
@@ -613,8 +608,7 @@
   #define KD_ARCH_64BIT_PTR 1
 #endif
 
-#if defined KD_CPU_SPARC64 || defined KD_OS_WIN64 || defined __64BIT__ || defined __LP64 || defined _LP64 ||           \
-  defined __LP64__ || defined _ADDR64 || defined _CRAYC
+#if defined KD_CPU_SPARC64 || defined KD_OS_WIN64 || defined __64BIT__ || defined __LP64 || defined _LP64 || defined __LP64__ || defined _ADDR64 || defined _CRAYC
   #define KD_ARCH_64BIT_PTR 1
 #endif
 

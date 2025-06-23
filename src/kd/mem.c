@@ -44,49 +44,198 @@
 
 
 kd_bool_t
-kdMemAlloc(void* dst, kd_usize_t sz)
+kdMemAlloc(void *dst, kd_usize_t sz)
 {
-  return kdi_MemAlloc(dst, sz);
+  kd_byte_t *ptr;
+
+  if (!dst || sz == 0)
+  {
+    if (dst)
+    {
+      *(kd_byte_t **)dst = kd_null;
+    }
+
+    return KD_RESULT_FAILURE;
+  }
+
+  ptr = kdi_MemAlloc(sz);
+  if (!ptr)
+  {
+    return KD_RESULT_FAILURE;
+  }
+
+  *(kd_byte_t **)dst = ptr;
+
+  return KD_RESULT_SUCCESS;
 }
 
 
 kd_bool_t
-kdMemRealloc(void* dst, kd_usize_t new_sz, void* src, kd_usize_t old_sz)
+kdMemRealloc(void *dst, kd_usize_t new_sz, void *src, kd_usize_t old_sz)
 {
-  return kdi_MemRealloc(dst, new_sz, src, old_sz);
+  kd_byte_t **dst_adr = dst, **src_adr, *temp_ptr, *ptr = kd_null;
+
+  (void)old_sz;
+
+  if (!dst_adr)
+  {
+    return KD_RESULT_FAILURE;
+  }
+
+  *dst_adr = kd_null;
+  src_adr  = src;
+  temp_ptr = src ? *src_adr : kd_null;
+
+  if (temp_ptr)
+  {
+    *src_adr = kd_null;
+
+    if (!new_sz)
+    {
+      return kdi_MemFree(temp_ptr);
+    }
+
+    ptr = kdi_MemRealloc(temp_ptr, new_sz);
+    if (!ptr)
+    {
+      return KD_RESULT_FAILURE;
+    }
+  }
+  else if (new_sz)
+  {
+    ptr = kdi_MemAlloc(new_sz);
+    if (!ptr)
+    {
+      return KD_RESULT_FAILURE;
+    }
+  }
+  else
+  {
+    return KD_RESULT_FAILURE;
+  }
+
+  *dst_adr = ptr;
+
+  return KD_RESULT_SUCCESS;
 }
 
 
 kd_bool_t
-kdMemFree(void* dst)
+kdMemFree(void *dst)
 {
-  return kdi_MemFree(dst);
+  kd_byte_t **dst_adr = dst;
+
+  if (!dst_adr || !*dst_adr || !kdi_MemFree(*dst_adr))
+  {
+    return KD_RESULT_FAILURE;
+  }
+
+  *dst_adr = kd_null;
+
+  return KD_RESULT_SUCCESS;
 }
 
 
 kd_bool_t
-kdMemAllocWithSizeInfo(void* dst, kd_usize_t sz)
+kdMemAllocWithSizeInfo(void *dst, kd_usize_t sz)
 {
-  return kdi_MemAllocWithSizeInfo(dst, sz);
+  kd_byte_t *ptr;
+
+  if (!dst || sz == 0)
+  {
+    if (dst)
+    {
+      *(kd_byte_t **)dst = kd_null;
+    }
+
+    return KD_RESULT_FAILURE;
+  }
+
+  ptr = kdi_MemAllocWithSizeInfo(sz);
+  if (!ptr)
+  {
+    return KD_RESULT_FAILURE;
+  }
+
+  *(kd_byte_t **)dst = ptr;
+
+  return KD_RESULT_SUCCESS;
 }
 
 
 kd_bool_t
-kdMemReallocWithSizeInfo(void* dst, kd_usize_t new_sz, void* src, kd_usize_t old_sz)
+kdMemReallocWithSizeInfo(void *dst, kd_usize_t new_sz, void *src, kd_usize_t old_sz)
 {
-  return kdi_MemReallocWithSizeInfo(dst, new_sz, src, old_sz);
+  kd_byte_t **dst_adr = dst, **src_adr, *temp_ptr, *ptr = kd_null;
+
+  (void)old_sz;
+
+  if (!dst_adr)
+  {
+    return KD_RESULT_FAILURE;
+  }
+
+  *dst_adr = kd_null;
+  src_adr  = src;
+  temp_ptr = src ? *src_adr : kd_null;
+
+  if (temp_ptr)
+  {
+    *src_adr = kd_null;
+
+    if (!new_sz)
+    {
+      return kdi_MemFreeWithSizeInfo(temp_ptr);
+    }
+
+    ptr = kdi_MemReallocWithSizeInfo(temp_ptr, new_sz);
+    if (!ptr)
+    {
+      return KD_RESULT_FAILURE;
+    }
+  }
+  else if (new_sz)
+  {
+    ptr = kdi_MemAllocWithSizeInfo(new_sz);
+    if (!ptr)
+    {
+      return KD_RESULT_FAILURE;
+    }
+  }
+  else
+  {
+    return KD_RESULT_FAILURE;
+  }
+
+  *dst_adr = ptr;
+
+  return KD_RESULT_SUCCESS;
 }
 
 
 kd_bool_t
-kdMemFreeWithSizeInfo(void* dst)
+kdMemFreeWithSizeInfo(void *dst)
 {
-  return kdi_MemFreeWithSizeInfo(dst);
+  kd_byte_t **dst_adr = dst;
+
+  if (!dst_adr || !*dst_adr || !kdi_MemFreeWithSizeInfo(*dst_adr))
+  {
+    return KD_RESULT_FAILURE;
+  }
+
+  *dst_adr = kd_null;
+
+  return KD_RESULT_SUCCESS;
 }
 
 
 kd_usize_t
-kdMemGetAllocSize(void* src)
+kdMemGetAllocSize(void *src)
 {
+  if (!src)
+  {
+    return KD_RESULT_FAILURE;
+  }
+
   return kdi_MemGetAllocSize(src);
 }

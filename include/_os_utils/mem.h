@@ -49,13 +49,13 @@ KD_EXTERN_BEGIN
 
 #if defined KD_OS_WINDOWS
 
-KDAPI(kd_bool_t) kdi_MemAlloc(void* dst, kd_usize_t sz);
-KDAPI(kd_bool_t) kdi_MemRealloc(void* dst, kd_usize_t new_sz, void* src, kd_usize_t old_sz);
-KDAPI(kd_bool_t) kdi_MemFree(void* dst);
-KDAPI(kd_bool_t) kdi_MemAllocWithSizeInfo(void* dst, kd_usize_t sz);
-KDAPI(kd_bool_t) kdi_MemReallocWithSizeInfo(void* dst, kd_usize_t new_sz, void* src, kd_usize_t old_sz);
-KDAPI(kd_bool_t) kdi_MemFreeWithSizeInfo(void* dst);
-KDAPI(kd_usize_t) kdi_MemGetAllocSize(void* src);
+KDAPI(void *) kdi_MemAlloc(kd_usize_t sz);
+KDAPI(void *) kdi_MemRealloc(void *ptr, kd_usize_t new_sz);
+KDAPI(kd_bool_t) kdi_MemFree(void *ptr);
+KDAPI(void *) kdi_MemAllocWithSizeInfo(kd_usize_t sz);
+KDAPI(void *) kdi_MemReallocWithSizeInfo(void *ptr, kd_usize_t new_sz);
+KDAPI(kd_bool_t) kdi_MemFreeWithSizeInfo(void *ptr);
+KDAPI(kd_usize_t) kdi_MemGetAllocSize(void *ptr);
 
 #endif /* KD_OS_WINDOWS */
 

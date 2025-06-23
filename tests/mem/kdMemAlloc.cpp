@@ -37,7 +37,6 @@
  */
 
 
-#define KD_USE_SIMPLIFIED_TYPES
 #include "kd.h"
 #include "kd/mem.h"
 #include "gtest/gtest.h"
@@ -45,127 +44,127 @@
 
 TEST(MemoryAllocationTest, BasicArguments)
 {
-  u8* ptr;
+  kd_u8_t *ptr;
 
-  EXPECT_EQ(kdMemAlloc(null, 0), KD_RESULT_FAILURE);
-  EXPECT_EQ(kdMemAlloc(null, 420000), KD_RESULT_FAILURE);
-  EXPECT_EQ(kdMemAlloc(null, 69), KD_RESULT_FAILURE);
+  EXPECT_EQ(kdMemAlloc(kd_null, 0), KD_RESULT_FAILURE);
+  EXPECT_EQ(kdMemAlloc(kd_null, 420000), KD_RESULT_FAILURE);
+  EXPECT_EQ(kdMemAlloc(kd_null, 69), KD_RESULT_FAILURE);
 
   EXPECT_EQ(kdMemAlloc(&ptr, 0), KD_RESULT_FAILURE);
-  EXPECT_EQ(ptr, null);
+  EXPECT_EQ(ptr, kd_null);
 
   EXPECT_EQ(kdMemAlloc(&ptr, 69000), KD_RESULT_SUCCESS);
-  EXPECT_NE(ptr, null);
+  EXPECT_NE(ptr, kd_null);
 }
 
 TEST(MemoryAllocationTest, BasicAllocationBytes)
 {
-  u8* ptr;
+  kd_u8_t *ptr;
 
   EXPECT_EQ(kdMemAlloc(&ptr, 1), KD_RESULT_SUCCESS);
-  ASSERT_NE(ptr, null);
-  if (ptr != null)
+  ASSERT_NE(ptr, kd_null);
+  if (ptr != kd_null)
     kdMemFree(&ptr);
 
   EXPECT_EQ(kdMemAlloc(&ptr, 64), KD_RESULT_SUCCESS);
-  ASSERT_NE(ptr, null);
-  if (ptr != null)
+  ASSERT_NE(ptr, kd_null);
+  if (ptr != kd_null)
     kdMemFree(&ptr);
 
   EXPECT_EQ(kdMemAlloc(&ptr, 128), KD_RESULT_SUCCESS);
-  ASSERT_NE(ptr, null);
-  if (ptr != null)
+  ASSERT_NE(ptr, kd_null);
+  if (ptr != kd_null)
     kdMemFree(&ptr);
 
   EXPECT_EQ(kdMemAlloc(&ptr, 256), KD_RESULT_SUCCESS);
-  ASSERT_NE(ptr, null);
-  if (ptr != null)
+  ASSERT_NE(ptr, kd_null);
+  if (ptr != kd_null)
     kdMemFree(&ptr);
 
   EXPECT_EQ(kdMemAlloc(&ptr, 512), KD_RESULT_SUCCESS);
-  ASSERT_NE(ptr, null);
-  if (ptr != null)
+  ASSERT_NE(ptr, kd_null);
+  if (ptr != kd_null)
     kdMemFree(&ptr);
 
   EXPECT_EQ(kdMemAlloc(&ptr, 1024), KD_RESULT_SUCCESS);
-  ASSERT_NE(ptr, null);
-  if (ptr != null)
+  ASSERT_NE(ptr, kd_null);
+  if (ptr != kd_null)
     kdMemFree(&ptr);
 }
 
 TEST(MemoryAllocationTest, BasicAllocationKiloBytes)
 {
-  u8* ptr;
+  kd_u8_t *ptr;
 
   EXPECT_EQ(kdMemAlloc(&ptr, 1024 * 1), KD_RESULT_SUCCESS);
-  ASSERT_NE(ptr, null);
-  if (ptr != null)
+  ASSERT_NE(ptr, kd_null);
+  if (ptr != kd_null)
     kdMemFree(&ptr);
 
   EXPECT_EQ(kdMemAlloc(&ptr, 1024 * 64), KD_RESULT_SUCCESS);
-  ASSERT_NE(ptr, null);
-  if (ptr != null)
+  ASSERT_NE(ptr, kd_null);
+  if (ptr != kd_null)
     kdMemFree(&ptr);
 
   EXPECT_EQ(kdMemAlloc(&ptr, 1024 * 128), KD_RESULT_SUCCESS);
-  ASSERT_NE(ptr, null);
-  if (ptr != null)
+  ASSERT_NE(ptr, kd_null);
+  if (ptr != kd_null)
     kdMemFree(&ptr);
 
   EXPECT_EQ(kdMemAlloc(&ptr, 1024 * 256), KD_RESULT_SUCCESS);
-  ASSERT_NE(ptr, null);
-  if (ptr != null)
+  ASSERT_NE(ptr, kd_null);
+  if (ptr != kd_null)
     kdMemFree(&ptr);
 
   EXPECT_EQ(kdMemAlloc(&ptr, 1024 * 512), KD_RESULT_SUCCESS);
-  ASSERT_NE(ptr, null);
-  if (ptr != null)
+  ASSERT_NE(ptr, kd_null);
+  if (ptr != kd_null)
     kdMemFree(&ptr);
 
   EXPECT_EQ(kdMemAlloc(&ptr, 1024 * 1024), KD_RESULT_SUCCESS);
-  ASSERT_NE(ptr, null);
-  if (ptr != null)
+  ASSERT_NE(ptr, kd_null);
+  if (ptr != kd_null)
     kdMemFree(&ptr);
 }
 
 TEST(MemoryAllocationTest, BasicAllocationMegaBytes)
 {
-  u8* ptr;
+  kd_u8_t *ptr;
 
   EXPECT_EQ(kdMemAlloc(&ptr, 1024 * 1024 * 1), KD_RESULT_SUCCESS);
-  ASSERT_NE(ptr, null);
-  if (ptr != null)
+  ASSERT_NE(ptr, kd_null);
+  if (ptr != kd_null)
     kdMemFree(&ptr);
 
   EXPECT_EQ(kdMemAlloc(&ptr, 1024 * 1024 * 64), KD_RESULT_SUCCESS);
-  ASSERT_NE(ptr, null);
-  if (ptr != null)
+  ASSERT_NE(ptr, kd_null);
+  if (ptr != kd_null)
     kdMemFree(&ptr);
 
   EXPECT_EQ(kdMemAlloc(&ptr, 1024 * 1024 * 128), KD_RESULT_SUCCESS);
-  ASSERT_NE(ptr, null);
-  if (ptr != null)
+  ASSERT_NE(ptr, kd_null);
+  if (ptr != kd_null)
     kdMemFree(&ptr);
 
   EXPECT_EQ(kdMemAlloc(&ptr, 1024 * 1024 * 256), KD_RESULT_SUCCESS);
-  ASSERT_NE(ptr, null);
-  if (ptr != null)
+  ASSERT_NE(ptr, kd_null);
+  if (ptr != kd_null)
     kdMemFree(&ptr);
 
   EXPECT_EQ(kdMemAlloc(&ptr, 1024 * 1024 * 512), KD_RESULT_SUCCESS);
-  ASSERT_NE(ptr, null);
-  if (ptr != null)
+  ASSERT_NE(ptr, kd_null);
+  if (ptr != kd_null)
     kdMemFree(&ptr);
 
   EXPECT_EQ(kdMemAlloc(&ptr, 1024 * 1024 * 1024), KD_RESULT_SUCCESS);
-  ASSERT_NE(ptr, null);
-  if (ptr != null)
+  ASSERT_NE(ptr, kd_null);
+  if (ptr != kd_null)
     kdMemFree(&ptr);
 }
 
 TEST(MemoryAllocationTest, BasicMultipleSequentialAllocationsBytes)
 {
-  u8 *ptr1, *ptr2, *ptr3, *ptr4, *ptr5, *ptr6, *ptr7, *ptr8, *ptr9, *ptr10, *ptr11;
+  kd_u8_t *ptr1, *ptr2, *ptr3, *ptr4, *ptr5, *ptr6, *ptr7, *ptr8, *ptr9, *ptr10, *ptr11;
 
   EXPECT_EQ(kdMemAlloc(&ptr1, 1), KD_RESULT_SUCCESS);
   EXPECT_EQ(kdMemAlloc(&ptr2, 64), KD_RESULT_SUCCESS);
@@ -179,44 +178,44 @@ TEST(MemoryAllocationTest, BasicMultipleSequentialAllocationsBytes)
   EXPECT_EQ(kdMemAlloc(&ptr10, 64), KD_RESULT_SUCCESS);
   EXPECT_EQ(kdMemAlloc(&ptr11, 1), KD_RESULT_SUCCESS);
 
-  ASSERT_NE(ptr1, null);
-  if (ptr1 != null)
+  ASSERT_NE(ptr1, kd_null);
+  if (ptr1 != kd_null)
     kdMemFree(&ptr1);
-  ASSERT_NE(ptr2, null);
-  if (ptr2 != null)
+  ASSERT_NE(ptr2, kd_null);
+  if (ptr2 != kd_null)
     kdMemFree(&ptr2);
-  ASSERT_NE(ptr3, null);
-  if (ptr3 != null)
+  ASSERT_NE(ptr3, kd_null);
+  if (ptr3 != kd_null)
     kdMemFree(&ptr3);
-  ASSERT_NE(ptr4, null);
-  if (ptr4 != null)
+  ASSERT_NE(ptr4, kd_null);
+  if (ptr4 != kd_null)
     kdMemFree(&ptr4);
-  ASSERT_NE(ptr5, null);
-  if (ptr5 != null)
+  ASSERT_NE(ptr5, kd_null);
+  if (ptr5 != kd_null)
     kdMemFree(&ptr5);
-  ASSERT_NE(ptr6, null);
-  if (ptr6 != null)
+  ASSERT_NE(ptr6, kd_null);
+  if (ptr6 != kd_null)
     kdMemFree(&ptr6);
-  ASSERT_NE(ptr7, null);
-  if (ptr7 != null)
+  ASSERT_NE(ptr7, kd_null);
+  if (ptr7 != kd_null)
     kdMemFree(&ptr7);
-  ASSERT_NE(ptr8, null);
-  if (ptr8 != null)
+  ASSERT_NE(ptr8, kd_null);
+  if (ptr8 != kd_null)
     kdMemFree(&ptr8);
-  ASSERT_NE(ptr9, null);
-  if (ptr9 != null)
+  ASSERT_NE(ptr9, kd_null);
+  if (ptr9 != kd_null)
     kdMemFree(&ptr9);
-  ASSERT_NE(ptr10, null);
-  if (ptr10 != null)
+  ASSERT_NE(ptr10, kd_null);
+  if (ptr10 != kd_null)
     kdMemFree(&ptr10);
-  ASSERT_NE(ptr11, null);
-  if (ptr11 != null)
+  ASSERT_NE(ptr11, kd_null);
+  if (ptr11 != kd_null)
     kdMemFree(&ptr11);
 }
 
 TEST(MemoryAllocationTest, BasicMultipleSequentialAllocationsKiloBytes)
 {
-  u8 *ptr1, *ptr2, *ptr3, *ptr4, *ptr5, *ptr6, *ptr7, *ptr8, *ptr9, *ptr10, *ptr11;
+  kd_u8_t *ptr1, *ptr2, *ptr3, *ptr4, *ptr5, *ptr6, *ptr7, *ptr8, *ptr9, *ptr10, *ptr11;
 
   EXPECT_EQ(kdMemAlloc(&ptr1, 1024 * 1), KD_RESULT_SUCCESS);
   EXPECT_EQ(kdMemAlloc(&ptr2, 1024 * 64), KD_RESULT_SUCCESS);
@@ -230,44 +229,44 @@ TEST(MemoryAllocationTest, BasicMultipleSequentialAllocationsKiloBytes)
   EXPECT_EQ(kdMemAlloc(&ptr10, 1024 * 64), KD_RESULT_SUCCESS);
   EXPECT_EQ(kdMemAlloc(&ptr11, 1024 * 1), KD_RESULT_SUCCESS);
 
-  ASSERT_NE(ptr1, null);
-  if (ptr1 != null)
+  ASSERT_NE(ptr1, kd_null);
+  if (ptr1 != kd_null)
     kdMemFree(&ptr1);
-  ASSERT_NE(ptr2, null);
-  if (ptr2 != null)
+  ASSERT_NE(ptr2, kd_null);
+  if (ptr2 != kd_null)
     kdMemFree(&ptr2);
-  ASSERT_NE(ptr3, null);
-  if (ptr3 != null)
+  ASSERT_NE(ptr3, kd_null);
+  if (ptr3 != kd_null)
     kdMemFree(&ptr3);
-  ASSERT_NE(ptr4, null);
-  if (ptr4 != null)
+  ASSERT_NE(ptr4, kd_null);
+  if (ptr4 != kd_null)
     kdMemFree(&ptr4);
-  ASSERT_NE(ptr5, null);
-  if (ptr5 != null)
+  ASSERT_NE(ptr5, kd_null);
+  if (ptr5 != kd_null)
     kdMemFree(&ptr5);
-  ASSERT_NE(ptr6, null);
-  if (ptr6 != null)
+  ASSERT_NE(ptr6, kd_null);
+  if (ptr6 != kd_null)
     kdMemFree(&ptr6);
-  ASSERT_NE(ptr7, null);
-  if (ptr7 != null)
+  ASSERT_NE(ptr7, kd_null);
+  if (ptr7 != kd_null)
     kdMemFree(&ptr7);
-  ASSERT_NE(ptr8, null);
-  if (ptr8 != null)
+  ASSERT_NE(ptr8, kd_null);
+  if (ptr8 != kd_null)
     kdMemFree(&ptr8);
-  ASSERT_NE(ptr9, null);
-  if (ptr9 != null)
+  ASSERT_NE(ptr9, kd_null);
+  if (ptr9 != kd_null)
     kdMemFree(&ptr9);
-  ASSERT_NE(ptr10, null);
-  if (ptr10 != null)
+  ASSERT_NE(ptr10, kd_null);
+  if (ptr10 != kd_null)
     kdMemFree(&ptr10);
-  ASSERT_NE(ptr11, null);
-  if (ptr11 != null)
+  ASSERT_NE(ptr11, kd_null);
+  if (ptr11 != kd_null)
     kdMemFree(&ptr11);
 }
 
 TEST(MemoryAllocationTest, BasicMultipleSequentialAllocationsMegaBytes)
 {
-  u8 *ptr1, *ptr2, *ptr3, *ptr4, *ptr5, *ptr6, *ptr7, *ptr8, *ptr9, *ptr10, *ptr11;
+  kd_u8_t *ptr1, *ptr2, *ptr3, *ptr4, *ptr5, *ptr6, *ptr7, *ptr8, *ptr9, *ptr10, *ptr11;
 
   EXPECT_EQ(kdMemAlloc(&ptr1, 1024 * 1024 * 1), KD_RESULT_SUCCESS);
   EXPECT_EQ(kdMemAlloc(&ptr2, 1024 * 1024 * 64), KD_RESULT_SUCCESS);
@@ -281,37 +280,37 @@ TEST(MemoryAllocationTest, BasicMultipleSequentialAllocationsMegaBytes)
   EXPECT_EQ(kdMemAlloc(&ptr10, 1024 * 1024 * 64), KD_RESULT_SUCCESS);
   EXPECT_EQ(kdMemAlloc(&ptr11, 1024 * 1024 * 1), KD_RESULT_SUCCESS);
 
-  ASSERT_NE(ptr1, null);
-  if (ptr1 != null)
+  ASSERT_NE(ptr1, kd_null);
+  if (ptr1 != kd_null)
     kdMemFree(&ptr1);
-  ASSERT_NE(ptr2, null);
-  if (ptr2 != null)
+  ASSERT_NE(ptr2, kd_null);
+  if (ptr2 != kd_null)
     kdMemFree(&ptr2);
-  ASSERT_NE(ptr3, null);
-  if (ptr3 != null)
+  ASSERT_NE(ptr3, kd_null);
+  if (ptr3 != kd_null)
     kdMemFree(&ptr3);
-  ASSERT_NE(ptr4, null);
-  if (ptr4 != null)
+  ASSERT_NE(ptr4, kd_null);
+  if (ptr4 != kd_null)
     kdMemFree(&ptr4);
-  ASSERT_NE(ptr5, null);
-  if (ptr5 != null)
+  ASSERT_NE(ptr5, kd_null);
+  if (ptr5 != kd_null)
     kdMemFree(&ptr5);
-  ASSERT_NE(ptr6, null);
-  if (ptr6 != null)
+  ASSERT_NE(ptr6, kd_null);
+  if (ptr6 != kd_null)
     kdMemFree(&ptr6);
-  ASSERT_NE(ptr7, null);
-  if (ptr7 != null)
+  ASSERT_NE(ptr7, kd_null);
+  if (ptr7 != kd_null)
     kdMemFree(&ptr7);
-  ASSERT_NE(ptr8, null);
-  if (ptr8 != null)
+  ASSERT_NE(ptr8, kd_null);
+  if (ptr8 != kd_null)
     kdMemFree(&ptr8);
-  ASSERT_NE(ptr9, null);
-  if (ptr9 != null)
+  ASSERT_NE(ptr9, kd_null);
+  if (ptr9 != kd_null)
     kdMemFree(&ptr9);
-  ASSERT_NE(ptr10, null);
-  if (ptr10 != null)
+  ASSERT_NE(ptr10, kd_null);
+  if (ptr10 != kd_null)
     kdMemFree(&ptr10);
-  ASSERT_NE(ptr11, null);
-  if (ptr11 != null)
+  ASSERT_NE(ptr11, kd_null);
+  if (ptr11 != kd_null)
     kdMemFree(&ptr11);
 }

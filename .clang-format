@@ -71,7 +71,7 @@ AlignConsecutiveMacros:
 MaxEmptyLinesToKeep: 2
 AlignArrayOfStructures: Right
 NamespaceIndentation: All
-PointerAlignment: Left
+PointerAlignment: Right
 SpaceAfterCStyleCast: false
 SpaceInEmptyParentheses: false
 SpacesInAngles: false
