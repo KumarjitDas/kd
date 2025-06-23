@@ -48,23 +48,21 @@
 KD_EXTERN_BEGIN
 
 
-#define KD_MEM_ALGN_MAX_ALGN_SIZE  128
-#define KD_MEM_ALGN_DEFAULT_OFFSET KD_SZ_U8
-#define KD_MEM_ALGN_MAX_OFFSET     KD_SZ_UMAX
+#define KD_MEM_ALGN_MAX_ALGN_SIZE                          128
+#define KD_MEM_ALGN_DEFAULT_OFFSET                         KD_SZ_U8
+#define KD_MEM_ALGN_MAX_OFFSET                             KD_SZ_UMAX
 
 
-#define kdMemAlgnGetDefaultAllocSize(usable_size, algn_sz)                                                             \
-  kdMemAlgnGetAllocSize(usable_size, algn_sz, KD_MEM_ALGN_DEFAULT_OFFSET)
-#define kdMemAlgnGetDefaultOffsetPtr(head_ptr, algn_sz)                                                                \
-  kdMemAlgnGetOffsetPtr(head_ptr, algn_sz, KD_MEM_ALGN_DEFAULT_OFFSET)
-#define kdMemAlgnGetDefaultHeadPtr(off_ptr) kdMemAlgnGetHeadPtr(off_ptr, KD_MEM_ALGN_DEFAULT_OFFSET)
+#define kdMemAlgnGetDefaultAllocSize(usable_size, algn_sz) kdMemAlgnGetAllocSize(usable_size, algn_sz, KD_MEM_ALGN_DEFAULT_OFFSET)
+#define kdMemAlgnGetDefaultOffsetPtr(head_ptr, algn_sz)    kdMemAlgnGetOffsetPtr(head_ptr, algn_sz, KD_MEM_ALGN_DEFAULT_OFFSET)
+#define kdMemAlgnGetDefaultHeadPtr(off_ptr)                kdMemAlgnGetHeadPtr(off_ptr, KD_MEM_ALGN_DEFAULT_OFFSET)
 
 
 KDAPI(kd_usize_t) kdMemAlgnGetAllocSize(kd_usize_t usable_size, kd_u8_t algn_sz, kd_u8_t offset);
-KDAPI(void*) kdMemAlgnGetForwardPtr(void* head_ptr, kd_u8_t algn_sz, kd_u8_t offset);
-KDAPI(void*) kdMemAlgnGetBackwardPtr(void* head_ptr, kd_u8_t algn_sz, kd_u8_t offset);
-KDAPI(void*) kdMemAlgnGetOffsetPtr(void* head_ptr, kd_u8_t algn_sz, kd_u8_t offset);
-KDAPI(void*) kdMemAlgnGetHeadPtr(void* off_ptr, kd_u8_t offset);
+KDAPI(void *) kdMemAlgnGetForwardPtr(void *head_ptr, kd_u8_t algn_sz, kd_u8_t offset);
+KDAPI(void *) kdMemAlgnGetBackwardPtr(void *head_ptr, kd_u8_t algn_sz, kd_u8_t offset);
+KDAPI(void *) kdMemAlgnGetOffsetPtr(void *head_ptr, kd_u8_t algn_sz, kd_u8_t offset);
+KDAPI(void *) kdMemAlgnGetHeadPtr(void *off_ptr, kd_u8_t offset);
 
 
 KD_EXTERN_END

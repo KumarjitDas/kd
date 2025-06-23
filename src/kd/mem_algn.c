@@ -76,32 +76,32 @@ kdMemAlgnGetAllocSize(kd_usize_t usable_size, kd_u8_t algn_sz, kd_u8_t offset)
 }
 
 
-void*
-kdMemAlgnGetForwardPtr(void* head_ptr, kd_u8_t algn_sz, kd_u8_t offset)
+void *
+kdMemAlgnGetForwardPtr(void *head_ptr, kd_u8_t algn_sz, kd_u8_t offset)
 {
   if (!head_ptr || !algn_sz || !kdi_IsValidAlgnSize(algn_sz) || !kdi_IsValidOffset(offset))
   {
     return kd_null;
   }
 
-  kd_u8_t* forward = (kd_u8_t*)head_ptr + offset + algn_sz;
+  kd_u8_t *forward = (kd_u8_t *)head_ptr + offset + algn_sz;
 
   return forward - ((kd_usize_t)forward % algn_sz);
 }
 
 
-void*
-kdMemAlgnGetBackwardPtr(void* head_ptr, kd_u8_t algn_sz, kd_u8_t offset)
+void *
+kdMemAlgnGetBackwardPtr(void *head_ptr, kd_u8_t algn_sz, kd_u8_t offset)
 {
-  kd_u8_t* forward = kdMemAlgnGetForwardPtr(head_ptr, algn_sz, offset);
+  kd_u8_t *forward = kdMemAlgnGetForwardPtr(head_ptr, algn_sz, offset);
   if (!forward)
   {
     return kd_null;
   }
 
-  kd_u8_t* backward = forward;
+  kd_u8_t *backward = forward;
 
-  while (backward >= (kd_u8_t*)head_ptr)
+  while (backward >= (kd_u8_t *)head_ptr)
   {
     backward -= algn_sz;
   }
@@ -110,25 +110,25 @@ kdMemAlgnGetBackwardPtr(void* head_ptr, kd_u8_t algn_sz, kd_u8_t offset)
 }
 
 
-void*
-kdMemAlgnGetOffsetPtr(void* head_ptr, kd_u8_t algn_sz, kd_u8_t offset)
+void *
+kdMemAlgnGetOffsetPtr(void *head_ptr, kd_u8_t algn_sz, kd_u8_t offset)
 {
-  void* forward = kdMemAlgnGetForwardPtr(head_ptr, algn_sz, offset);
+  void *forward = kdMemAlgnGetForwardPtr(head_ptr, algn_sz, offset);
   if (forward)
   {
     switch (offset)
     {
       case KD_SZ_U8:
-        *((kd_u8_t*)forward - offset) = (kd_u8_t)((kd_u8_t*)forward - (kd_u8_t*)head_ptr);
+        *((kd_u8_t *)forward - offset) = (kd_u8_t)((kd_u8_t *)forward - (kd_u8_t *)head_ptr);
         break;
       case KD_SZ_U16:
-        *(kd_u16_t*)((kd_u8_t*)forward - offset) = (kd_u16_t)((kd_u8_t*)forward - (kd_u8_t*)head_ptr);
+        *(kd_u16_t *)((kd_u8_t *)forward - offset) = (kd_u16_t)((kd_u8_t *)forward - (kd_u8_t *)head_ptr);
         break;
       case KD_SZ_U32:
-        *(kd_u32_t*)((kd_u8_t*)forward - offset) = (kd_u32_t)((kd_u8_t*)forward - (kd_u8_t*)head_ptr);
+        *(kd_u32_t *)((kd_u8_t *)forward - offset) = (kd_u32_t)((kd_u8_t *)forward - (kd_u8_t *)head_ptr);
         break;
       default:
-        *(kd_umax_t*)((kd_u8_t*)forward - offset) = (kd_umax_t)((kd_u8_t*)forward - (kd_u8_t*)head_ptr);
+        *(kd_umax_t *)((kd_u8_t *)forward - offset) = (kd_umax_t)((kd_u8_t *)forward - (kd_u8_t *)head_ptr);
     }
   }
 
@@ -136,8 +136,8 @@ kdMemAlgnGetOffsetPtr(void* head_ptr, kd_u8_t algn_sz, kd_u8_t offset)
 }
 
 
-void*
-kdMemAlgnGetHeadPtr(void* off_ptr, kd_u8_t offset)
+void *
+kdMemAlgnGetHeadPtr(void *off_ptr, kd_u8_t offset)
 {
   if (!off_ptr || !kdi_IsValidOffset(offset))
   {
@@ -149,17 +149,17 @@ kdMemAlgnGetHeadPtr(void* off_ptr, kd_u8_t offset)
   switch (offset)
   {
     case KD_SZ_U8:
-      head_offset = *((kd_u8_t*)off_ptr - offset);
+      head_offset = *((kd_u8_t *)off_ptr - offset);
       break;
     case KD_SZ_U16:
-      head_offset = *(kd_u16_t*)((kd_u8_t*)off_ptr - offset);
+      head_offset = *(kd_u16_t *)((kd_u8_t *)off_ptr - offset);
       break;
     case KD_SZ_U32:
-      head_offset = *(kd_u32_t*)((kd_u8_t*)off_ptr - offset);
+      head_offset = *(kd_u32_t *)((kd_u8_t *)off_ptr - offset);
       break;
     default:
-      head_offset = *(kd_umax_t*)((kd_u8_t*)off_ptr - offset);
+      head_offset = *(kd_umax_t *)((kd_u8_t *)off_ptr - offset);
   }
 
-  return (kd_u8_t*)off_ptr - head_offset;
+  return (kd_u8_t *)off_ptr - head_offset;
 }
