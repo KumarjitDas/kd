@@ -84,9 +84,9 @@ kdMemAlgnGetForwardPtr(void *head_ptr, kd_u8_t algn_sz, kd_u8_t offset)
     return kd_null;
   }
 
-  kd_u8_t *forward = (kd_u8_t *)head_ptr + offset + algn_sz;
+  kd_u8_t *forward = KD_PU8_C(head_ptr) + offset + algn_sz;
 
-  return forward - ((kd_usize_t)forward % algn_sz);
+  return forward - (KD_USIZE_C(forward) % algn_sz);
 }
 
 
@@ -101,7 +101,7 @@ kdMemAlgnGetBackwardPtr(void *head_ptr, kd_u8_t algn_sz, kd_u8_t offset)
 
   kd_u8_t *backward = forward;
 
-  while (backward >= (kd_u8_t *)head_ptr)
+  while (backward >= KD_PU8_C(head_ptr))
   {
     backward -= algn_sz;
   }
@@ -119,16 +119,20 @@ kdMemAlgnGetOffsetPtr(void *head_ptr, kd_u8_t algn_sz, kd_u8_t offset)
     switch (offset)
     {
       case KD_SZ_U8:
-        *((kd_u8_t *)forward - offset) = (kd_u8_t)((kd_u8_t *)forward - (kd_u8_t *)head_ptr);
+        *(KD_PU8_C(forward) - offset) = KD_U8_C(KD_PU8_C(forward) - (kd_u8_t *)head_ptr);
         break;
       case KD_SZ_U16:
-        *(kd_u16_t *)((kd_u8_t *)forward - offset) = (kd_u16_t)((kd_u8_t *)forward - (kd_u8_t *)head_ptr);
+        *KD_PU16_C(KD_PU8_C(forward) - offset) = KD_U16_C(KD_PU8_C(forward) - (kd_u8_t *)head_ptr);
         break;
       case KD_SZ_U32:
-        *(kd_u32_t *)((kd_u8_t *)forward - offset) = (kd_u32_t)((kd_u8_t *)forward - (kd_u8_t *)head_ptr);
+        *KD_PU32_C(KD_PU8_C(forward) - offset) = KD_U32_C(KD_PU8_C(forward) - (kd_u8_t *)head_ptr);
         break;
-      default:
-        *(kd_umax_t *)((kd_u8_t *)forward - offset) = (kd_umax_t)((kd_u8_t *)forward - (kd_u8_t *)head_ptr);
+#if defined KD_ARCH_64BIT_INT
+      case KD_SZ_U64:
+        *KD_PU64_C(KD_PU8_C(forward) - offset) = KD_U64_C(KD_PU8_C(forward) - (kd_u8_t *)head_ptr);
+        break;
+#endif /* KD_ARCH_64BIT_INT */
+      default:;
     }
   }
 
@@ -149,17 +153,21 @@ kdMemAlgnGetHeadPtr(void *off_ptr, kd_u8_t offset)
   switch (offset)
   {
     case KD_SZ_U8:
-      head_offset = *((kd_u8_t *)off_ptr - offset);
+      head_offset = *(KD_PU8_C(off_ptr) - offset);
       break;
     case KD_SZ_U16:
-      head_offset = *(kd_u16_t *)((kd_u8_t *)off_ptr - offset);
+      head_offset = *KD_PU16_C(KD_PU8_C(off_ptr) - offset);
       break;
     case KD_SZ_U32:
-      head_offset = *(kd_u32_t *)((kd_u8_t *)off_ptr - offset);
+      head_offset = *KD_PU32_C(KD_PU8_C(off_ptr) - offset);
       break;
-    default:
-      head_offset = *(kd_umax_t *)((kd_u8_t *)off_ptr - offset);
+#if defined KD_ARCH_64BIT_INT
+    case KD_SZ_U64:
+      head_offset = *KD_PU64_C(KD_PU8_C(off_ptr) - offset);
+      break;
+#endif /* KD_ARCH_64BIT_INT */
+    default:;
   }
 
-  return (kd_u8_t *)off_ptr - head_offset;
+  return KD_PU8_C(off_ptr) - head_offset;
 }
