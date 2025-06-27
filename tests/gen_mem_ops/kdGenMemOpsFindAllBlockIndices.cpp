@@ -1,8 +1,8 @@
 /**
- * @file kdGenMemOpsFindAllBlocksIndex.cpp
+ * @file kdGenMemOpsFindAllBlockIndices.cpp
  * @author Kumarjit Das
  * @date 2025-06-06
- * @brief kdGenMemOpsFindAllBlocksIndex test file.
+ * @brief kdGenMemOpsFindAllBlockIndices test file.
  */
 /**
  * LICENSE: BSD 3-Clause License
@@ -49,11 +49,11 @@ TEST(GenMemOpsFindAllBlocksIndexTest, FindsAllOccurrences)
   kd_i32_t   val1 = 2;
   kd_i32_t   val2 = 3;
 
-  EXPECT_EQ(kdGenMemOpsFindAllBlocksIndex(idxs, sizeof(idxs), ptr, sizeof(ptr), &val1, sizeof(val1)), 3);
+  EXPECT_EQ(kdGenMemOpsFindAllBlockIndices(idxs, sizeof(idxs), ptr, sizeof(ptr), &val1, sizeof(val1)), 3);
   EXPECT_EQ(idxs[0], 1 * sizeof(val1));
   EXPECT_EQ(idxs[1], 3 * sizeof(val1));
   EXPECT_EQ(idxs[2], 5 * sizeof(val1));
-  EXPECT_EQ(kdGenMemOpsFindAllBlocksIndex(idxs, sizeof(idxs), ptr, sizeof(ptr), &val2, sizeof(val2)), 2);
+  EXPECT_EQ(kdGenMemOpsFindAllBlockIndices(idxs, sizeof(idxs), ptr, sizeof(ptr), &val2, sizeof(val2)), 2);
   EXPECT_EQ(idxs[0], 2 * sizeof(val2));
   EXPECT_EQ(idxs[1], 7 * sizeof(val2));
 }
@@ -65,8 +65,8 @@ TEST(GenMemOpsFindAllBlocksIndexTest, ReturnsZeroIfNotFound)
   kd_i32_t   val1 = 0;
   kd_i32_t   val2 = 11;
 
-  EXPECT_EQ(kdGenMemOpsFindAllBlocksIndex(idxs, sizeof(idxs), ptr, sizeof(ptr), &val1, sizeof(val1)), 0);
-  EXPECT_EQ(kdGenMemOpsFindAllBlocksIndex(idxs, sizeof(idxs), ptr, sizeof(ptr), &val2, sizeof(val2)), 0);
+  EXPECT_EQ(kdGenMemOpsFindAllBlockIndices(idxs, sizeof(idxs), ptr, sizeof(ptr), &val1, sizeof(val1)), 0);
+  EXPECT_EQ(kdGenMemOpsFindAllBlockIndices(idxs, sizeof(idxs), ptr, sizeof(ptr), &val2, sizeof(val2)), 0);
 }
 
 TEST(GenMemOpsFindAllBlocksIndexTest, HandlesZeroSize)
@@ -75,13 +75,13 @@ TEST(GenMemOpsFindAllBlocksIndexTest, HandlesZeroSize)
   kd_usize_t idxs[8];
   kd_i32_t   val = 6969;
 
-  EXPECT_EQ(kdGenMemOpsFindAllBlocksIndex(idxs, 0, ptr, 0, &val, 0), 0);
-  EXPECT_EQ(kdGenMemOpsFindAllBlocksIndex(idxs, 0, ptr, 0, &val, sizeof(val)), 0);
-  EXPECT_EQ(kdGenMemOpsFindAllBlocksIndex(idxs, 0, ptr, sizeof(ptr), &val, 0), 0);
-  EXPECT_EQ(kdGenMemOpsFindAllBlocksIndex(idxs, 0, ptr, sizeof(ptr), &val, sizeof(val)), 0);
-  EXPECT_EQ(kdGenMemOpsFindAllBlocksIndex(idxs, sizeof(idxs), ptr, 0, &val, 0), 0);
-  EXPECT_EQ(kdGenMemOpsFindAllBlocksIndex(idxs, sizeof(idxs), ptr, 0, &val, sizeof(val)), 0);
-  EXPECT_EQ(kdGenMemOpsFindAllBlocksIndex(idxs, sizeof(idxs), ptr, sizeof(ptr), &val, 0), 0);
+  EXPECT_EQ(kdGenMemOpsFindAllBlockIndices(idxs, 0, ptr, 0, &val, 0), 0);
+  EXPECT_EQ(kdGenMemOpsFindAllBlockIndices(idxs, 0, ptr, 0, &val, sizeof(val)), 0);
+  EXPECT_EQ(kdGenMemOpsFindAllBlockIndices(idxs, 0, ptr, sizeof(ptr), &val, 0), 0);
+  EXPECT_EQ(kdGenMemOpsFindAllBlockIndices(idxs, 0, ptr, sizeof(ptr), &val, sizeof(val)), 0);
+  EXPECT_EQ(kdGenMemOpsFindAllBlockIndices(idxs, sizeof(idxs), ptr, 0, &val, 0), 0);
+  EXPECT_EQ(kdGenMemOpsFindAllBlockIndices(idxs, sizeof(idxs), ptr, 0, &val, sizeof(val)), 0);
+  EXPECT_EQ(kdGenMemOpsFindAllBlockIndices(idxs, sizeof(idxs), ptr, sizeof(ptr), &val, 0), 0);
 }
 
 TEST(GenMemOpsFindAllBlocksIndexTest, HandlesNullPointer)
@@ -91,16 +91,16 @@ TEST(GenMemOpsFindAllBlocksIndexTest, HandlesNullPointer)
   kd_i32_t   val = 6969;
 
   EXPECT_EQ(
-    kdGenMemOpsFindAllBlocksIndex((kd_usize_t*)kd_null, sizeof(idxs), kd_null, sizeof(ptr), kd_null, sizeof(val)), 0
+    kdGenMemOpsFindAllBlockIndices((kd_usize_t*)kd_null, sizeof(idxs), kd_null, sizeof(ptr), kd_null, sizeof(val)), 0
   );
   EXPECT_EQ(
-    kdGenMemOpsFindAllBlocksIndex((kd_usize_t*)kd_null, sizeof(idxs), kd_null, sizeof(ptr), &val, sizeof(val)), 0
+    kdGenMemOpsFindAllBlockIndices((kd_usize_t*)kd_null, sizeof(idxs), kd_null, sizeof(ptr), &val, sizeof(val)), 0
   );
   EXPECT_EQ(
-    kdGenMemOpsFindAllBlocksIndex((kd_usize_t*)kd_null, sizeof(idxs), ptr, sizeof(ptr), kd_null, sizeof(val)), 0
+    kdGenMemOpsFindAllBlockIndices((kd_usize_t*)kd_null, sizeof(idxs), ptr, sizeof(ptr), kd_null, sizeof(val)), 0
   );
-  EXPECT_EQ(kdGenMemOpsFindAllBlocksIndex((kd_usize_t*)kd_null, sizeof(idxs), ptr, sizeof(ptr), &val, sizeof(val)), 0);
-  EXPECT_EQ(kdGenMemOpsFindAllBlocksIndex(idxs, sizeof(idxs), kd_null, sizeof(ptr), kd_null, sizeof(val)), 0);
-  EXPECT_EQ(kdGenMemOpsFindAllBlocksIndex(idxs, sizeof(idxs), kd_null, sizeof(ptr), &val, sizeof(val)), 0);
-  EXPECT_EQ(kdGenMemOpsFindAllBlocksIndex(idxs, sizeof(idxs), ptr, sizeof(ptr), kd_null, sizeof(val)), 0);
+  EXPECT_EQ(kdGenMemOpsFindAllBlockIndices((kd_usize_t*)kd_null, sizeof(idxs), ptr, sizeof(ptr), &val, sizeof(val)), 0);
+  EXPECT_EQ(kdGenMemOpsFindAllBlockIndices(idxs, sizeof(idxs), kd_null, sizeof(ptr), kd_null, sizeof(val)), 0);
+  EXPECT_EQ(kdGenMemOpsFindAllBlockIndices(idxs, sizeof(idxs), kd_null, sizeof(ptr), &val, sizeof(val)), 0);
+  EXPECT_EQ(kdGenMemOpsFindAllBlockIndices(idxs, sizeof(idxs), ptr, sizeof(ptr), kd_null, sizeof(val)), 0);
 }

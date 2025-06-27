@@ -1,8 +1,8 @@
 /**
- * @file kdGenMemOpsFindAllBytesIndex.cpp
+ * @file kdGenMemOpsFindAllByteIndices.cpp
  * @author Kumarjit Das
  * @date 2025-06-06
- * @brief kdGenMemOpsFindAllBytesIndex test file.
+ * @brief kdGenMemOpsFindAllByteIndices test file.
  */
 /**
  * LICENSE: BSD 3-Clause License
@@ -47,11 +47,11 @@ TEST(GenMemOpsFindAllBytesIndexTest, FindsAllOccurrences)
   kd_byte_t  ptr[] = {1, 2, 3, 2, 5, 2, 7, 3, 9, 10};
   kd_usize_t idxs[8];
 
-  EXPECT_EQ(kdGenMemOpsFindAllBytesIndex(idxs, sizeof(idxs), ptr, sizeof(ptr), 2), 3);
+  EXPECT_EQ(kdGenMemOpsFindAllByteIndices(idxs, sizeof(idxs), ptr, sizeof(ptr), 2), 3);
   EXPECT_EQ(idxs[0], 1);
   EXPECT_EQ(idxs[1], 3);
   EXPECT_EQ(idxs[2], 5);
-  EXPECT_EQ(kdGenMemOpsFindAllBytesIndex(idxs, sizeof(idxs), ptr, sizeof(ptr), 3), 2);
+  EXPECT_EQ(kdGenMemOpsFindAllByteIndices(idxs, sizeof(idxs), ptr, sizeof(ptr), 3), 2);
   EXPECT_EQ(idxs[0], 2);
   EXPECT_EQ(idxs[1], 7);
 }
@@ -61,8 +61,8 @@ TEST(GenMemOpsFindAllBytesIndexTest, ReturnsZeroIfNotFound)
   kd_byte_t  ptr[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
   kd_usize_t idxs[8];
 
-  EXPECT_EQ(kdGenMemOpsFindAllBytesIndex(idxs, sizeof(idxs), ptr, sizeof(ptr), 0), 0);
-  EXPECT_EQ(kdGenMemOpsFindAllBytesIndex(idxs, sizeof(idxs), ptr, sizeof(ptr), 69), 0);
+  EXPECT_EQ(kdGenMemOpsFindAllByteIndices(idxs, sizeof(idxs), ptr, sizeof(ptr), 0), 0);
+  EXPECT_EQ(kdGenMemOpsFindAllByteIndices(idxs, sizeof(idxs), ptr, sizeof(ptr), 69), 0);
 }
 
 TEST(GenMemOpsFindAllBytesIndexTest, HandlesZeroSize)
@@ -70,9 +70,9 @@ TEST(GenMemOpsFindAllBytesIndexTest, HandlesZeroSize)
   kd_byte_t  ptr[16];
   kd_usize_t idxs[8];
 
-  EXPECT_EQ(kdGenMemOpsFindAllBytesIndex(idxs, 0, ptr, 0, 69), 0);
-  EXPECT_EQ(kdGenMemOpsFindAllBytesIndex(idxs, 0, ptr, sizeof(ptr), 69), 0);
-  EXPECT_EQ(kdGenMemOpsFindAllBytesIndex(idxs, sizeof(idxs), ptr, 0, 69), 0);
+  EXPECT_EQ(kdGenMemOpsFindAllByteIndices(idxs, 0, ptr, 0, 69), 0);
+  EXPECT_EQ(kdGenMemOpsFindAllByteIndices(idxs, 0, ptr, sizeof(ptr), 69), 0);
+  EXPECT_EQ(kdGenMemOpsFindAllByteIndices(idxs, sizeof(idxs), ptr, 0, 69), 0);
 }
 
 TEST(GenMemOpsFindAllBytesIndexTest, HandlesNullPointer)
@@ -80,7 +80,7 @@ TEST(GenMemOpsFindAllBytesIndexTest, HandlesNullPointer)
   kd_byte_t  ptr[16];
   kd_usize_t idxs[8];
 
-  EXPECT_EQ(kdGenMemOpsFindAllBytesIndex((kd_usize_t*)kd_null, 8, kd_null, 16, 69), 0);
-  EXPECT_EQ(kdGenMemOpsFindAllBytesIndex((kd_usize_t*)kd_null, 8, ptr, 16, 69), 0);
-  EXPECT_EQ(kdGenMemOpsFindAllBytesIndex(idxs, 8, kd_null, 16, 69), 0);
+  EXPECT_EQ(kdGenMemOpsFindAllByteIndices((kd_usize_t*)kd_null, 8, kd_null, 16, 69), 0);
+  EXPECT_EQ(kdGenMemOpsFindAllByteIndices((kd_usize_t*)kd_null, 8, ptr, 16, 69), 0);
+  EXPECT_EQ(kdGenMemOpsFindAllByteIndices(idxs, 8, kd_null, 16, 69), 0);
 }
