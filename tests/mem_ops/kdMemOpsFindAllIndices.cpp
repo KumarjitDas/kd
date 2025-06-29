@@ -1,8 +1,8 @@
 /**
- * @file kdMemOpsFindAllIndex.cpp
+ * @file kdMemOpsFindAllIndices.cpp
  * @author Kumarjit Das
  * @date 2025-06-09
- * @brief kdMemOpsFindAllIndex test file.
+ * @brief kdMemOpsFindAllIndices test file.
  */
 /**
  * LICENSE: BSD 3-Clause License
@@ -48,11 +48,11 @@ TEST(MemOpsFindAllIndexTest, FindsAllOccurrences)
   kd_usize_t idxs[8];
   kd_usize_t ptr_len = sizeof(ptr) / sizeof(*ptr), idxs_len = sizeof(idxs) / sizeof(*idxs);
 
-  EXPECT_EQ(kdMemOpsFindAllIndexI32(idxs, idxs_len, ptr, ptr_len, 2), 3);
+  EXPECT_EQ(kdMemOpsFindAllIndicesI32(idxs, KD_ELTYPE_USIZE, idxs_len, ptr, ptr_len, 2), 3);
   EXPECT_EQ(idxs[0], 1);
   EXPECT_EQ(idxs[1], 3);
   EXPECT_EQ(idxs[2], 5);
-  EXPECT_EQ(kdMemOpsFindAllIndexI32(idxs, idxs_len, ptr, ptr_len, 3), 2);
+  EXPECT_EQ(kdMemOpsFindAllIndicesI32(idxs, KD_ELTYPE_USIZE, idxs_len, ptr, ptr_len, 3), 2);
   EXPECT_EQ(idxs[0], 2);
   EXPECT_EQ(idxs[1], 7);
 }
@@ -63,8 +63,8 @@ TEST(MemOpsFindAllIndexTest, ReturnsZeroIfNotFound)
   kd_usize_t idxs[8];
   kd_usize_t ptr_len = sizeof(ptr) / sizeof(*ptr), idxs_len = sizeof(idxs) / sizeof(*idxs);
 
-  EXPECT_EQ(kdMemOpsFindAllIndexI32(idxs, idxs_len, ptr, ptr_len, 69), 0);
-  EXPECT_EQ(kdMemOpsFindAllIndexI32(idxs, idxs_len, ptr, ptr_len, 420), 0);
+  EXPECT_EQ(kdMemOpsFindAllIndicesI32(idxs, KD_ELTYPE_USIZE, idxs_len, ptr, ptr_len, 69), 0);
+  EXPECT_EQ(kdMemOpsFindAllIndicesI32(idxs, KD_ELTYPE_USIZE, idxs_len, ptr, ptr_len, 420), 0);
 }
 
 TEST(MemOpsFindAllIndexTest, HandlesZeroSize)
@@ -73,13 +73,13 @@ TEST(MemOpsFindAllIndexTest, HandlesZeroSize)
   kd_usize_t idxs[8];
   kd_usize_t ptr_len = sizeof(ptr) / sizeof(*ptr), idxs_len = sizeof(idxs) / sizeof(*idxs);
 
-  EXPECT_EQ(kdMemOpsFindAllIndexI32(idxs, 0, ptr, 0, 69), 0);
-  EXPECT_EQ(kdMemOpsFindAllIndexI32(idxs, 0, ptr, 0, 69), 0);
-  EXPECT_EQ(kdMemOpsFindAllIndexI32(idxs, 0, ptr, ptr_len, 69), 0);
-  EXPECT_EQ(kdMemOpsFindAllIndexI32(idxs, 0, ptr, ptr_len, 69), 0);
-  EXPECT_EQ(kdMemOpsFindAllIndexI32(idxs, idxs_len, ptr, 0, 69), 0);
-  EXPECT_EQ(kdMemOpsFindAllIndexI32(idxs, idxs_len, ptr, 0, 69), 0);
-  EXPECT_EQ(kdMemOpsFindAllIndexI32(idxs, idxs_len, ptr, ptr_len, 69), 0);
+  EXPECT_EQ(kdMemOpsFindAllIndicesI32(idxs, KD_ELTYPE_USIZE, 0, ptr, 0, 69), 0);
+  EXPECT_EQ(kdMemOpsFindAllIndicesI32(idxs, KD_ELTYPE_USIZE, 0, ptr, 0, 69), 0);
+  EXPECT_EQ(kdMemOpsFindAllIndicesI32(idxs, KD_ELTYPE_USIZE, 0, ptr, ptr_len, 69), 0);
+  EXPECT_EQ(kdMemOpsFindAllIndicesI32(idxs, KD_ELTYPE_USIZE, 0, ptr, ptr_len, 69), 0);
+  EXPECT_EQ(kdMemOpsFindAllIndicesI32(idxs, KD_ELTYPE_USIZE, idxs_len, ptr, 0, 69), 0);
+  EXPECT_EQ(kdMemOpsFindAllIndicesI32(idxs, KD_ELTYPE_USIZE, idxs_len, ptr, 0, 69), 0);
+  EXPECT_EQ(kdMemOpsFindAllIndicesI32(idxs, KD_ELTYPE_USIZE, idxs_len, ptr, ptr_len, 69), 0);
 }
 
 TEST(MemOpsFindAllIndexTest, HandlesNullPointer)
@@ -88,11 +88,11 @@ TEST(MemOpsFindAllIndexTest, HandlesNullPointer)
   kd_usize_t idxs[8];
   kd_usize_t ptr_len = sizeof(ptr) / sizeof(*ptr), idxs_len = sizeof(idxs) / sizeof(*idxs);
 
-  EXPECT_EQ(kdMemOpsFindAllIndexI32((kd_usize_t*)kd_null, idxs_len, kd_null, ptr_len, 69), 0);
-  EXPECT_EQ(kdMemOpsFindAllIndexI32((kd_usize_t*)kd_null, idxs_len, kd_null, ptr_len, 69), 0);
-  EXPECT_EQ(kdMemOpsFindAllIndexI32((kd_usize_t*)kd_null, idxs_len, ptr, ptr_len, 69), 0);
-  EXPECT_EQ(kdMemOpsFindAllIndexI32((kd_usize_t*)kd_null, idxs_len, ptr, ptr_len, 69), 0);
-  EXPECT_EQ(kdMemOpsFindAllIndexI32(idxs, idxs_len, kd_null, ptr_len, 69), 0);
-  EXPECT_EQ(kdMemOpsFindAllIndexI32(idxs, idxs_len, kd_null, ptr_len, 69), 0);
-  EXPECT_EQ(kdMemOpsFindAllIndexI32(idxs, idxs_len, ptr, ptr_len, 69), 0);
+  EXPECT_EQ(kdMemOpsFindAllIndicesI32(KD_PUSIZE_C(kd_null), KD_ELTYPE_USIZE, idxs_len, kd_null, ptr_len, 69), 0);
+  EXPECT_EQ(kdMemOpsFindAllIndicesI32(KD_PUSIZE_C(kd_null), KD_ELTYPE_USIZE, idxs_len, kd_null, ptr_len, 69), 0);
+  EXPECT_EQ(kdMemOpsFindAllIndicesI32(KD_PUSIZE_C(kd_null), KD_ELTYPE_USIZE, idxs_len, ptr, ptr_len, 69), 0);
+  EXPECT_EQ(kdMemOpsFindAllIndicesI32(KD_PUSIZE_C(kd_null), KD_ELTYPE_USIZE, idxs_len, ptr, ptr_len, 69), 0);
+  EXPECT_EQ(kdMemOpsFindAllIndicesI32(idxs, KD_ELTYPE_USIZE, idxs_len, kd_null, ptr_len, 69), 0);
+  EXPECT_EQ(kdMemOpsFindAllIndicesI32(idxs, KD_ELTYPE_USIZE, idxs_len, kd_null, ptr_len, 69), 0);
+  EXPECT_EQ(kdMemOpsFindAllIndicesI32(idxs, KD_ELTYPE_USIZE, idxs_len, ptr, ptr_len, 69), 0);
 }
