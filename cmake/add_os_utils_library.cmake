@@ -68,16 +68,6 @@ set(INCLUDE_FILES
 set(SRC_FILES
     "${SRC_DIR}/_os_utils/mem.c")
 
-#[[if (KD_TARGET_OS STREQUAL "Windows")
-  if (KD_TARGET_ARCH STREQUAL "x86" OR KD_TARGET_ARCH STREQUAL "arm32")
-    set(SRC_FILES
-        "${SRC_DIR}/_os_utils/mem/win32.c")
-  elseif (KD_TARGET_ARCH STREQUAL "x64" OR KD_TARGET_ARCH STREQUAL "arm64")
-    set(SRC_FILES
-        "${SRC_DIR}/_os_utils/mem/win64.c")
-  endif ()
-endif ()]]
-
 # Adding the include file to the _os_utils target
 target_sources(_os_utils PRIVATE ${INCLUDE_FILES})
 

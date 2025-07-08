@@ -1,9 +1,9 @@
 /**
- * @file common.h
+ * @file dec.h
  * @author Kumarjit Das
- * @date 2025-06-06
- * @since 0.0.10
- * @brief Common header file for all internal libraries.
+ * @date 2025-06-30
+ * @since 0.0.15
+ * @brief Main header file of the DEC library.
  */
 /**
  * LICENSE: BSD 3-Clause License
@@ -38,43 +38,34 @@
  */
 
 
-#ifndef KD__INTERNAL_COMMON_H_
-#define KD__INTERNAL_COMMON_H_
+#ifndef KD_DEC_H_
+#define KD_DEC_H_
+
 
 #include "kd/defs.h"
 #include "kd/fixed_width.h"
 
+
 KD_EXTERN_BEGIN
 
 
-/**
- * ---------------------------------------------------------------------------------------------------------------------
- *  Sizes Of Primitive Storage Types (In Bytes)
- * ---------------------------------------------------------------------------------------------------------------------
- */
+typedef kd_usize_t kd_dec_t;
 
-#define KD_SZ_S8  KD_SZ_U8
-#define KD_SZ_S16 KD_SZ_U16
-#define KD_SZ_S32 KD_SZ_U32
-#if defined KD_ARCH_64BIT_INT
-  #define KD_SZ_S64 KD_SZ_U64
-#endif
+#define KD_LIT_DEC(x)   KD_LIT_USIZE(x)
+#define KD_DEC_C(X)     ((kd_dec_t)(X))
+#define KD_PDEC_C(X)    ((kd_dec_t *)(X))
+#define KD_MIN_DEC      KD_MAX_USIZE
+#define KD_MAX_DEC      KD_MAX_WORD
+#define KD_SZ_DEC       sizeof(kd_dec_t)
+#define KD_FMTSP_DEC    KD_FMTSP_USIZE
+#define KD_FSBTC_DEC(x) KD_FSBTC_USIZE(x)
 
-
-/**
- * ---------------------------------------------------------------------------------------------------------------------
- *  Type Definitions
- * ---------------------------------------------------------------------------------------------------------------------
- */
-
-typedef kd_u8_t  kdi_s8_t;
-typedef kd_u16_t kdi_s16_t;
-typedef kd_u32_t kdi_s32_t;
-#if defined KD_ARCH_64BIT_INT
-typedef kd_u64_t kdi_s64_t;
-#endif
+#if defined KD_USE_SIMPLIFIED_TYPES
+typedef kd_dec_t dec;
+#endif /* KD_USE_SIMPLIFIED_TYPES */
 
 
 KD_EXTERN_END
 
-#endif /* KD__INTERNAL_COMMON_H_ */
+
+#endif /* KD_DEC_H_ */

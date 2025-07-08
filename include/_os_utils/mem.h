@@ -42,8 +42,6 @@
 
 #include "common.h"
 
-#include <windows.h>
-
 KD_EXTERN_BEGIN
 
 

@@ -43,7 +43,8 @@
 
 
 #include "kd/defs.h"
-#include "kd/types/fw.h"
+#include "kd/fixed_width.h"
+#include "kd/eltype.h"
 
 
 KD_EXTERN_BEGIN

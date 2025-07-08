@@ -40,7 +40,7 @@
 #include <stdio.h>
 
 #define KD_USE_SIMPLIFIED_TYPES
-#include "kd/types/fw.h"
+#include "../../include/kd/fixed_width.h"
 
 
 int

@@ -1,5 +1,5 @@
 /**
- * @file fp.h
+ * @file floating_point.h
  * @author Kumarjit Das
  * @date 2025-05-28
  * @since 0.0.4
@@ -38,8 +38,8 @@
  */
 
 
-#ifndef KD_TYPES_FP_H_
-#define KD_TYPES_FP_H_
+#ifndef KD_TYPES_FLOATING_POINT_H_
+#define KD_TYPES_FLOATING_POINT_H_
 
 
 #include "kd/defs.h"
@@ -158,4 +158,4 @@ typedef kd_f64_t f64;
 KD_EXTERN_END
 
 
-#endif /* KD_TYPES_FP_H_ */
+#endif /* KD_TYPES_FLOATING_POINT_H_ */

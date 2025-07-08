@@ -40,8 +40,12 @@ write_status("Adding sources to the main library target...")
 set(COMMON_INCLUDE_FILES
     "${CMAKE_CURRENT_BINARY_DIR}/include/kd/version.h"
     "${INCLUDE_DIR}/kd/defs.h"
-    "${INCLUDE_DIR}/kd/types/fw.h"
-    # "${INCLUDE_DIR}/kd/types/fp.h"
+    "${INCLUDE_DIR}/kd/fixed_width.h"
+    "${INCLUDE_DIR}/kd/floating_point.h"
+    "${INCLUDE_DIR}/kd/eltype.h"
+    "${INCLUDE_DIR}/kd/dec.h"
+    "${INCLUDE_DIR}/kd/any.h"
+    "${INCLUDE_DIR}/kd/object.h"
 )
 
 # Common include files for all internal sublibraries
@@ -139,4 +143,4 @@ target_link_libraries(${KD_LIBRARY_NAME} PRIVATE ${OBJECT_LIBS})
 
 # Setting the install destination for include and source file
 install(FILES ${INCLUDE_FILES} DESTINATION "include")
-install(FILES ${SRC_FILES} DESTINATION "src")
+# install(FILES ${SRC_FILES} DESTINATION "src")

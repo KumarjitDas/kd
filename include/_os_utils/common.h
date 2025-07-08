@@ -41,7 +41,11 @@
 #define KD__OS_UTILS_COMMON_H_
 
 #include "kd/defs.h"
-#include "kd/types/fw.h"
+#include "kd/fixed_width.h"
+
+#if defined KD_OS_WINDOWS
+  #include <windows.h>
+#endif
 
 #if defined KD_OS_MINGW
   #if defined KD_OS_WINDOWS && (defined KD_OS_WIN64 || defined KD_OS_MINGW64)

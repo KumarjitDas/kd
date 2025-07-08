@@ -40,7 +40,7 @@
 
 #define KD_BUILDING_LIB 1
 #include "kd/defs.h"
-#include "kd/types/fw.h"
+#include "../../include/kd/fixed_width.h"
 #include "kd/mem_algn.h"
 
 

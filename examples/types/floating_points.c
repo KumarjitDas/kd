@@ -40,7 +40,7 @@
 #include "kd/defs.h"
 
 #define KD_USE_SIMPLIFIED_TYPES
-#include "kd/types/fp.h"
+#include "../../include/kd/floating_point.h"
 
 #include <stdio.h>
 

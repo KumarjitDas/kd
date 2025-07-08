@@ -7,6 +7,7 @@
       <w>c-string</w>
       <w>cstr</w>
       <w>delims</w>
+      <w>eltype</w>
       <w>fmax</w>
       <w>fmin</w>
       <w>fmtsp</w>
@@ -22,6 +23,7 @@
       <w>pbool</w>
       <w>pbyte</w>
       <w>pchr</w>
+      <w>peltype</w>
       <w>pimax</w>
       <w>pimin</w>
       <w>puint</w>

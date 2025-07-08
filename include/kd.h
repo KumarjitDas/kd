@@ -44,7 +44,12 @@
 
 #include "kd/version.h"
 #include "kd/defs.h"
-#include "kd/types/fw.h"
+#include "kd/fixed_width.h"
+#include "kd/floating_point.h"
+#include "kd/dec.h"
+#include "kd/eltype.h"
+#include "kd/any.h"
+#include "kd/object.h"
 #include "kd/mem_algn.h"
 #include "kd/gen_mem_ops.h"
 #include "kd/mem_ops.h"

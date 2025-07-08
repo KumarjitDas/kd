@@ -1,9 +1,9 @@
 /**
- * @file common.h
+ * @file eltype.h
  * @author Kumarjit Das
- * @date 2025-06-06
- * @since 0.0.10
- * @brief Common header file for all internal libraries.
+ * @date 2025-06-30
+ * @since 0.0.15
+ * @brief Main header file of the ELTYPE library.
  */
 /**
  * LICENSE: BSD 3-Clause License
@@ -38,43 +38,70 @@
  */
 
 
-#ifndef KD__INTERNAL_COMMON_H_
-#define KD__INTERNAL_COMMON_H_
+#ifndef KD_ELTYPE_H_
+#define KD_ELTYPE_H_
+
 
 #include "kd/defs.h"
 #include "kd/fixed_width.h"
 
+
 KD_EXTERN_BEGIN
 
 
-/**
- * ---------------------------------------------------------------------------------------------------------------------
- *  Sizes Of Primitive Storage Types (In Bytes)
- * ---------------------------------------------------------------------------------------------------------------------
- */
+enum kd_eltype_t
+{
+  KD_ELTYPE_DEFAULT,
 
-#define KD_SZ_S8  KD_SZ_U8
-#define KD_SZ_S16 KD_SZ_U16
-#define KD_SZ_S32 KD_SZ_U32
+  KD_ELTYPE_BYTE,
+  KD_ELTYPE_I8,
+  KD_ELTYPE_U8,
+  KD_ELTYPE_IMIN,
+  KD_ELTYPE_UMIN,
+  KD_ELTYPE_I16,
+  KD_ELTYPE_U16,
+  KD_ELTYPE_I32,
+  KD_ELTYPE_U32,
+  KD_ELTYPE_BOOL,
+  KD_ELTYPE_CHR,
+  KD_ELTYPE_UMAX,
+  KD_ELTYPE_IMAX,
+  KD_ELTYPE_WORD,
+  KD_ELTYPE_USIZE,
+  KD_ELTYPE_PTR,
+  KD_ELTYPE_DEC,
+  KD_ELTYPE_F32,
+  KD_ELTYPE_F64,
+  KD_ELTYPE_ANY,
 #if defined KD_ARCH_64BIT_INT
-  #define KD_SZ_S64 KD_SZ_U64
+  KD_ELTYPE_I64,
+  KD_ELTYPE_U64,
+#endif                           /* KD_ARCH_64BIT_INT */
+
+  KDI_IGNORE_ELTYPE = KD_MAX_I32 /* Force it to be always 32-bit */
+};
+
+#if defined KD_ARCH_64BIT_INT
+  #define KDI_IGNORE_ELTYPE_MAX_VAL KD_ELTYPE_U64
+#else
+  #define KDI_IGNORE_ELTYPE_MAX_VAL KD_ELTYPE_ANY
 #endif
 
+#define KD_LIT_ELTYPE(x)   KD_LIT_I32(x)
+#define KD_ELTYPE_C(X)     ((enum kd_eltype_t)(X))
+#define KD_PELTYPE_C(X)    ((enum kd_eltype_t *)(X))
+#define KD_MIN_ELTYPE      KD_ELTYPE_DEFAULT
+#define KD_MAX_ELTYPE      KDI_IGNORE_ELTYPE_MAX_VAL
+#define KD_SZ_ELTYPE       sizeof(enum kd_eltype_t)
+#define KD_FMTSP_ELTYPE    KD_FMTSP_I32
+#define KD_FSBTC_ELTYPE(x) KD_FSBTC_I32(x)
 
-/**
- * ---------------------------------------------------------------------------------------------------------------------
- *  Type Definitions
- * ---------------------------------------------------------------------------------------------------------------------
- */
-
-typedef kd_u8_t  kdi_s8_t;
-typedef kd_u16_t kdi_s16_t;
-typedef kd_u32_t kdi_s32_t;
-#if defined KD_ARCH_64BIT_INT
-typedef kd_u64_t kdi_s64_t;
-#endif
+#if defined KD_USE_SIMPLIFIED_TYPES
+typedef enum kd_eltype_t eltype;
+#endif /* KD_USE_SIMPLIFIED_TYPES */
 
 
 KD_EXTERN_END
 
-#endif /* KD__INTERNAL_COMMON_H_ */
+
+#endif /* KD_ELTYPE_H_ */
