@@ -51,7 +51,7 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
-# CMake Build directory
+# Build directory
 build/*
 Build/*
 cmake-build*/*

@@ -43,7 +43,7 @@ BraceWrapping:
 BreakBeforeBraces: Custom
 BreakConstructorInitializers: AfterColon
 BreakConstructorInitializersBeforeComma: false
-ColumnLimit: 800
+ColumnLimit: 180
 ConstructorInitializerAllOnOneLineOrOnePerLine: false
 ContinuationIndentWidth: 2
 SortIncludes: Never
@@ -82,7 +82,6 @@ TabWidth: 2
 BinPackParameters: false
 AllowAllParametersOfDeclarationOnNextLine: false
 AlignAfterOpenBracket: BlockIndent
-BreakAfterReturnType: None
 AlwaysBreakAfterDefinitionReturnType: All
 PenaltyReturnTypeOnItsOwnLine: 0
 ...
