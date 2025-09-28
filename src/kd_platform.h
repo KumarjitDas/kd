@@ -599,8 +599,8 @@
  * ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
  */
 
-#define KD_RESULT_SUCCESS 1
-#define KD_RESULT_FAILURE 0
+#define KD_RESULT_SUCCESS 0
+#define KD_RESULT_FAILURE 1
 #define KD_EXIT_SUCCESS   0
 #define KD_EXIT_FAILURE   1
 

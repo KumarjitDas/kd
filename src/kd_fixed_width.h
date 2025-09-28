@@ -462,8 +462,8 @@ typedef kd_u32_t kd_bool_t;
   #undef KD_RESULT_FAILURE
 #endif
 
-#define KD_RESULT_SUCCESS kd_true
-#define KD_RESULT_FAILURE kd_false
+#define KD_RESULT_SUCCESS kd_false
+#define KD_RESULT_FAILURE kd_true
 
 
 /**

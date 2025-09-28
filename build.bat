@@ -2,42 +2,30 @@
 SETLOCAL ENABLEDELAYEDEXPANSION
 
 
-@REM ========== Set global flags ==========
-
-SET "DEBUG_FLAGS=/Zi /Od"
-SET "C_FLAGS=/WX /W4 /w14242 /w14254 /w14263 /w14265 /w14287 /we4289 /w14296 /w14311 /w14545 /w14546 /w14547 /w14549 /w14555 /w14619 /w14640 /w14826 /w14905 /w14906 /w14928 /permissive- /Za /Gy /TC"
-@REM "SET NO_C_RUNTIME=/nodefaultlib"
-SET "NO_C_RUNTIME="
-
-SET "INCLUDE_DIR=src"
-SET "BUILD_DIR=build"
-SET "TESTS_DIR=tests"
-SET "EXAMPLES_DIR=examples"
-
-SET "COMMON_FLAGS=%DEBUG_FLAGS% %C_FLAGS% %NO_C_RUNTIME% /I %INCLUDE_DIR% /Fo:%BUILD_DIR%\"
-
-
 @REM ========== Control switches ==========
 
 SET "CLEAN_ALL=0"
-SET "CLEAN_BUILDS=0"
-SET "BUILD_TESTS=0"
-SET "RUN_TESTS=0"
+SET "CLEAN_BUILDS=1"
+SET "DEBUG_MODE=1"
+SET "SHARED_LIBS=0"
+SET "STATIC_LIBS=1"
+SET "BUILD_TESTS=1"
+SET "RUN_TESTS=1"
 SET "BUILD_EXAMPLES=0"
 
 
 @REM ========== Parse command-line args and set switches ==========
 
-IF "%~1"=="" (
-    SET "CLEAN_BUILDS=1"
-    SET "BUILD_TESTS=1"
-    SET "RUN_TESTS=1"
-) ELSE (
+IF NOT "%~1"=="" (
 	FOR %%A IN (%*) DO (
 	    IF /I "%%A"=="clean" (
 	        SET "CLEAN_BUILDS=1"
 	    ) ELSE IF /I "%%A"=="clean-all" (
 	        SET "CLEAN_ALL=1"
+	    ) ELSE IF /I "%%A"=="release" (
+	        SET "DEBUG_MODE=0"
+	    ) ELSE IF /I "%%A"=="shared" (
+	        SET "SHARED_LIBS=1"
 	    ) ELSE IF /I "%%A"=="build-tests" (
 	        SET "BUILD_TESTS=1"
 	    ) ELSE IF /I "%%A"=="build-examples" (
@@ -50,6 +38,25 @@ IF "%~1"=="" (
 	    )
 	)
 )
+
+
+@REM ========== Set global flags ==========
+
+SET "DEBUG_FLAGS=/Zi /Od"
+IF "!DEBUG_MODE!"=="0" ( SET "DEBUG_FLAGS=" )
+
+SET "C_FLAGS=/WX /W4 /w14242 /w14254 /w14263 /w14265 /w14287 /we4289 /w14296 /w14311 /w14545 /w14546 /w14547 /w14549 /w14555 /w14619 /w14640 /w14826 /w14905 /w14906 /w14928 /permissive- /Gy"
+@REM "SET NO_C_RUNTIME=/nodefaultlib"
+SET "NO_C_RUNTIME="
+
+SET "INCLUDE_DIR=src"
+SET "SRC_DIR=src"
+SET "BUILD_DIR=build"
+SET "TESTS_DIR=tests"
+SET "EXAMPLES_DIR=examples"
+
+SET "COMMON_PLATFORM_FLAGS=%DEBUG_FLAGS% %C_FLAGS% %NO_C_RUNTIME% /I %INCLUDE_DIR% /Fo:%BUILD_DIR%\"
+SET "COMMON_FLAGS=%DEBUG_FLAGS% %C_FLAGS% /Za /TC %NO_C_RUNTIME% /I %INCLUDE_DIR% /Fo:%BUILD_DIR%\"
 
 
 @REM ========== Clean up ==========
@@ -118,6 +125,49 @@ IF "!BUILD_EXAMPLES!"=="1" (
 )
 
 
+@REM ========== Objects ==========
+
+@REM Any source file that uses Windows headers
+SET "PLATFORM_OBJECTS="
+SET "PLATFORM_OBJECTS=!PLATFORM_OBJECTS! kd_mem"
+
+SET "OBJECTS="
+
+IF "!SHARED_LIBS!"=="1" (
+	ECHO [INFO] SHARED LIBS is not implemented
+) ELSE (
+	IF "!STATIC_LIBS!"=="1" (
+		FOR %%O IN (!PLATFORM_OBJECTS!) DO (
+		    SET "OBJECT_NAME=%%O"
+		    ECHO [BUILD] Compiling object file: !SRC_DIR!\!OBJECT_NAME!.c
+
+		    CL !COMMON_PLATFORM_FLAGS! /Zc:strictStrings- /c "!SRC_DIR!\!OBJECT_NAME!.c"
+
+		    IF ERRORLEVEL 1 (
+		        ECHO [ERROR] Failed to compile: !OBJECT_NAME!
+		        EXIT /B 1
+		    )
+
+		    ECHO [BUILD] Compilation output: !OBJECT_NAME!.obj
+		)
+
+		FOR %%O IN (!OBJECTS!) DO (
+		    SET "OBJECT_NAME=%%O"
+		    ECHO [BUILD] Compiling object file: !SRC_DIR!\!OBJECT_NAME!.c
+
+		    CL !COMMON_FLAGS! /c "!SRC_DIR!\!OBJECT_NAME!.c"
+
+		    IF ERRORLEVEL 1 (
+		        ECHO [ERROR] Failed to compile: !OBJECT_NAME!
+		        EXIT /B 1
+		    )
+
+		    ECHO [BUILD] Compilation output: !OBJECT_NAME!.obj
+		)
+	)
+)
+
+
 @REM ========== Tests ==========
 
 IF "!BUILD_TESTS!"=="1" (
@@ -139,6 +189,7 @@ IF "!BUILD_TESTS!"=="1" (
 	    ECHO [BUILD] Compilation output: !TARGET_NAME!.exe
 	)
 )
+
 
 @REM ========== Run tests ==========
 
@@ -197,5 +248,6 @@ IF "!BUILD_EXAMPLES!"=="1" (
 	    ECHO [BUILD] Compilation output: !TARGET_NAME!.exe
 	)
 )
+
 
 ENDLOCAL
