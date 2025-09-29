@@ -1,16 +1,17 @@
 @ECHO OFF
 SETLOCAL ENABLEDELAYEDEXPANSION
+CLS
 
 
 @REM ========== Control switches ==========
 
 SET "CLEAN_ALL=0"
-SET "CLEAN_BUILDS=1"
-SET "DEBUG_MODE=1"
+SET "CLEAN_BUILDS=0"
+SET "DEBUG_MODE=0"
 SET "SHARED_LIBS=0"
 SET "STATIC_LIBS=1"
-SET "BUILD_TESTS=1"
-SET "RUN_TESTS=1"
+SET "BUILD_TESTS=0"
+SET "RUN_TESTS=0"
 SET "BUILD_EXAMPLES=0"
 
 
@@ -22,30 +23,35 @@ IF NOT "%~1"=="" (
 	        SET "CLEAN_BUILDS=1"
 	    ) ELSE IF /I "%%A"=="clean-all" (
 	        SET "CLEAN_ALL=1"
-	    ) ELSE IF /I "%%A"=="release" (
+	    ) ELSE IF /I "%%A"=="debug" (
 	        SET "DEBUG_MODE=0"
 	    ) ELSE IF /I "%%A"=="shared" (
 	        SET "SHARED_LIBS=1"
-	    ) ELSE IF /I "%%A"=="build-tests" (
+	    ) ELSE IF /I "%%A"=="tests" (
 	        SET "BUILD_TESTS=1"
-	    ) ELSE IF /I "%%A"=="build-examples" (
+	    ) ELSE IF /I "%%A"=="examples" (
 	        SET "BUILD_EXAMPLES=1"
-	    ) ELSE IF /I "%%A"=="build-all" (
+	    ) ELSE IF /I "%%A"=="all" (
 	        SET "BUILD_TESTS=1"
 	        SET "BUILD_EXAMPLES=1"
-	    ) ELSE IF /I "%%A"=="run-tests" (
+	    ) ELSE IF /I "%%A"=="run" (
 	        SET "RUN_TESTS=1"
 	    )
 	)
 )
 
+IF "!SHARED_LIBS!"=="1" (
+	SET "STATIC_LIBS=0"
+)
+
 
 @REM ========== Set global flags ==========
 
+SET LIB_NAME=kd
 SET "DEBUG_FLAGS=/Zi /Od"
 IF "!DEBUG_MODE!"=="0" ( SET "DEBUG_FLAGS=" )
 
-SET "C_FLAGS=/WX /W4 /w14242 /w14254 /w14263 /w14265 /w14287 /we4289 /w14296 /w14311 /w14545 /w14546 /w14547 /w14549 /w14555 /w14619 /w14640 /w14826 /w14905 /w14906 /w14928 /permissive- /Gy"
+SET "C_FLAGS=/nologo /WX /W4 /w14242 /w14254 /w14263 /w14265 /w14287 /we4289 /w14296 /w14311 /w14545 /w14546 /w14547 /w14549 /w14555 /w14619 /w14640 /w14826 /w14905 /w14906 /w14928 /permissive- /Gy"
 @REM "SET NO_C_RUNTIME=/nodefaultlib"
 SET "NO_C_RUNTIME="
 
@@ -56,6 +62,7 @@ SET "TESTS_DIR=tests"
 SET "EXAMPLES_DIR=examples"
 
 SET "COMMON_PLATFORM_FLAGS=%DEBUG_FLAGS% %C_FLAGS% %NO_C_RUNTIME% /I %INCLUDE_DIR% /Fo:%BUILD_DIR%\"
+SET "COMMON_EXE_FLAGS=%DEBUG_FLAGS% %C_FLAGS% /Za %NO_C_RUNTIME% /I %INCLUDE_DIR% /Fo:%BUILD_DIR%\"
 SET "COMMON_FLAGS=%DEBUG_FLAGS% %C_FLAGS% /Za /TC %NO_C_RUNTIME% /I %INCLUDE_DIR% /Fo:%BUILD_DIR%\"
 
 
@@ -133,6 +140,16 @@ SET "PLATFORM_OBJECTS=!PLATFORM_OBJECTS! kd_mem"
 
 SET "OBJECTS="
 
+SET "OUTPUT_OBJECTS="
+
+FOR %%P IN (%PLATFORM_OBJECTS%) DO (
+    SET "OUTPUT_OBJECTS=!OUTPUT_OBJECTS! %BUILD_DIR%\%%P.obj"
+)
+
+FOR %%O IN (%OBJECTS%) DO (
+    SET "OUTPUT_OBJECTS=!OUTPUT_OBJECTS! %BUILD_DIR%\%%O.obj"
+)
+
 IF "!SHARED_LIBS!"=="1" (
 	ECHO [INFO] SHARED LIBS is not implemented
 ) ELSE (
@@ -143,7 +160,7 @@ IF "!SHARED_LIBS!"=="1" (
 
 		    CL !COMMON_PLATFORM_FLAGS! /Zc:strictStrings- /c "!SRC_DIR!\!OBJECT_NAME!.c"
 
-		    IF ERRORLEVEL 1 (
+		    IF !ERRORLEVEl! NEQ 0 (
 		        ECHO [ERROR] Failed to compile: !OBJECT_NAME!
 		        EXIT /B 1
 		    )
@@ -157,13 +174,22 @@ IF "!SHARED_LIBS!"=="1" (
 
 		    CL !COMMON_FLAGS! /c "!SRC_DIR!\!OBJECT_NAME!.c"
 
-		    IF ERRORLEVEL 1 (
+		    IF !ERRORLEVEl! NEQ 0 (
 		        ECHO [ERROR] Failed to compile: !OBJECT_NAME!
 		        EXIT /B 1
 		    )
 
 		    ECHO [BUILD] Compilation output: !OBJECT_NAME!.obj
 		)
+
+		LIB /OUT:%BUILD_DIR%\%LIB_NAME%.lib !OUTPUT_OBJECTS!
+
+	    IF %ERRORLEVEl% NEQ 0 (
+	        ECHO [ERROR] Failed to build library: %LIB_NAME%
+	        EXIT /B 1
+	    )
+
+	    ECHO [BUILD] Compilation output: %LIB_NAME%.lib
 	)
 )
 
@@ -172,16 +198,19 @@ IF "!SHARED_LIBS!"=="1" (
 
 IF "!BUILD_TESTS!"=="1" (
 	SET "TESTS="
-	SET "TESTS=!TESTS! platform_bool_macros"
-	SET "TESTS=!TESTS! platform_cstr_macros"
+	rem SET "TESTS=!TESTS! platform_bool_macros"
+	rem SET "TESTS=!TESTS! platform_cstr_macros"
+	SET "TESTS=!TESTS! kdMemAlloc"
+	SET "TESTS=!TESTS! kdMemFree"
+	SET "TESTS=!TESTS! kdMemRealloc"
 
 	FOR %%T IN (!TESTS!) DO (
 	    SET "TARGET_NAME=%%T"
 	    ECHO [BUILD] Compiling test file: !TESTS_DIR!\!TARGET_NAME!.c
 
-	    CL !COMMON_FLAGS! "!TESTS_DIR!\!TARGET_NAME!.c" /Fe:"!BUILD_DIR!\!TESTS_DIR!\!TARGET_NAME!.exe"
+	    CL !COMMON_EXE_FLAGS! "!TESTS_DIR!\!TARGET_NAME!.c" "!BUILD_DIR!\!LIB_NAME!.lib" /Fe:"!BUILD_DIR!\!TESTS_DIR!\!TARGET_NAME!.exe"
 
-	    IF ERRORLEVEL 1 (
+	    IF !ERRORLEVEl! NEQ 0 (
 	        ECHO [ERROR] Failed to compile: !TARGET_NAME!
 	        EXIT /B 1
 	    )
@@ -200,7 +229,7 @@ IF "!BUILD_TESTS!"=="1" (
             SET /A TOTAL_TESTS+=1
         )
 
-		ECHO [TEST] Running !TOTAL_TESTS! tests.
+		ECHO [TEST] Running !TOTAL_TESTS! test(s^).
 
 		SET /A PASSED=0
         SET /A CURRENT=0
@@ -213,9 +242,13 @@ IF "!BUILD_TESTS!"=="1" (
 
 		    "!BUILD_DIR!\!TESTS_DIR!\!TEST_NAME!.exe"
 
-		    IF ERRORLEVEL 1 (
+		    IF !ERRORLEVEl! NEQ 0 (
+				SET /A UNREACHED=TOTAL_TESTS-PASSED-1
+				ECHO
 		        ECHO [TEST] Test failed: !TEST_NAME!
-		        ECHO [TEST] Passed !PASSED!/!TOTAL_TESTS! tests.
+		        ECHO [TEST] Total tests: !TOTAL_TESTS!
+		        ECHO [TEST] Passed tests !PASSED!
+		        ECHO [TEST] Unreached tests: !UNREACHED!
 		        EXIT /B 1
 		    )
 
@@ -233,14 +266,16 @@ IF "!BUILD_EXAMPLES!"=="1" (
 	SET "EXAMPLES="
 	SET "EXAMPLES=!EXAMPLES! platform_bool_macros"
 	SET "EXAMPLES=!EXAMPLES! platform_cstr_macros"
+	SET "EXAMPLES=!EXAMPLES! fixed_widths"
+	SET "EXAMPLES=!EXAMPLES! floating_points"
 
 	FOR %%T IN (!EXAMPLES!) DO (
 	    SET "TARGET_NAME=%%T"
 	    ECHO [BUILD] Compiling example file: !EXAMPLES_DIR!\!TARGET_NAME!.c
 
-	    CL !COMMON_FLAGS! "!EXAMPLES_DIR!\!TARGET_NAME!.c" /Fe:"!BUILD_DIR!\!EXAMPLES_DIR!\!TARGET_NAME!.exe"
+	    CL !COMMON_EXE_FLAGS! "!EXAMPLES_DIR!\!TARGET_NAME!.c" "!BUILD_DIR!\!LIB_NAME!.lib" /Fe:"!BUILD_DIR!\!EXAMPLES_DIR!\!TARGET_NAME!.exe"
 
-	    IF ERRORLEVEL 1 (
+	    IF !ERRORLEVEl! NEQ 0 (
 	        ECHO [ERROR] Failed to compile: !TARGET_NAME!
 	        EXIT /B 1
 	    )

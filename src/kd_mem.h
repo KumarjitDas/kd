@@ -21,6 +21,14 @@
 KD_EXTERN_BEGIN
 
 
+#define KD_MEM_VERSION_MAJOR 0
+#define KD_MEM_VERSION_MINOR 0
+#define KD_MEM_VERSION_PATCH 1
+
+#define KD_MEM_VERSION_CSTR  KDI_STRINGIFY(KD_MEM_VERSION_MAJOR) "." KDI_STRINGIFY(KD_MEM_VERSION_MINOR) "." KDI_STRINGIFY(KD_MEM_VERSION_PATCH)
+#define KD_MEM_VERSION_ARR   {KD_MEM_VERSION_MAJOR, KD_MEM_VERSION_MINOR, KD_MEM_VERSION_PATCH}
+
+
 KDAPI(kd_bool_t) kdMemAlloc(void *dst, kd_usize_t sz);
 KDAPI(kd_bool_t) kdMemFree(void *dst, kd_usize_t sz);
 KDAPI(kd_bool_t) kdMemRealloc(void *dst, kd_usize_t new_sz, void *src, kd_usize_t old_sz);

@@ -26,31 +26,31 @@ KD_EXTERN_BEGIN
 
 union kd_any_t
 {
-  kd_i8_t          _i8;
-  kd_i16_t         _i16;
-  kd_i32_t         _i32;
-  kd_imin_t        _imin;
-  kd_imax_t        _imax;
-  kd_u8_t          _u8;
-  kd_u16_t         _u16;
-  kd_u32_t         _u32;
-  kd_umin_t        _umin;
-  kd_umax_t        _umax;
-  kd_word_t        _word;
-  kd_usize_t       _usize;
-  kd_byte_t        _byte;
-  kd_chr_t         _chr;
-  kd_dec_t         _dec;
-  kd_f32_t         _f32;
-  kd_f64_t         _f64;
-  void            *_ptr;
-  enum kd_eltype_t _eltype;
+    kd_i8_t          _i8;
+    kd_i16_t         _i16;
+    kd_i32_t         _i32;
+    kd_imin_t        _imin;
+    kd_imax_t        _imax;
+    kd_u8_t          _u8;
+    kd_u16_t         _u16;
+    kd_u32_t         _u32;
+    kd_umin_t        _umin;
+    kd_umax_t        _umax;
+    kd_word_t        _word;
+    kd_usize_t       _usize;
+    kd_byte_t        _byte;
+    kd_chr_t         _chr;
+    kd_dec_t         _dec;
+    kd_f32_t         _f32;
+    kd_f64_t         _f64;
+    void            *_ptr;
+    enum kd_eltype_t _eltype;
 #if defined KD_ARCH_64BIT_INT
-  kd_byte_t _slice[8];
-  kd_i64_t  _i64;
-  kd_u64_t  _u64;
+    kd_byte_t _slice[8];
+    kd_i64_t  _i64;
+    kd_u64_t  _u64;
 #else
-  kd_byte_t _slice[8];
+    kd_byte_t _slice[8];
 #endif /* KD_ARCH_64BIT_INT */
 };
 

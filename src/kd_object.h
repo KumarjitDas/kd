@@ -24,8 +24,8 @@ KD_EXTERN_BEGIN
 
 struct kd_Object_t
 {
-  enum kd_eltype_t type;
-  union kd_any_t   value;
+    enum kd_eltype_t type;
+    union kd_any_t   value;
 };
 
 

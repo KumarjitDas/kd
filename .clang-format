@@ -45,7 +45,7 @@ BreakConstructorInitializers: AfterColon
 BreakConstructorInitializersBeforeComma: false
 ColumnLimit: 180
 ConstructorInitializerAllOnOneLineOrOnePerLine: false
-ContinuationIndentWidth: 2
+ContinuationIndentWidth: 4
 SortIncludes: Never
 IncludeBlocks: Preserve
 IncludeCategories:
@@ -78,7 +78,9 @@ SpacesInAngles: false
 SpacesInConditionalStatement: false
 SpacesInCStyleCastParentheses: false
 SpacesInParentheses: false
-TabWidth: 2
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
 BinPackParameters: false
 AllowAllParametersOfDeclarationOnNextLine: false
 AlignAfterOpenBracket: BlockIndent

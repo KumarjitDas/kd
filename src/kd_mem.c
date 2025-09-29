@@ -16,10 +16,10 @@
 
 #if defined KD_OS_WINDOWS
 KD_EXTERN_BEGIN
-  #include <windows.h>
+    #include <windows.h>
 KD_EXTERN_END
 #else
-  #include <stdlib.h>
+    #include <stdlib.h>
 #endif
 
 #include "kd_fixed_width.h"
@@ -30,42 +30,42 @@ kd_bool_t
 kdMemAlloc(void *dst, kd_usize_t sz)
 {
 #if defined KD_OS_WINDOWS
-  HANDLE heap;
+    HANDLE heap;
 #endif
-  kd_byte_t *ptr;
+    kd_byte_t *ptr;
 
-  if (!dst)
-  {
-    return KD_RESULT_FAILURE;
-  }
+    if (!dst)
+    {
+        return KD_RESULT_FAILURE;
+    }
 
-  *(kd_byte_t **)dst = kd_null;
+    *(kd_byte_t **)dst = kd_null;
 
-  if (!sz)
-  {
-    return KD_RESULT_FAILURE;
-  }
+    if (!sz)
+    {
+        return KD_RESULT_FAILURE;
+    }
 
 #if defined KD_OS_WINDOWS
-  heap = GetProcessHeap();
-  if (!heap)
-  {
-    return KD_RESULT_FAILURE;
-  }
+    heap = GetProcessHeap();
+    if (!heap)
+    {
+        return KD_RESULT_FAILURE;
+    }
 
-  ptr = HeapAlloc(heap, 0, sz);
+    ptr = HeapAlloc(heap, 0, sz);
 #else
-  ptr = malloc(sz);
+    ptr = malloc(sz);
 #endif
 
-  if (!ptr)
-  {
-    return KD_RESULT_FAILURE;
-  }
+    if (!ptr)
+    {
+        return KD_RESULT_FAILURE;
+    }
 
-  *(kd_byte_t **)dst = ptr;
+    *(kd_byte_t **)dst = ptr;
 
-  return KD_RESULT_SUCCESS;
+    return KD_RESULT_SUCCESS;
 }
 
 
@@ -73,35 +73,33 @@ kd_bool_t
 kdMemFree(void *dst, kd_usize_t sz)
 {
 #if defined KD_OS_WINDOWS
-  HANDLE heap;
+    HANDLE heap;
 #endif
-  kd_byte_t **dst_adr = dst;
+    kd_byte_t **dst_adr = dst;
 
-  (void)sz;
-
-  if (!dst_adr || !*dst_adr)
-  {
-    return KD_RESULT_FAILURE;
-  }
+    if (!dst_adr || !*dst_adr || !sz)
+    {
+        return KD_RESULT_FAILURE;
+    }
 
 #if defined KD_OS_WINDOWS
-  heap = GetProcessHeap();
-  if (!heap)
-  {
-    return KD_RESULT_FAILURE;
-  }
+    heap = GetProcessHeap();
+    if (!heap)
+    {
+        return KD_RESULT_FAILURE;
+    }
 
-  if (!HeapFree(heap, 0, *dst_adr))
-  {
-    return KD_RESULT_FAILURE;
-  }
+    if (!HeapFree(heap, 0, *dst_adr))
+    {
+        return KD_RESULT_FAILURE;
+    }
 #else
-  free(*dst_adr);
+    free(*dst_adr);
 #endif
 
-  *dst_adr = kd_null;
+    *dst_adr = kd_null;
 
-  return KD_RESULT_SUCCESS;
+    return KD_RESULT_SUCCESS;
 }
 
 
@@ -109,73 +107,83 @@ kd_bool_t
 kdMemRealloc(void *dst, kd_usize_t new_sz, void *src, kd_usize_t old_sz)
 {
 #if defined KD_OS_WINDOWS
-  HANDLE heap;
+    HANDLE heap;
 #endif
-  kd_byte_t **dst_adr = dst, **src_adr, *temp_ptr, *ptr = kd_null;
+    kd_byte_t **dst_adr = dst, **src_adr = src, *temp_ptr, *ptr = kd_null;
 
-  (void)old_sz;
-
-  if (!dst_adr)
-  {
-    return KD_RESULT_FAILURE;
-  }
-
-  *dst_adr = kd_null;
-  src_adr  = src;
-  temp_ptr = src ? *src_adr : kd_null;
-
-#if defined KD_OS_WINDOWS
-  heap = GetProcessHeap();
-  if (!heap)
-  {
-    return KD_RESULT_FAILURE;
-  }
-#endif
-
-  if (temp_ptr)
-  {
-    *src_adr = kd_null;
-
-    if (!new_sz)
+    if (!dst_adr || !old_sz)
     {
-#if defined KD_OS_WINDOWS
-      return !HeapFree(heap, 0, temp_ptr);
-#else
-      free(temp_ptr);
-      return KD_RESULT_SUCCESS;
-#endif
+        return KD_RESULT_FAILURE;
     }
 
+    temp_ptr = src_adr ? *src_adr : kd_null;
+
 #if defined KD_OS_WINDOWS
-    ptr = HeapReAlloc(heap, 0, temp_ptr, new_sz);
-#else
-    ptr = realloc(temp_ptr, new_sz);
+    heap = GetProcessHeap();
+    if (!heap)
+    {
+        return KD_RESULT_FAILURE;
+    }
 #endif
 
-    if (!ptr)
+    if (temp_ptr)
     {
-      return KD_RESULT_FAILURE;
-    }
-  }
-  else if (new_sz)
-  {
+        if (!new_sz)
+        {
 #if defined KD_OS_WINDOWS
-    ptr = HeapAlloc(heap, 0, new_sz);
+            if (!HeapFree(heap, 0, temp_ptr))
+            {
+                return KD_RESULT_FAILURE;
+            }
 #else
-    ptr = malloc(new_sz);
+            free(temp_ptr);
 #endif
 
-    if (!ptr)
-    {
-      return KD_RESULT_FAILURE;
+            *dst_adr = kd_null;
+
+            if (src_adr)
+            {
+                *src_adr = kd_null;
+            }
+
+            return KD_RESULT_SUCCESS;
+        }
+
+#if defined KD_OS_WINDOWS
+        ptr = HeapReAlloc(heap, 0, temp_ptr, new_sz);
+#else
+        ptr = realloc(temp_ptr, new_sz);
+#endif
+
+        if (!ptr)
+        {
+            return KD_RESULT_FAILURE;
+        }
     }
-  }
-  else
-  {
-    return KD_RESULT_FAILURE;
-  }
+    else if (new_sz)
+    {
+#if defined KD_OS_WINDOWS
+        ptr = HeapAlloc(heap, 0, new_sz);
+#else
+        ptr = malloc(new_sz);
+#endif
 
-  *dst_adr = ptr;
+        if (!ptr)
+        {
+            return KD_RESULT_FAILURE;
+        }
+    }
+    else
+    {
+        return KD_RESULT_FAILURE;
+    }
 
-  return KD_RESULT_SUCCESS;
+    *dst_adr = ptr;
+
+    if (src_adr)
+    {
+        *src_adr = kd_null;
+    }
+
+    return KD_RESULT_SUCCESS;
 }

@@ -40,8 +40,8 @@ typedef double kd_f64_t;
 #define KD_LIT_F64(x) (kd_f64_t)(x)
 
 #if !(defined KD_CPLUSPLUS && defined KD_GOOGLE_TEST && defined KD_OS_WINDOWS && defined KD_COMP_MSVC)
-  #define KD_LIT_FMIN(x) KD_LIT_F32(x)
-  #define KD_LIT_FMAX(x) KD_LIT_F64(x)
+    #define KD_LIT_FMIN(x) KD_LIT_F32(x)
+    #define KD_LIT_FMAX(x) KD_LIT_F64(x)
 #endif
 
 
@@ -55,8 +55,8 @@ typedef double kd_f64_t;
 #define KD_MIN_F64 KD_LIT_F64(-2.22507385850720139E-308)
 
 #if !(defined KD_CPLUSPLUS && defined KD_GOOGLE_TEST && defined KD_OS_WINDOWS && defined KD_COMP_MSVC)
-  #define KD_MIN_FMIN KD_MIN_F32
-  #define KD_MIN_FMAX KD_MIN_F64
+    #define KD_MIN_FMIN KD_MIN_F32
+    #define KD_MIN_FMAX KD_MIN_F64
 #endif
 
 
@@ -70,8 +70,8 @@ typedef double kd_f64_t;
 #define KD_MAX_F64 KD_LIT_F64(1.79769313486231571E+308)
 
 #if !(defined KD_CPLUSPLUS && defined KD_GOOGLE_TEST && defined KD_OS_WINDOWS && defined KD_COMP_MSVC)
-  #define KD_MAX_FMIN KD_MAX_F32
-  #define KD_MAX_FMAX KD_MAX_F64
+    #define KD_MAX_FMIN KD_MAX_F32
+    #define KD_MAX_FMAX KD_MAX_F64
 #endif
 
 
@@ -95,8 +95,8 @@ typedef double kd_f64_t;
 #define KD_FMTSP_F64 "%.17e"
 
 #if !(defined KD_CPLUSPLUS && defined KD_GOOGLE_TEST && defined KD_OS_WINDOWS && defined KD_COMP_MSVC)
-  #define KD_FMTSP_FMIN "%.9e"
-  #define KD_FMTSP_FMAX "%.17e"
+    #define KD_FMTSP_FMIN "%.9e"
+    #define KD_FMTSP_FMAX "%.17e"
 #endif
 
 
@@ -110,8 +110,8 @@ typedef double kd_f64_t;
 #define KD_FSBTC_F64(x) (x)
 
 #if !(defined KD_CPLUSPLUS && defined KD_GOOGLE_TEST && defined KD_OS_WINDOWS && defined KD_COMP_MSVC)
-  #define KD_FSBTC_FMIN(x) KD_FSBTC_F32(x)
-  #define KD_FSBTC_FMAX(x) KD_FSBTC_F64(x)
+    #define KD_FSBTC_FMIN(x) KD_FSBTC_F32(x)
+    #define KD_FSBTC_FMAX(x) KD_FSBTC_F64(x)
 #endif
 
 

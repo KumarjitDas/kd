@@ -27,15 +27,15 @@ KD_EXTERN_BEGIN
  */
 
 #if defined KD_ARCH_64BIT_INT
-  #define KD_FW_64BIT_INT 1
+    #define KD_FW_64BIT_INT 1
 #elif defined KD_ARCH_32BIT_INT
-  #define KD_FW_32BIT_INT 1
+    #define KD_FW_32BIT_INT 1
 #endif
 
 #if defined KD_ARCH_64BIT_PTR
-  #define KD_FW_64BIT_PTR 1
+    #define KD_FW_64BIT_PTR 1
 #elif defined KD_ARCH_32BIT_PTR
-  #define KD_FW_32BIT_PTR 1
+    #define KD_FW_32BIT_PTR 1
 #endif
 
 
@@ -63,20 +63,19 @@ typedef unsigned int   kd_u32_t;
 #endif
 
 #if defined KD_ARCH_64BIT_INT
-  #if defined _MSC_VER || defined __BORLANDC__ || defined __WATCOMC__ || (defined __alpha && defined __DECC) || (defined KD_OS_MINGW64 && defined KD_C_STD_89)
+    #if defined _MSC_VER || defined __BORLANDC__ || defined __WATCOMC__ || (defined __alpha && defined __DECC) || (defined KD_OS_MINGW64 && defined KD_C_STD_89)
 typedef __int64          kd_i64_t;
 typedef unsigned __int64 kd_u64_t;
-  #elif (                                                                                                                                                                          \
-    defined __GNUC__ || defined __MWERKS__ || defined __SUNPRO_C || defined __SUNPRO_CC || defined __APPLE_CC__ || defined KD_OS_IRIX || defined _LONG_LONG || defined _CRAYC      \
-  ) &&                                                                                                                                                                             \
-    __SIZEOF_LONG__ == 8
+    #elif (                                                                                                                                                                        \
+        defined __GNUC__ || defined __MWERKS__ || defined __SUNPRO_C || defined __SUNPRO_CC || defined __APPLE_CC__ || defined KD_OS_IRIX || defined _LONG_LONG || defined _CRAYC  \
+    ) && __SIZEOF_LONG__ == 8
 typedef long          kd_i64_t;
 typedef unsigned long kd_u64_t;
-  /* #elif defined __LP64__ || defined __powerpc64__ || defined KD_CPU_SPARC64 */
-  #else
+    /* #elif defined __LP64__ || defined __powerpc64__ || defined KD_CPU_SPARC64 */
+    #else
 typedef long          kd_i64_t;
 typedef unsigned long kd_u64_t;
-  #endif
+    #endif
 typedef kd_i64_t kd_imax_t;
 typedef kd_u64_t kd_umax_t;
 #else
@@ -97,11 +96,11 @@ typedef kd_u32_t kd_chr_t;
 typedef kd_u32_t kd_bool_t;
 
 #if defined KD_ARCH_64BIT_INT
-  #define KD_BASE_INT_T  kd_i64_t
-  #define KD_BASE_UINT_T kd_u64_t
+    #define KD_BASE_INT_T  kd_i64_t
+    #define KD_BASE_UINT_T kd_u64_t
 #else
-  #define KD_BASE_INT_T  kd_i32_t
-  #define KD_BASE_UINT_T kd_u32_t
+    #define KD_BASE_INT_T  kd_i32_t
+    #define KD_BASE_UINT_T kd_u32_t
 #endif /* KD_ARCH_64BIT_INT */
 
 
@@ -118,31 +117,31 @@ typedef kd_u32_t kd_bool_t;
 #define KD_LIT_U16(x)  (kd_u16_t)(x)
 
 #if defined KD_ARCH_32BIT_INT && __SIZEOF_INT__ == 2 && __SIZEOF_LONG__ == 4
-  #define KD_LIT_I32(x) x##L
-  #define KD_LIT_U32(x) x##UL
+    #define KD_LIT_I32(x) x##L
+    #define KD_LIT_U32(x) x##UL
 #else
-  #define KD_LIT_I32(x) (kd_i32_t)(x)
-  #define KD_LIT_U32(x) x##U
+    #define KD_LIT_I32(x) (kd_i32_t)(x)
+    #define KD_LIT_U32(x) x##U
 #endif
 
 #if defined KD_FW_64BIT_INT
-  #if defined KD_OS_MINGW64 && defined KD_C_STD_89
-    #define KD_LIT_I64(x) ((kd_i64_t)(x))
-    #define KD_LIT_U64(x) ((kd_u64_t)(x))
-  #else
-    #define KD_LIT_I64(x) ((kd_i64_t)(x##L))
-    #define KD_LIT_U64(x) ((kd_u64_t)(x##UL))
-  #endif
+    #if defined KD_OS_MINGW64 && defined KD_C_STD_89
+        #define KD_LIT_I64(x) ((kd_i64_t)(x))
+        #define KD_LIT_U64(x) ((kd_u64_t)(x))
+    #else
+        #define KD_LIT_I64(x) ((kd_i64_t)(x##L))
+        #define KD_LIT_U64(x) ((kd_u64_t)(x##UL))
+    #endif
 
-  #define KD_LIT_IMAX(x)  ((kd_imax_t)KD_LIT_I64(x))
-  #define KD_LIT_UMAX(x)  ((kd_umax_t)KD_LIT_U64(x))
-  #define KD_LIT_WORD(x)  ((kd_word_t)KD_LIT_I64(x))
-  #define KD_LIT_USIZE(x) ((kd_usize_t)KD_LIT_U64(x))
+    #define KD_LIT_IMAX(x)  ((kd_imax_t)KD_LIT_I64(x))
+    #define KD_LIT_UMAX(x)  ((kd_umax_t)KD_LIT_U64(x))
+    #define KD_LIT_WORD(x)  ((kd_word_t)KD_LIT_I64(x))
+    #define KD_LIT_USIZE(x) ((kd_usize_t)KD_LIT_U64(x))
 #else
-  #define KD_LIT_IMAX(x)  ((kd_imax_t)KD_LIT_I32(x))
-  #define KD_LIT_UMAX(x)  ((kd_imax_t)KD_LIT_U32(x))
-  #define KD_LIT_WORD(x)  ((kd_word_t)KD_LIT_I32(x))
-  #define KD_LIT_USIZE(x) ((kd_usize_t)KD_LIT_U32(x))
+    #define KD_LIT_IMAX(x)  ((kd_imax_t)KD_LIT_I32(x))
+    #define KD_LIT_UMAX(x)  ((kd_imax_t)KD_LIT_U32(x))
+    #define KD_LIT_WORD(x)  ((kd_word_t)KD_LIT_I32(x))
+    #define KD_LIT_USIZE(x) ((kd_usize_t)KD_LIT_U32(x))
 #endif /* KD_FW_64BIT_INT */
 
 #define KD_LIT_IMIN(x) (kd_imin_t)(x)
@@ -152,9 +151,9 @@ typedef kd_u32_t kd_bool_t;
 #define KD_LIT_CHR(x)  (kd_chr_t) KD_LIT_U32(x)
 
 #if defined KD_ARCH_64BIT_PTR && defined KD_FW_64BIT_INT
-  #define KD_LIT_PTR(x) (void *)KD_LIT_U64(x)
+    #define KD_LIT_PTR(x) (void *)KD_LIT_U64(x)
 #else
-  #define KD_LIT_PTR(x) (void *)KD_LIT_U32(x)
+    #define KD_LIT_PTR(x) (void *)KD_LIT_U32(x)
 #endif
 
 
@@ -182,8 +181,8 @@ typedef kd_u32_t kd_bool_t;
 #define KD_PTR_C(X)   ((void *)(X))
 
 #if defined KD_ARCH_64BIT_INT
-  #define KD_I64_C(X) ((kd_i64_t)(X))
-  #define KD_U64_C(X) ((kd_u64_t)(X))
+    #define KD_I64_C(X) ((kd_i64_t)(X))
+    #define KD_U64_C(X) ((kd_u64_t)(X))
 #endif
 
 #define KD_PBOOL_C(X)  ((kd_bool_t *)(X))
@@ -203,8 +202,8 @@ typedef kd_u32_t kd_bool_t;
 #define KD_PCHR_C(X)   ((kd_chr_t *)(X))
 
 #if defined KD_ARCH_64BIT_INT
-  #define KD_PI64_C(X) ((kd_i64_t *)(X))
-  #define KD_PU64_C(X) ((kd_u64_t *)(X))
+    #define KD_PI64_C(X) ((kd_i64_t *)(X))
+    #define KD_PU64_C(X) ((kd_u64_t *)(X))
 #endif
 
 #define KD_BASE_INT_C(X)   ((KD_BASE_INT_T)(X))
@@ -233,21 +232,21 @@ typedef kd_u32_t kd_bool_t;
 #define KD_MIN_PTR         KD_LIT_PTR(0)
 
 #if defined KD_ARCH_64BIT_INT
-  #if defined KD_OS_MINGW64 && defined KD_C_STD_89
-    #define KD_MIN_I64 ((KD_LIT_I64(0x80000000) << 31) << 1)
-  #else
-    #define KD_MIN_I64 (-9223372036854775807L - 1)
-  #endif
-  #define KD_MIN_IMAX  KD_MIN_I64
-  #define KD_MIN_U64   KD_LIT_U64(0)
-  #define KD_MIN_UMAX  KD_MIN_U64
-  #define KD_MIN_WORD  KD_MIN_I64
-  #define KD_MIN_USIZE KD_MIN_U64
+    #if defined KD_OS_MINGW64 && defined KD_C_STD_89
+        #define KD_MIN_I64 ((KD_LIT_I64(0x80000000) << 31) << 1)
+    #else
+        #define KD_MIN_I64 (-9223372036854775807L - 1)
+    #endif
+    #define KD_MIN_IMAX  KD_MIN_I64
+    #define KD_MIN_U64   KD_LIT_U64(0)
+    #define KD_MIN_UMAX  KD_MIN_U64
+    #define KD_MIN_WORD  KD_MIN_I64
+    #define KD_MIN_USIZE KD_MIN_U64
 #else
-  #define KD_MIN_IMAX  KD_MIN_I32
-  #define KD_MIN_UMAX  KD_MIN_U32
-  #define KD_MIN_WORD  KD_MIN_I32
-  #define KD_MIN_USIZE KD_MIN_U32
+    #define KD_MIN_IMAX  KD_MIN_I32
+    #define KD_MIN_UMAX  KD_MIN_U32
+    #define KD_MIN_WORD  KD_MIN_I32
+    #define KD_MIN_USIZE KD_MIN_U32
 #endif /* KD_ARCH_64BIT_INT */
 
 
@@ -269,33 +268,33 @@ typedef kd_u32_t kd_bool_t;
 #define KD_MAX_CHR  KD_LIT_CHR(4294967295)
 
 #if defined KD_ARCH_64BIT_INT
-  #if defined KD_OS_MINGW64 && defined KD_C_STD_89
-    #define KD_MAX_I64 (((KD_LIT_I64(0x7FFFFFFF) << 31) << 1) | 0xFFFFFFFF)
-    #define KD_MAX_U64 (((KD_LIT_U64(0xFFFFFFFF) << 31) << 1) | 0xFFFFFFFF)
-  #else
-    #define KD_MAX_I64 9223372036854775807L
-    #define KD_MAX_U64 0xffffffffffffffffUL
-  #endif
-  #define KD_MAX_IMAX  KD_MAX_I64
-  #define KD_MAX_UMAX  KD_MAX_U64
-  #define KD_MAX_WORD  KD_MAX_I64
-  #define KD_MAX_USIZE KD_MAX_U64
+    #if defined KD_OS_MINGW64 && defined KD_C_STD_89
+        #define KD_MAX_I64 (((KD_LIT_I64(0x7FFFFFFF) << 31) << 1) | 0xFFFFFFFF)
+        #define KD_MAX_U64 (((KD_LIT_U64(0xFFFFFFFF) << 31) << 1) | 0xFFFFFFFF)
+    #else
+        #define KD_MAX_I64 9223372036854775807L
+        #define KD_MAX_U64 0xffffffffffffffffUL
+    #endif
+    #define KD_MAX_IMAX  KD_MAX_I64
+    #define KD_MAX_UMAX  KD_MAX_U64
+    #define KD_MAX_WORD  KD_MAX_I64
+    #define KD_MAX_USIZE KD_MAX_U64
 #else
-  #define KD_MAX_IMAX  KD_MAX_I32
-  #define KD_MAX_UMAX  KD_MAX_U32
-  #define KD_MAX_WORD  KD_MAX_I32
-  #define KD_MAX_USIZE KD_MAX_U32
+    #define KD_MAX_IMAX  KD_MAX_I32
+    #define KD_MAX_UMAX  KD_MAX_U32
+    #define KD_MAX_WORD  KD_MAX_I32
+    #define KD_MAX_USIZE KD_MAX_U32
 #endif /* KD_ARCH_64BIT_INT */
 
 #if defined KD_ARCH_64BIT_PTR
-  #if defined KD_ARCH_64BIT_INT
-    #define KD_MAX_PTR ((void *)KD_MAX_U64)
-  #else
-    #define KD_MAX_PTR ((void *)0xFFFFFFFFFFFFFFFF)
-  #endif /* KD_ARCH_64BIT_INT */
+    #if defined KD_ARCH_64BIT_INT
+        #define KD_MAX_PTR ((void *)KD_MAX_U64)
+    #else
+        #define KD_MAX_PTR ((void *)0xFFFFFFFFFFFFFFFF)
+    #endif /* KD_ARCH_64BIT_INT */
 #else
-  #define KD_MAX_PTR ((void *)KD_MAX_U32)
-#endif   /* KD_ARCH_64BIT_PTR */
+    #define KD_MAX_PTR ((void *)KD_MAX_U32)
+#endif     /* KD_ARCH_64BIT_PTR */
 
 
 /**
@@ -322,8 +321,8 @@ typedef kd_u32_t kd_bool_t;
 #define KD_SZ_PTR   sizeof(void *)
 
 #if defined KD_ARCH_64BIT_INT
-  #define KD_SZ_I64 sizeof(kd_i64_t)
-  #define KD_SZ_U64 sizeof(kd_u64_t)
+    #define KD_SZ_I64 sizeof(kd_i64_t)
+    #define KD_SZ_U64 sizeof(kd_u64_t)
 #endif
 
 
@@ -344,47 +343,47 @@ typedef kd_u32_t kd_bool_t;
 #define KD_FMTSP_PTR  "%p"
 
 #if defined KD_ARCH_32BIT_INT
-  #if __SIZEOF_INT__ == 4
+    #if __SIZEOF_INT__ == 4
+        #define KD_FMTSP_I32 "%d"
+        #define KD_FMTSP_U32 "%u"
+    #else
+        #define KD_FMTSP_I32 "%ld"
+        #define KD_FMTSP_U32 "%lu"
+    #endif
+#else
     #define KD_FMTSP_I32 "%d"
     #define KD_FMTSP_U32 "%u"
-  #else
-    #define KD_FMTSP_I32 "%ld"
-    #define KD_FMTSP_U32 "%lu"
-  #endif
-#else
-  #define KD_FMTSP_I32 "%d"
-  #define KD_FMTSP_U32 "%u"
 #endif /* KD_ARCH_32BIT_INT */
 
 #define KD_FMTSP_CHR KD_FMTSP_U32
 
 #if defined KD_ARCH_64BIT_INT
-  #ifdef KD_COMP_MSVC
-    #define KD_FMTSP_I64   "%lld"
-    #define KD_FMTSP_U64   "%llu"
-    #define KD_FMTSP_IMAX  "%lld"
-    #define KD_FMTSP_UMAX  "%llu"
-    #define KD_FMTSP_WORD  "%lld"
-    #define KD_FMTSP_USIZE "%llu"
-  #elif defined KD_OS_MINGW64 && !defined KD_C_STD_89 && (KD_C_STD_NO > 0)
-    #define KD_FMTSP_I64   "%I64d"
-    #define KD_FMTSP_U64   "%I64u"
-    #define KD_FMTSP_IMAX  "%I64d"
-    #define KD_FMTSP_UMAX  "%I64u"
-    #define KD_FMTSP_WORD  "%I64d"
-    #define KD_FMTSP_USIZE "%I64u"
-  #else
-    #define KD_FMTSP_I64   "%ld"
-    #define KD_FMTSP_U64   "%lu"
-    #define KD_FMTSP_IMAX  "%ld"
-    #define KD_FMTSP_UMAX  "%lu"
-    #define KD_FMTSP_WORD  "%ld"
-    #define KD_FMTSP_USIZE "%lu"
-  #endif /* KD_COMP_MSVC */
+    #ifdef KD_COMP_MSVC
+        #define KD_FMTSP_I64   "%lld"
+        #define KD_FMTSP_U64   "%llu"
+        #define KD_FMTSP_IMAX  "%lld"
+        #define KD_FMTSP_UMAX  "%llu"
+        #define KD_FMTSP_WORD  "%lld"
+        #define KD_FMTSP_USIZE "%llu"
+    #elif defined KD_OS_MINGW64 && !defined KD_C_STD_89 && (KD_C_STD_NO > 0)
+        #define KD_FMTSP_I64   "%I64d"
+        #define KD_FMTSP_U64   "%I64u"
+        #define KD_FMTSP_IMAX  "%I64d"
+        #define KD_FMTSP_UMAX  "%I64u"
+        #define KD_FMTSP_WORD  "%I64d"
+        #define KD_FMTSP_USIZE "%I64u"
+    #else
+        #define KD_FMTSP_I64   "%ld"
+        #define KD_FMTSP_U64   "%lu"
+        #define KD_FMTSP_IMAX  "%ld"
+        #define KD_FMTSP_UMAX  "%lu"
+        #define KD_FMTSP_WORD  "%ld"
+        #define KD_FMTSP_USIZE "%lu"
+    #endif /* KD_COMP_MSVC */
 #else
-  #define KD_FMTSP_IMAX  KD_FMTSP_I32
-  #define KD_FMTSP_UMAX  KD_FMTSP_U32
-  #define KD_FMTSP_USIZE KD_FMTSP_U32
+    #define KD_FMTSP_IMAX  KD_FMTSP_I32
+    #define KD_FMTSP_UMAX  KD_FMTSP_U32
+    #define KD_FMTSP_USIZE KD_FMTSP_U32
 #endif /* KD_ARCH_64BIT_INT */
 
 
@@ -405,41 +404,41 @@ typedef kd_u32_t kd_bool_t;
 #define KD_FSBTC_PTR(x)  (void *)(x)
 
 #if defined KD_ARCH_32BIT_INT
-  #if __SIZEOF_INT__ == 4
+    #if __SIZEOF_INT__ == 4
+        #define KD_FSBTC_I32(x) (x)
+        #define KD_FSBTC_U32(x) (unsigned int)(x)
+    #else
+        #define KD_FSBTC_I32(x) (long)(x)
+        #define KD_FSBTC_U32(x) (unsigned long)(x)
+    #endif
+#else
     #define KD_FSBTC_I32(x) (x)
     #define KD_FSBTC_U32(x) (unsigned int)(x)
-  #else
-    #define KD_FSBTC_I32(x) (long)(x)
-    #define KD_FSBTC_U32(x) (unsigned long)(x)
-  #endif
-#else
-  #define KD_FSBTC_I32(x) (x)
-  #define KD_FSBTC_U32(x) (unsigned int)(x)
 #endif /* KD_ARCH_32BIT_INT */
 
 #define KD_FSBTC_CHR(x) KD_FSBTC_U32(x)
 
 #if defined KD_ARCH_64BIT_INT
-  #ifdef KD_COMP_MSVC
-    #define KD_FSBTC_I64(x)   (long long)(x)
-    #define KD_FSBTC_U64(x)   (unsigned long long)(x)
-    #define KD_FSBTC_IMAX(x)  (long long)(x)
-    #define KD_FSBTC_UMAX(x)  (unsigned long long)(x)
-    #define KD_FSBTC_WORD(x)  (long long)(x)
-    #define KD_FSBTC_USIZE(x) (unsigned long long)(x)
-  #else
-    #define KD_FSBTC_I64(x)   (long)(x)
-    #define KD_FSBTC_U64(x)   (unsigned long)(x)
-    #define KD_FSBTC_IMAX(x)  (long)(x)
-    #define KD_FSBTC_UMAX(x)  (unsigned long)(x)
-    #define KD_FSBTC_WORD(x)  (long)(x)
-    #define KD_FSBTC_USIZE(x) (unsigned long)(x)
-  #endif /* KD_COMP_MSVC */
+    #ifdef KD_COMP_MSVC
+        #define KD_FSBTC_I64(x)   (long long)(x)
+        #define KD_FSBTC_U64(x)   (unsigned long long)(x)
+        #define KD_FSBTC_IMAX(x)  (long long)(x)
+        #define KD_FSBTC_UMAX(x)  (unsigned long long)(x)
+        #define KD_FSBTC_WORD(x)  (long long)(x)
+        #define KD_FSBTC_USIZE(x) (unsigned long long)(x)
+    #else
+        #define KD_FSBTC_I64(x)   (long)(x)
+        #define KD_FSBTC_U64(x)   (unsigned long)(x)
+        #define KD_FSBTC_IMAX(x)  (long)(x)
+        #define KD_FSBTC_UMAX(x)  (unsigned long)(x)
+        #define KD_FSBTC_WORD(x)  (long)(x)
+        #define KD_FSBTC_USIZE(x) (unsigned long)(x)
+    #endif /* KD_COMP_MSVC */
 #else
-  #define KD_FSBTC_IMAX(x)  KD_FSBTC_I32(x)
-  #define KD_FSBTC_UMAX(x)  KD_FSBTC_U32(x)
-  #define KD_FSBTC_WORD(x)  KD_FSBTC_I32(x)
-  #define KD_FSBTC_USIZE(x) KD_FSBTC_U32(x)
+    #define KD_FSBTC_IMAX(x)  KD_FSBTC_I32(x)
+    #define KD_FSBTC_UMAX(x)  KD_FSBTC_U32(x)
+    #define KD_FSBTC_WORD(x)  KD_FSBTC_I32(x)
+    #define KD_FSBTC_USIZE(x) KD_FSBTC_U32(x)
 #endif /* KD_ARCH_64BIT_INT */
 
 
@@ -456,10 +455,10 @@ typedef kd_u32_t kd_bool_t;
 #define KD_LAST_IDX (-1)
 
 #if defined KD_RESULT_SUCCESS
-  #undef KD_RESULT_SUCCESS
+    #undef KD_RESULT_SUCCESS
 #endif
 #if defined KD_RESULT_FAILURE
-  #undef KD_RESULT_FAILURE
+    #undef KD_RESULT_FAILURE
 #endif
 
 #define KD_RESULT_SUCCESS kd_false
@@ -473,17 +472,17 @@ typedef kd_u32_t kd_bool_t;
  */
 
 #if defined KD_USE_SIMPLIFIED_TYPES
-  #ifndef KD_CPLUSPLUS
-    #undef true
-    #undef false
-    #define false kd_false
-    #define true  kd_true
+    #ifndef KD_CPLUSPLUS
+        #undef true
+        #undef false
+        #define false kd_false
+        #define true  kd_true
 typedef kd_bool_t bool;
-  #endif
-  #undef KD_FSBTC_BOOL
-  #undef null
-  #define KD_FSBTC_BOOL(x) ((x) ? "true" : "false")
-  #define null             kd_null
+    #endif
+    #undef KD_FSBTC_BOOL
+    #undef null
+    #define KD_FSBTC_BOOL(x) ((x) ? "true" : "false")
+    #define null             kd_null
 typedef kd_i8_t    i8;
 typedef kd_i16_t   i16;
 typedef kd_i32_t   i32;
@@ -498,11 +497,11 @@ typedef kd_word_t  word;
 typedef kd_usize_t usize;
 typedef kd_byte_t  byte;
 typedef kd_chr_t   chr;
-  #if defined KD_ARCH_64BIT_INT
+    #if defined KD_ARCH_64BIT_INT
 typedef kd_i64_t i64;
 typedef kd_u64_t u64;
-  #endif /* KD_ARCH_64BIT_INT */
-#endif   /* KD_USE_SIMPLIFIED_TYPES */
+    #endif /* KD_ARCH_64BIT_INT */
+#endif     /* KD_USE_SIMPLIFIED_TYPES */
 
 
 KD_EXTERN_END
