@@ -139,6 +139,7 @@ SET "PLATFORM_OBJECTS="
 SET "PLATFORM_OBJECTS=!PLATFORM_OBJECTS! kd_mem"
 
 SET "OBJECTS="
+SET "OBJECTS=!OBJECTS! kd_mem_algn"
 
 SET "OUTPUT_OBJECTS="
 
@@ -198,17 +199,23 @@ IF "!SHARED_LIBS!"=="1" (
 
 IF "!BUILD_TESTS!"=="1" (
 	SET "TESTS="
-	rem SET "TESTS=!TESTS! platform_bool_macros"
-	rem SET "TESTS=!TESTS! platform_cstr_macros"
+	SET "TESTS=!TESTS! platform_bool_macros"
+	SET "TESTS=!TESTS! platform_cstr_macros"
 	SET "TESTS=!TESTS! kdMemAlloc"
 	SET "TESTS=!TESTS! kdMemFree"
 	SET "TESTS=!TESTS! kdMemRealloc"
+	SET "TESTS=!TESTS! kdMemAlgnGetAllocSize"
+	SET "TESTS=!TESTS! kdMemAlgnGetForwardPtr"
+	SET "TESTS=!TESTS! kdMemAlgnGetBackwardPtr"
+	SET "TESTS=!TESTS! kdMemAlgnGetOffsetPtr"
+	SET "TESTS=!TESTS! kdMemAlgnGetHeadPtr"
 
 	FOR %%T IN (!TESTS!) DO (
 	    SET "TARGET_NAME=%%T"
 	    ECHO [BUILD] Compiling test file: !TESTS_DIR!\!TARGET_NAME!.c
 
-	    CL !COMMON_EXE_FLAGS! "!TESTS_DIR!\!TARGET_NAME!.c" "!BUILD_DIR!\!LIB_NAME!.lib" /Fe:"!BUILD_DIR!\!TESTS_DIR!\!TARGET_NAME!.exe"
+	    CL !COMMON_FLAGS! /c "!TESTS_DIR!\!TARGET_NAME!.c"
+	    CL !COMMON_EXE_FLAGS! "!BUILD_DIR!\!TARGET_NAME!.obj" "!BUILD_DIR!\!LIB_NAME!.lib" /Fe:"!BUILD_DIR!\!TESTS_DIR!\!TARGET_NAME!.exe"
 
 	    IF !ERRORLEVEl! NEQ 0 (
 	        ECHO [ERROR] Failed to compile: !TARGET_NAME!
@@ -273,7 +280,8 @@ IF "!BUILD_EXAMPLES!"=="1" (
 	    SET "TARGET_NAME=%%T"
 	    ECHO [BUILD] Compiling example file: !EXAMPLES_DIR!\!TARGET_NAME!.c
 
-	    CL !COMMON_EXE_FLAGS! "!EXAMPLES_DIR!\!TARGET_NAME!.c" "!BUILD_DIR!\!LIB_NAME!.lib" /Fe:"!BUILD_DIR!\!EXAMPLES_DIR!\!TARGET_NAME!.exe"
+	    CL !COMMON_EXE_FLAGS! /c "!EXAMPLES_DIR!\!TARGET_NAME!.c"
+	    CL !COMMON_EXE_FLAGS! "!BUILD_DIR!\!TARGET_NAME!.obj" "!BUILD_DIR!\!LIB_NAME!.lib" /Fe:"!BUILD_DIR!\!EXAMPLES_DIR!\!TARGET_NAME!.exe"
 
 	    IF !ERRORLEVEl! NEQ 0 (
 	        ECHO [ERROR] Failed to compile: !TARGET_NAME!
