@@ -134,14 +134,22 @@ IF "!BUILD_EXAMPLES!"=="1" (
 
 @REM ========== Objects ==========
 
+SET "INTERNAL_OBJECTS="
+SET "INTERNAL_OBJECTS=!INTERNAL_OBJECTS! kdi_gen_mem_ops"
+
 @REM Any source file that uses Windows headers
 SET "PLATFORM_OBJECTS="
 SET "PLATFORM_OBJECTS=!PLATFORM_OBJECTS! kd_mem"
 
 SET "OBJECTS="
 SET "OBJECTS=!OBJECTS! kd_mem_algn"
+SET "OBJECTS=!OBJECTS! kd_gen_mem_ops"
 
 SET "OUTPUT_OBJECTS="
+
+FOR %%O IN (%INTERNAL_OBJECTS%) DO (
+    SET "OUTPUT_OBJECTS=!OUTPUT_OBJECTS! %BUILD_DIR%\%%O.obj"
+)
 
 FOR %%P IN (%PLATFORM_OBJECTS%) DO (
     SET "OUTPUT_OBJECTS=!OUTPUT_OBJECTS! %BUILD_DIR%\%%P.obj"
@@ -155,9 +163,23 @@ IF "!SHARED_LIBS!"=="1" (
 	ECHO [INFO] SHARED LIBS is not implemented
 ) ELSE (
 	IF "!STATIC_LIBS!"=="1" (
+		FOR %%O IN (!INTERNAL_OBJECTS!) DO (
+		    SET "OBJECT_NAME=%%O"
+		    ECHO [BUILD] Compiling internal object file: !SRC_DIR!\internal\!OBJECT_NAME!.c
+
+		    CL !COMMON_FLAGS! /c "!SRC_DIR!\internal\!OBJECT_NAME!.c"
+
+		    IF !ERRORLEVEl! NEQ 0 (
+		        ECHO [ERROR] Failed to compile: !OBJECT_NAME!
+		        EXIT /B 1
+		    )
+
+		    ECHO [BUILD] Compilation output: !OBJECT_NAME!.obj
+		)
+
 		FOR %%O IN (!PLATFORM_OBJECTS!) DO (
 		    SET "OBJECT_NAME=%%O"
-		    ECHO [BUILD] Compiling object file: !SRC_DIR!\!OBJECT_NAME!.c
+		    ECHO [BUILD] Compiling platform object file: !SRC_DIR!\!OBJECT_NAME!.c
 
 		    CL !COMMON_PLATFORM_FLAGS! /Zc:strictStrings- /c "!SRC_DIR!\!OBJECT_NAME!.c"
 
@@ -201,14 +223,60 @@ IF "!BUILD_TESTS!"=="1" (
 	SET "TESTS="
 	SET "TESTS=!TESTS! platform_bool_macros"
 	SET "TESTS=!TESTS! platform_cstr_macros"
+
 	SET "TESTS=!TESTS! kdMemAlloc"
 	SET "TESTS=!TESTS! kdMemFree"
 	SET "TESTS=!TESTS! kdMemRealloc"
+
 	SET "TESTS=!TESTS! kdMemAlgnGetAllocSize"
 	SET "TESTS=!TESTS! kdMemAlgnGetForwardPtr"
 	SET "TESTS=!TESTS! kdMemAlgnGetBackwardPtr"
 	SET "TESTS=!TESTS! kdMemAlgnGetOffsetPtr"
 	SET "TESTS=!TESTS! kdMemAlgnGetHeadPtr"
+
+	SET "TESTS=!TESTS! kdGenMemOpsSwapBytes"
+	SET "TESTS=!TESTS! kdGenMemOpsSwapBlocks"
+	SET "TESTS=!TESTS! kdGenMemOpsReverseBytes"
+	SET "TESTS=!TESTS! kdGenMemOpsReverseBlocks"
+	SET "TESTS=!TESTS! kdGenMemOpsSetBytes"
+	SET "TESTS=!TESTS! kdGenMemOpsSetBlocks"
+	SET "TESTS=!TESTS! kdGenMemOpsCpy"
+	SET "TESTS=!TESTS! kdGenMemOpsMove"
+
+	SET "TESTS=!TESTS! kdGenMemOpsFindByte"
+	SET "TESTS=!TESTS! kdGenMemOpsFindByteIndex"
+	SET "TESTS=!TESTS! kdGenMemOpsFindLastByte"
+	SET "TESTS=!TESTS! kdGenMemOpsFindLastByteIndex"
+	SET "TESTS=!TESTS! kdGenMemOpsFindAllBytes"
+
+	SET "TESTS=!TESTS! kdGenMemOpsFindAllByteIndices"
+	SET "TESTS=!TESTS! kdGenMemOpsFindAllByteIndicesU8"
+	SET "TESTS=!TESTS! kdGenMemOpsFindAllByteIndicesU16"
+	SET "TESTS=!TESTS! kdGenMemOpsFindAllByteIndicesU32"
+	SET "TESTS=!TESTS! kdGenMemOpsFindAllByteIndicesU64"
+
+	SET "TESTS=!TESTS! kdGenMemOpsFindBlock"
+	SET "TESTS=!TESTS! kdGenMemOpsFindBlockIndex"
+	SET "TESTS=!TESTS! kdGenMemOpsFindLastBlock"
+	SET "TESTS=!TESTS! kdGenMemOpsFindLastBlockIndex"
+	SET "TESTS=!TESTS! kdGenMemOpsFindAllBlocks"
+
+	SET "TESTS=!TESTS! kdGenMemOpsFindAllBlockIndices"
+	SET "TESTS=!TESTS! kdGenMemOpsFindAllBlockIndicesU8"
+	SET "TESTS=!TESTS! kdGenMemOpsFindAllBlockIndicesU16"
+	SET "TESTS=!TESTS! kdGenMemOpsFindAllBlockIndicesU32"
+	SET "TESTS=!TESTS! kdGenMemOpsFindAllBlockIndicesU64"
+
+	SET "TESTS=!TESTS! kdGenMemOpsCmp"
+	SET "TESTS=!TESTS! kdGenMemOpsCat"
+
+	SET "TESTS=!TESTS! kdGenMemOpsBytesCompSpn"
+	SET "TESTS=!TESTS! kdGenMemOpsBytesCompSpnIndex"
+	SET "TESTS=!TESTS! kdGenMemOpsBlocksCompSpn"
+	SET "TESTS=!TESTS! kdGenMemOpsBlocksCompSpnIndex"
+
+	SET "TESTS=!TESTS! kdGenMemOpsBytesSpn"
+	SET "TESTS=!TESTS! kdGenMemOpsBlocksSpn"
 
 	FOR %%T IN (!TESTS!) DO (
 	    SET "TARGET_NAME=%%T"
@@ -262,7 +330,7 @@ IF "!BUILD_TESTS!"=="1" (
 		    SET /A PASSED+=1
 		)
 
-		ECHO [TEST] Passed: !PASSED!/!TOTAL_TESTS! tests.
+		ECHO [TEST] Passed: !PASSED!/!TOTAL_TESTS! test(s^).
 	)
 )
 
