@@ -8,7 +8,8 @@
 
 
 #include <stdio.h>
-#include "kd.h"
+
+#include "../include/kd.h"
 
 
 int

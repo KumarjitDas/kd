@@ -13,8 +13,8 @@
 #define KD_FLOATING_POINT_H_
 
 
-#include "kd_version.h"
-#include "kd_platform.h"
+#include "./version.h"
+#include "./platform.h"
 
 
 KD_EXTERN_BEGIN
@@ -121,10 +121,8 @@ typedef double kd_f64_t;
  * ---------------------------------------------------------------------------------------------------------------------
  */
 
-#if defined KD_USE_SIMPLIFIED_TYPES
-typedef kd_f32_t f32;
-typedef kd_f64_t f64;
-#endif /* KD_USE_SIMPLIFIED_TYPES */
+#define f32 kd_f32_t
+#define f64 kd_f64_t
 
 
 KD_EXTERN_END

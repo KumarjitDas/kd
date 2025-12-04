@@ -10,8 +10,7 @@
 #include <stdio.h>
 #include <assert.h>
 
-#include "kd.h"
-#include "kd_mem.h"
+#include "../include/kd/mem.h"
 
 
 #define LIB_NAME_CSTR   "KD_MEM"
@@ -22,31 +21,31 @@
 void
 BasicArguments(void)
 {
-    kd_u8_t *dst, *src;
+    u8 *dst, *src;
 
     printf(LOG_PREFIX_CSTR "BasicArguments -> ");
 
-    assert(kdMemRealloc(kd_null, 0, kd_null, 0) == KD_RESULT_FAILURE);
-    assert(kdMemRealloc(kd_null, 0, kd_null, 42) == KD_RESULT_FAILURE);
-    assert(kdMemRealloc(kd_null, 0, &src, 0) == KD_RESULT_FAILURE);
-    assert(kdMemRealloc(kd_null, 0, &src, 42) == KD_RESULT_FAILURE);
-    assert(kdMemRealloc(kd_null, 69, kd_null, 0) == KD_RESULT_FAILURE);
-    assert(kdMemRealloc(kd_null, 69, kd_null, 42) == KD_RESULT_FAILURE);
-    assert(kdMemRealloc(kd_null, 69, &src, 0) == KD_RESULT_FAILURE);
-    assert(kdMemRealloc(kd_null, 69, &src, 42) == KD_RESULT_FAILURE);
-    assert(kdMemRealloc(&dst, 0, kd_null, 0) == KD_RESULT_FAILURE);
-    assert(kdMemRealloc(&dst, 0, kd_null, 42) == KD_RESULT_FAILURE);
-    assert(kdMemRealloc(&dst, 0, &src, 0) == KD_RESULT_FAILURE);
+    assert(MemRealloc(null, 0, null, 0) == KD_RESULT_FAILURE);
+    assert(MemRealloc(null, 0, null, 42) == KD_RESULT_FAILURE);
+    assert(MemRealloc(null, 0, &src, 0) == KD_RESULT_FAILURE);
+    assert(MemRealloc(null, 0, &src, 42) == KD_RESULT_FAILURE);
+    assert(MemRealloc(null, 69, null, 0) == KD_RESULT_FAILURE);
+    assert(MemRealloc(null, 69, null, 42) == KD_RESULT_FAILURE);
+    assert(MemRealloc(null, 69, &src, 0) == KD_RESULT_FAILURE);
+    assert(MemRealloc(null, 69, &src, 42) == KD_RESULT_FAILURE);
+    assert(MemRealloc(&dst, 0, null, 0) == KD_RESULT_FAILURE);
+    assert(MemRealloc(&dst, 0, null, 42) == KD_RESULT_FAILURE);
+    assert(MemRealloc(&dst, 0, &src, 0) == KD_RESULT_FAILURE);
 
     kdMemAlloc(&src, 42);
-    assert(kdMemRealloc(&dst, 0, &src, 42) == KD_RESULT_SUCCESS);
-    assert(dst == kd_null);
-    assert(src == kd_null);
+    assert(MemRealloc(&dst, 0, &src, 42) == KD_RESULT_SUCCESS);
+    assert(dst == null);
+    assert(src == null);
 
     kdMemAlloc(&src, 42);
-    assert(kdMemRealloc(&dst, 69, &src, 42) == KD_RESULT_SUCCESS);
-    assert(dst != kd_null);
-    assert(src == kd_null);
+    assert(MemRealloc(&dst, 69, &src, 42) == KD_RESULT_SUCCESS);
+    assert(dst != null);
+    assert(src == null);
     kdMemFree(&dst, 69);
 
     printf("PASSED\n");
@@ -56,38 +55,38 @@ BasicArguments(void)
 void
 BasicReallocationBytes(void)
 {
-    kd_u8_t *dst, *src;
+    u8 *dst, *src;
 
     printf(LOG_PREFIX_CSTR "BasicReallocationBytes -> ");
 
     kdMemAlloc(&src, 1);
-    assert(kdMemRealloc(&dst, 64, &src, 1) == KD_RESULT_SUCCESS);
-    assert(src == kd_null);
-    assert(dst != kd_null);
+    assert(MemRealloc(&dst, 64, &src, 1) == KD_RESULT_SUCCESS);
+    assert(src == null);
+    assert(dst != null);
     kdMemFree(&dst, 64);
 
     kdMemAlloc(&src, 64);
-    assert(kdMemRealloc(&dst, 128, &src, 64) == KD_RESULT_SUCCESS);
-    assert(src == kd_null);
-    assert(dst != kd_null);
+    assert(MemRealloc(&dst, 128, &src, 64) == KD_RESULT_SUCCESS);
+    assert(src == null);
+    assert(dst != null);
     kdMemFree(&dst, 128);
 
     kdMemAlloc(&src, 128);
-    assert(kdMemRealloc(&dst, 256, &src, 128) == KD_RESULT_SUCCESS);
-    assert(src == kd_null);
-    assert(dst != kd_null);
+    assert(MemRealloc(&dst, 256, &src, 128) == KD_RESULT_SUCCESS);
+    assert(src == null);
+    assert(dst != null);
     kdMemFree(&dst, 256);
 
     kdMemAlloc(&src, 256);
-    assert(kdMemRealloc(&dst, 512, &src, 256) == KD_RESULT_SUCCESS);
-    assert(src == kd_null);
-    assert(dst != kd_null);
+    assert(MemRealloc(&dst, 512, &src, 256) == KD_RESULT_SUCCESS);
+    assert(src == null);
+    assert(dst != null);
     kdMemFree(&dst, 512);
 
     kdMemAlloc(&src, 512);
-    assert(kdMemRealloc(&dst, 1024, &src, 512) == KD_RESULT_SUCCESS);
-    assert(src == kd_null);
-    assert(dst != kd_null);
+    assert(MemRealloc(&dst, 1024, &src, 512) == KD_RESULT_SUCCESS);
+    assert(src == null);
+    assert(dst != null);
     kdMemFree(&dst, 1024);
 
     printf("PASSED\n");
@@ -97,38 +96,38 @@ BasicReallocationBytes(void)
 void
 BasicReallocationKiloBytes(void)
 {
-    kd_u8_t *dst, *src;
+    u8 *dst, *src;
 
     printf(LOG_PREFIX_CSTR "BasicReallocationKiloBytes -> ");
 
     kdMemAlloc(&src, 1024 * 1);
-    assert(kdMemRealloc(&dst, 1024 * 64, &src, 1024 * 1) == KD_RESULT_SUCCESS);
-    assert(src == kd_null);
-    assert(dst != kd_null);
+    assert(MemRealloc(&dst, 1024 * 64, &src, 1024 * 1) == KD_RESULT_SUCCESS);
+    assert(src == null);
+    assert(dst != null);
     kdMemFree(&dst, 1024 * 64);
 
     kdMemAlloc(&src, 1024 * 64);
-    assert(kdMemRealloc(&dst, 1024 * 128, &src, 1024 * 64) == KD_RESULT_SUCCESS);
-    assert(src == kd_null);
-    assert(dst != kd_null);
+    assert(MemRealloc(&dst, 1024 * 128, &src, 1024 * 64) == KD_RESULT_SUCCESS);
+    assert(src == null);
+    assert(dst != null);
     kdMemFree(&dst, 1024 * 128);
 
     kdMemAlloc(&src, 1024 * 128);
-    assert(kdMemRealloc(&dst, 1024 * 256, &src, 1024 * 128) == KD_RESULT_SUCCESS);
-    assert(src == kd_null);
-    assert(dst != kd_null);
+    assert(MemRealloc(&dst, 1024 * 256, &src, 1024 * 128) == KD_RESULT_SUCCESS);
+    assert(src == null);
+    assert(dst != null);
     kdMemFree(&dst, 1024 * 256);
 
     kdMemAlloc(&src, 1024 * 256);
-    assert(kdMemRealloc(&dst, 1024 * 512, &src, 1024 * 256) == KD_RESULT_SUCCESS);
-    assert(src == kd_null);
-    assert(dst != kd_null);
+    assert(MemRealloc(&dst, 1024 * 512, &src, 1024 * 256) == KD_RESULT_SUCCESS);
+    assert(src == null);
+    assert(dst != null);
     kdMemFree(&dst, 1024 * 512);
 
     kdMemAlloc(&src, 1024 * 512);
-    assert(kdMemRealloc(&dst, 1024 * 1024, &src, 1024 * 512) == KD_RESULT_SUCCESS);
-    assert(src == kd_null);
-    assert(dst != kd_null);
+    assert(MemRealloc(&dst, 1024 * 1024, &src, 1024 * 512) == KD_RESULT_SUCCESS);
+    assert(src == null);
+    assert(dst != null);
     kdMemFree(&dst, 1024 * 1024);
 
     printf("PASSED\n");
@@ -138,38 +137,38 @@ BasicReallocationKiloBytes(void)
 void
 BasicReallocationMegaBytes(void)
 {
-    kd_u8_t *dst, *src;
+    u8 *dst, *src;
 
     printf(LOG_PREFIX_CSTR "BasicReallocationMegaBytes -> ");
 
     kdMemAlloc(&src, 1024 * 1024 * 1);
-    assert(kdMemRealloc(&dst, 1024 * 1024 * 64, &src, 1024 * 1024 * 1) == KD_RESULT_SUCCESS);
-    assert(src == kd_null);
-    assert(dst != kd_null);
+    assert(MemRealloc(&dst, 1024 * 1024 * 64, &src, 1024 * 1024 * 1) == KD_RESULT_SUCCESS);
+    assert(src == null);
+    assert(dst != null);
     kdMemFree(&dst, 1024 * 1024 * 64);
 
     kdMemAlloc(&src, 1024 * 1024 * 64);
-    assert(kdMemRealloc(&dst, 1024 * 1024 * 128, &src, 1024 * 1024 * 64) == KD_RESULT_SUCCESS);
-    assert(src == kd_null);
-    assert(dst != kd_null);
+    assert(MemRealloc(&dst, 1024 * 1024 * 128, &src, 1024 * 1024 * 64) == KD_RESULT_SUCCESS);
+    assert(src == null);
+    assert(dst != null);
     kdMemFree(&dst, 1024 * 1024 * 128);
 
     kdMemAlloc(&src, 1024 * 1024 * 128);
-    assert(kdMemRealloc(&dst, 1024 * 1024 * 256, &src, 1024 * 1024 * 128) == KD_RESULT_SUCCESS);
-    assert(src == kd_null);
-    assert(dst != kd_null);
+    assert(MemRealloc(&dst, 1024 * 1024 * 256, &src, 1024 * 1024 * 128) == KD_RESULT_SUCCESS);
+    assert(src == null);
+    assert(dst != null);
     kdMemFree(&dst, 1024 * 1024 * 256);
 
     kdMemAlloc(&src, 1024 * 1024 * 256);
-    assert(kdMemRealloc(&dst, 1024 * 1024 * 512, &src, 1024 * 1024 * 256) == KD_RESULT_SUCCESS);
-    assert(src == kd_null);
-    assert(dst != kd_null);
+    assert(MemRealloc(&dst, 1024 * 1024 * 512, &src, 1024 * 1024 * 256) == KD_RESULT_SUCCESS);
+    assert(src == null);
+    assert(dst != null);
     kdMemFree(&dst, 1024 * 1024 * 512);
 
     kdMemAlloc(&src, 1024 * 1024 * 512);
-    assert(kdMemRealloc(&dst, 1024 * 1024 * 1024, &src, 1024 * 1024 * 512) == KD_RESULT_SUCCESS);
-    assert(src == kd_null);
-    assert(dst != kd_null);
+    assert(MemRealloc(&dst, 1024 * 1024 * 1024, &src, 1024 * 1024 * 512) == KD_RESULT_SUCCESS);
+    assert(src == null);
+    assert(dst != null);
     kdMemFree(&dst, 1024 * 1024 * 1024);
 
     printf("PASSED\n");
@@ -179,8 +178,8 @@ BasicReallocationMegaBytes(void)
 void
 BasicMultipleSequentialReallocationsBytes(void)
 {
-    kd_u8_t *dst1, *dst2, *dst3, *dst4, *dst5, *dst6, *dst7, *dst8, *dst9, *dst10, *dst11;
-    kd_u8_t *ptr1, *ptr2, *ptr3, *ptr4, *ptr5, *ptr6, *ptr7, *ptr8, *ptr9, *ptr10, *ptr11;
+    u8 *dst1, *dst2, *dst3, *dst4, *dst5, *dst6, *dst7, *dst8, *dst9, *dst10, *dst11;
+    u8 *ptr1, *ptr2, *ptr3, *ptr4, *ptr5, *ptr6, *ptr7, *ptr8, *ptr9, *ptr10, *ptr11;
 
     printf(LOG_PREFIX_CSTR "BasicMultipleSequentialReallocationsBytes -> ");
 
@@ -196,41 +195,41 @@ BasicMultipleSequentialReallocationsBytes(void)
     kdMemAlloc(&ptr10, 64);
     kdMemAlloc(&ptr11, 1);
 
-    assert(kdMemRealloc(&dst1, 2 * 1, &ptr1, 1) == KD_RESULT_SUCCESS);
-    assert(kdMemRealloc(&dst2, 2 * 64, &ptr2, 64) == KD_RESULT_SUCCESS);
-    assert(kdMemRealloc(&dst3, 2 * 128, &ptr3, 128) == KD_RESULT_SUCCESS);
-    assert(kdMemRealloc(&dst4, 2 * 256, &ptr4, 256) == KD_RESULT_SUCCESS);
-    assert(kdMemRealloc(&dst5, 2 * 32, &ptr5, 32) == KD_RESULT_SUCCESS);
-    assert(kdMemRealloc(&dst6, 2 * 512, &ptr6, 512) == KD_RESULT_SUCCESS);
-    assert(kdMemRealloc(&dst7, 2 * 32, &ptr7, 32) == KD_RESULT_SUCCESS);
-    assert(kdMemRealloc(&dst8, 2 * 256, &ptr8, 256) == KD_RESULT_SUCCESS);
-    assert(kdMemRealloc(&dst9, 2 * 128, &ptr9, 128) == KD_RESULT_SUCCESS);
-    assert(kdMemRealloc(&dst10, 2 * 64, &ptr10, 64) == KD_RESULT_SUCCESS);
-    assert(kdMemRealloc(&dst11, 2 * 1, &ptr11, 1) == KD_RESULT_SUCCESS);
+    assert(MemRealloc(&dst1, 2 * 1, &ptr1, 1) == KD_RESULT_SUCCESS);
+    assert(MemRealloc(&dst2, 2 * 64, &ptr2, 64) == KD_RESULT_SUCCESS);
+    assert(MemRealloc(&dst3, 2 * 128, &ptr3, 128) == KD_RESULT_SUCCESS);
+    assert(MemRealloc(&dst4, 2 * 256, &ptr4, 256) == KD_RESULT_SUCCESS);
+    assert(MemRealloc(&dst5, 2 * 32, &ptr5, 32) == KD_RESULT_SUCCESS);
+    assert(MemRealloc(&dst6, 2 * 512, &ptr6, 512) == KD_RESULT_SUCCESS);
+    assert(MemRealloc(&dst7, 2 * 32, &ptr7, 32) == KD_RESULT_SUCCESS);
+    assert(MemRealloc(&dst8, 2 * 256, &ptr8, 256) == KD_RESULT_SUCCESS);
+    assert(MemRealloc(&dst9, 2 * 128, &ptr9, 128) == KD_RESULT_SUCCESS);
+    assert(MemRealloc(&dst10, 2 * 64, &ptr10, 64) == KD_RESULT_SUCCESS);
+    assert(MemRealloc(&dst11, 2 * 1, &ptr11, 1) == KD_RESULT_SUCCESS);
 
-    assert(dst1 != kd_null);
-    assert(dst2 != kd_null);
-    assert(dst3 != kd_null);
-    assert(dst4 != kd_null);
-    assert(dst5 != kd_null);
-    assert(dst6 != kd_null);
-    assert(dst7 != kd_null);
-    assert(dst8 != kd_null);
-    assert(dst9 != kd_null);
-    assert(dst10 != kd_null);
-    assert(dst11 != kd_null);
+    assert(dst1 != null);
+    assert(dst2 != null);
+    assert(dst3 != null);
+    assert(dst4 != null);
+    assert(dst5 != null);
+    assert(dst6 != null);
+    assert(dst7 != null);
+    assert(dst8 != null);
+    assert(dst9 != null);
+    assert(dst10 != null);
+    assert(dst11 != null);
 
-    assert(ptr1 == kd_null);
-    assert(ptr2 == kd_null);
-    assert(ptr3 == kd_null);
-    assert(ptr4 == kd_null);
-    assert(ptr5 == kd_null);
-    assert(ptr6 == kd_null);
-    assert(ptr7 == kd_null);
-    assert(ptr8 == kd_null);
-    assert(ptr9 == kd_null);
-    assert(ptr10 == kd_null);
-    assert(ptr11 == kd_null);
+    assert(ptr1 == null);
+    assert(ptr2 == null);
+    assert(ptr3 == null);
+    assert(ptr4 == null);
+    assert(ptr5 == null);
+    assert(ptr6 == null);
+    assert(ptr7 == null);
+    assert(ptr8 == null);
+    assert(ptr9 == null);
+    assert(ptr10 == null);
+    assert(ptr11 == null);
 
     kdMemFree(&dst1, 2 * 1);
     kdMemFree(&dst2, 2 * 64);
@@ -251,8 +250,8 @@ BasicMultipleSequentialReallocationsBytes(void)
 void
 BasicMultipleSequentialReallocationsKiloBytes(void)
 {
-    kd_u8_t *dst1, *dst2, *dst3, *dst4, *dst5, *dst6, *dst7, *dst8, *dst9, *dst10, *dst11;
-    kd_u8_t *ptr1, *ptr2, *ptr3, *ptr4, *ptr5, *ptr6, *ptr7, *ptr8, *ptr9, *ptr10, *ptr11;
+    u8 *dst1, *dst2, *dst3, *dst4, *dst5, *dst6, *dst7, *dst8, *dst9, *dst10, *dst11;
+    u8 *ptr1, *ptr2, *ptr3, *ptr4, *ptr5, *ptr6, *ptr7, *ptr8, *ptr9, *ptr10, *ptr11;
 
     printf(LOG_PREFIX_CSTR "BasicMultipleSequentialReallocationsKiloBytes -> ");
 
@@ -268,41 +267,41 @@ BasicMultipleSequentialReallocationsKiloBytes(void)
     kdMemAlloc(&ptr10, 64);
     kdMemAlloc(&ptr11, 1);
 
-    assert(kdMemRealloc(&dst1, 1024 * 1, &ptr1, 1) == KD_RESULT_SUCCESS);
-    assert(kdMemRealloc(&dst2, 1024 * 64, &ptr2, 64) == KD_RESULT_SUCCESS);
-    assert(kdMemRealloc(&dst3, 1024 * 128, &ptr3, 128) == KD_RESULT_SUCCESS);
-    assert(kdMemRealloc(&dst4, 1024 * 256, &ptr4, 256) == KD_RESULT_SUCCESS);
-    assert(kdMemRealloc(&dst5, 1024 * 32, &ptr5, 32) == KD_RESULT_SUCCESS);
-    assert(kdMemRealloc(&dst6, 1024 * 512, &ptr6, 512) == KD_RESULT_SUCCESS);
-    assert(kdMemRealloc(&dst7, 1024 * 32, &ptr7, 32) == KD_RESULT_SUCCESS);
-    assert(kdMemRealloc(&dst8, 1024 * 256, &ptr8, 256) == KD_RESULT_SUCCESS);
-    assert(kdMemRealloc(&dst9, 1024 * 128, &ptr9, 128) == KD_RESULT_SUCCESS);
-    assert(kdMemRealloc(&dst10, 1024 * 64, &ptr10, 64) == KD_RESULT_SUCCESS);
-    assert(kdMemRealloc(&dst11, 1024 * 1, &ptr11, 1) == KD_RESULT_SUCCESS);
+    assert(MemRealloc(&dst1, 1024 * 1, &ptr1, 1) == KD_RESULT_SUCCESS);
+    assert(MemRealloc(&dst2, 1024 * 64, &ptr2, 64) == KD_RESULT_SUCCESS);
+    assert(MemRealloc(&dst3, 1024 * 128, &ptr3, 128) == KD_RESULT_SUCCESS);
+    assert(MemRealloc(&dst4, 1024 * 256, &ptr4, 256) == KD_RESULT_SUCCESS);
+    assert(MemRealloc(&dst5, 1024 * 32, &ptr5, 32) == KD_RESULT_SUCCESS);
+    assert(MemRealloc(&dst6, 1024 * 512, &ptr6, 512) == KD_RESULT_SUCCESS);
+    assert(MemRealloc(&dst7, 1024 * 32, &ptr7, 32) == KD_RESULT_SUCCESS);
+    assert(MemRealloc(&dst8, 1024 * 256, &ptr8, 256) == KD_RESULT_SUCCESS);
+    assert(MemRealloc(&dst9, 1024 * 128, &ptr9, 128) == KD_RESULT_SUCCESS);
+    assert(MemRealloc(&dst10, 1024 * 64, &ptr10, 64) == KD_RESULT_SUCCESS);
+    assert(MemRealloc(&dst11, 1024 * 1, &ptr11, 1) == KD_RESULT_SUCCESS);
 
-    assert(dst1 != kd_null);
-    assert(dst2 != kd_null);
-    assert(dst3 != kd_null);
-    assert(dst4 != kd_null);
-    assert(dst5 != kd_null);
-    assert(dst6 != kd_null);
-    assert(dst7 != kd_null);
-    assert(dst8 != kd_null);
-    assert(dst9 != kd_null);
-    assert(dst10 != kd_null);
-    assert(dst11 != kd_null);
+    assert(dst1 != null);
+    assert(dst2 != null);
+    assert(dst3 != null);
+    assert(dst4 != null);
+    assert(dst5 != null);
+    assert(dst6 != null);
+    assert(dst7 != null);
+    assert(dst8 != null);
+    assert(dst9 != null);
+    assert(dst10 != null);
+    assert(dst11 != null);
 
-    assert(ptr1 == kd_null);
-    assert(ptr2 == kd_null);
-    assert(ptr3 == kd_null);
-    assert(ptr4 == kd_null);
-    assert(ptr5 == kd_null);
-    assert(ptr6 == kd_null);
-    assert(ptr7 == kd_null);
-    assert(ptr8 == kd_null);
-    assert(ptr9 == kd_null);
-    assert(ptr10 == kd_null);
-    assert(ptr11 == kd_null);
+    assert(ptr1 == null);
+    assert(ptr2 == null);
+    assert(ptr3 == null);
+    assert(ptr4 == null);
+    assert(ptr5 == null);
+    assert(ptr6 == null);
+    assert(ptr7 == null);
+    assert(ptr8 == null);
+    assert(ptr9 == null);
+    assert(ptr10 == null);
+    assert(ptr11 == null);
 
     kdMemFree(&dst1, 1024 * 1);
     kdMemFree(&dst2, 1024 * 64);
@@ -323,8 +322,8 @@ BasicMultipleSequentialReallocationsKiloBytes(void)
 void
 BasicMultipleSequentialReallocationsMegaBytes(void)
 {
-    kd_u8_t *dst1, *dst2, *dst3, *dst4, *dst5, *dst6, *dst7, *dst8, *dst9, *dst10, *dst11;
-    kd_u8_t *ptr1, *ptr2, *ptr3, *ptr4, *ptr5, *ptr6, *ptr7, *ptr8, *ptr9, *ptr10, *ptr11;
+    u8 *dst1, *dst2, *dst3, *dst4, *dst5, *dst6, *dst7, *dst8, *dst9, *dst10, *dst11;
+    u8 *ptr1, *ptr2, *ptr3, *ptr4, *ptr5, *ptr6, *ptr7, *ptr8, *ptr9, *ptr10, *ptr11;
 
     printf(LOG_PREFIX_CSTR "BasicMultipleSequentialReallocationsMegaBytes -> ");
 
@@ -340,41 +339,41 @@ BasicMultipleSequentialReallocationsMegaBytes(void)
     kdMemAlloc(&ptr10, 64);
     kdMemAlloc(&ptr11, 1);
 
-    assert(kdMemRealloc(&dst1, 1024 * 1024 * 1, &ptr1, 1) == KD_RESULT_SUCCESS);
-    assert(kdMemRealloc(&dst2, 1024 * 1024 * 64, &ptr2, 64) == KD_RESULT_SUCCESS);
-    assert(kdMemRealloc(&dst3, 1024 * 1024 * 128, &ptr3, 128) == KD_RESULT_SUCCESS);
-    assert(kdMemRealloc(&dst4, 1024 * 1024 * 256, &ptr4, 256) == KD_RESULT_SUCCESS);
-    assert(kdMemRealloc(&dst5, 1024 * 1024 * 32, &ptr5, 32) == KD_RESULT_SUCCESS);
-    assert(kdMemRealloc(&dst6, 1024 * 1024 * 512, &ptr6, 512) == KD_RESULT_SUCCESS);
-    assert(kdMemRealloc(&dst7, 1024 * 1024 * 32, &ptr7, 32) == KD_RESULT_SUCCESS);
-    assert(kdMemRealloc(&dst8, 1024 * 1024 * 256, &ptr8, 256) == KD_RESULT_SUCCESS);
-    assert(kdMemRealloc(&dst9, 1024 * 1024 * 128, &ptr9, 128) == KD_RESULT_SUCCESS);
-    assert(kdMemRealloc(&dst10, 1024 * 1024 * 64, &ptr10, 64) == KD_RESULT_SUCCESS);
-    assert(kdMemRealloc(&dst11, 1024 * 1024 * 1, &ptr11, 1) == KD_RESULT_SUCCESS);
+    assert(MemRealloc(&dst1, 1024 * 1024 * 1, &ptr1, 1) == KD_RESULT_SUCCESS);
+    assert(MemRealloc(&dst2, 1024 * 1024 * 64, &ptr2, 64) == KD_RESULT_SUCCESS);
+    assert(MemRealloc(&dst3, 1024 * 1024 * 128, &ptr3, 128) == KD_RESULT_SUCCESS);
+    assert(MemRealloc(&dst4, 1024 * 1024 * 256, &ptr4, 256) == KD_RESULT_SUCCESS);
+    assert(MemRealloc(&dst5, 1024 * 1024 * 32, &ptr5, 32) == KD_RESULT_SUCCESS);
+    assert(MemRealloc(&dst6, 1024 * 1024 * 512, &ptr6, 512) == KD_RESULT_SUCCESS);
+    assert(MemRealloc(&dst7, 1024 * 1024 * 32, &ptr7, 32) == KD_RESULT_SUCCESS);
+    assert(MemRealloc(&dst8, 1024 * 1024 * 256, &ptr8, 256) == KD_RESULT_SUCCESS);
+    assert(MemRealloc(&dst9, 1024 * 1024 * 128, &ptr9, 128) == KD_RESULT_SUCCESS);
+    assert(MemRealloc(&dst10, 1024 * 1024 * 64, &ptr10, 64) == KD_RESULT_SUCCESS);
+    assert(MemRealloc(&dst11, 1024 * 1024 * 1, &ptr11, 1) == KD_RESULT_SUCCESS);
 
-    assert(dst1 != kd_null);
-    assert(dst2 != kd_null);
-    assert(dst3 != kd_null);
-    assert(dst4 != kd_null);
-    assert(dst5 != kd_null);
-    assert(dst6 != kd_null);
-    assert(dst7 != kd_null);
-    assert(dst8 != kd_null);
-    assert(dst9 != kd_null);
-    assert(dst10 != kd_null);
-    assert(dst11 != kd_null);
+    assert(dst1 != null);
+    assert(dst2 != null);
+    assert(dst3 != null);
+    assert(dst4 != null);
+    assert(dst5 != null);
+    assert(dst6 != null);
+    assert(dst7 != null);
+    assert(dst8 != null);
+    assert(dst9 != null);
+    assert(dst10 != null);
+    assert(dst11 != null);
 
-    assert(ptr1 == kd_null);
-    assert(ptr2 == kd_null);
-    assert(ptr3 == kd_null);
-    assert(ptr4 == kd_null);
-    assert(ptr5 == kd_null);
-    assert(ptr6 == kd_null);
-    assert(ptr7 == kd_null);
-    assert(ptr8 == kd_null);
-    assert(ptr9 == kd_null);
-    assert(ptr10 == kd_null);
-    assert(ptr11 == kd_null);
+    assert(ptr1 == null);
+    assert(ptr2 == null);
+    assert(ptr3 == null);
+    assert(ptr4 == null);
+    assert(ptr5 == null);
+    assert(ptr6 == null);
+    assert(ptr7 == null);
+    assert(ptr8 == null);
+    assert(ptr9 == null);
+    assert(ptr10 == null);
+    assert(ptr11 == null);
 
     kdMemFree(&dst1, 1024 * 1024 * 1);
     kdMemFree(&dst2, 1024 * 1024 * 64);
@@ -399,7 +398,6 @@ main(int argc, char **argv)
     (void)argv;
 
     printf("\n" TEST_NAME_CSTR " :: begin\n");
-    printf("Library Version: %s\n\n", KD_MEM_VERSION_CSTR);
 
     BasicArguments();
 

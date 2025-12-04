@@ -1,5 +1,5 @@
 /**
- * @file kd_version.h
+ * @file version.h
  * @author Kumarjit Das
  * @version 0.0.1
  * @brief Version info of the KD library.

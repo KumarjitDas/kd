@@ -13,9 +13,9 @@
 #define KD_MEM_ALGN_H_
 
 
-#include "kd_version.h"
-#include "kd_platform.h"
-#include "kd_fixed_width.h"
+#include "./version.h"
+#include "./platform.h"
+#include "./fixed_width.h"
 
 
 KD_EXTERN_BEGIN

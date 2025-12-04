@@ -13,10 +13,10 @@
 #define KD_OBJECT_H_
 
 
-#include "kd_version.h"
-#include "kd_platform.h"
-#include "kd_eltype.h"
-#include "kd_any.h"
+#include "./version.h"
+#include "./platform.h"
+#include "./eltype.h"
+#include "./any.h"
 
 
 KD_EXTERN_BEGIN

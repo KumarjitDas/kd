@@ -13,9 +13,9 @@
 #define KD_GEN_MEM_OPS_H_
 
 
-#include "kd_version.h"
-#include "kd_platform.h"
-#include "kd_fixed_width.h"
+#include "./version.h"
+#include "./platform.h"
+#include "./fixed_width.h"
 
 
 KD_EXTERN_BEGIN
@@ -100,14 +100,6 @@ KDAPI(kd_usize_t) kdGenMemOpsFindAllBlockIndicesU64(kd_u64_t *idxs, kd_usize_t i
 
 KDAPI(kd_word_t) kdGenMemOpsCmp(void *ptr1, void *ptr2, kd_usize_t sz);
 KDAPI(kd_bool_t) kdGenMemOpsCat(void *dst, kd_usize_t sz, void *src1, kd_usize_t sz1, void *src2, kd_usize_t sz2);
-
-KDAPI(void *) kdGenMemOpsBytesCompSpn(void *ptr, kd_usize_t sz, void *keys, kd_usize_t keys_sz);
-KDAPI(kd_bool_t) kdGenMemOpsBytesCompSpnIndex(kd_usize_t *idx_ptr, void *ptr, kd_usize_t sz, void *keys, kd_usize_t keys_sz);
-KDAPI(void *) kdGenMemOpsBlocksCompSpn(void *ptr, kd_usize_t sz, void *key_blocks, kd_usize_t key_block_sz, kd_usize_t key_blocks_sz);
-KDAPI(kd_bool_t) kdGenMemOpsBlocksCompSpnIndex(kd_usize_t *idx_ptr, void *ptr, kd_usize_t sz, void *key_blocks, kd_usize_t key_block_sz, kd_usize_t key_blocks_sz);
-
-KDAPI(kd_usize_t) kdGenMemOpsBytesSpn(void *ptr, kd_usize_t sz, void *keys, kd_usize_t keys_sz);
-KDAPI(kd_usize_t) kdGenMemOpsBlocksSpn(void *ptr, kd_usize_t sz, void *key_blocks, kd_usize_t key_block_sz, kd_usize_t key_blocks_sz);
 
 
 KD_EXTERN_END

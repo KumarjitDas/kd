@@ -1,5 +1,5 @@
 /**
- * @file kd_platform.h
+ * @file platform.h
  * @author Kumarjit Das
  * @version 0.0.1
  * @brief Platform-specific definitions for the KD library.
@@ -88,7 +88,6 @@
 #if !defined KD_COMP_CSTR
     #define KD_COMP_CSTR "Unknown"
 #endif
-#include <limits.h>
 
 
 /**
@@ -515,9 +514,8 @@
 #endif
 
 #if defined KD_CPLUSPLUS
-    #define KD_EXTERN_BEGIN                                                                                                                                                        \
-        extern "C"                                                                                                                                                                 \
-        {
+    /* clang-format off */
+    #define KD_EXTERN_BEGIN  extern "C" {
     #define KD_EXTERN_END }
 #else
     #define KD_EXTERN_BEGIN

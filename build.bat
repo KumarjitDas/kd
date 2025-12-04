@@ -55,15 +55,15 @@ SET "C_FLAGS=/nologo /WX /W4 /w14242 /w14254 /w14263 /w14265 /w14287 /we4289 /w1
 @REM "SET NO_C_RUNTIME=/nodefaultlib"
 SET "NO_C_RUNTIME="
 
-SET "INCLUDE_DIR=src"
+SET "INCLUDE_DIR=include"
 SET "SRC_DIR=src"
 SET "BUILD_DIR=build"
 SET "TESTS_DIR=tests"
 SET "EXAMPLES_DIR=examples"
 
-SET "COMMON_PLATFORM_FLAGS=%DEBUG_FLAGS% %C_FLAGS% %NO_C_RUNTIME% /I %INCLUDE_DIR% /Fo:%BUILD_DIR%\"
-SET "COMMON_EXE_FLAGS=%DEBUG_FLAGS% %C_FLAGS% /Za %NO_C_RUNTIME% /I %INCLUDE_DIR% /Fo:%BUILD_DIR%\"
-SET "COMMON_FLAGS=%DEBUG_FLAGS% %C_FLAGS% /Za /TC %NO_C_RUNTIME% /I %INCLUDE_DIR% /Fo:%BUILD_DIR%\"
+SET "COMMON_PLATFORM_FLAGS=%DEBUG_FLAGS% %C_FLAGS% %NO_C_RUNTIME% /I %INCLUDE_DIR%"
+SET "COMMON_EXE_FLAGS=%DEBUG_FLAGS% %C_FLAGS% /Za %NO_C_RUNTIME% /I %INCLUDE_DIR%"
+SET "COMMON_FLAGS=%DEBUG_FLAGS% %C_FLAGS% /Za /TC %NO_C_RUNTIME% /I %INCLUDE_DIR%"
 
 
 @REM ========== Clean up ==========
@@ -135,28 +135,30 @@ IF "!BUILD_EXAMPLES!"=="1" (
 @REM ========== Objects ==========
 
 SET "INTERNAL_OBJECTS="
-SET "INTERNAL_OBJECTS=!INTERNAL_OBJECTS! kdi_gen_mem_ops"
+@REM SET "INTERNAL_OBJECTS=!INTERNAL_OBJECTS! gen_mem_ops"
 
 @REM Any source file that uses Windows headers
 SET "PLATFORM_OBJECTS="
-SET "PLATFORM_OBJECTS=!PLATFORM_OBJECTS! kd_mem"
+SET "PLATFORM_OBJECTS=!PLATFORM_OBJECTS! mem"
 
 SET "OBJECTS="
-SET "OBJECTS=!OBJECTS! kd_mem_algn"
-SET "OBJECTS=!OBJECTS! kd_gen_mem_ops"
+SET "OBJECTS=!OBJECTS! mem"
+@REM SET "OBJECTS=!OBJECTS! mem_algn"
+@REM SET "OBJECTS=!OBJECTS! gen_mem_ops"
+@REM SET "OBJECTS=!OBJECTS! mem_ops"
 
 SET "OUTPUT_OBJECTS="
 
 FOR %%O IN (%INTERNAL_OBJECTS%) DO (
-    SET "OUTPUT_OBJECTS=!OUTPUT_OBJECTS! %BUILD_DIR%\%%O.obj"
+    SET "OUTPUT_OBJECTS=!OUTPUT_OBJECTS! %BUILD_DIR%\kdi_%%O.obj"
 )
 
 FOR %%P IN (%PLATFORM_OBJECTS%) DO (
-    SET "OUTPUT_OBJECTS=!OUTPUT_OBJECTS! %BUILD_DIR%\%%P.obj"
+    SET "OUTPUT_OBJECTS=!OUTPUT_OBJECTS! %BUILD_DIR%\kdi_windows_%%P.obj"
 )
 
 FOR %%O IN (%OBJECTS%) DO (
-    SET "OUTPUT_OBJECTS=!OUTPUT_OBJECTS! %BUILD_DIR%\%%O.obj"
+    SET "OUTPUT_OBJECTS=!OUTPUT_OBJECTS! %BUILD_DIR%\kd_%%O.obj"
 )
 
 IF "!SHARED_LIBS!"=="1" (
@@ -167,7 +169,7 @@ IF "!SHARED_LIBS!"=="1" (
 		    SET "OBJECT_NAME=%%O"
 		    ECHO [BUILD] Compiling internal object file: !SRC_DIR!\internal\!OBJECT_NAME!.c
 
-		    CL !COMMON_FLAGS! /c "!SRC_DIR!\internal\!OBJECT_NAME!.c"
+		    CL !COMMON_FLAGS! /c "!SRC_DIR!\internal\!OBJECT_NAME!.c" /Fo:!BUILD_DIR!\kdi_!OBJECT_NAME!.obj
 
 		    IF !ERRORLEVEl! NEQ 0 (
 		        ECHO [ERROR] Failed to compile: !OBJECT_NAME!
@@ -179,9 +181,9 @@ IF "!SHARED_LIBS!"=="1" (
 
 		FOR %%O IN (!PLATFORM_OBJECTS!) DO (
 		    SET "OBJECT_NAME=%%O"
-		    ECHO [BUILD] Compiling platform object file: !SRC_DIR!\!OBJECT_NAME!.c
+		    ECHO [BUILD] Compiling platform object file: !SRC_DIR!\os\windows\!OBJECT_NAME!.c
 
-		    CL !COMMON_PLATFORM_FLAGS! /Zc:strictStrings- /c "!SRC_DIR!\!OBJECT_NAME!.c"
+		    CL !COMMON_PLATFORM_FLAGS! /Zc:strictStrings- /c "!SRC_DIR!\os\windows\!OBJECT_NAME!.c" /Fo:!BUILD_DIR!\kdi_windows_!OBJECT_NAME!.obj
 
 		    IF !ERRORLEVEl! NEQ 0 (
 		        ECHO [ERROR] Failed to compile: !OBJECT_NAME!
@@ -195,7 +197,7 @@ IF "!SHARED_LIBS!"=="1" (
 		    SET "OBJECT_NAME=%%O"
 		    ECHO [BUILD] Compiling object file: !SRC_DIR!\!OBJECT_NAME!.c
 
-		    CL !COMMON_FLAGS! /c "!SRC_DIR!\!OBJECT_NAME!.c"
+		    CL !COMMON_FLAGS! /c "!SRC_DIR!\!OBJECT_NAME!.c" /Fo:!BUILD_DIR!\kd_!OBJECT_NAME!.obj
 
 		    IF !ERRORLEVEl! NEQ 0 (
 		        ECHO [ERROR] Failed to compile: !OBJECT_NAME!
@@ -228,61 +230,56 @@ IF "!BUILD_TESTS!"=="1" (
 	SET "TESTS=!TESTS! kdMemFree"
 	SET "TESTS=!TESTS! kdMemRealloc"
 
-	SET "TESTS=!TESTS! kdMemAlgnGetAllocSize"
-	SET "TESTS=!TESTS! kdMemAlgnGetForwardPtr"
-	SET "TESTS=!TESTS! kdMemAlgnGetBackwardPtr"
-	SET "TESTS=!TESTS! kdMemAlgnGetOffsetPtr"
-	SET "TESTS=!TESTS! kdMemAlgnGetHeadPtr"
+	@REM SET "TESTS=!TESTS! kdMemAlgnGetAllocSize"
+	@REM SET "TESTS=!TESTS! kdMemAlgnGetForwardPtr"
+	@REM SET "TESTS=!TESTS! kdMemAlgnGetBackwardPtr"
+	@REM SET "TESTS=!TESTS! kdMemAlgnGetOffsetPtr"
+	@REM SET "TESTS=!TESTS! kdMemAlgnGetHeadPtr"
 
-	SET "TESTS=!TESTS! kdGenMemOpsSwapBytes"
-	SET "TESTS=!TESTS! kdGenMemOpsSwapBlocks"
-	SET "TESTS=!TESTS! kdGenMemOpsReverseBytes"
-	SET "TESTS=!TESTS! kdGenMemOpsReverseBlocks"
-	SET "TESTS=!TESTS! kdGenMemOpsSetBytes"
-	SET "TESTS=!TESTS! kdGenMemOpsSetBlocks"
-	SET "TESTS=!TESTS! kdGenMemOpsCpy"
-	SET "TESTS=!TESTS! kdGenMemOpsMove"
+	@REM SET "TESTS=!TESTS! kdGenMemOpsSwapBytes"
+	@REM SET "TESTS=!TESTS! kdGenMemOpsSwapBlocks"
+	@REM SET "TESTS=!TESTS! kdGenMemOpsReverseBytes"
+	@REM SET "TESTS=!TESTS! kdGenMemOpsReverseBlocks"
+	@REM SET "TESTS=!TESTS! kdGenMemOpsSetBytes"
+	@REM SET "TESTS=!TESTS! kdGenMemOpsSetBlocks"
+	@REM SET "TESTS=!TESTS! kdGenMemOpsCpy"
+	@REM SET "TESTS=!TESTS! kdGenMemOpsMove"
 
-	SET "TESTS=!TESTS! kdGenMemOpsFindByte"
-	SET "TESTS=!TESTS! kdGenMemOpsFindByteIndex"
-	SET "TESTS=!TESTS! kdGenMemOpsFindLastByte"
-	SET "TESTS=!TESTS! kdGenMemOpsFindLastByteIndex"
-	SET "TESTS=!TESTS! kdGenMemOpsFindAllBytes"
+	@REM SET "TESTS=!TESTS! kdGenMemOpsFindByte"
+	@REM SET "TESTS=!TESTS! kdGenMemOpsFindByteIndex"
+	@REM SET "TESTS=!TESTS! kdGenMemOpsFindLastByte"
+	@REM SET "TESTS=!TESTS! kdGenMemOpsFindLastByteIndex"
+	@REM SET "TESTS=!TESTS! kdGenMemOpsFindAllBytes"
 
-	SET "TESTS=!TESTS! kdGenMemOpsFindAllByteIndices"
-	SET "TESTS=!TESTS! kdGenMemOpsFindAllByteIndicesU8"
-	SET "TESTS=!TESTS! kdGenMemOpsFindAllByteIndicesU16"
-	SET "TESTS=!TESTS! kdGenMemOpsFindAllByteIndicesU32"
-	SET "TESTS=!TESTS! kdGenMemOpsFindAllByteIndicesU64"
+	@REM SET "TESTS=!TESTS! kdGenMemOpsFindAllByteIndices"
+	@REM SET "TESTS=!TESTS! kdGenMemOpsFindAllByteIndicesU8"
+	@REM SET "TESTS=!TESTS! kdGenMemOpsFindAllByteIndicesU16"
+	@REM SET "TESTS=!TESTS! kdGenMemOpsFindAllByteIndicesU32"
+	@REM SET "TESTS=!TESTS! kdGenMemOpsFindAllByteIndicesU64"
 
-	SET "TESTS=!TESTS! kdGenMemOpsFindBlock"
-	SET "TESTS=!TESTS! kdGenMemOpsFindBlockIndex"
-	SET "TESTS=!TESTS! kdGenMemOpsFindLastBlock"
-	SET "TESTS=!TESTS! kdGenMemOpsFindLastBlockIndex"
-	SET "TESTS=!TESTS! kdGenMemOpsFindAllBlocks"
+	@REM SET "TESTS=!TESTS! kdGenMemOpsFindBlock"
+	@REM SET "TESTS=!TESTS! kdGenMemOpsFindBlockIndex"
+	@REM SET "TESTS=!TESTS! kdGenMemOpsFindLastBlock"
+	@REM SET "TESTS=!TESTS! kdGenMemOpsFindLastBlockIndex"
+	@REM SET "TESTS=!TESTS! kdGenMemOpsFindAllBlocks"
 
-	SET "TESTS=!TESTS! kdGenMemOpsFindAllBlockIndices"
-	SET "TESTS=!TESTS! kdGenMemOpsFindAllBlockIndicesU8"
-	SET "TESTS=!TESTS! kdGenMemOpsFindAllBlockIndicesU16"
-	SET "TESTS=!TESTS! kdGenMemOpsFindAllBlockIndicesU32"
-	SET "TESTS=!TESTS! kdGenMemOpsFindAllBlockIndicesU64"
+	@REM SET "TESTS=!TESTS! kdGenMemOpsFindAllBlockIndices"
+	@REM SET "TESTS=!TESTS! kdGenMemOpsFindAllBlockIndicesU8"
+	@REM SET "TESTS=!TESTS! kdGenMemOpsFindAllBlockIndicesU16"
+	@REM SET "TESTS=!TESTS! kdGenMemOpsFindAllBlockIndicesU32"
+	@REM SET "TESTS=!TESTS! kdGenMemOpsFindAllBlockIndicesU64"
 
-	SET "TESTS=!TESTS! kdGenMemOpsCmp"
-	SET "TESTS=!TESTS! kdGenMemOpsCat"
+	@REM SET "TESTS=!TESTS! kdGenMemOpsCmp"
+	@REM SET "TESTS=!TESTS! kdGenMemOpsCat"
 
-	SET "TESTS=!TESTS! kdGenMemOpsBytesCompSpn"
-	SET "TESTS=!TESTS! kdGenMemOpsBytesCompSpnIndex"
-	SET "TESTS=!TESTS! kdGenMemOpsBlocksCompSpn"
-	SET "TESTS=!TESTS! kdGenMemOpsBlocksCompSpnIndex"
-
-	SET "TESTS=!TESTS! kdGenMemOpsBytesSpn"
-	SET "TESTS=!TESTS! kdGenMemOpsBlocksSpn"
+	@REM SET "TESTS=!TESTS! kdMemOpsSwapN"
+	@REM SET "TESTS=!TESTS! kdMemOpsSwapN"
 
 	FOR %%T IN (!TESTS!) DO (
 	    SET "TARGET_NAME=%%T"
 	    ECHO [BUILD] Compiling test file: !TESTS_DIR!\!TARGET_NAME!.c
 
-	    CL !COMMON_FLAGS! /c "!TESTS_DIR!\!TARGET_NAME!.c"
+	    CL !COMMON_FLAGS! /c "!TESTS_DIR!\!TARGET_NAME!.c" /Fo:!BUILD_DIR!\
 	    CL !COMMON_EXE_FLAGS! "!BUILD_DIR!\!TARGET_NAME!.obj" "!BUILD_DIR!\!LIB_NAME!.lib" /Fe:"!BUILD_DIR!\!TESTS_DIR!\!TARGET_NAME!.exe"
 
 	    IF !ERRORLEVEl! NEQ 0 (
@@ -348,7 +345,7 @@ IF "!BUILD_EXAMPLES!"=="1" (
 	    SET "TARGET_NAME=%%T"
 	    ECHO [BUILD] Compiling example file: !EXAMPLES_DIR!\!TARGET_NAME!.c
 
-	    CL !COMMON_EXE_FLAGS! /c "!EXAMPLES_DIR!\!TARGET_NAME!.c"
+	    CL !COMMON_EXE_FLAGS! /c "!EXAMPLES_DIR!\!TARGET_NAME!.c" /Fo:!BUILD_DIR!\
 	    CL !COMMON_EXE_FLAGS! "!BUILD_DIR!\!TARGET_NAME!.obj" "!BUILD_DIR!\!LIB_NAME!.lib" /Fe:"!BUILD_DIR!\!EXAMPLES_DIR!\!TARGET_NAME!.exe"
 
 	    IF !ERRORLEVEl! NEQ 0 (

@@ -59,6 +59,9 @@ cmake-build*/*
 # VS Code project
 .vscode/*
 
+# Zed project
+.zed/*
+
 # Clangd cache
 .cache/*
 

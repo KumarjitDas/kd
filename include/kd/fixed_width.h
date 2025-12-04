@@ -1,5 +1,5 @@
 /**
- * @file kd_fixed_width.h
+ * @file fixed_width.h
  * @author Kumarjit Das
  * @version 0.0.1
  * @brief Fixed-width integral typedefs and macro definitions.
@@ -13,8 +13,8 @@
 #define KD_FIXED_WIDTH_H_
 
 
-#include "kd_version.h"
-#include "kd_platform.h"
+#include "./version.h"
+#include "./platform.h"
 
 
 KD_EXTERN_BEGIN
@@ -66,9 +66,7 @@ typedef unsigned int   kd_u32_t;
     #if defined _MSC_VER || defined __BORLANDC__ || defined __WATCOMC__ || (defined __alpha && defined __DECC) || (defined KD_OS_MINGW64 && defined KD_C_STD_89)
 typedef __int64          kd_i64_t;
 typedef unsigned __int64 kd_u64_t;
-    #elif (                                                                                                                                                                        \
-        defined __GNUC__ || defined __MWERKS__ || defined __SUNPRO_C || defined __SUNPRO_CC || defined __APPLE_CC__ || defined KD_OS_IRIX || defined _LONG_LONG || defined _CRAYC  \
-    ) && __SIZEOF_LONG__ == 8
+    #elif (defined __GNUC__ || defined __MWERKS__ || defined __SUNPRO_C || defined __SUNPRO_CC || defined __APPLE_CC__ || defined KD_OS_IRIX || defined _LONG_LONG || defined _CRAYC) && __SIZEOF_LONG__ == 8
 typedef long          kd_i64_t;
 typedef unsigned long kd_u64_t;
     /* #elif defined __LP64__ || defined __powerpc64__ || defined KD_CPU_SPARC64 */
@@ -471,37 +469,33 @@ typedef kd_u32_t kd_bool_t;
  * ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
  */
 
-#if defined KD_USE_SIMPLIFIED_TYPES
-    #ifndef KD_CPLUSPLUS
-        #undef true
-        #undef false
-        #define false kd_false
-        #define true  kd_true
-typedef kd_bool_t bool;
-    #endif
-    #undef KD_FSBTC_BOOL
-    #undef null
-    #define KD_FSBTC_BOOL(x) ((x) ? "true" : "false")
-    #define null             kd_null
-typedef kd_i8_t    i8;
-typedef kd_i16_t   i16;
-typedef kd_i32_t   i32;
-typedef kd_imin_t  imin;
-typedef kd_imax_t  imax;
-typedef kd_u8_t    u8;
-typedef kd_u16_t   u16;
-typedef kd_u32_t   u32;
-typedef kd_umin_t  umin;
-typedef kd_umax_t  umax;
-typedef kd_word_t  word;
-typedef kd_usize_t usize;
-typedef kd_byte_t  byte;
-typedef kd_chr_t   chr;
-    #if defined KD_ARCH_64BIT_INT
-typedef kd_i64_t i64;
-typedef kd_u64_t u64;
-    #endif /* KD_ARCH_64BIT_INT */
-#endif     /* KD_USE_SIMPLIFIED_TYPES */
+#ifndef KD_CPLUSPLUS
+    #undef true
+    #define true kd_true
+    #undef false
+    #define false kd_false
+    #define bool  kd_bool_t
+#endif
+#undef null
+#define null  kd_null
+#define i8    kd_i8_t
+#define i16   kd_i16_t
+#define i32   kd_i32_t
+#define imin  kd_imin_t
+#define imax  kd_imax_t
+#define u8    kd_u8_t
+#define u16   kd_u16_t
+#define u32   kd_u32_t
+#define umin  kd_umin_t
+#define umax  kd_umax_t
+#define word  kd_word_t
+#define usize kd_usize_t
+#define byte  kd_byte_t
+#define chr   kd_chr_t
+#if defined KD_ARCH_64BIT_INT
+    #define i64 kd_i64_t
+    #define u64 kd_u64_t
+#endif /* KD_ARCH_64BIT_INT */
 
 
 KD_EXTERN_END

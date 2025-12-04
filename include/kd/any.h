@@ -13,12 +13,12 @@
 #define KD_ANY_H_
 
 
-#include "kd_version.h"
-#include "kd_platform.h"
-#include "kd_fixed_width.h"
-#include "kd_floating_point.h"
-#include "kd_eltype.h"
-#include "kd_dec.h"
+#include "./version.h"
+#include "./platform.h"
+#include "./fixed_width.h"
+#include "./floating_point.h"
+#include "./eltype.h"
+#include "./dec.h"
 
 
 KD_EXTERN_BEGIN
