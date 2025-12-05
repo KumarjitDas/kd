@@ -101,7 +101,7 @@ MemRealloc(void *dst, usize new_sz, void *src, usize old_sz)
 
             *dst_adr = null;
 
-            if (src_adr)
+            if (src_adr && src_adr != dst_adr)
             {
                 *src_adr = null;
             }
@@ -130,7 +130,7 @@ MemRealloc(void *dst, usize new_sz, void *src, usize old_sz)
 
     *dst_adr = ptr;
 
-    if (src_adr)
+    if (src_adr && src_adr != dst_adr)
     {
         *src_adr = null;
     }

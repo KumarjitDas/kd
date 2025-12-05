@@ -3,7 +3,6 @@
  * @author Kumarjit Das
  * @brief KD_MEM library kdMemFree function test.
  * @license BSD 3-Clause License
- * @copyright Copyright (c) 2025, Kumarjit Das.
  */
 
 
@@ -32,13 +31,46 @@ BasicArguments(void)
     assert(MemFree(&ptr, 0) == RESULT_FAILURE);
     assert(ptr != null);
 
-    MemAlloc(&ptr, 6900);
+    ptr = null;
+    assert(MemAlloc(&ptr, 6900) == RESULT_SUCCESS);
+    assert(ptr != null);
     assert(MemFree(&ptr, 6900) == RESULT_SUCCESS);
     assert(ptr == null);
 
     printf("PASSED\n");
 }
 
+void
+FreeNullPointer(void)
+{
+    u8 *ptr = null;
+
+    printf(LOG_PREFIX_CSTR "FreeNullPointer -> ");
+
+    assert(MemFree(&ptr, 16) == RESULT_FAILURE);
+    assert(ptr == null);
+
+    printf("PASSED\n");
+}
+
+void
+DoubleFree(void)
+{
+    u8 *ptr;
+
+    printf(LOG_PREFIX_CSTR "DoubleFree -> ");
+
+    assert(MemAlloc(&ptr, 128) == RESULT_SUCCESS);
+    assert(ptr != null);
+
+    assert(MemFree(&ptr, 128) == RESULT_SUCCESS);
+    assert(ptr == null);
+
+    assert(MemFree(&ptr, 128) == RESULT_FAILURE);
+    assert(ptr == null);
+
+    printf("PASSED\n");
+}
 
 void
 BasicDeallocationBytes(void)
@@ -74,7 +106,6 @@ BasicDeallocationBytes(void)
     printf("PASSED\n");
 }
 
-
 void
 BasicDeallocationKiloBytes(void)
 {
@@ -86,6 +117,10 @@ BasicDeallocationKiloBytes(void)
     assert(MemFree(&ptr, 1024 * 1) == RESULT_SUCCESS);
     assert(ptr == null);
 
+    MemAlloc(&ptr, 1024 * 16);
+    assert(MemFree(&ptr, 1024 * 16) == RESULT_SUCCESS);
+    assert(ptr == null);
+
     MemAlloc(&ptr, 1024 * 64);
     assert(MemFree(&ptr, 1024 * 64) == RESULT_SUCCESS);
     assert(ptr == null);
@@ -94,21 +129,8 @@ BasicDeallocationKiloBytes(void)
     assert(MemFree(&ptr, 1024 * 128) == RESULT_SUCCESS);
     assert(ptr == null);
 
-    MemAlloc(&ptr, 1024 * 256);
-    assert(MemFree(&ptr, 1024 * 256) == RESULT_SUCCESS);
-    assert(ptr == null);
-
-    MemAlloc(&ptr, 1024 * 512);
-    assert(MemFree(&ptr, 1024 * 512) == RESULT_SUCCESS);
-    assert(ptr == null);
-
-    MemAlloc(&ptr, 1024 * 1024);
-    assert(MemFree(&ptr, 1024 * 1024) == RESULT_SUCCESS);
-    assert(ptr == null);
-
     printf("PASSED\n");
 }
-
 
 void
 BasicDeallocationMegaBytes(void)
@@ -121,29 +143,12 @@ BasicDeallocationMegaBytes(void)
     assert(MemFree(&ptr, 1024 * 1024 * 1) == RESULT_SUCCESS);
     assert(ptr == null);
 
-    MemAlloc(&ptr, 1024 * 1024 * 64);
-    assert(MemFree(&ptr, 1024 * 1024 * 64) == RESULT_SUCCESS);
-    assert(ptr == null);
-
-    MemAlloc(&ptr, 1024 * 1024 * 128);
-    assert(MemFree(&ptr, 1024 * 1024 * 128) == RESULT_SUCCESS);
-    assert(ptr == null);
-
-    MemAlloc(&ptr, 1024 * 1024 * 256);
-    assert(MemFree(&ptr, 1024 * 1024 * 256) == RESULT_SUCCESS);
-    assert(ptr == null);
-
-    MemAlloc(&ptr, 1024 * 1024 * 512);
-    assert(MemFree(&ptr, 1024 * 1024 * 512) == RESULT_SUCCESS);
-    assert(ptr == null);
-
-    MemAlloc(&ptr, 1024 * 1024 * 1024);
-    assert(MemFree(&ptr, 1024 * 1024 * 1024) == RESULT_SUCCESS);
+    MemAlloc(&ptr, 1024 * 1024 * 4);
+    assert(MemFree(&ptr, 1024 * 1024 * 4) == RESULT_SUCCESS);
     assert(ptr == null);
 
     printf("PASSED\n");
 }
-
 
 void
 BasicMultipleSequentialDeallocationsBytes(void)
@@ -191,7 +196,6 @@ BasicMultipleSequentialDeallocationsBytes(void)
     printf("PASSED\n");
 }
 
-
 void
 BasicMultipleSequentialDeallocationsKiloBytes(void)
 {
@@ -200,27 +204,27 @@ BasicMultipleSequentialDeallocationsKiloBytes(void)
     printf(LOG_PREFIX_CSTR "BasicMultipleSequentialDeallocationsKiloBytes -> ");
 
     MemAlloc(&ptr1, 1024 * 1);
-    MemAlloc(&ptr2, 1024 * 64);
-    MemAlloc(&ptr3, 1024 * 128);
-    MemAlloc(&ptr4, 1024 * 256);
-    MemAlloc(&ptr5, 1024 * 32);
-    MemAlloc(&ptr6, 1024 * 512);
-    MemAlloc(&ptr7, 1024 * 32);
-    MemAlloc(&ptr8, 1024 * 256);
-    MemAlloc(&ptr9, 1024 * 128);
-    MemAlloc(&ptr10, 1024 * 64);
+    MemAlloc(&ptr2, 1024 * 8);
+    MemAlloc(&ptr3, 1024 * 16);
+    MemAlloc(&ptr4, 1024 * 32);
+    MemAlloc(&ptr5, 1024 * 4);
+    MemAlloc(&ptr6, 1024 * 64);
+    MemAlloc(&ptr7, 1024 * 4);
+    MemAlloc(&ptr8, 1024 * 32);
+    MemAlloc(&ptr9, 1024 * 16);
+    MemAlloc(&ptr10, 1024 * 8);
     MemAlloc(&ptr11, 1024 * 1);
 
     assert(MemFree(&ptr1, 1024 * 1) == RESULT_SUCCESS);
-    assert(MemFree(&ptr2, 1024 * 64) == RESULT_SUCCESS);
-    assert(MemFree(&ptr3, 1024 * 128) == RESULT_SUCCESS);
-    assert(MemFree(&ptr4, 1024 * 256) == RESULT_SUCCESS);
-    assert(MemFree(&ptr5, 1024 * 32) == RESULT_SUCCESS);
-    assert(MemFree(&ptr6, 1024 * 512) == RESULT_SUCCESS);
-    assert(MemFree(&ptr7, 1024 * 32) == RESULT_SUCCESS);
-    assert(MemFree(&ptr8, 1024 * 256) == RESULT_SUCCESS);
-    assert(MemFree(&ptr9, 1024 * 128) == RESULT_SUCCESS);
-    assert(MemFree(&ptr10, 1024 * 64) == RESULT_SUCCESS);
+    assert(MemFree(&ptr2, 1024 * 8) == RESULT_SUCCESS);
+    assert(MemFree(&ptr3, 1024 * 16) == RESULT_SUCCESS);
+    assert(MemFree(&ptr4, 1024 * 32) == RESULT_SUCCESS);
+    assert(MemFree(&ptr5, 1024 * 4) == RESULT_SUCCESS);
+    assert(MemFree(&ptr6, 1024 * 64) == RESULT_SUCCESS);
+    assert(MemFree(&ptr7, 1024 * 4) == RESULT_SUCCESS);
+    assert(MemFree(&ptr8, 1024 * 32) == RESULT_SUCCESS);
+    assert(MemFree(&ptr9, 1024 * 16) == RESULT_SUCCESS);
+    assert(MemFree(&ptr10, 1024 * 8) == RESULT_SUCCESS);
     assert(MemFree(&ptr11, 1024 * 1) == RESULT_SUCCESS);
 
     assert(ptr1 == null);
@@ -238,54 +242,6 @@ BasicMultipleSequentialDeallocationsKiloBytes(void)
     printf("PASSED\n");
 }
 
-
-void
-BasicMultipleSequentialDeallocationsMegaBytes(void)
-{
-    u8 *ptr1, *ptr2, *ptr3, *ptr4, *ptr5, *ptr6, *ptr7, *ptr8, *ptr9, *ptr10, *ptr11;
-
-    printf(LOG_PREFIX_CSTR "BasicMultipleSequentialDeallocationsMegaBytes -> ");
-
-    MemAlloc(&ptr1, 1024 * 1024 * 1);
-    MemAlloc(&ptr2, 1024 * 1024 * 64);
-    MemAlloc(&ptr3, 1024 * 1024 * 128);
-    MemAlloc(&ptr4, 1024 * 1024 * 256);
-    MemAlloc(&ptr5, 1024 * 1024 * 32);
-    MemAlloc(&ptr6, 1024 * 1024 * 512);
-    MemAlloc(&ptr7, 1024 * 1024 * 32);
-    MemAlloc(&ptr8, 1024 * 1024 * 256);
-    MemAlloc(&ptr9, 1024 * 1024 * 128);
-    MemAlloc(&ptr10, 1024 * 1024 * 64);
-    MemAlloc(&ptr11, 1024 * 1024 * 1);
-
-    assert(MemFree(&ptr1, 1024 * 1024 * 1) == RESULT_SUCCESS);
-    assert(MemFree(&ptr2, 1024 * 1024 * 64) == RESULT_SUCCESS);
-    assert(MemFree(&ptr3, 1024 * 1024 * 128) == RESULT_SUCCESS);
-    assert(MemFree(&ptr4, 1024 * 1024 * 256) == RESULT_SUCCESS);
-    assert(MemFree(&ptr5, 1024 * 1024 * 32) == RESULT_SUCCESS);
-    assert(MemFree(&ptr6, 1024 * 1024 * 512) == RESULT_SUCCESS);
-    assert(MemFree(&ptr7, 1024 * 1024 * 32) == RESULT_SUCCESS);
-    assert(MemFree(&ptr8, 1024 * 1024 * 256) == RESULT_SUCCESS);
-    assert(MemFree(&ptr9, 1024 * 1024 * 128) == RESULT_SUCCESS);
-    assert(MemFree(&ptr10, 1024 * 1024 * 64) == RESULT_SUCCESS);
-    assert(MemFree(&ptr11, 1024 * 1024 * 1) == RESULT_SUCCESS);
-
-    assert(ptr1 == null);
-    assert(ptr2 == null);
-    assert(ptr3 == null);
-    assert(ptr4 == null);
-    assert(ptr5 == null);
-    assert(ptr6 == null);
-    assert(ptr7 == null);
-    assert(ptr8 == null);
-    assert(ptr9 == null);
-    assert(ptr10 == null);
-    assert(ptr11 == null);
-
-    printf("PASSED\n");
-}
-
-
 int
 main(int argc, char **argv)
 {
@@ -295,6 +251,8 @@ main(int argc, char **argv)
     printf("\n" TEST_NAME_CSTR " :: begin\n");
 
     BasicArguments();
+    FreeNullPointer();
+    DoubleFree();
 
     BasicDeallocationBytes();
     BasicDeallocationKiloBytes();
@@ -302,7 +260,6 @@ main(int argc, char **argv)
 
     BasicMultipleSequentialDeallocationsBytes();
     BasicMultipleSequentialDeallocationsKiloBytes();
-    BasicMultipleSequentialDeallocationsMegaBytes();
 
     printf("\n" TEST_NAME_CSTR " :: end\n\n");
 

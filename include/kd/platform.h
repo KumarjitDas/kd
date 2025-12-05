@@ -605,10 +605,15 @@
  * ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
  */
 
-#define KD_RESULT_SUCCESS 0
-#define KD_RESULT_FAILURE 1
-#define KD_EXIT_SUCCESS   0
-#define KD_EXIT_FAILURE   1
+#if !defined KD_RESULT_SUCCESS
+    #define KD_RESULT_SUCCESS 0
+#endif
+#if !defined KD_RESULT_FAILURE
+    #define KD_RESULT_FAILURE 1
+#endif
+
+#define KD_EXIT_SUCCESS 0
+#define KD_EXIT_FAILURE 1
 
 
 /**

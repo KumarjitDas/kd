@@ -59,7 +59,7 @@ enum kd_eltype_t
 #define KD_ELTYPE_C(X)     ((enum kd_eltype_t)(X))
 #define KD_PELTYPE_C(X)    ((enum kd_eltype_t *)(X))
 #define KD_MIN_ELTYPE      KD_ELTYPE_DEFAULT
-#define KD_MAX_ELTYPE      KD_ELTYPE_CUSTOM_STRUCT_PTR
+#define KD_MAX_ELTYPE      (KDI_IGNORE_ELTYPE - 1)
 #define KD_SZ_ELTYPE       sizeof(enum kd_eltype_t)
 #define KD_FMTSP_ELTYPE    KD_FMTSP_I32
 #define KD_FSBTC_ELTYPE(x) KD_FSBTC_I32(x)
