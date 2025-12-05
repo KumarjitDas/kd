@@ -143,7 +143,7 @@ SET "PLATFORM_OBJECTS=!PLATFORM_OBJECTS! mem"
 
 SET "OBJECTS="
 SET "OBJECTS=!OBJECTS! mem"
-@REM SET "OBJECTS=!OBJECTS! mem_algn"
+SET "OBJECTS=!OBJECTS! mem_algn"
 @REM SET "OBJECTS=!OBJECTS! gen_mem_ops"
 @REM SET "OBJECTS=!OBJECTS! mem_ops"
 
@@ -230,11 +230,11 @@ IF "!BUILD_TESTS!"=="1" (
 	SET "TESTS=!TESTS! kdMemFree"
 	SET "TESTS=!TESTS! kdMemRealloc"
 
-	@REM SET "TESTS=!TESTS! kdMemAlgnGetAllocSize"
-	@REM SET "TESTS=!TESTS! kdMemAlgnGetForwardPtr"
-	@REM SET "TESTS=!TESTS! kdMemAlgnGetBackwardPtr"
-	@REM SET "TESTS=!TESTS! kdMemAlgnGetOffsetPtr"
-	@REM SET "TESTS=!TESTS! kdMemAlgnGetHeadPtr"
+	SET "TESTS=!TESTS! kdMemAlgnGetAllocSize"
+	SET "TESTS=!TESTS! kdMemAlgnGetForwardPtr"
+	SET "TESTS=!TESTS! kdMemAlgnGetBackwardPtr"
+	SET "TESTS=!TESTS! kdMemAlgnGetOffsetPtr"
+	SET "TESTS=!TESTS! kdMemAlgnGetHeadPtr"
 
 	@REM SET "TESTS=!TESTS! kdGenMemOpsSwapBytes"
 	@REM SET "TESTS=!TESTS! kdGenMemOpsSwapBlocks"

@@ -10,8 +10,7 @@
 #include <stdio.h>
 #include <assert.h>
 
-#include "kd.h"
-#include "kd_mem_algn.h"
+#include "../include/kd/mem_algn.h"
 
 
 #define LIB_NAME_CSTR   "KD_MEM_ALGN"
@@ -24,25 +23,25 @@ AlignsCorrectlyForGivenOffset(void)
 {
     printf(LOG_PREFIX_CSTR "AlignsCorrectlyForGivenOffset -> ");
 
-    assert(kdMemAlgnGetBackwardPtr(KD_PTR_C(4), 4, 1) == KD_PTR_C(0));
-    assert(kdMemAlgnGetBackwardPtr(KD_PTR_C(5), 4, 1) == KD_PTR_C(4));
-    assert(kdMemAlgnGetBackwardPtr(KD_PTR_C(6), 4, 1) == KD_PTR_C(4));
-    assert(kdMemAlgnGetBackwardPtr(KD_PTR_C(12), 4, 1) == KD_PTR_C(8));
+    assert(MemAlgnGetBackwardPtr(KD_PTR_C(4), 4, 1) == KD_PTR_C(0));
+    assert(MemAlgnGetBackwardPtr(KD_PTR_C(5), 4, 1) == KD_PTR_C(4));
+    assert(MemAlgnGetBackwardPtr(KD_PTR_C(6), 4, 1) == KD_PTR_C(4));
+    assert(MemAlgnGetBackwardPtr(KD_PTR_C(12), 4, 1) == KD_PTR_C(8));
 
-    assert(kdMemAlgnGetBackwardPtr(KD_PTR_C(4), 4, 2) == KD_PTR_C(0));
-    assert(kdMemAlgnGetBackwardPtr(KD_PTR_C(5), 4, 2) == KD_PTR_C(4));
-    assert(kdMemAlgnGetBackwardPtr(KD_PTR_C(6), 4, 2) == KD_PTR_C(4));
-    assert(kdMemAlgnGetBackwardPtr(KD_PTR_C(12), 4, 2) == KD_PTR_C(8));
+    assert(MemAlgnGetBackwardPtr(KD_PTR_C(4), 4, 2) == KD_PTR_C(0));
+    assert(MemAlgnGetBackwardPtr(KD_PTR_C(5), 4, 2) == KD_PTR_C(4));
+    assert(MemAlgnGetBackwardPtr(KD_PTR_C(6), 4, 2) == KD_PTR_C(4));
+    assert(MemAlgnGetBackwardPtr(KD_PTR_C(12), 4, 2) == KD_PTR_C(8));
 
-    assert(kdMemAlgnGetBackwardPtr(KD_PTR_C(4), 4, 4) == KD_PTR_C(0));
-    assert(kdMemAlgnGetBackwardPtr(KD_PTR_C(5), 4, 4) == KD_PTR_C(4));
-    assert(kdMemAlgnGetBackwardPtr(KD_PTR_C(6), 4, 4) == KD_PTR_C(4));
-    assert(kdMemAlgnGetBackwardPtr(KD_PTR_C(12), 4, 4) == KD_PTR_C(8));
+    assert(MemAlgnGetBackwardPtr(KD_PTR_C(4), 4, 4) == KD_PTR_C(0));
+    assert(MemAlgnGetBackwardPtr(KD_PTR_C(5), 4, 4) == KD_PTR_C(4));
+    assert(MemAlgnGetBackwardPtr(KD_PTR_C(6), 4, 4) == KD_PTR_C(4));
+    assert(MemAlgnGetBackwardPtr(KD_PTR_C(12), 4, 4) == KD_PTR_C(8));
 
-    assert(kdMemAlgnGetBackwardPtr(KD_PTR_C(4), 4, 8) == KD_PTR_C(0));
-    assert(kdMemAlgnGetBackwardPtr(KD_PTR_C(5), 4, 8) == KD_PTR_C(4));
-    assert(kdMemAlgnGetBackwardPtr(KD_PTR_C(6), 4, 8) == KD_PTR_C(4));
-    assert(kdMemAlgnGetBackwardPtr(KD_PTR_C(12), 4, 8) == KD_PTR_C(8));
+    assert(MemAlgnGetBackwardPtr(KD_PTR_C(4), 4, 8) == KD_PTR_C(0));
+    assert(MemAlgnGetBackwardPtr(KD_PTR_C(5), 4, 8) == KD_PTR_C(4));
+    assert(MemAlgnGetBackwardPtr(KD_PTR_C(6), 4, 8) == KD_PTR_C(4));
+    assert(MemAlgnGetBackwardPtr(KD_PTR_C(12), 4, 8) == KD_PTR_C(8));
 
     printf("PASSED\n");
 }
@@ -52,15 +51,15 @@ ZeroOffsetHandledCorrectly(void)
 {
     printf(LOG_PREFIX_CSTR "ZeroOffsetHandledCorrectly -> ");
 
-    assert(kdMemAlgnGetBackwardPtr(KD_PTR_C(4), 4, 0) == KD_PTR_C(0));
-    assert(kdMemAlgnGetBackwardPtr(KD_PTR_C(5), 4, 0) == KD_PTR_C(4));
-    assert(kdMemAlgnGetBackwardPtr(KD_PTR_C(6), 4, 0) == KD_PTR_C(4));
-    assert(kdMemAlgnGetBackwardPtr(KD_PTR_C(12), 4, 0) == KD_PTR_C(8));
+    assert(MemAlgnGetBackwardPtr(KD_PTR_C(4), 4, 0) == KD_PTR_C(0));
+    assert(MemAlgnGetBackwardPtr(KD_PTR_C(5), 4, 0) == KD_PTR_C(4));
+    assert(MemAlgnGetBackwardPtr(KD_PTR_C(6), 4, 0) == KD_PTR_C(4));
+    assert(MemAlgnGetBackwardPtr(KD_PTR_C(12), 4, 0) == KD_PTR_C(8));
 
-    assert(kdMemAlgnGetBackwardPtr(KD_PTR_C(8), 8, 0) == KD_PTR_C(0));
-    assert(kdMemAlgnGetBackwardPtr(KD_PTR_C(13), 8, 0) == KD_PTR_C(8));
-    assert(kdMemAlgnGetBackwardPtr(KD_PTR_C(14), 8, 0) == KD_PTR_C(8));
-    assert(kdMemAlgnGetBackwardPtr(KD_PTR_C(16), 8, 0) == KD_PTR_C(8));
+    assert(MemAlgnGetBackwardPtr(KD_PTR_C(8), 8, 0) == KD_PTR_C(0));
+    assert(MemAlgnGetBackwardPtr(KD_PTR_C(13), 8, 0) == KD_PTR_C(8));
+    assert(MemAlgnGetBackwardPtr(KD_PTR_C(14), 8, 0) == KD_PTR_C(8));
+    assert(MemAlgnGetBackwardPtr(KD_PTR_C(16), 8, 0) == KD_PTR_C(8));
 
     printf("PASSED\n");
 }
@@ -70,8 +69,8 @@ AlignmentAndOffsetBoundaries(void)
 {
     printf(LOG_PREFIX_CSTR "AlignmentAndOffsetBoundaries -> ");
 
-    assert(kdMemAlgnGetBackwardPtr(KD_PTR_C(4), 255, 0) == kd_null);
-    assert(kdMemAlgnGetBackwardPtr(KD_PTR_C(5), 4, 23) == kd_null);
+    assert(MemAlgnGetBackwardPtr(KD_PTR_C(4), 255, 0) == null);
+    assert(MemAlgnGetBackwardPtr(KD_PTR_C(5), 4, 23) == null);
 
     printf("PASSED\n");
 }
@@ -81,20 +80,20 @@ InvalidAlignmentOrOffsetPanicsOrFails(void)
 {
     printf(LOG_PREFIX_CSTR "InvalidAlignmentOrOffsetPanicsOrFails -> ");
 
-    assert(kdMemAlgnGetBackwardPtr(KD_PTR_C(4), 0, 0) == kd_null);
-    assert(kdMemAlgnGetBackwardPtr(KD_PTR_C(5), 3, 0) == kd_null);
-    assert(kdMemAlgnGetBackwardPtr(KD_PTR_C(6), 19, 0) == kd_null);
-    assert(kdMemAlgnGetBackwardPtr(KD_PTR_C(7), 35, 0) == kd_null);
+    assert(MemAlgnGetBackwardPtr(KD_PTR_C(4), 0, 0) == null);
+    assert(MemAlgnGetBackwardPtr(KD_PTR_C(5), 3, 0) == null);
+    assert(MemAlgnGetBackwardPtr(KD_PTR_C(6), 19, 0) == null);
+    assert(MemAlgnGetBackwardPtr(KD_PTR_C(7), 35, 0) == null);
 
-    assert(kdMemAlgnGetBackwardPtr(KD_PTR_C(4), 4, 3) == kd_null);
-    assert(kdMemAlgnGetBackwardPtr(KD_PTR_C(5), 4, 5) == kd_null);
-    assert(kdMemAlgnGetBackwardPtr(KD_PTR_C(6), 4, 6) == kd_null);
-    assert(kdMemAlgnGetBackwardPtr(KD_PTR_C(7), 4, 7) == kd_null);
+    assert(MemAlgnGetBackwardPtr(KD_PTR_C(4), 4, 3) == null);
+    assert(MemAlgnGetBackwardPtr(KD_PTR_C(5), 4, 5) == null);
+    assert(MemAlgnGetBackwardPtr(KD_PTR_C(6), 4, 6) == null);
+    assert(MemAlgnGetBackwardPtr(KD_PTR_C(7), 4, 7) == null);
 
-    assert(kdMemAlgnGetBackwardPtr(KD_PTR_C(4), 0, 3) == kd_null);
-    assert(kdMemAlgnGetBackwardPtr(KD_PTR_C(5), 1, 5) == kd_null);
-    assert(kdMemAlgnGetBackwardPtr(KD_PTR_C(6), 19, 6) == kd_null);
-    assert(kdMemAlgnGetBackwardPtr(KD_PTR_C(7), 35, 7) == kd_null);
+    assert(MemAlgnGetBackwardPtr(KD_PTR_C(4), 0, 3) == null);
+    assert(MemAlgnGetBackwardPtr(KD_PTR_C(5), 1, 5) == null);
+    assert(MemAlgnGetBackwardPtr(KD_PTR_C(6), 19, 6) == null);
+    assert(MemAlgnGetBackwardPtr(KD_PTR_C(7), 35, 7) == null);
 
     printf("PASSED\n");
 }
@@ -107,7 +106,6 @@ main(int argc, char **argv)
     (void)argv;
 
     printf("\n" TEST_NAME_CSTR " :: begin\n");
-    printf("Library Version: %s\n\n", KD_MEM_ALGN_VERSION_CSTR);
 
     AlignsCorrectlyForGivenOffset();
     ZeroOffsetHandledCorrectly();

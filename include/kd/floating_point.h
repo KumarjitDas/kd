@@ -1,5 +1,5 @@
 /**
- * @file kd_floating_point.h
+ * @file floating_point.h
  * @author Kumarjit Das
  * @version 0.0.1
  * @brief Floating-point typedefs and macro definitions.

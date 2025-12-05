@@ -1,5 +1,5 @@
 /**
- * @file kd_dec.h
+ * @file dec.h
  * @author Kumarjit Das
  * @version 0.0.1
  * @brief Main header file of the KD_DEC library.

@@ -1,5 +1,5 @@
 /**
- * @file kd_mem_algn.h
+ * @file mem_algn.h
  * @author Kumarjit Das
  * @version 0.0.1
  * @brief Main header file of the KD_MEM_ALGN library.
@@ -21,13 +21,6 @@
 KD_EXTERN_BEGIN
 
 
-#define KD_MEM_ALGN_VERSION_MAJOR  0
-#define KD_MEM_ALGN_VERSION_MINOR  0
-#define KD_MEM_ALGN_VERSION_PATCH  1
-
-#define KD_MEM_ALGN_VERSION_CSTR   KDI_STRINGIFY(KD_MEM_ALGN_VERSION_MAJOR) "." KDI_STRINGIFY(KD_MEM_ALGN_VERSION_MINOR) "." KDI_STRINGIFY(KD_MEM_ALGN_VERSION_PATCH)
-#define KD_MEM_ALGN_VERSION_ARR    {KD_MEM_ALGN_VERSION_MAJOR, KD_MEM_ALGN_VERSION_MINOR, KD_MEM_ALGN_VERSION_PATCH}
-
 #define KD_MEM_ALGN_MAX_ALGN_SIZE  128
 #define KD_MEM_ALGN_DEFAULT_OFFSET KD_SZ_U8
 #define KD_MEM_ALGN_MAX_OFFSET     KD_SZ_UMAX
@@ -43,6 +36,16 @@ KDAPI(void *) kdMemAlgnGetHeadPtr(void *off_ptr, kd_u8_t offset);
 #define kdMemAlgnGetDefaultAllocSize(usable_size, algn_sz) kdMemAlgnGetAllocSize(usable_size, algn_sz, KD_MEM_ALGN_DEFAULT_OFFSET)
 #define kdMemAlgnGetDefaultOffsetPtr(head_ptr, algn_sz)    kdMemAlgnGetOffsetPtr(head_ptr, algn_sz, KD_MEM_ALGN_DEFAULT_OFFSET)
 #define kdMemAlgnGetDefaultHeadPtr(off_ptr)                kdMemAlgnGetHeadPtr(off_ptr, KD_MEM_ALGN_DEFAULT_OFFSET)
+
+#define MemAlgnGetAllocSize                                kdMemAlgnGetAllocSize
+#define MemAlgnGetForwardPtr                               kdMemAlgnGetForwardPtr
+#define MemAlgnGetBackwardPtr                              kdMemAlgnGetBackwardPtr
+#define MemAlgnGetOffsetPtr                                kdMemAlgnGetOffsetPtr
+#define MemAlgnGetHeadPtr                                  kdMemAlgnGetHeadPtr
+
+#define MemAlgnGetDefaultAllocSize                         kdMemAlgnGetDefaultAllocSize
+#define MemAlgnGetDefaultOffsetPtr                         kdMemAlgnGetDefaultOffsetPtr
+#define MemAlgnGetDefaultHeadPtr                           kdMemAlgnGetDefaultHeadPtr
 
 
 KD_EXTERN_END

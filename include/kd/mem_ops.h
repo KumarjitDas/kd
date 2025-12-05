@@ -1,5 +1,5 @@
 /**
- * @file kd_mem_ops.h
+ * @file mem_ops.h
  * @author Kumarjit Das
  * @version 0.0.1
  * @brief Main header file of the KD_MEM_OPS library.

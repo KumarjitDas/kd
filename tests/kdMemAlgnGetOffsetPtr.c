@@ -10,8 +10,7 @@
 #include <stdio.h>
 #include <assert.h>
 
-#include "kd.h"
-#include "kd_mem_algn.h"
+#include "../include/kd/mem_algn.h"
 
 
 #define LIB_NAME_CSTR   "KD_MEM_ALGN"
@@ -19,15 +18,15 @@
 #define LOG_PREFIX_CSTR "[" LIB_NAME_CSTR "] "
 
 
-static kd_u8_t ptr[1024];
+static u8 ptr[1024];
 
 void
 AlignsAndStoresOffsetCorrectly(void)
 {
     printf(LOG_PREFIX_CSTR "AlignsAndStoresOffsetCorrectly -> ");
 
-    assert(KD_PU8_C(kdMemAlgnGetOffsetPtr(ptr + 123, 4, 1)) != kd_null);
-    assert(KD_PU8_C(kdMemAlgnGetOffsetPtr(ptr + 345, 4, 4)) != kd_null);
+    assert(KD_PU8_C(MemAlgnGetOffsetPtr(ptr + 123, 4, 1)) != null);
+    assert(KD_PU8_C(MemAlgnGetOffsetPtr(ptr + 345, 4, 4)) != null);
 
     printf("PASSED\n");
 }
@@ -37,12 +36,12 @@ InvalidInputsHandled(void)
 {
     printf(LOG_PREFIX_CSTR "InvalidInputsHandled -> ");
 
-    assert(kdMemAlgnGetOffsetPtr(ptr + 123, 4, 3) == kd_null);
-    assert(kdMemAlgnGetOffsetPtr(ptr + 234, 4, 6) == kd_null);
-    assert(kdMemAlgnGetOffsetPtr(ptr + 456, 8, 3) == kd_null);
-    assert(kdMemAlgnGetOffsetPtr(ptr + 678, 5, 0) == kd_null);
-    assert(kdMemAlgnGetOffsetPtr(ptr + 890, 11, 1) == kd_null);
-    assert(kdMemAlgnGetOffsetPtr(ptr + 012, 23, 4) == kd_null);
+    assert(MemAlgnGetOffsetPtr(ptr + 123, 4, 3) == null);
+    assert(MemAlgnGetOffsetPtr(ptr + 234, 4, 6) == null);
+    assert(MemAlgnGetOffsetPtr(ptr + 456, 8, 3) == null);
+    assert(MemAlgnGetOffsetPtr(ptr + 678, 5, 0) == null);
+    assert(MemAlgnGetOffsetPtr(ptr + 890, 11, 1) == null);
+    assert(MemAlgnGetOffsetPtr(ptr + 012, 23, 4) == null);
 
     printf("PASSED\n");
 }
@@ -55,7 +54,6 @@ main(int argc, char **argv)
     (void)argv;
 
     printf("\n" TEST_NAME_CSTR " :: begin\n");
-    printf("Library Version: %s\n\n", KD_MEM_ALGN_VERSION_CSTR);
 
     AlignsAndStoresOffsetCorrectly();
     InvalidInputsHandled();

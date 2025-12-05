@@ -1,5 +1,5 @@
 /**
- * @file kd_object.h
+ * @file object.h
  * @author Kumarjit Das
  * @version 0.0.1
  * @brief Main header file of the KD_OBJECT library.

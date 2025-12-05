@@ -10,8 +10,7 @@
 #include <stdio.h>
 #include <assert.h>
 
-#include "kd.h"
-#include "kd_mem_algn.h"
+#include "../include/kd/mem_algn.h"
 
 
 #define LIB_NAME_CSTR   "KD_MEM_ALGN"
@@ -19,23 +18,23 @@
 #define LOG_PREFIX_CSTR "[" LIB_NAME_CSTR "] "
 
 
-static kd_u8_t ptr[1024];
+static u8 ptr[1024];
 
 void
 ReturnsOriginalPointerFromOffsetPtr(void)
 {
     printf(LOG_PREFIX_CSTR "ReturnsOriginalPointerFromOffsetPtr -> ");
 
-    kd_u8_t *off;
+    u8 *off;
 
-    off = KD_PU8_C(kdMemAlgnGetOffsetPtr(ptr + 123, 4, 1));
-    assert(kdMemAlgnGetHeadPtr(off, 1) == (ptr + 123));
+    off = KD_PU8_C(MemAlgnGetOffsetPtr(ptr + 123, 4, 1));
+    assert(MemAlgnGetHeadPtr(off, 1) == (ptr + 123));
 
-    off = KD_PU8_C(kdMemAlgnGetOffsetPtr(ptr + 456, 4, 2));
-    assert(kdMemAlgnGetHeadPtr(off, 2) == (ptr + 456));
+    off = KD_PU8_C(MemAlgnGetOffsetPtr(ptr + 456, 4, 2));
+    assert(MemAlgnGetHeadPtr(off, 2) == (ptr + 456));
 
-    off = KD_PU8_C(kdMemAlgnGetOffsetPtr(ptr + 789, 8, 4));
-    assert(kdMemAlgnGetHeadPtr(off, 4) == (ptr + 789));
+    off = KD_PU8_C(MemAlgnGetOffsetPtr(ptr + 789, 8, 4));
+    assert(MemAlgnGetHeadPtr(off, 4) == (ptr + 789));
 
     printf("PASSED\n");
 }
@@ -45,11 +44,11 @@ InvalidInputsHandled(void)
 {
     printf(LOG_PREFIX_CSTR "InvalidInputsHandled -> ");
 
-    assert(kdMemAlgnGetHeadPtr(kd_null, 1) == kd_null);
-    assert(kdMemAlgnGetHeadPtr(ptr + 123, 3) == kd_null);
-    assert(kdMemAlgnGetHeadPtr(ptr + 234, 5) == kd_null);
-    assert(kdMemAlgnGetHeadPtr(ptr + 456, 6) == kd_null);
-    assert(kdMemAlgnGetHeadPtr(ptr + 678, 7) == kd_null);
+    assert(MemAlgnGetHeadPtr(null, 1) == null);
+    assert(MemAlgnGetHeadPtr(ptr + 123, 3) == null);
+    assert(MemAlgnGetHeadPtr(ptr + 234, 5) == null);
+    assert(MemAlgnGetHeadPtr(ptr + 456, 6) == null);
+    assert(MemAlgnGetHeadPtr(ptr + 678, 7) == null);
 
     printf("PASSED\n");
 }
@@ -62,7 +61,6 @@ main(int argc, char **argv)
     (void)argv;
 
     printf("\n" TEST_NAME_CSTR " :: begin\n");
-    printf("Library Version: %s\n\n", KD_MEM_ALGN_VERSION_CSTR);
 
     ReturnsOriginalPointerFromOffsetPtr();
     InvalidInputsHandled();

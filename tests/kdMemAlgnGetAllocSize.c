@@ -10,8 +10,7 @@
 #include <stdio.h>
 #include <assert.h>
 
-#include "kd.h"
-#include "kd_mem_algn.h"
+#include "../include/kd/mem_algn.h"
 
 
 #define LIB_NAME_CSTR   "KD_MEM_ALGN"
@@ -24,9 +23,9 @@ ValidPowerOfTwoAlignmentAndOffset(void)
 {
     printf(LOG_PREFIX_CSTR "ValidPowerOfTwoAlignmentAndOffset -> ");
 
-    assert(kdMemAlgnGetAllocSize(1, 1, 1) == 3);
-    assert(kdMemAlgnGetAllocSize(16, 4, 8) == 28);
-    assert(kdMemAlgnGetAllocSize(16, 8, 4) == 28);
+    assert(MemAlgnGetAllocSize(1, 1, 1) == 3);
+    assert(MemAlgnGetAllocSize(16, 4, 8) == 28);
+    assert(MemAlgnGetAllocSize(16, 8, 4) == 28);
 
     printf("PASSED\n");
 }
@@ -36,9 +35,9 @@ ZeroOffsetIsHandledCorrectly(void)
 {
     printf(LOG_PREFIX_CSTR "ZeroOffsetIsHandledCorrectly -> ");
 
-    assert(kdMemAlgnGetAllocSize(0, 4, 0) == 0);
-    assert(kdMemAlgnGetAllocSize(16, 4, 0) == 20);
-    assert(kdMemAlgnGetAllocSize(32, 8, 0) == 40);
+    assert(MemAlgnGetAllocSize(0, 4, 0) == 0);
+    assert(MemAlgnGetAllocSize(16, 4, 0) == 20);
+    assert(MemAlgnGetAllocSize(32, 8, 0) == 40);
 
     printf("PASSED\n");
 }
@@ -48,10 +47,10 @@ MaxAlignmentAndOffsetLimits(void)
 {
     printf(LOG_PREFIX_CSTR "MaxAlignmentAndOffsetLimits -> ");
 
-    assert(kdMemAlgnGetAllocSize(16, 128, 8) == 152);
-    assert(kdMemAlgnGetAllocSize(16, 255, 8) == 0);
-    assert(kdMemAlgnGetAllocSize(16, 64, 16) == 0);
-    assert(kdMemAlgnGetAllocSize(16, 255, 32) == 0);
+    assert(MemAlgnGetAllocSize(16, 128, 8) == 152);
+    assert(MemAlgnGetAllocSize(16, 255, 8) == 0);
+    assert(MemAlgnGetAllocSize(16, 64, 16) == 0);
+    assert(MemAlgnGetAllocSize(16, 255, 32) == 0);
 
     printf("PASSED\n");
 }
@@ -61,8 +60,8 @@ InvalidZeroAlignment(void)
 {
     printf(LOG_PREFIX_CSTR "InvalidZeroAlignment -> ");
 
-    assert(kdMemAlgnGetAllocSize(16, 0, 4) == 0);
-    assert(kdMemAlgnGetAllocSize(16, 0, 8) == 0);
+    assert(MemAlgnGetAllocSize(16, 0, 4) == 0);
+    assert(MemAlgnGetAllocSize(16, 0, 8) == 0);
 
     printf("PASSED\n");
 }
@@ -72,9 +71,9 @@ InvalidNonPowerOfTwoAlignment(void)
 {
     printf(LOG_PREFIX_CSTR "InvalidNonPowerOfTwoAlignment -> ");
 
-    assert(kdMemAlgnGetAllocSize(1, 3, 1) == 0);
-    assert(kdMemAlgnGetAllocSize(16, 5, 8) == 0);
-    assert(kdMemAlgnGetAllocSize(16, 11, 4) == 0);
+    assert(MemAlgnGetAllocSize(1, 3, 1) == 0);
+    assert(MemAlgnGetAllocSize(16, 5, 8) == 0);
+    assert(MemAlgnGetAllocSize(16, 11, 4) == 0);
 
     printf("PASSED\n");
 }
@@ -84,9 +83,9 @@ InvalidOffsetExceedsLimit(void)
 {
     printf(LOG_PREFIX_CSTR "InvalidOffsetExceedsLimit -> ");
 
-    assert(kdMemAlgnGetAllocSize(1, 1, 128) == 0);
-    assert(kdMemAlgnGetAllocSize(16, 4, 64) == 0);
-    assert(kdMemAlgnGetAllocSize(16, 8, 128) == 0);
+    assert(MemAlgnGetAllocSize(1, 1, 128) == 0);
+    assert(MemAlgnGetAllocSize(16, 4, 64) == 0);
+    assert(MemAlgnGetAllocSize(16, 8, 128) == 0);
 
     printf("PASSED\n");
 }
@@ -96,10 +95,10 @@ InvalidNonPowerOfTwoOffset(void)
 {
     printf(LOG_PREFIX_CSTR "InvalidNonPowerOfTwoOffset -> ");
 
-    assert(kdMemAlgnGetAllocSize(1, 1, 3) == 0);
-    assert(kdMemAlgnGetAllocSize(16, 4, 5) == 0);
-    assert(kdMemAlgnGetAllocSize(16, 8, 6) == 0);
-    assert(kdMemAlgnGetAllocSize(16, 8, 7) == 0);
+    assert(MemAlgnGetAllocSize(1, 1, 3) == 0);
+    assert(MemAlgnGetAllocSize(16, 4, 5) == 0);
+    assert(MemAlgnGetAllocSize(16, 8, 6) == 0);
+    assert(MemAlgnGetAllocSize(16, 8, 7) == 0);
 
     printf("PASSED\n");
 }
@@ -112,7 +111,6 @@ main(int argc, char **argv)
     (void)argv;
 
     printf("\n" TEST_NAME_CSTR " :: begin\n");
-    printf("Library Version: %s\n\n", KD_MEM_ALGN_VERSION_CSTR);
 
     ValidPowerOfTwoAlignmentAndOffset();
     ZeroOffsetIsHandledCorrectly();
