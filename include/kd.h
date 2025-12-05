@@ -19,7 +19,6 @@
 #include "kd/floating_point.h"
 #include "kd/eltype.h"
 #include "kd/mem.h"
-#include "kd/mem_algn.h"
 
 /*
 #include "kd/gen_mem_ops.h"
