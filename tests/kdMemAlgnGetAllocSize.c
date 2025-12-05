@@ -122,5 +122,5 @@ main(int argc, char **argv)
 
     printf("\n" TEST_NAME_CSTR " :: end\n\n");
 
-    return KD_EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }

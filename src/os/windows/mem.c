@@ -9,8 +9,12 @@
  */
 
 
-#define KD_BUILDING_LIB 1
+#define BUILDING_LIB 1
 #include "./mem.h"
+
+#undef EXIT_SUCCESS
+#undef EXIT_FAILURE
+#undef CDECL
 
 #include <windows.h>
 

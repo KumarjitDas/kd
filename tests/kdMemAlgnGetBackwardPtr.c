@@ -23,25 +23,25 @@ AlignsCorrectlyForGivenOffset(void)
 {
     printf(LOG_PREFIX_CSTR "AlignsCorrectlyForGivenOffset -> ");
 
-    assert(MemAlgnGetBackwardPtr(KD_PTR_C(4), 4, 1) == KD_PTR_C(0));
-    assert(MemAlgnGetBackwardPtr(KD_PTR_C(5), 4, 1) == KD_PTR_C(4));
-    assert(MemAlgnGetBackwardPtr(KD_PTR_C(6), 4, 1) == KD_PTR_C(4));
-    assert(MemAlgnGetBackwardPtr(KD_PTR_C(12), 4, 1) == KD_PTR_C(8));
+    assert(MemAlgnGetBackwardPtr(PTR_C(4), 4, 1) == PTR_C(0));
+    assert(MemAlgnGetBackwardPtr(PTR_C(5), 4, 1) == PTR_C(4));
+    assert(MemAlgnGetBackwardPtr(PTR_C(6), 4, 1) == PTR_C(4));
+    assert(MemAlgnGetBackwardPtr(PTR_C(12), 4, 1) == PTR_C(8));
 
-    assert(MemAlgnGetBackwardPtr(KD_PTR_C(4), 4, 2) == KD_PTR_C(0));
-    assert(MemAlgnGetBackwardPtr(KD_PTR_C(5), 4, 2) == KD_PTR_C(4));
-    assert(MemAlgnGetBackwardPtr(KD_PTR_C(6), 4, 2) == KD_PTR_C(4));
-    assert(MemAlgnGetBackwardPtr(KD_PTR_C(12), 4, 2) == KD_PTR_C(8));
+    assert(MemAlgnGetBackwardPtr(PTR_C(4), 4, 2) == PTR_C(0));
+    assert(MemAlgnGetBackwardPtr(PTR_C(5), 4, 2) == PTR_C(4));
+    assert(MemAlgnGetBackwardPtr(PTR_C(6), 4, 2) == PTR_C(4));
+    assert(MemAlgnGetBackwardPtr(PTR_C(12), 4, 2) == PTR_C(8));
 
-    assert(MemAlgnGetBackwardPtr(KD_PTR_C(4), 4, 4) == KD_PTR_C(0));
-    assert(MemAlgnGetBackwardPtr(KD_PTR_C(5), 4, 4) == KD_PTR_C(4));
-    assert(MemAlgnGetBackwardPtr(KD_PTR_C(6), 4, 4) == KD_PTR_C(4));
-    assert(MemAlgnGetBackwardPtr(KD_PTR_C(12), 4, 4) == KD_PTR_C(8));
+    assert(MemAlgnGetBackwardPtr(PTR_C(4), 4, 4) == PTR_C(0));
+    assert(MemAlgnGetBackwardPtr(PTR_C(5), 4, 4) == PTR_C(4));
+    assert(MemAlgnGetBackwardPtr(PTR_C(6), 4, 4) == PTR_C(4));
+    assert(MemAlgnGetBackwardPtr(PTR_C(12), 4, 4) == PTR_C(8));
 
-    assert(MemAlgnGetBackwardPtr(KD_PTR_C(4), 4, 8) == KD_PTR_C(0));
-    assert(MemAlgnGetBackwardPtr(KD_PTR_C(5), 4, 8) == KD_PTR_C(4));
-    assert(MemAlgnGetBackwardPtr(KD_PTR_C(6), 4, 8) == KD_PTR_C(4));
-    assert(MemAlgnGetBackwardPtr(KD_PTR_C(12), 4, 8) == KD_PTR_C(8));
+    assert(MemAlgnGetBackwardPtr(PTR_C(4), 4, 8) == PTR_C(0));
+    assert(MemAlgnGetBackwardPtr(PTR_C(5), 4, 8) == PTR_C(4));
+    assert(MemAlgnGetBackwardPtr(PTR_C(6), 4, 8) == PTR_C(4));
+    assert(MemAlgnGetBackwardPtr(PTR_C(12), 4, 8) == PTR_C(8));
 
     printf("PASSED\n");
 }
@@ -51,15 +51,15 @@ ZeroOffsetHandledCorrectly(void)
 {
     printf(LOG_PREFIX_CSTR "ZeroOffsetHandledCorrectly -> ");
 
-    assert(MemAlgnGetBackwardPtr(KD_PTR_C(4), 4, 0) == KD_PTR_C(0));
-    assert(MemAlgnGetBackwardPtr(KD_PTR_C(5), 4, 0) == KD_PTR_C(4));
-    assert(MemAlgnGetBackwardPtr(KD_PTR_C(6), 4, 0) == KD_PTR_C(4));
-    assert(MemAlgnGetBackwardPtr(KD_PTR_C(12), 4, 0) == KD_PTR_C(8));
+    assert(MemAlgnGetBackwardPtr(PTR_C(4), 4, 0) == PTR_C(0));
+    assert(MemAlgnGetBackwardPtr(PTR_C(5), 4, 0) == PTR_C(4));
+    assert(MemAlgnGetBackwardPtr(PTR_C(6), 4, 0) == PTR_C(4));
+    assert(MemAlgnGetBackwardPtr(PTR_C(12), 4, 0) == PTR_C(8));
 
-    assert(MemAlgnGetBackwardPtr(KD_PTR_C(8), 8, 0) == KD_PTR_C(0));
-    assert(MemAlgnGetBackwardPtr(KD_PTR_C(13), 8, 0) == KD_PTR_C(8));
-    assert(MemAlgnGetBackwardPtr(KD_PTR_C(14), 8, 0) == KD_PTR_C(8));
-    assert(MemAlgnGetBackwardPtr(KD_PTR_C(16), 8, 0) == KD_PTR_C(8));
+    assert(MemAlgnGetBackwardPtr(PTR_C(8), 8, 0) == PTR_C(0));
+    assert(MemAlgnGetBackwardPtr(PTR_C(13), 8, 0) == PTR_C(8));
+    assert(MemAlgnGetBackwardPtr(PTR_C(14), 8, 0) == PTR_C(8));
+    assert(MemAlgnGetBackwardPtr(PTR_C(16), 8, 0) == PTR_C(8));
 
     printf("PASSED\n");
 }
@@ -69,8 +69,8 @@ AlignmentAndOffsetBoundaries(void)
 {
     printf(LOG_PREFIX_CSTR "AlignmentAndOffsetBoundaries -> ");
 
-    assert(MemAlgnGetBackwardPtr(KD_PTR_C(4), 255, 0) == null);
-    assert(MemAlgnGetBackwardPtr(KD_PTR_C(5), 4, 23) == null);
+    assert(MemAlgnGetBackwardPtr(PTR_C(4), 255, 0) == null);
+    assert(MemAlgnGetBackwardPtr(PTR_C(5), 4, 23) == null);
 
     printf("PASSED\n");
 }
@@ -80,20 +80,20 @@ InvalidAlignmentOrOffsetPanicsOrFails(void)
 {
     printf(LOG_PREFIX_CSTR "InvalidAlignmentOrOffsetPanicsOrFails -> ");
 
-    assert(MemAlgnGetBackwardPtr(KD_PTR_C(4), 0, 0) == null);
-    assert(MemAlgnGetBackwardPtr(KD_PTR_C(5), 3, 0) == null);
-    assert(MemAlgnGetBackwardPtr(KD_PTR_C(6), 19, 0) == null);
-    assert(MemAlgnGetBackwardPtr(KD_PTR_C(7), 35, 0) == null);
+    assert(MemAlgnGetBackwardPtr(PTR_C(4), 0, 0) == null);
+    assert(MemAlgnGetBackwardPtr(PTR_C(5), 3, 0) == null);
+    assert(MemAlgnGetBackwardPtr(PTR_C(6), 19, 0) == null);
+    assert(MemAlgnGetBackwardPtr(PTR_C(7), 35, 0) == null);
 
-    assert(MemAlgnGetBackwardPtr(KD_PTR_C(4), 4, 3) == null);
-    assert(MemAlgnGetBackwardPtr(KD_PTR_C(5), 4, 5) == null);
-    assert(MemAlgnGetBackwardPtr(KD_PTR_C(6), 4, 6) == null);
-    assert(MemAlgnGetBackwardPtr(KD_PTR_C(7), 4, 7) == null);
+    assert(MemAlgnGetBackwardPtr(PTR_C(4), 4, 3) == null);
+    assert(MemAlgnGetBackwardPtr(PTR_C(5), 4, 5) == null);
+    assert(MemAlgnGetBackwardPtr(PTR_C(6), 4, 6) == null);
+    assert(MemAlgnGetBackwardPtr(PTR_C(7), 4, 7) == null);
 
-    assert(MemAlgnGetBackwardPtr(KD_PTR_C(4), 0, 3) == null);
-    assert(MemAlgnGetBackwardPtr(KD_PTR_C(5), 1, 5) == null);
-    assert(MemAlgnGetBackwardPtr(KD_PTR_C(6), 19, 6) == null);
-    assert(MemAlgnGetBackwardPtr(KD_PTR_C(7), 35, 7) == null);
+    assert(MemAlgnGetBackwardPtr(PTR_C(4), 0, 3) == null);
+    assert(MemAlgnGetBackwardPtr(PTR_C(5), 1, 5) == null);
+    assert(MemAlgnGetBackwardPtr(PTR_C(6), 19, 6) == null);
+    assert(MemAlgnGetBackwardPtr(PTR_C(7), 35, 7) == null);
 
     printf("PASSED\n");
 }
@@ -114,5 +114,5 @@ main(int argc, char **argv)
 
     printf("\n" TEST_NAME_CSTR " :: end\n\n");
 
-    return KD_EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }

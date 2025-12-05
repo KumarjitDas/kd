@@ -25,14 +25,14 @@ BasicArguments(void)
 
     printf(LOG_PREFIX_CSTR "BasicArguments -> ");
 
-    assert(MemAlloc(null, 0) == KD_RESULT_FAILURE);
-    assert(MemAlloc(null, 4200) == KD_RESULT_FAILURE);
-    assert(MemAlloc(null, 69) == KD_RESULT_FAILURE);
+    assert(MemAlloc(null, 0) == RESULT_FAILURE);
+    assert(MemAlloc(null, 4200) == RESULT_FAILURE);
+    assert(MemAlloc(null, 69) == RESULT_FAILURE);
 
-    assert(MemAlloc(&ptr, 0) == KD_RESULT_FAILURE);
+    assert(MemAlloc(&ptr, 0) == RESULT_FAILURE);
     assert(ptr == null);
 
-    assert(MemAlloc(&ptr, 6900) == KD_RESULT_SUCCESS);
+    assert(MemAlloc(&ptr, 6900) == RESULT_SUCCESS);
     assert(ptr != null);
 
     printf("PASSED\n");
@@ -46,22 +46,22 @@ BasicAllocationBytes(void)
 
     printf(LOG_PREFIX_CSTR "BasicAllocationBytes -> ");
 
-    assert(MemAlloc(&ptr, 1) == KD_RESULT_SUCCESS);
+    assert(MemAlloc(&ptr, 1) == RESULT_SUCCESS);
     assert(ptr != null);
 
-    assert(MemAlloc(&ptr, 64) == KD_RESULT_SUCCESS);
+    assert(MemAlloc(&ptr, 64) == RESULT_SUCCESS);
     assert(ptr != null);
 
-    assert(MemAlloc(&ptr, 128) == KD_RESULT_SUCCESS);
+    assert(MemAlloc(&ptr, 128) == RESULT_SUCCESS);
     assert(ptr != null);
 
-    assert(MemAlloc(&ptr, 256) == KD_RESULT_SUCCESS);
+    assert(MemAlloc(&ptr, 256) == RESULT_SUCCESS);
     assert(ptr != null);
 
-    assert(MemAlloc(&ptr, 512) == KD_RESULT_SUCCESS);
+    assert(MemAlloc(&ptr, 512) == RESULT_SUCCESS);
     assert(ptr != null);
 
-    assert(MemAlloc(&ptr, 1024) == KD_RESULT_SUCCESS);
+    assert(MemAlloc(&ptr, 1024) == RESULT_SUCCESS);
     assert(ptr != null);
 
     printf("PASSED\n");
@@ -75,22 +75,22 @@ BasicAllocationKiloBytes(void)
 
     printf(LOG_PREFIX_CSTR "BasicAllocationKiloBytes -> ");
 
-    assert(MemAlloc(&ptr, 1024 * 1) == KD_RESULT_SUCCESS);
+    assert(MemAlloc(&ptr, 1024 * 1) == RESULT_SUCCESS);
     assert(ptr != null);
 
-    assert(MemAlloc(&ptr, 1024 * 64) == KD_RESULT_SUCCESS);
+    assert(MemAlloc(&ptr, 1024 * 64) == RESULT_SUCCESS);
     assert(ptr != null);
 
-    assert(MemAlloc(&ptr, 1024 * 128) == KD_RESULT_SUCCESS);
+    assert(MemAlloc(&ptr, 1024 * 128) == RESULT_SUCCESS);
     assert(ptr != null);
 
-    assert(MemAlloc(&ptr, 1024 * 256) == KD_RESULT_SUCCESS);
+    assert(MemAlloc(&ptr, 1024 * 256) == RESULT_SUCCESS);
     assert(ptr != null);
 
-    assert(MemAlloc(&ptr, 1024 * 512) == KD_RESULT_SUCCESS);
+    assert(MemAlloc(&ptr, 1024 * 512) == RESULT_SUCCESS);
     assert(ptr != null);
 
-    assert(MemAlloc(&ptr, 1024 * 1024) == KD_RESULT_SUCCESS);
+    assert(MemAlloc(&ptr, 1024 * 1024) == RESULT_SUCCESS);
     assert(ptr != null);
 
     printf("PASSED\n");
@@ -104,22 +104,22 @@ BasicAllocationMegaBytes(void)
 
     printf(LOG_PREFIX_CSTR "BasicAllocationMegaBytes -> ");
 
-    assert(MemAlloc(&ptr, 1024 * 1024 * 1) == KD_RESULT_SUCCESS);
+    assert(MemAlloc(&ptr, 1024 * 1024 * 1) == RESULT_SUCCESS);
     assert(ptr != null);
 
-    assert(MemAlloc(&ptr, 1024 * 1024 * 64) == KD_RESULT_SUCCESS);
+    assert(MemAlloc(&ptr, 1024 * 1024 * 64) == RESULT_SUCCESS);
     assert(ptr != null);
 
-    assert(MemAlloc(&ptr, 1024 * 1024 * 128) == KD_RESULT_SUCCESS);
+    assert(MemAlloc(&ptr, 1024 * 1024 * 128) == RESULT_SUCCESS);
     assert(ptr != null);
 
-    assert(MemAlloc(&ptr, 1024 * 1024 * 256) == KD_RESULT_SUCCESS);
+    assert(MemAlloc(&ptr, 1024 * 1024 * 256) == RESULT_SUCCESS);
     assert(ptr != null);
 
-    assert(MemAlloc(&ptr, 1024 * 1024 * 512) == KD_RESULT_SUCCESS);
+    assert(MemAlloc(&ptr, 1024 * 1024 * 512) == RESULT_SUCCESS);
     assert(ptr != null);
 
-    assert(MemAlloc(&ptr, 1024 * 1024 * 1024) == KD_RESULT_SUCCESS);
+    assert(MemAlloc(&ptr, 1024 * 1024 * 1024) == RESULT_SUCCESS);
     assert(ptr != null);
 
     printf("PASSED\n");
@@ -133,17 +133,17 @@ BasicMultipleSequentialAllocationsBytes(void)
 
     printf(LOG_PREFIX_CSTR "BasicMultipleSequentialAllocationsBytes -> ");
 
-    assert(MemAlloc(&ptr1, 1) == KD_RESULT_SUCCESS);
-    assert(MemAlloc(&ptr2, 64) == KD_RESULT_SUCCESS);
-    assert(MemAlloc(&ptr3, 128) == KD_RESULT_SUCCESS);
-    assert(MemAlloc(&ptr4, 256) == KD_RESULT_SUCCESS);
-    assert(MemAlloc(&ptr5, 32) == KD_RESULT_SUCCESS);
-    assert(MemAlloc(&ptr6, 512) == KD_RESULT_SUCCESS);
-    assert(MemAlloc(&ptr7, 32) == KD_RESULT_SUCCESS);
-    assert(MemAlloc(&ptr8, 256) == KD_RESULT_SUCCESS);
-    assert(MemAlloc(&ptr9, 128) == KD_RESULT_SUCCESS);
-    assert(MemAlloc(&ptr10, 64) == KD_RESULT_SUCCESS);
-    assert(MemAlloc(&ptr11, 1) == KD_RESULT_SUCCESS);
+    assert(MemAlloc(&ptr1, 1) == RESULT_SUCCESS);
+    assert(MemAlloc(&ptr2, 64) == RESULT_SUCCESS);
+    assert(MemAlloc(&ptr3, 128) == RESULT_SUCCESS);
+    assert(MemAlloc(&ptr4, 256) == RESULT_SUCCESS);
+    assert(MemAlloc(&ptr5, 32) == RESULT_SUCCESS);
+    assert(MemAlloc(&ptr6, 512) == RESULT_SUCCESS);
+    assert(MemAlloc(&ptr7, 32) == RESULT_SUCCESS);
+    assert(MemAlloc(&ptr8, 256) == RESULT_SUCCESS);
+    assert(MemAlloc(&ptr9, 128) == RESULT_SUCCESS);
+    assert(MemAlloc(&ptr10, 64) == RESULT_SUCCESS);
+    assert(MemAlloc(&ptr11, 1) == RESULT_SUCCESS);
 
     assert(ptr1 != null);
     assert(ptr2 != null);
@@ -168,17 +168,17 @@ BasicMultipleSequentialAllocationsKiloBytes(void)
 
     printf(LOG_PREFIX_CSTR "BasicMultipleSequentialAllocationsKiloBytes -> ");
 
-    assert(MemAlloc(&ptr1, 1024 * 1) == KD_RESULT_SUCCESS);
-    assert(MemAlloc(&ptr2, 1024 * 64) == KD_RESULT_SUCCESS);
-    assert(MemAlloc(&ptr3, 1024 * 128) == KD_RESULT_SUCCESS);
-    assert(MemAlloc(&ptr4, 1024 * 256) == KD_RESULT_SUCCESS);
-    assert(MemAlloc(&ptr5, 1024 * 32) == KD_RESULT_SUCCESS);
-    assert(MemAlloc(&ptr6, 1024 * 512) == KD_RESULT_SUCCESS);
-    assert(MemAlloc(&ptr7, 1024 * 32) == KD_RESULT_SUCCESS);
-    assert(MemAlloc(&ptr8, 1024 * 256) == KD_RESULT_SUCCESS);
-    assert(MemAlloc(&ptr9, 1024 * 128) == KD_RESULT_SUCCESS);
-    assert(MemAlloc(&ptr10, 1024 * 64) == KD_RESULT_SUCCESS);
-    assert(MemAlloc(&ptr11, 1024 * 1) == KD_RESULT_SUCCESS);
+    assert(MemAlloc(&ptr1, 1024 * 1) == RESULT_SUCCESS);
+    assert(MemAlloc(&ptr2, 1024 * 64) == RESULT_SUCCESS);
+    assert(MemAlloc(&ptr3, 1024 * 128) == RESULT_SUCCESS);
+    assert(MemAlloc(&ptr4, 1024 * 256) == RESULT_SUCCESS);
+    assert(MemAlloc(&ptr5, 1024 * 32) == RESULT_SUCCESS);
+    assert(MemAlloc(&ptr6, 1024 * 512) == RESULT_SUCCESS);
+    assert(MemAlloc(&ptr7, 1024 * 32) == RESULT_SUCCESS);
+    assert(MemAlloc(&ptr8, 1024 * 256) == RESULT_SUCCESS);
+    assert(MemAlloc(&ptr9, 1024 * 128) == RESULT_SUCCESS);
+    assert(MemAlloc(&ptr10, 1024 * 64) == RESULT_SUCCESS);
+    assert(MemAlloc(&ptr11, 1024 * 1) == RESULT_SUCCESS);
 
     assert(ptr1 != null);
     assert(ptr2 != null);
@@ -203,17 +203,17 @@ BasicMultipleSequentialAllocationsMegaBytes(void)
 
     printf(LOG_PREFIX_CSTR "BasicMultipleSequentialAllocationsMegaBytes -> ");
 
-    assert(MemAlloc(&ptr1, 1024 * 1024 * 1) == KD_RESULT_SUCCESS);
-    assert(MemAlloc(&ptr2, 1024 * 1024 * 64) == KD_RESULT_SUCCESS);
-    assert(MemAlloc(&ptr3, 1024 * 1024 * 128) == KD_RESULT_SUCCESS);
-    assert(MemAlloc(&ptr4, 1024 * 1024 * 256) == KD_RESULT_SUCCESS);
-    assert(MemAlloc(&ptr5, 1024 * 1024 * 32) == KD_RESULT_SUCCESS);
-    assert(MemAlloc(&ptr6, 1024 * 1024 * 512) == KD_RESULT_SUCCESS);
-    assert(MemAlloc(&ptr7, 1024 * 1024 * 32) == KD_RESULT_SUCCESS);
-    assert(MemAlloc(&ptr8, 1024 * 1024 * 256) == KD_RESULT_SUCCESS);
-    assert(MemAlloc(&ptr9, 1024 * 1024 * 128) == KD_RESULT_SUCCESS);
-    assert(MemAlloc(&ptr10, 1024 * 1024 * 64) == KD_RESULT_SUCCESS);
-    assert(MemAlloc(&ptr11, 1024 * 1024 * 1) == KD_RESULT_SUCCESS);
+    assert(MemAlloc(&ptr1, 1024 * 1024 * 1) == RESULT_SUCCESS);
+    assert(MemAlloc(&ptr2, 1024 * 1024 * 64) == RESULT_SUCCESS);
+    assert(MemAlloc(&ptr3, 1024 * 1024 * 128) == RESULT_SUCCESS);
+    assert(MemAlloc(&ptr4, 1024 * 1024 * 256) == RESULT_SUCCESS);
+    assert(MemAlloc(&ptr5, 1024 * 1024 * 32) == RESULT_SUCCESS);
+    assert(MemAlloc(&ptr6, 1024 * 1024 * 512) == RESULT_SUCCESS);
+    assert(MemAlloc(&ptr7, 1024 * 1024 * 32) == RESULT_SUCCESS);
+    assert(MemAlloc(&ptr8, 1024 * 1024 * 256) == RESULT_SUCCESS);
+    assert(MemAlloc(&ptr9, 1024 * 1024 * 128) == RESULT_SUCCESS);
+    assert(MemAlloc(&ptr10, 1024 * 1024 * 64) == RESULT_SUCCESS);
+    assert(MemAlloc(&ptr11, 1024 * 1024 * 1) == RESULT_SUCCESS);
 
     assert(ptr1 != null);
     assert(ptr2 != null);
@@ -251,5 +251,5 @@ main(int argc, char **argv)
 
     printf("\n" TEST_NAME_CSTR " :: end\n\n");
 
-    return KD_EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }

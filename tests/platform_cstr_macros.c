@@ -21,15 +21,15 @@ main(int argc, char **argv)
     printf("System information C-string macros test :: begin\n\n");
 
     printf("API Version: %s\n", KD_VERSION_CSTR);
-    printf("Compiler: %s\n", KD_COMP_CSTR);
-    printf("C Standard: %s\n", KD_C_STD_CSTR);
-    printf("Target Operating System: %s\n", KD_OS_CSTR);
-    printf("Target CPU: %s\n", KD_CPU_CSTR);
-    printf("Target Architecture Integer Size: %s\n", KD_ARCH_INT_CSTR);
-    printf("Target Architecture Pointer(Address) Size: %s\n", KD_ARCH_PTR_CSTR);
-    printf("Endianness: %s\n", KD_ENDIAN_CSTR);
+    printf("Compiler: %s\n", COMP_CSTR);
+    printf("C Standard: %s\n", C_STD_CSTR);
+    printf("Target Operating System: %s\n", OS_CSTR);
+    printf("Target CPU: %s\n", CPU_CSTR);
+    printf("Target Architecture Integer Size: %s\n", ARCH_INT_CSTR);
+    printf("Target Architecture Pointer(Address) Size: %s\n", ARCH_PTR_CSTR);
+    printf("Endianness: %s\n", ENDIAN_CSTR);
 
     printf("\nSystem information C-string macros test :: end\n\n");
 
-    return KD_EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }

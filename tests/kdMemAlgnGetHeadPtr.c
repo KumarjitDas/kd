@@ -27,13 +27,13 @@ ReturnsOriginalPointerFromOffsetPtr(void)
 
     u8 *off;
 
-    off = KD_PU8_C(MemAlgnGetOffsetPtr(ptr + 123, 4, 1));
+    off = PU8_C(MemAlgnGetOffsetPtr(ptr + 123, 4, 1));
     assert(MemAlgnGetHeadPtr(off, 1) == (ptr + 123));
 
-    off = KD_PU8_C(MemAlgnGetOffsetPtr(ptr + 456, 4, 2));
+    off = PU8_C(MemAlgnGetOffsetPtr(ptr + 456, 4, 2));
     assert(MemAlgnGetHeadPtr(off, 2) == (ptr + 456));
 
-    off = KD_PU8_C(MemAlgnGetOffsetPtr(ptr + 789, 8, 4));
+    off = PU8_C(MemAlgnGetOffsetPtr(ptr + 789, 8, 4));
     assert(MemAlgnGetHeadPtr(off, 4) == (ptr + 789));
 
     printf("PASSED\n");
@@ -67,5 +67,5 @@ main(int argc, char **argv)
 
     printf("\n" TEST_NAME_CSTR " :: end\n\n");
 
-    return KD_EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }

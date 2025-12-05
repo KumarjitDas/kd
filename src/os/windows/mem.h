@@ -18,12 +18,12 @@
 #include "../../../include/kd/fixed_width.h"
 
 
-#if !defined KD_OS_WINDOWS && !(defined KD_OS_WIN32 || defined KD_OS_WIN64)
+#if !defined OS_WINDOWS && !(defined OS_WIN32 || defined OS_WIN64)
     #error This translation unit is only compilable for Microsoft Windows platforms.
 #endif
 
 
-KD_EXTERN_BEGIN
+EXTERN_BEGIN
 
 
 KDAPI(bool) kdi_windows_MemAlloc(void *dst, usize sz);
@@ -31,7 +31,7 @@ KDAPI(bool) kdi_windows_MemFree(void *dst, usize sz);
 KDAPI(bool) kdi_windows_MemRealloc(void *dst, usize new_sz, void *src, usize old_sz);
 
 
-KD_EXTERN_END
+EXTERN_END
 
 
 #endif /* KDI_WINDOWS_MEM_H_ */

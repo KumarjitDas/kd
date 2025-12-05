@@ -9,12 +9,16 @@
  */
 
 
-#define KD_BUILDING_LIB 1
+#define BUILDING_LIB 1
 #include "../include/kd/mem.h"
 
-#if defined KD_OS_WINDOWS && (defined KD_OS_WIN32 || defined KD_OS_WIN64)
+#if defined OS_WINDOWS && (defined OS_WIN32 || defined OS_WIN64)
     #include "./os/windows/mem.h"
 #else
+    #undef EXIT_SUCCESS
+    #undef EXIT_FAILURE
+    #undef CDECL
+
     #include <stdlib.h>
 #endif
 
@@ -22,7 +26,7 @@
 bool
 MemAlloc(void *dst, usize sz)
 {
-#if defined KD_OS_WINDOWS
+#if defined OS_WINDOWS
     return kdi_windows_MemAlloc(dst, sz);
 #else
     byte *ptr;
@@ -55,7 +59,7 @@ MemAlloc(void *dst, usize sz)
 bool
 MemFree(void *dst, usize sz)
 {
-#if defined KD_OS_WINDOWS
+#if defined OS_WINDOWS
     return kdi_windows_MemFree(dst, sz);
 #else
     byte **dst_adr = dst;
@@ -77,7 +81,7 @@ MemFree(void *dst, usize sz)
 bool
 MemRealloc(void *dst, usize new_sz, void *src, usize old_sz)
 {
-#if defined KD_OS_WINDOWS
+#if defined OS_WINDOWS
     return kdi_windows_MemRealloc(dst, new_sz, src, old_sz);
 #else
     byte **dst_adr = dst, **src_adr = src, *temp_ptr, *ptr = null;

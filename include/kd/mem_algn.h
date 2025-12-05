@@ -37,6 +37,10 @@ KDAPI(void *) kdMemAlgnGetHeadPtr(void *off_ptr, kd_u8_t offset);
 #define kdMemAlgnGetDefaultOffsetPtr(head_ptr, algn_sz)    kdMemAlgnGetOffsetPtr(head_ptr, algn_sz, KD_MEM_ALGN_DEFAULT_OFFSET)
 #define kdMemAlgnGetDefaultHeadPtr(off_ptr)                kdMemAlgnGetHeadPtr(off_ptr, KD_MEM_ALGN_DEFAULT_OFFSET)
 
+#define MEM_ALGN_MAX_ALGN_SIZE                             KD_MEM_ALGN_MAX_ALGN_SIZE
+#define MEM_ALGN_DEFAULT_OFFSET                            KD_MEM_ALGN_DEFAULT_OFFSET
+#define MEM_ALGN_MAX_OFFSET                                KD_MEM_ALGN_MAX_OFFSET
+
 #define MemAlgnGetAllocSize                                kdMemAlgnGetAllocSize
 #define MemAlgnGetForwardPtr                               kdMemAlgnGetForwardPtr
 #define MemAlgnGetBackwardPtr                              kdMemAlgnGetBackwardPtr

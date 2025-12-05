@@ -46,10 +46,11 @@ enum kd_eltype_t
     KD_ELTYPE_F32,
     KD_ELTYPE_F64,
     KD_ELTYPE_ANY,
+
 #if defined KD_ARCH_64BIT_INT
     KD_ELTYPE_I64,
     KD_ELTYPE_U64,
-#endif                             /* KD_ARCH_64BIT_INT */
+#endif
 
     KDI_IGNORE_ELTYPE = KD_MAX_I32 /* Force it to be always 32-bit */
 };
@@ -86,10 +87,20 @@ enum kd_eltype_t
 #define ELTYPE_F32         KD_ELTYPE_F32
 #define ELTYPE_F64         KD_ELTYPE_F64
 #define ELTYPE_ANY         KD_ELTYPE_ANY
+
 #if defined KD_ARCH_64BIT_INT
     #define ELTYPE_I64 KD_ELTYPE_I64
     #define ELTYPE_U64 KD_ELTYPE_U64
-#endif /* KD_ARCH_64BIT_INT */
+#endif
+
+#define LIT_ELTYPE(x)   KD_LIT_ELTYPE(x)
+#define ELTYPE_C(X)     KD_ELTYPE_C(X)
+#define PELTYPE_C(X)    KD_PELTYPE_C(X)
+#define MIN_ELTYPE      KD_MIN_ELTYPE
+#define MAX_ELTYPE      KD_MAX_ELTYPE
+#define SZ_ELTYPE       KD_SZ_ELTYPE
+#define FMTSP_ELTYPE    KD_FMTSP_ELTYPE
+#define FSBTC_ELTYPE(x) KD_FSBTC_ELTYPE(x)
 
 
 KD_EXTERN_END

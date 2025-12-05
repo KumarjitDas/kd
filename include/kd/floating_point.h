@@ -117,12 +117,55 @@ typedef double kd_f64_t;
 
 /**
  * ---------------------------------------------------------------------------------------------------------------------
- *  Conditional simplified versions of typedefs and macros
+ *  Simplified versions of typedefs, macros, and miscellaneous constants without library initials/prefix
  * ---------------------------------------------------------------------------------------------------------------------
  */
 
-#define f32 kd_f32_t
-#define f64 kd_f64_t
+#define f32        kd_f32_t
+#define f64        kd_f64_t
+
+#define LIT_F32(x) KD_LIT_F32(x)
+#define LIT_F64(x) KD_LIT_F64(x)
+
+#if !(defined KD_CPLUSPLUS && defined KD_GOOGLE_TEST && defined KD_OS_WINDOWS && defined KD_COMP_MSVC)
+    #define LIT_FMIN(x) KD_LIT_FMIN(x)
+    #define LIT_FMAX(x) KD_LIT_FMAX(x)
+#endif
+
+#define MIN_F32 KD_MIN_F32
+#define MIN_F64 KD_MIN_F64
+
+#if !(defined KD_CPLUSPLUS && defined KD_GOOGLE_TEST && defined KD_OS_WINDOWS && defined KD_COMP_MSVC)
+    #define MIN_FMIN KD_MIN_FMIN
+    #define MIN_FMAX KD_MIN_FMAX
+#endif
+
+#define MAX_F32 KD_MAX_F32
+#define MAX_F64 KD_MAX_F64
+
+#if !(defined KD_CPLUSPLUS && defined KD_GOOGLE_TEST && defined KD_OS_WINDOWS && defined KD_COMP_MSVC)
+    #define MAX_FMIN KD_MAX_FMIN
+    #define MAX_FMAX KD_MAX_FMAX
+#endif
+
+#define SZ_F32    KD_SZ_F32
+#define SZ_F64    KD_SZ_F64
+
+#define FMTSP_F32 KD_FMTSP_F32
+#define FMTSP_F64 KD_FMTSP_F64
+
+#if !(defined KD_CPLUSPLUS && defined KD_GOOGLE_TEST && defined KD_OS_WINDOWS && defined KD_COMP_MSVC)
+    #define FMTSP_FMIN KD_FMTSP_FMIN
+    #define FMTSP_FMAX KD_FMTSP_FMAX
+#endif
+
+#define FSBTC_F32(x) KD_FSBTC_F32(x)
+#define FSBTC_F64(x) KD_FSBTC_F64(x)
+
+#if !(defined KD_CPLUSPLUS && defined KD_GOOGLE_TEST && defined KD_OS_WINDOWS && defined KD_COMP_MSVC)
+    #define FSBTC_FMIN(x) KD_FSBTC_FMIN(x)
+    #define FSBTC_FMAX(x) KD_FSBTC_FMAX(x)
+#endif
 
 
 KD_EXTERN_END

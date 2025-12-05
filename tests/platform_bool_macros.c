@@ -24,172 +24,172 @@ main(int argc, char **argv)
 
     printf(
         "Compiler: %s\n",
-#if defined KD_COMP_INTEL
+#if defined COMP_INTEL
         "Intel C/C++"
-#elif defined KD_COMP_MIPSPRO
+#elif defined COMP_MIPSPRO
         "MIPSpro C/C++"
-#elif defined KD_COMP_HPCC
+#elif defined COMP_HPCC
         "HP-UX CC"
-#elif defined KD_COMP_GCC || defined KD_COMP_APPLECC
+#elif defined COMP_GCC || defined COMP_APPLECC
         "Gnu GCC"
-#elif defined KD_COMP_IBM
+#elif defined COMP_IBM
         "IBM C/C++"
-#elif defined KD_COMP_MSVC
+#elif defined COMP_MSVC
         "Microsoft Visual C++"
-#elif defined KD_COMP_SUN
+#elif defined COMP_SUN
         "Sun Pro"
-#elif defined KD_COMP_BORLAND
+#elif defined COMP_BORLAND
         "Borland C/C++"
-#elif defined KD_COMP_METROWERKS
+#elif defined COMP_METROWERKS
         "MetroWerks CodeWarrior"
-#elif defined KD_COMP_DEC
+#elif defined COMP_DEC
         "Compaq/DEC C/C++"
-#elif defined KD_COMP_WATCOM
+#elif defined COMP_WATCOM
         "Watcom C/C++"
 #else
         "Unknown"
-#endif /* KD_COMP_INTEL */
+#endif /* COMP_INTEL */
     );
 
     printf(
         "Target Operating System: %s\n",
-#if defined KD_OS_LINUX
+#if defined OS_LINUX
         "Linux"
-#elif defined KD_OS_CYGWIN32
+#elif defined OS_CYGWIN32
         "Cygwin"
-#elif defined KD_OS_GAMECUBE
+#elif defined OS_GAMECUBE
         "GameCube"
-#elif defined KD_OS_MINGW
+#elif defined OS_MINGW
         "MinGW"
-    #if defined KD_OS_MINGW64
+    #if defined OS_MINGW64
         " 64-bit"
     #else
         " 32-bit"
-    #endif /* defined KD_OS_MINGW64 */
-#elif defined KD_OS_GO32
+    #endif /* defined OS_MINGW64 */
+#elif defined OS_GO32
         "GO32/MS-DOS"
-#elif defined KD_OS_DOS32
+#elif defined OS_DOS32
         "DOS/32-bit"
-#elif defined KD_OS_UNICOS
+#elif defined OS_UNICOS
         "UNICOS"
-#elif defined KD_OS_OSX
+#elif defined OS_OSX
         "MacOS X"
-#elif defined KD_OS_SOLARIS
+#elif defined OS_SOLARIS
         "Solaris"
-#elif defined KD_OS_SUNOS
+#elif defined OS_SUNOS
         "SunOS"
-#elif defined KD_OS_IRIX
+#elif defined OS_IRIX
         "Irix"
-#elif defined KD_OS_HPUX
+#elif defined OS_HPUX
         "HP-UX"
-#elif defined KD_OS_AIX
+#elif defined OS_AIX
         "AIX"
-#elif defined KD_OS_TRU64
+#elif defined OS_TRU64
         "Tru64"
-#elif defined KD_OS_BEOS
+#elif defined OS_BEOS
         "BeOS"
-#elif defined KD_OS_AMIGA
+#elif defined OS_AMIGA
         "Amiga"
-#elif defined KD_OS_UNIX
+#elif defined OS_UNIX
         "Unix-like (generic)"
-#elif defined KD_OS_XBOX
+#elif defined OS_XBOX
         "XBOX"
-#elif defined KD_OS_WINDOWS
+#elif defined OS_WINDOWS
         "Windows"
-    #if defined KD_OS_WINCE
+    #if defined OS_WINCE
         " CE"
-    #elif defined KD_OS_WIN64
+    #elif defined OS_WIN64
         " 64-bit"
     #else
         " 32-bit"
-    #endif /* defined KD_OS_WINCE */
-#elif defined KD_OS_PALM
+    #endif /* defined OS_WINCE */
+#elif defined OS_PALM
         "PalmOS"
-#elif defined KD_OS_MACOS
+#elif defined OS_MACOS
         "MacOS"
 #else
         "Unknown"
-#endif /* KD_OS_LINUX */
+#endif /* OS_LINUX */
     );
 
 
     printf(
         "Target CPU: %s\n",
-#if defined KD_CPU_PPC750
+#if defined CPU_PPC750
         "IBM PowerPC 750 (NGC)"
-#elif defined KD_CPU_68K
+#elif defined CPU_68K
         "MC68000"
-#elif defined KD_CPU_PPC
+#elif defined CPU_PPC
         "PowerPC"
-    #if defined KD_CPU_PPC64
+    #if defined CPU_PPC64
         " 64-bit"
-    #endif /* defined KD_CPU_PPC64 */
-#elif defined KD_CPU_CRAYT3E
+    #endif /* defined CPU_PPC64 */
+#elif defined CPU_CRAYT3E
         "Cray T3E (Alpha 21164)"
-#elif defined KD_CPU_SH3 || defined KD_CPU_SH4
+#elif defined CPU_SH3 || defined CPU_SH4
         "Hitachi SH-"
-    #if defined KD_CPU_SH4
+    #if defined CPU_SH4
         "4"
     #else
         "3"
-    #endif /* defined KD_CPU_SH4 */
-#elif defined KD_CPU_SPARC64
+    #endif /* defined CPU_SH4 */
+#elif defined CPU_SPARC64
         "Sparc/64"
-#elif defined KD_CPU_SPARC
+#elif defined CPU_SPARC
         "Sparc/32"
-#elif defined KD_CPU_STRONGARM
+#elif defined CPU_STRONGARM
         "ARM"
-#elif defined KD_CPU_MIPS
+#elif defined CPU_MIPS
         "MIPS"
-#elif defined KD_CPU_IA64
+#elif defined CPU_IA64
         "IA64"
-#elif defined KD_CPU_X86 || defined KD_CPU_X86_64
-    #if defined KD_CPU_X86_64
+#elif defined CPU_X86 || defined CPU_X86_64
+    #if defined CPU_X86_64
         "AMD x86-64"
     #else
         "Intel 386+"
-    #endif /* defined KD_CPU_X86_64 */
-#elif defined KD_CPU_AXP
+    #endif /* defined CPU_X86_64 */
+#elif defined CPU_AXP
         "AXP"
-#elif defined KD_CPU_HPPA
+#elif defined CPU_HPPA
         "PA-RISC"
 #else
         "Unknown"
-#endif /* KD_CPU_PPC750 */
+#endif /* CPU_PPC750 */
     );
 
     printf(
         "Target Architecture Integer Size: %s\n",
-#if defined KD_ARCH_64BIT_INT
+#if defined ARCH_64BIT_INT
         "64 bit"
-#elif defined KD_ARCH_32BIT_INT
+#elif defined ARCH_32BIT_INT
         "32 bit"
 #else
         "Unknown"
-#endif /* KD_ARCH_64BIT_INT */
+#endif /* ARCH_64BIT_INT */
     );
 
     printf(
         "Target Architecture Pointer(Address) Size: %s\n",
-#if defined KD_ARCH_64BIT_PTR
+#if defined ARCH_64BIT_PTR
         "64 bit"
-#elif defined KD_ARCH_32BIT_PTR
+#elif defined ARCH_32BIT_PTR
         "32 bit"
 #else
         "Unknown"
-#endif /* KD_ARCH_64BIT_PTR */
+#endif /* ARCH_64BIT_PTR */
     );
 
     printf(
         "Endianness: %s\n",
-#if defined KD_ENDIAN_LITTLE
+#if defined ENDIAN_LITTLE
         "Little"
 #else
         "Big"
-#endif /* KD_ENDIAN_LITTLE */
+#endif /* ENDIAN_LITTLE */
     );
 
     printf("\nSystem information boolean macros test :: end\n\n");
 
-    return KD_EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }

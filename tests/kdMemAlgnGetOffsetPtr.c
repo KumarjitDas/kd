@@ -25,8 +25,8 @@ AlignsAndStoresOffsetCorrectly(void)
 {
     printf(LOG_PREFIX_CSTR "AlignsAndStoresOffsetCorrectly -> ");
 
-    assert(KD_PU8_C(MemAlgnGetOffsetPtr(ptr + 123, 4, 1)) != null);
-    assert(KD_PU8_C(MemAlgnGetOffsetPtr(ptr + 345, 4, 4)) != null);
+    assert(PU8_C(MemAlgnGetOffsetPtr(ptr + 123, 4, 1)) != null);
+    assert(PU8_C(MemAlgnGetOffsetPtr(ptr + 345, 4, 4)) != null);
 
     printf("PASSED\n");
 }
@@ -60,5 +60,5 @@ main(int argc, char **argv)
 
     printf("\n" TEST_NAME_CSTR " :: end\n\n");
 
-    return KD_EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }

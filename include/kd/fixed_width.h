@@ -161,7 +161,7 @@ typedef kd_u32_t kd_bool_t;
  * ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
  */
 
-#define KD_BOOL_C(X)  ((kd_bool_t)(X))
+#define KD_BOOL_C(X)  ((kd_bool_t)(!!(X)))
 #define KD_I8_C(X)    ((kd_i8_t)(X))
 #define KD_I16_C(X)   ((kd_i16_t)(X))
 #define KD_I32_C(X)   ((kd_i32_t)(X))
@@ -301,7 +301,7 @@ typedef kd_u32_t kd_bool_t;
  * ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
  */
 
-#define KD_SZ_BOOL  sizeof(kd_i32_t) /* sizeof(kd_bool_t) */
+#define KD_SZ_BOOL  sizeof(kd_bool_t)
 #define KD_SZ_I8    sizeof(kd_i8_t)
 #define KD_SZ_I16   sizeof(kd_i16_t)
 #define KD_SZ_I32   sizeof(kd_i32_t)
@@ -465,7 +465,7 @@ typedef kd_u32_t kd_bool_t;
 
 /**
  * ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
- *  Conditional simplified versions of typedefs and macros
+ *  Simplified versions of typedefs, macros, and miscellaneous constants without library initials/prefix
  * ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
  */
 
@@ -492,10 +492,228 @@ typedef kd_u32_t kd_bool_t;
 #define usize kd_usize_t
 #define byte  kd_byte_t
 #define chr   kd_chr_t
+
 #if defined KD_ARCH_64BIT_INT
     #define i64 kd_i64_t
     #define u64 kd_u64_t
-#endif /* KD_ARCH_64BIT_INT */
+#endif
+
+#define LIT_BOOL(x) KD_LIT_BOOL(x)
+#define LIT_I8(x)   KD_LIT_I8(x)
+#define LIT_I16(x)  KD_LIT_I16(x)
+#define LIT_U8(x)   KD_LIT_U8(x)
+#define LIT_U16(x)  KD_LIT_U16(x)
+#define LIT_I32(x)  KD_LIT_I32(x)
+#define LIT_U32(x)  KD_LIT_U32(x)
+#define LIT_IMIN(x) KD_LIT_IMIN(x)
+#define LIT_UMIN(x) KD_LIT_UMIN(x)
+#define LIT_BYTE(x) KD_LIT_BYTE(x)
+#define LIT_CHR(x)  KD_LIT_CHR(x)
+#define LIT_PTR(x)  KD_LIT_PTR(x)
+
+#if defined KD_FW_64BIT_INT
+    #define LIT_I64(x)   KD_LIT_I64(x)
+    #define LIT_U64(x)   KD_LIT_U64(x)
+    #define LIT_IMAX(x)  KD_LIT_IMAX(x)
+    #define LIT_UMAX(x)  KD_LIT_UMAX(x)
+    #define LIT_WORD(x)  KD_LIT_WORD(x)
+    #define LIT_USIZE(x) KD_LIT_USIZE(x)
+#else
+    #define LIT_IMAX(x)  KD_LIT_IMAX(x)
+    #define LIT_UMAX(x)  KD_LIT_UMAX(x)
+    #define LIT_WORD(x)  KD_LIT_WORD(x)
+    #define LIT_USIZE(x) KD_LIT_USIZE(x)
+#endif
+
+#define BOOL_C(x)  KD_BOOL_C(x)
+#define I8_C(x)    KD_I8_C(x)
+#define I16_C(x)   KD_I16_C(x)
+#define I32_C(x)   KD_I32_C(x)
+#define IMIN_C(x)  KD_IMIN_C(x)
+#define IMAX_C(x)  KD_IMAX_C(x)
+#define U8_C(x)    KD_U8_C(x)
+#define U16_C(x)   KD_U16_C(x)
+#define U32_C(x)   KD_U32_C(x)
+#define UMIN_C(x)  KD_UMIN_C(x)
+#define UMAX_C(x)  KD_UMAX_C(x)
+#define WORD_C(x)  KD_WORD_C(x)
+#define USIZE_C(x) KD_USIZE_C(x)
+#define BYTE_C(x)  KD_BYTE_C(x)
+#define CHR_C(x)   KD_CHR_C(x)
+#define PTR_C(x)   KD_PTR_C(x)
+
+#if defined KD_ARCH_64BIT_INT
+    #define I64_C(x) KD_I64_C(x)
+    #define U64_C(x) KD_U64_C(x)
+#endif
+
+#define PBOOL_C(x)  KD_PBOOL_C(x)
+#define PI8_C(x)    KD_PI8_C(x)
+#define PI16_C(x)   KD_PI16_C(x)
+#define PI32_C(x)   KD_PI32_C(x)
+#define PIMIN_C(x)  KD_PIMIN_C(x)
+#define PIMAX_C(x)  KD_PIMAX_C(x)
+#define PU8_C(x)    KD_PU8_C(x)
+#define PU16_C(x)   KD_PU16_C(x)
+#define PU32_C(x)   KD_PU32_C(x)
+#define PUMIN_C(x)  KD_PUMIN_C(x)
+#define PUMAX_C(x)  KD_PUMAX_C(x)
+#define PWORD_C(x)  KD_PWORD_C(x)
+#define PUSIZE_C(x) KD_PUSIZE_C(x)
+#define PBYTE_C(x)  KD_PBYTE_C(x)
+#define PCHR_C(x)   KD_PCHR_C(x)
+
+#if defined KD_ARCH_64BIT_INT
+    #define PI64_C(x) KD_PI64_C(x)
+    #define PU64_C(x) KD_PU64_C(x)
+#endif
+
+#define BASE_INT_T      KD_BASE_INT_T
+#define BASE_UINT_T     KD_BASE_UINT_T
+#define BASE_INT_C(x)   KD_BASE_INT_C(x)
+#define BASE_UINT_C(x)  KD_BASE_UINT_C(x)
+#define BASE_PINT_C(x)  KD_BASE_PINT_C(x)
+#define BASE_PUINT_C(x) KD_BASE_PUINT_C(x)
+
+#define MIN_I8          KD_MIN_I8
+#define MIN_I16         KD_MIN_I16
+#define MIN_I32         KD_MIN_I32
+#define MIN_IMIN        KD_MIN_IMIN
+#define MIN_U8          KD_MIN_U8
+#define MIN_U16         KD_MIN_U16
+#define MIN_U32         KD_MIN_U32
+#define MIN_UMIN        KD_MIN_UMIN
+#define MIN_BYTE        KD_MIN_BYTE
+#define MIN_CHR         KD_MIN_CHR
+#define MIN_PTR         KD_MIN_PTR
+
+#if defined KD_ARCH_64BIT_INT
+    #define MIN_I64   KD_MIN_I64
+    #define MIN_IMAX  KD_MIN_IMAX
+    #define MIN_U64   KD_MIN_U64
+    #define MIN_UMAX  KD_MIN_UMAX
+    #define MIN_WORD  KD_MIN_WORD
+    #define MIN_USIZE KD_MIN_USIZE
+#else
+    #define MIN_IMAX  KD_MIN_IMAX
+    #define MIN_UMAX  KD_MIN_UMAX
+    #define MIN_WORD  KD_MIN_WORD
+    #define MIN_USIZE KD_MIN_USIZE
+#endif
+
+#define MAX_I8   KD_MAX_I8
+#define MAX_I16  KD_MAX_I16
+#define MAX_I32  KD_MAX_I32
+#define MAX_IMIN KD_MAX_IMIN
+#define MAX_U8   KD_MAX_U8
+#define MAX_U16  KD_MAX_U16
+#define MAX_U32  KD_MAX_U32
+#define MAX_UMIN KD_MAX_UMIN
+#define MAX_BYTE KD_MAX_BYTE
+#define MAX_CHR  KD_MAX_CHR
+
+#if defined KD_ARCH_64BIT_INT
+    #define MAX_I64   KD_MAX_I64
+    #define MAX_IMAX  KD_MAX_IMAX
+    #define MAX_U64   KD_MAX_U64
+    #define MAX_UMAX  KD_MAX_UMAX
+    #define MAX_WORD  KD_MAX_WORD
+    #define MAX_USIZE KD_MAX_USIZE
+#else
+    #define MAX_IMAX  KD_MAX_IMAX
+    #define MAX_UMAX  KD_MAX_UMAX
+    #define MAX_WORD  KD_MAX_WORD
+    #define MAX_USIZE KD_MAX_USIZE
+#endif
+
+#define MAX_PTR  KD_MAX_PTR
+
+#define SZ_BOOL  KD_SZ_BOOL
+#define SZ_I8    KD_SZ_I8
+#define SZ_I16   KD_SZ_I16
+#define SZ_I32   KD_SZ_I32
+#define SZ_IMIN  KD_SZ_IMIN
+#define SZ_IMAX  KD_SZ_IMAX
+#define SZ_U8    KD_SZ_U8
+#define SZ_U16   KD_SZ_U16
+#define SZ_U32   KD_SZ_U32
+#define SZ_UMIN  KD_SZ_UMIN
+#define SZ_UMAX  KD_SZ_UMAX
+#define SZ_WORD  KD_SZ_WORD
+#define SZ_USIZE KD_SZ_USIZE
+#define SZ_BYTE  KD_SZ_BYTE
+#define SZ_CHR   KD_SZ_CHR
+#define SZ_PTR   KD_SZ_PTR
+
+#if defined KD_ARCH_64BIT_INT
+    #define SZ_I64 KD_SZ_I64
+    #define SZ_U64 KD_SZ_U64
+#endif
+
+#define FMTSP_BOOL KD_FMTSP_BOOL
+#define FMTSP_I8   KD_FMTSP_I8
+#define FMTSP_I16  KD_FMTSP_I16
+#define FMTSP_IMIN KD_FMTSP_IMIN
+#define FMTSP_U8   KD_FMTSP_U8
+#define FMTSP_U16  KD_FMTSP_U16
+#define FMTSP_UMIN KD_FMTSP_UMIN
+#define FMTSP_BYTE KD_FMTSP_BYTE
+#define FMTSP_PTR  KD_FMTSP_PTR
+#define FMTSP_I32  KD_FMTSP_I32
+#define FMTSP_U32  KD_FMTSP_U32
+#define FMTSP_CHR  KD_FMTSP_CHR
+
+#if defined KD_ARCH_64BIT_INT
+    #define FMTSP_I64   KD_FMTSP_I64
+    #define FMTSP_U64   KD_FMTSP_U64
+    #define FMTSP_IMAX  KD_FMTSP_IMAX
+    #define FMTSP_UMAX  KD_FMTSP_UMAX
+    #define FMTSP_WORD  KD_FMTSP_WORD
+    #define FMTSP_USIZE KD_FMTSP_USIZE
+#else
+    #define FMTSP_IMAX  KD_FMTSP_IMAX
+    #define FMTSP_UMAX  KD_FMTSP_UMAX
+    #define FMTSP_USIZE KD_FMTSP_USIZE
+#endif
+
+#define FSBTC_BOOL(x) KD_FSBTC_BOOL(x)
+#define FSBTC_I8(x)   KD_FSBTC_I8(x)
+#define FSBTC_I16(x)  KD_FSBTC_I16(x)
+#define FSBTC_IMIN(x) KD_FSBTC_IMIN(x)
+#define FSBTC_U8(x)   KD_FSBTC_U8(x)
+#define FSBTC_U16(x)  KD_FSBTC_U16(x)
+#define FSBTC_UMIN(x) KD_FSBTC_UMIN(x)
+#define FSBTC_BYTE(x) KD_FSBTC_BYTE(x)
+#define FSBTC_PTR(x)  KD_FSBTC_PTR(x)
+#define FSBTC_I32(x)  KD_FSBTC_I32(x)
+#define FSBTC_U32(x)  KD_FSBTC_U32(x)
+#define FSBTC_CHR(x)  KD_FSBTC_CHR(x)
+
+#if defined KD_ARCH_64BIT_INT
+    #define FSBTC_I64(x)   KD_FSBTC_I64(x)
+    #define FSBTC_U64(x)   KD_FSBTC_U64(x)
+    #define FSBTC_IMAX(x)  KD_FSBTC_IMAX(x)
+    #define FSBTC_UMAX(x)  KD_FSBTC_UMAX(x)
+    #define FSBTC_WORD(x)  KD_FSBTC_WORD(x)
+    #define FSBTC_USIZE(x) KD_FSBTC_USIZE(x)
+#else
+    #define FSBTC_IMAX(x)  KD_FSBTC_IMAX(x)
+    #define FSBTC_UMAX(x)  KD_FSBTC_UMAX(x)
+    #define FSBTC_WORD(x)  KD_FSBTC_WORD(x)
+    #define FSBTC_USIZE(x) KD_FSBTC_USIZE(x)
+#endif
+
+#define LAST_IDX KD_LAST_IDX
+
+#if defined RESULT_SUCCESS
+    #undef RESULT_SUCCESS
+#endif
+#if defined RESULT_FAILURE
+    #undef RESULT_FAILURE
+#endif
+
+#define RESULT_SUCCESS KD_RESULT_SUCCESS
+#define RESULT_FAILURE KD_RESULT_FAILURE
 
 
 KD_EXTERN_END

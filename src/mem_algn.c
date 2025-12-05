@@ -9,7 +9,7 @@
  */
 
 
-#define KD_BUILDING_LIB 1
+#define BUILDING_LIB 1
 #include "../include/kd/mem_algn.h"
 
 
@@ -23,14 +23,14 @@ kdi_IsPowerOfTwo(usize n)
 static bool
 kdi_IsValidAlgnSize(u8 algn_sz)
 {
-    return (algn_sz != 0) && kdi_IsPowerOfTwo(algn_sz) && (algn_sz <= KD_MEM_ALGN_MAX_ALGN_SIZE);
+    return (algn_sz != 0) && kdi_IsPowerOfTwo(algn_sz) && (algn_sz <= MEM_ALGN_MAX_ALGN_SIZE);
 }
 
 
 static bool
 kdi_IsValidOffset(u8 offset)
 {
-    return !offset || (kdi_IsPowerOfTwo(offset) && (offset <= KD_MEM_ALGN_MAX_OFFSET));
+    return !offset || (kdi_IsPowerOfTwo(offset) && (offset <= MEM_ALGN_MAX_OFFSET));
 }
 
 
@@ -53,9 +53,9 @@ kdMemAlgnGetForwardPtr(void *head_ptr, u8 algn_sz, u8 offset)
         return null;
     }
 
-    u8 *forward = KD_PU8_C(head_ptr) + offset + algn_sz;
+    u8 *forward = PU8_C(head_ptr) + offset + algn_sz;
 
-    return forward - (KD_USIZE_C(forward) % algn_sz);
+    return forward - (USIZE_C(forward) % algn_sz);
 }
 
 
@@ -70,7 +70,7 @@ kdMemAlgnGetBackwardPtr(void *head_ptr, u8 algn_sz, u8 offset)
 
     u8 *backward = forward;
 
-    while (backward >= KD_PU8_C(head_ptr))
+    while (backward >= PU8_C(head_ptr))
     {
         backward -= algn_sz;
     }
@@ -87,20 +87,20 @@ kdMemAlgnGetOffsetPtr(void *head_ptr, u8 algn_sz, u8 offset)
     {
         switch (offset)
         {
-            case KD_SZ_U8:
-                *(KD_PU8_C(forward) - offset) = KD_U8_C(KD_PU8_C(forward) - (u8 *)head_ptr);
+            case SZ_U8:
+                *(PU8_C(forward) - offset) = U8_C(PU8_C(forward) - (u8 *)head_ptr);
                 break;
-            case KD_SZ_U16:
-                *KD_PU16_C(KD_PU8_C(forward) - offset) = KD_U16_C(KD_PU8_C(forward) - (u8 *)head_ptr);
+            case SZ_U16:
+                *PU16_C(PU8_C(forward) - offset) = U16_C(PU8_C(forward) - (u8 *)head_ptr);
                 break;
-            case KD_SZ_U32:
-                *KD_PU32_C(KD_PU8_C(forward) - offset) = KD_U32_C(KD_PU8_C(forward) - (u8 *)head_ptr);
+            case SZ_U32:
+                *PU32_C(PU8_C(forward) - offset) = U32_C(PU8_C(forward) - (u8 *)head_ptr);
                 break;
-#if defined KD_ARCH_64BIT_INT
-            case KD_SZ_U64:
-                *KD_PU64_C(KD_PU8_C(forward) - offset) = KD_U64_C(KD_PU8_C(forward) - (u8 *)head_ptr);
+#if defined ARCH_64BIT_INT
+            case SZ_U64:
+                *PU64_C(PU8_C(forward) - offset) = U64_C(PU8_C(forward) - (u8 *)head_ptr);
                 break;
-#endif /* KD_ARCH_64BIT_INT */
+#endif /* ARCH_64BIT_INT */
             default:;
         }
     }
@@ -121,22 +121,22 @@ kdMemAlgnGetHeadPtr(void *off_ptr, u8 offset)
 
     switch (offset)
     {
-        case KD_SZ_U8:
-            head_offset = *(KD_PU8_C(off_ptr) - offset);
+        case SZ_U8:
+            head_offset = *(PU8_C(off_ptr) - offset);
             break;
-        case KD_SZ_U16:
-            head_offset = *KD_PU16_C(KD_PU8_C(off_ptr) - offset);
+        case SZ_U16:
+            head_offset = *PU16_C(PU8_C(off_ptr) - offset);
             break;
-        case KD_SZ_U32:
-            head_offset = *KD_PU32_C(KD_PU8_C(off_ptr) - offset);
+        case SZ_U32:
+            head_offset = *PU32_C(PU8_C(off_ptr) - offset);
             break;
-#if defined KD_ARCH_64BIT_INT
-        case KD_SZ_U64:
-            head_offset = *KD_PU64_C(KD_PU8_C(off_ptr) - offset);
+#if defined ARCH_64BIT_INT
+        case SZ_U64:
+            head_offset = *PU64_C(PU8_C(off_ptr) - offset);
             break;
-#endif /* KD_ARCH_64BIT_INT */
+#endif /* ARCH_64BIT_INT */
         default:;
     }
 
-    return KD_PU8_C(off_ptr) - head_offset;
+    return PU8_C(off_ptr) - head_offset;
 }
