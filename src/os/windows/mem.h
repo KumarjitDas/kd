@@ -26,9 +26,26 @@
 EXTERN_BEGIN
 
 
-KDAPI(bool) kdi_windows_MemAlloc(void *dst, usize sz);
-KDAPI(bool) kdi_windows_MemFree(void *dst, usize sz);
-KDAPI(bool) kdi_windows_MemRealloc(void *dst, usize new_sz, void *src, usize old_sz);
+/**
+ * @internal
+ * Windows-specific backend implementation of kdMemAlloc().
+ * Has the same contract and return semantics as kdMemAlloc().
+ */
+KDAPI(bool) kdi_windows_MemAlloc(void *dst_addr, usize sz);
+
+/**
+ * @internal
+ * Windows-specific backend implementation of kdMemFree().
+ * Has the same contract and return semantics as kdMemFree().
+ */
+KDAPI(bool) kdi_windows_MemFree(void *dst_addr, usize sz);
+
+/**
+ * @internal
+ * Windows-specific backend implementation of kdMemRealloc().
+ * Has the same contract and return semantics as kdMemRealloc().
+ */
+KDAPI(bool) kdi_windows_MemRealloc(void *dst_addr, usize new_sz, void *src_addr, usize old_sz);
 
 
 EXTERN_END

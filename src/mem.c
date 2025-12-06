@@ -24,19 +24,19 @@
 
 
 bool
-MemAlloc(void *dst, usize sz)
+MemAlloc(void *dst_addr, usize sz)
 {
 #if defined OS_WINDOWS
-    return kdi_windows_MemAlloc(dst, sz);
+    return kdi_windows_MemAlloc(dst_addr, sz);
 #else
     byte *ptr;
 
-    if (!dst)
+    if (!dst_addr)
     {
         return KD_RESULT_FAILURE;
     }
 
-    *(byte **)dst = null;
+    *(byte **)dst_addr = null;
 
     if (!sz)
     {
@@ -49,7 +49,7 @@ MemAlloc(void *dst, usize sz)
         return KD_RESULT_FAILURE;
     }
 
-    *(byte **)dst = ptr;
+    *(byte **)dst_addr = ptr;
 
     return KD_RESULT_SUCCESS;
 #endif
@@ -57,21 +57,21 @@ MemAlloc(void *dst, usize sz)
 
 
 bool
-MemFree(void *dst, usize sz)
+MemFree(void *dst_addr, usize sz)
 {
 #if defined OS_WINDOWS
-    return kdi_windows_MemFree(dst, sz);
+    return kdi_windows_MemFree(dst_addr, sz);
 #else
-    byte **dst_adr = dst;
+    byte **solid_dst_adr = dst_addr;
 
-    if (!dst_adr || !*dst_adr || !sz)
+    if (!solid_dst_adr || !*solid_dst_adr || !sz)
     {
         return KD_RESULT_FAILURE;
     }
 
-    free(*dst_adr);
+    free(*solid_dst_adr);
 
-    *dst_adr = null;
+    *solid_dst_adr = null;
 
     return KD_RESULT_SUCCESS;
 #endif
@@ -79,14 +79,14 @@ MemFree(void *dst, usize sz)
 
 
 bool
-MemRealloc(void *dst, usize new_sz, void *src, usize old_sz)
+MemRealloc(void *dst_addr, usize new_sz, void *src, usize old_sz)
 {
 #if defined OS_WINDOWS
-    return kdi_windows_MemRealloc(dst, new_sz, src, old_sz);
+    return kdi_windows_MemRealloc(dst_addr, new_sz, src, old_sz);
 #else
-    byte **dst_adr = dst, **src_adr = src, *temp_ptr, *ptr = null;
+    byte **solid_dst_adr = dst_addr, **src_adr = src, *temp_ptr, *ptr = null;
 
-    if (!dst_adr || !old_sz)
+    if (!solid_dst_adr || !old_sz)
     {
         return KD_RESULT_FAILURE;
     }
@@ -99,9 +99,9 @@ MemRealloc(void *dst, usize new_sz, void *src, usize old_sz)
         {
             free(temp_ptr);
 
-            *dst_adr = null;
+            *solid_dst_adr = null;
 
-            if (src_adr && src_adr != dst_adr)
+            if (src_adr && src_adr != solid_dst_adr)
             {
                 *src_adr = null;
             }
@@ -128,9 +128,9 @@ MemRealloc(void *dst, usize new_sz, void *src, usize old_sz)
         return KD_RESULT_FAILURE;
     }
 
-    *dst_adr = ptr;
+    *solid_dst_adr = ptr;
 
-    if (src_adr && src_adr != dst_adr)
+    if (src_adr && src_adr != solid_dst_adr)
     {
         *src_adr = null;
     }

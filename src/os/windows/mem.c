@@ -20,17 +20,17 @@
 
 
 bool
-kdi_windows_MemAlloc(void *dst, usize sz)
+kdi_windows_MemAlloc(void *dst_addr, usize sz)
 {
     HANDLE heap;
     byte  *ptr;
 
-    if (!dst)
+    if (!dst_addr)
     {
         return KD_RESULT_FAILURE;
     }
 
-    *(byte **)dst = null;
+    *(byte **)dst_addr = null;
 
     if (!sz)
     {
@@ -50,19 +50,19 @@ kdi_windows_MemAlloc(void *dst, usize sz)
         return KD_RESULT_FAILURE;
     }
 
-    *(byte **)dst = ptr;
+    *(byte **)dst_addr = ptr;
 
     return KD_RESULT_SUCCESS;
 }
 
 
 bool
-kdi_windows_MemFree(void *dst, usize sz)
+kdi_windows_MemFree(void *dst_addr, usize sz)
 {
     HANDLE heap;
-    byte **dst_adr = dst;
+    byte **solid_dst_adr = dst_addr;
 
-    if (!dst_adr || !*dst_adr || !sz)
+    if (!solid_dst_adr || !*solid_dst_adr || !sz)
     {
         return KD_RESULT_FAILURE;
     }
@@ -73,24 +73,24 @@ kdi_windows_MemFree(void *dst, usize sz)
         return KD_RESULT_FAILURE;
     }
 
-    if (!HeapFree(heap, 0, *dst_adr))
+    if (!HeapFree(heap, 0, *solid_dst_adr))
     {
         return KD_RESULT_FAILURE;
     }
 
-    *dst_adr = null;
+    *solid_dst_adr = null;
 
     return KD_RESULT_SUCCESS;
 }
 
 
 bool
-kdi_windows_MemRealloc(void *dst, usize new_sz, void *src, usize old_sz)
+kdi_windows_MemRealloc(void *dst_addr, usize new_sz, void *src, usize old_sz)
 {
     HANDLE heap;
-    byte **dst_adr = dst, **src_adr = src, *temp_ptr, *ptr = null;
+    byte **solid_dst_adr = dst_addr, **src_adr = src, *temp_ptr, *ptr = null;
 
-    if (!dst_adr || !old_sz)
+    if (!solid_dst_adr || !old_sz)
     {
         return KD_RESULT_FAILURE;
     }
@@ -112,9 +112,9 @@ kdi_windows_MemRealloc(void *dst, usize new_sz, void *src, usize old_sz)
                 return KD_RESULT_FAILURE;
             }
 
-            *dst_adr = null;
+            *solid_dst_adr = null;
 
-            if (src_adr && src_adr != dst_adr)
+            if (src_adr && src_adr != solid_dst_adr)
             {
                 *src_adr = null;
             }
@@ -143,9 +143,9 @@ kdi_windows_MemRealloc(void *dst, usize new_sz, void *src, usize old_sz)
         return KD_RESULT_FAILURE;
     }
 
-    *dst_adr = ptr;
+    *solid_dst_adr = ptr;
 
-    if (src_adr && src_adr != dst_adr)
+    if (src_adr && src_adr != solid_dst_adr)
     {
         *src_adr = null;
     }
