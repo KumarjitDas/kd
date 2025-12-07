@@ -135,7 +135,7 @@ IF "!BUILD_EXAMPLES!"=="1" (
 @REM ========== Objects ==========
 
 SET "INTERNAL_OBJECTS="
-@REM SET "INTERNAL_OBJECTS=!INTERNAL_OBJECTS! gen_mem_ops"
+SET "INTERNAL_OBJECTS=!INTERNAL_OBJECTS! gen_mem_ops"
 
 @REM Any source file that uses Windows headers
 SET "PLATFORM_OBJECTS="
@@ -143,7 +143,7 @@ SET "PLATFORM_OBJECTS=!PLATFORM_OBJECTS! mem"
 
 SET "OBJECTS="
 SET "OBJECTS=!OBJECTS! mem"
-@REM SET "OBJECTS=!OBJECTS! gen_mem_ops"
+SET "OBJECTS=!OBJECTS! gen_mem_ops"
 @REM SET "OBJECTS=!OBJECTS! mem_ops"
 
 SET "OUTPUT_OBJECTS="
@@ -222,58 +222,37 @@ IF "!SHARED_LIBS!"=="1" (
 
 IF "!BUILD_TESTS!"=="1" (
 	SET "TESTS="
-	SET "TESTS=!TESTS! platform_bool_macros"
-	SET "TESTS=!TESTS! platform_cstr_macros"
+	@REM SET "TESTS=!TESTS! platform_bool_macros"
+	@REM SET "TESTS=!TESTS! platform_cstr_macros"
 
-	SET "TESTS=!TESTS! kdMemAlloc"
-	SET "TESTS=!TESTS! kdMemFree"
-	SET "TESTS=!TESTS! kdMemRealloc"
+	@REM SET "TESTS=!TESTS! mem\kdMemAlloc"
+	@REM SET "TESTS=!TESTS! mem\kdMemFree"
+	@REM SET "TESTS=!TESTS! mem\kdMemRealloc"
 
-	@REM SET "TESTS=!TESTS! kdGenMemOpsSwapBytes"
-	@REM SET "TESTS=!TESTS! kdGenMemOpsSwapBlocks"
-	@REM SET "TESTS=!TESTS! kdGenMemOpsReverseBytes"
-	@REM SET "TESTS=!TESTS! kdGenMemOpsReverseBlocks"
-	@REM SET "TESTS=!TESTS! kdGenMemOpsSetBytes"
-	@REM SET "TESTS=!TESTS! kdGenMemOpsSetBlocks"
-	@REM SET "TESTS=!TESTS! kdGenMemOpsCpy"
-	@REM SET "TESTS=!TESTS! kdGenMemOpsMove"
-
-	@REM SET "TESTS=!TESTS! kdGenMemOpsFindByte"
-	@REM SET "TESTS=!TESTS! kdGenMemOpsFindByteIndex"
-	@REM SET "TESTS=!TESTS! kdGenMemOpsFindLastByte"
-	@REM SET "TESTS=!TESTS! kdGenMemOpsFindLastByteIndex"
-	@REM SET "TESTS=!TESTS! kdGenMemOpsFindAllBytes"
-
-	@REM SET "TESTS=!TESTS! kdGenMemOpsFindAllByteIndices"
-	@REM SET "TESTS=!TESTS! kdGenMemOpsFindAllByteIndicesU8"
-	@REM SET "TESTS=!TESTS! kdGenMemOpsFindAllByteIndicesU16"
-	@REM SET "TESTS=!TESTS! kdGenMemOpsFindAllByteIndicesU32"
-	@REM SET "TESTS=!TESTS! kdGenMemOpsFindAllByteIndicesU64"
-
-	@REM SET "TESTS=!TESTS! kdGenMemOpsFindBlock"
-	@REM SET "TESTS=!TESTS! kdGenMemOpsFindBlockIndex"
-	@REM SET "TESTS=!TESTS! kdGenMemOpsFindLastBlock"
-	@REM SET "TESTS=!TESTS! kdGenMemOpsFindLastBlockIndex"
-	@REM SET "TESTS=!TESTS! kdGenMemOpsFindAllBlocks"
-
-	@REM SET "TESTS=!TESTS! kdGenMemOpsFindAllBlockIndices"
-	@REM SET "TESTS=!TESTS! kdGenMemOpsFindAllBlockIndicesU8"
-	@REM SET "TESTS=!TESTS! kdGenMemOpsFindAllBlockIndicesU16"
-	@REM SET "TESTS=!TESTS! kdGenMemOpsFindAllBlockIndicesU32"
-	@REM SET "TESTS=!TESTS! kdGenMemOpsFindAllBlockIndicesU64"
-
-	@REM SET "TESTS=!TESTS! kdGenMemOpsCmp"
-	@REM SET "TESTS=!TESTS! kdGenMemOpsCat"
-
-	@REM SET "TESTS=!TESTS! kdMemOpsSwapN"
-	@REM SET "TESTS=!TESTS! kdMemOpsSwapN"
+	SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsCopy"
 
 	FOR %%T IN (!TESTS!) DO (
 	    SET "TARGET_NAME=%%T"
 	    ECHO [BUILD] Compiling test file: !TESTS_DIR!\!TARGET_NAME!.c
 
-	    CL !COMMON_FLAGS! /c "!TESTS_DIR!\!TARGET_NAME!.c" /Fo:!BUILD_DIR!\
-	    CL !COMMON_EXE_FLAGS! "!BUILD_DIR!\!TARGET_NAME!.obj" "!BUILD_DIR!\!LIB_NAME!.lib" /Fe:"!BUILD_DIR!\!TESTS_DIR!\!TARGET_NAME!.exe"
+		ECHO "!TARGET_NAME!" | FIND "\" >NUL
+		IF ERRORLEVEL 1 (
+	    	CL !COMMON_FLAGS! /c "!TESTS_DIR!\!TARGET_NAME!.c" /Fo:!BUILD_DIR!\
+			CL !COMMON_EXE_FLAGS! "!BUILD_DIR!\!TARGET_NAME!.obj" "!BUILD_DIR!\!LIB_NAME!.lib" /Fe:"!BUILD_DIR!\!TESTS_DIR!\!TARGET_NAME!.exe"
+		) ELSE (
+			FOR /F "tokens=1,2 delims=\\" %%A IN ("!TARGET_NAME!") DO (
+				SET "TEST_SUBDIR_NAME=%%A"
+				SET "TEST_TARGET_NAME=%%B"
+
+				IF NOT EXIST "!BUILD_DIR!\!TESTS_DIR!\!TEST_SUBDIR_NAME!" (
+					MKDIR "!BUILD_DIR!\!TESTS_DIR!\!TEST_SUBDIR_NAME!"
+					ECHO [BUILD] Created directory: !BUILD_DIR!\!TESTS_DIR!\!TEST_SUBDIR_NAME!
+				)
+
+				CL !COMMON_FLAGS! /c "!TESTS_DIR!\!TEST_SUBDIR_NAME!\!TEST_TARGET_NAME!.c" /Fo:!BUILD_DIR!\
+				CL !COMMON_EXE_FLAGS! "!BUILD_DIR!\!TEST_TARGET_NAME!.obj" "!BUILD_DIR!\!LIB_NAME!.lib" /Fe:"!BUILD_DIR!\!TESTS_DIR!\!TEST_SUBDIR_NAME!\!TEST_TARGET_NAME!.exe"
+			)
+		)
 
 	    IF !ERRORLEVEl! NEQ 0 (
 	        ECHO [ERROR] Failed to compile: !TARGET_NAME!

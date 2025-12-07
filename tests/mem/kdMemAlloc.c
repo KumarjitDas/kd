@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include <assert.h>
 
-#include "../include/kd/mem.h"
+#include "../../include/kd/mem.h"
 
 
 #define LIB_NAME_CSTR   "KD_MEM"

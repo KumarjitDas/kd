@@ -3,13 +3,14 @@
  * @author Kumarjit Das
  * @brief KD_MEM library kdMemFree function test.
  * @license BSD 3-Clause License
+ * @copyright Copyright (c) 2025, Kumarjit Das.
  */
 
 
 #include <stdio.h>
 #include <assert.h>
 
-#include "../include/kd/mem.h"
+#include "../../include/kd/mem.h"
 
 
 #define LIB_NAME_CSTR   "KD_MEM"
