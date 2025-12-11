@@ -25,6 +25,37 @@ kdi_GenMemOpsCopy(byte *dst, byte *src, usize sz)
 }
 
 
+void
+kdi_GenMemOpsMove(byte *dst, byte *src, usize sz)
+{
+    if (dst == src)
+    {
+        return;
+    }
+
+    if (dst < src)
+    {
+        while (sz--)
+        {
+            *dst = *src;
+            ++dst;
+            ++src;
+        }
+        return;
+    }
+
+    dst += sz;
+    src += sz;
+
+    while (sz--)
+    {
+        --dst;
+        --src;
+        *dst = *src;
+    }
+}
+
+
 /*
 void
 kdi_GenMemOpsSwapBlocks_U8(u8 *ptr, usize idx1, usize idx2)

@@ -229,7 +229,9 @@ IF "!BUILD_TESTS!"=="1" (
 	@REM SET "TESTS=!TESTS! mem\kdMemFree"
 	@REM SET "TESTS=!TESTS! mem\kdMemRealloc"
 
-	SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsCopy"
+	@REM SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsCopy"
+	SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsCopyRegion"
+	SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsCopyRange"
 
 	FOR %%T IN (!TESTS!) DO (
 	    SET "TARGET_NAME=%%T"

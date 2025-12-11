@@ -23,16 +23,7 @@ EXTERN_BEGIN
 
 
 KDAPI(void) kdi_GenMemOpsCopy(byte *dst, byte *src, usize sz);
-KDAPI(void) kdi_GenMemOpsCopyRegion(void *dst, usize dst_sz, void *src, usize src_sz);
-
-KDAPI(void) kdi_GenMemOpsCopyBytesRange(void *dst_base, usize dst_base_sz, void *src_base, usize src_base_sz, usize dst_idx, usize src_idx, usize count);
-KDAPI(void) kdi_GenMemOpsCopyBlocksRange(void *dst_base, usize dst_base_sz, void *src_base, usize src_base_sz, usize dst_idx, usize src_idx, usize count, usize block_sz);
-
-KDAPI(void) kdi_GenMemOpsMove(void *dst, void *src, usize dst_sz);
-KDAPI(void) kdi_GenMemOpsMoveRegion(void *dst, usize dst_sz, void *src, usize src_sz);
-
-KDAPI(void) kdi_GenMemOpsMoveBytesRange(void *dst_base, usize dst_base_sz, void *src_base, usize src_base_sz, usize dst_idx, usize src_idx, usize count);
-KDAPI(void) kdi_GenMemOpsMoveBlocksRange(void *dst_base, usize dst_base_sz, void *src_base, usize src_base_sz, usize dst_idx, usize src_idx, usize count, usize block_sz);
+KDAPI(void) kdi_GenMemOpsMove(byte *dst, byte *src, usize sz);
 
 KDAPI(void) kdi_GenMemOpsConcat(void *dst, usize dst_sz, void *src_1, usize src_1_sz, void *src_2, usize src_2_sz);
 
@@ -218,6 +209,15 @@ KDAPI(void) kdi_GenMemOpsRotateBytesLeft(void *ptr, usize dst_sz, usize k);
 KDAPI(void) kdi_GenMemOpsRotateBlocksRight(void *ptr, usize dst_sz, usize k, usize block_sz);
 KDAPI(void) kdi_GenMemOpsRotateBlocksLeft(void *ptr, usize dst_sz, usize k, usize block_sz);
 
+/*
+KDAPI(void) kdi_GenMemOpsCopyRegion(byte *dst, usize dst_sz, byte *src, usize src_sz);
+KDAPI(void) kdi_GenMemOpsCopyBytesRange(void *dst_base, usize dst_base_sz, void *src_base, usize src_base_sz, usize dst_idx, usize src_idx, usize count);
+KDAPI(void) kdi_GenMemOpsCopyBlocksRange(void *dst_base, usize dst_base_sz, void *src_base, usize src_base_sz, usize dst_idx, usize src_idx, usize count, usize block_sz);
+KDAPI(void) kdi_GenMemOpsMoveRegion(void *dst, usize dst_sz, void *src, usize src_sz);
+
+KDAPI(void) kdi_GenMemOpsMoveBytesRange(void *dst_base, usize dst_base_sz, void *src_base, usize src_base_sz, usize dst_idx, usize src_idx, usize count);
+KDAPI(void) kdi_GenMemOpsMoveBlocksRange(void *dst_base, usize dst_base_sz, void *src_base, usize src_base_sz, usize dst_idx, usize src_idx, usize count, usize block_sz);
+*/
 
 EXTERN_END
 

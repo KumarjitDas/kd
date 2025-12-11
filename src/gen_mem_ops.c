@@ -29,6 +29,59 @@ GenMemOpsCopy(void *dst, void *src, usize sz)
 }
 
 
+bool
+GenMemOpsCopyRegion(void *dst, usize dst_sz, usize *copied_sz, void *src, usize src_sz)
+{
+    if (!copied_sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    *copied_sz = 0;
+
+    if (!dst || !dst_sz || !src || !src_sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    *copied_sz = dst_sz < src_sz ? dst_sz : src_sz;
+
+    kdi_GenMemOpsCopy(dst, src, *copied_sz);
+
+    return RESULT_SUCCESS;
+}
+
+bool
+kdGenMemOpsCopyRange(void *dst_base, usize dst_base_sz, usize *copied_sz, void *src_base, usize src_base_sz, usize dst_idx, usize src_idx, usize byte_count)
+{
+    usize final_dst_sz, final_src_sz;
+
+    if (!copied_sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    *copied_sz = 0;
+
+    if (!dst_base || !dst_base_sz || !src_base || !src_base_sz || dst_idx >= dst_base_sz || src_idx >= src_base_sz || !byte_count)
+    {
+        return RESULT_FAILURE;
+    }
+
+    final_dst_sz = dst_base_sz - dst_idx;
+    final_dst_sz = final_dst_sz > byte_count ? byte_count : final_dst_sz;
+
+    final_src_sz = src_base_sz - src_idx;
+    final_src_sz = final_src_sz > byte_count ? byte_count : final_src_sz;
+
+    *copied_sz   = final_dst_sz < final_src_sz ? final_dst_sz : final_src_sz;
+
+    kdi_GenMemOpsCopy(PU8_C(dst_base) + dst_idx, PU8_C(src_base) + src_idx, *copied_sz);
+
+    return RESULT_SUCCESS;
+}
+
+
 /*
 bool
 kdGenMemOpsSwapBytes(void *ptr, usize sz, usize idx1, usize idx2)
