@@ -25,9 +25,9 @@ KDAPI(kd_bool_t) kdGenMemOpsCopy(void *dst, void *src, kd_usize_t sz);
 KDAPI(kd_bool_t) kdGenMemOpsCopyRegion(void *dst, kd_usize_t dst_sz, kd_usize_t *copied_sz, void *src, kd_usize_t src_sz);
 KDAPI(kd_bool_t) kdGenMemOpsCopyRange(void *dst_base, kd_usize_t dst_base_sz, kd_usize_t *copied_sz, void *src_base, kd_usize_t src_base_sz, kd_usize_t dst_idx, kd_usize_t src_idx, kd_usize_t byte_count);
 
-KDAPI(kd_bool_t) kdGenMemOpsMove(void *dst, void *src, kd_usize_t dst_sz);
-KDAPI(kd_bool_t) kdGenMemOpsMoveRegion(void *dst, kd_usize_t dst_sz, kd_usize_t *copied_sz, void *src, kd_usize_t src_sz);
-KDAPI(kd_bool_t) kdGenMemOpsMoveRange(void *dst_base, kd_usize_t dst_base_sz, kd_usize_t *copied_sz, void *src_base, kd_usize_t src_base_sz, kd_usize_t dst_idx, kd_usize_t src_idx, kd_usize_t byte_count);
+KDAPI(kd_bool_t) kdGenMemOpsMove(void *dst, void *src, kd_usize_t sz);
+KDAPI(kd_bool_t) kdGenMemOpsMoveRegion(void *dst, kd_usize_t dst_sz, kd_usize_t *moved_sz, void *src, kd_usize_t src_sz);
+KDAPI(kd_bool_t) kdGenMemOpsMoveRange(void *dst_base, kd_usize_t dst_base_sz, kd_usize_t *moved_sz, void *src_base, kd_usize_t src_base_sz, kd_usize_t dst_idx, kd_usize_t src_idx, kd_usize_t byte_count);
 
 KDAPI(kd_bool_t) kdGenMemOpsConcat(void *dst, kd_usize_t dst_sz, void *src_1, kd_usize_t src_1_sz, void *src_2, kd_usize_t src_2_sz);
 
@@ -239,8 +239,7 @@ KDAPI(kd_bool_t) kdGenMemOpsRotateBlocksLeft(void *ptr, kd_usize_t dst_sz, kd_us
 #define GenMemOpsCopyRange                kdGenMemOpsCopyRange
 #define GenMemOpsMove                     kdGenMemOpsMove
 #define GenMemOpsMoveRegion               kdGenMemOpsMoveRegion
-#define GenMemOpsMoveBytesRange           kdGenMemOpsMoveBytesRange
-#define GenMemOpsMoveBlocksRange          kdGenMemOpsMoveBlocksRange
+#define GenMemOpsMoveRange                kdGenMemOpsMoveRange
 #define GenMemOpsConcat                   kdGenMemOpsConcat
 #define GenMemOpsConcatBytesRange         kdGenMemOpsConcatBytesRange
 #define GenMemOpsConcatBlocksRange        kdGenMemOpsConcatBlocksRange

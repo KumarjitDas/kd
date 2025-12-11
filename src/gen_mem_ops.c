@@ -51,8 +51,9 @@ GenMemOpsCopyRegion(void *dst, usize dst_sz, usize *copied_sz, void *src, usize 
     return RESULT_SUCCESS;
 }
 
+
 bool
-kdGenMemOpsCopyRange(void *dst_base, usize dst_base_sz, usize *copied_sz, void *src_base, usize src_base_sz, usize dst_idx, usize src_idx, usize byte_count)
+GenMemOpsCopyRange(void *dst_base, usize dst_base_sz, usize *copied_sz, void *src_base, usize src_base_sz, usize dst_idx, usize src_idx, usize byte_count)
 {
     usize final_dst_sz, final_src_sz;
 
@@ -77,6 +78,74 @@ kdGenMemOpsCopyRange(void *dst_base, usize dst_base_sz, usize *copied_sz, void *
     *copied_sz   = final_dst_sz < final_src_sz ? final_dst_sz : final_src_sz;
 
     kdi_GenMemOpsCopy(PU8_C(dst_base) + dst_idx, PU8_C(src_base) + src_idx, *copied_sz);
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsMove(void *dst, void *src, usize sz)
+{
+    if (!dst || !src || !sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    kdi_GenMemOpsMove(dst, src, sz);
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsMoveRegion(void *dst, usize dst_sz, usize *moved_sz, void *src, usize src_sz)
+{
+    if (!moved_sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    *moved_sz = 0;
+
+    if (!dst || !dst_sz || !src || !src_sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    *moved_sz = dst_sz < src_sz ? dst_sz : src_sz;
+
+    kdi_GenMemOpsMove(dst, src, *moved_sz);
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsMoveRange(void *dst_base, usize dst_base_sz, usize *moved_sz, void *src_base, usize src_base_sz, usize dst_idx, usize src_idx, usize byte_count)
+{
+    usize final_dst_sz, final_src_sz;
+
+    if (!moved_sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    *moved_sz = 0;
+
+    if (!dst_base || !dst_base_sz || !src_base || !src_base_sz || dst_idx >= dst_base_sz || src_idx >= src_base_sz || !byte_count)
+    {
+        return RESULT_FAILURE;
+    }
+
+    final_dst_sz = dst_base_sz - dst_idx;
+    final_dst_sz = final_dst_sz > byte_count ? byte_count : final_dst_sz;
+
+    final_src_sz = src_base_sz - src_idx;
+    final_src_sz = final_src_sz > byte_count ? byte_count : final_src_sz;
+
+    *moved_sz    = final_dst_sz < final_src_sz ? final_dst_sz : final_src_sz;
+
+    kdi_GenMemOpsMove(PU8_C(dst_base) + dst_idx, PU8_C(src_base) + src_idx, *moved_sz);
 
     return RESULT_SUCCESS;
 }

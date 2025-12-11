@@ -222,16 +222,19 @@ IF "!SHARED_LIBS!"=="1" (
 
 IF "!BUILD_TESTS!"=="1" (
 	SET "TESTS="
-	@REM SET "TESTS=!TESTS! platform_bool_macros"
-	@REM SET "TESTS=!TESTS! platform_cstr_macros"
+	SET "TESTS=!TESTS! platform_bool_macros"
+	SET "TESTS=!TESTS! platform_cstr_macros"
 
-	@REM SET "TESTS=!TESTS! mem\kdMemAlloc"
-	@REM SET "TESTS=!TESTS! mem\kdMemFree"
-	@REM SET "TESTS=!TESTS! mem\kdMemRealloc"
+	SET "TESTS=!TESTS! mem\kdMemAlloc"
+	SET "TESTS=!TESTS! mem\kdMemFree"
+	SET "TESTS=!TESTS! mem\kdMemRealloc"
 
-	@REM SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsCopy"
+	SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsCopy"
 	SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsCopyRegion"
 	SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsCopyRange"
+	SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsMove"
+	SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsMoveRegion"
+	SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsMoveRange"
 
 	FOR %%T IN (!TESTS!) DO (
 	    SET "TARGET_NAME=%%T"
