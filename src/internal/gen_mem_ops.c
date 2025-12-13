@@ -56,6 +56,99 @@ kdi_GenMemOpsMove(byte *dst, byte *src, usize sz)
 }
 
 
+void
+kdi_GenMemOpsConcat(byte *dst, usize dst_sz, byte *src_1, usize src_1_sz, byte *src_2, usize src_2_sz)
+{
+    while (src_1_sz-- && dst_sz--)
+    {
+        *dst = *src_1;
+        ++dst;
+        ++src_1;
+    }
+
+    while (src_2_sz-- && dst_sz--)
+    {
+        *dst = *src_2;
+        ++dst;
+        ++src_2;
+    }
+}
+
+
+void
+kdi_GenMemOpsSetBytes(byte *dst, usize sz, byte val)
+{
+    while (sz--)
+    {
+        *dst = val;
+        ++dst;
+    }
+}
+
+
+void
+kdi_GenMemOpsSetBlocks_U8(u8 *dst, usize sz, u8 val)
+{
+    while (sz--)
+    {
+        *dst = val;
+        ++dst;
+    }
+}
+
+
+void
+kdi_GenMemOpsSetBlocks_U16(u16 *dst, usize sz, u16 val)
+{
+    while (sz)
+    {
+        *dst = val;
+        ++dst;
+        sz -= SZ_U16;
+    }
+}
+
+
+void
+kdi_GenMemOpsSetBlocks_U32(u32 *dst, usize sz, u32 val)
+{
+    while (sz)
+    {
+        *dst = val;
+        ++dst;
+        sz -= SZ_U32;
+    }
+}
+
+
+#if defined ARCH_64BIT_INT
+void
+kdi_GenMemOpsSetBlocks_U64(u64 *dst, usize sz, u64 val)
+{
+    while (sz)
+    {
+        *dst = val;
+        ++dst;
+        sz -= SZ_U64;
+    }
+}
+#endif
+
+
+void
+kdi_GenMemOpsSetBlocks_Un(byte *dst, usize dst_sz, byte *block, usize block_sz)
+{
+    byte *temp_block = block, *block_end = block + block_sz - 1;
+
+    while (dst_sz--)
+    {
+        *dst = *temp_block;
+        ++dst;
+        temp_block = temp_block == block_end ? block : (temp_block + 1);
+    }
+}
+
+
 /*
 void
 kdi_GenMemOpsSwapBlocks_U8(u8 *ptr, usize idx1, usize idx2)
@@ -225,77 +318,6 @@ kdi_GenMemOpsReverseBlocks_Un(void *ptr, usize sz, usize block_sz)
 
             ++begin;
             ++temp_end;
-        }
-    }
-}
-
-
-void
-kdi_GenMemOpsSetBlocks_U8(u8 *ptr, usize sz, u8 val)
-{
-    while (sz--)
-    {
-        *ptr = val;
-        ++ptr;
-    }
-}
-
-
-void
-kdi_GenMemOpsSetBlocks_U16(u16 *ptr, usize sz, u16 val)
-{
-    while (sz)
-    {
-        *ptr = val;
-        ++ptr;
-        sz -= SZ_U16;
-    }
-}
-
-
-void
-kdi_GenMemOpsSetBlocks_U32(u32 *ptr, usize sz, u32 val)
-{
-    while (sz)
-    {
-        *ptr = val;
-        ++ptr;
-        sz -= SZ_U32;
-    }
-}
-
-
-#if defined ARCH_64BIT_INT
-void
-kdi_GenMemOpsSetBlocks_U64(u64 *ptr, usize sz, u64 val)
-{
-    while (sz)
-    {
-        *ptr = val;
-        ++ptr;
-        sz -= SZ_U64;
-    }
-}
-#endif
-
-
-void
-kdi_GenMemOpsSetBlocks_Un(void *ptr, usize sz, void *block, usize block_sz)
-{
-    byte *dst_ptr = ptr;
-    byte *block_ptr;
-    usize i;
-
-    while (sz)
-    {
-        block_ptr = block;
-        i         = block_sz;
-
-        while (i-- && sz--)
-        {
-            *dst_ptr = *block_ptr;
-            ++dst_ptr;
-            ++block_ptr;
         }
     }
 }

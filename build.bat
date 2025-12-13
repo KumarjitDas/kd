@@ -235,6 +235,12 @@ IF "!BUILD_TESTS!"=="1" (
 	SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsMove"
 	SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsMoveRegion"
 	SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsMoveRange"
+	SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsConcat"
+	SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsConcatRange"
+	SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsSetBytes"
+	SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsSetBytesRange"
+	SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsSetBlocks"
+	SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsSetBlocksRange"
 
 	FOR %%T IN (!TESTS!) DO (
 	    SET "TARGET_NAME=%%T"

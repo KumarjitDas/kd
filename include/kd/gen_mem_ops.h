@@ -29,19 +29,20 @@ KDAPI(kd_bool_t) kdGenMemOpsMove(void *dst, void *src, kd_usize_t sz);
 KDAPI(kd_bool_t) kdGenMemOpsMoveRegion(void *dst, kd_usize_t dst_sz, kd_usize_t *moved_sz, void *src, kd_usize_t src_sz);
 KDAPI(kd_bool_t) kdGenMemOpsMoveRange(void *dst_base, kd_usize_t dst_base_sz, kd_usize_t *moved_sz, void *src_base, kd_usize_t src_base_sz, kd_usize_t dst_idx, kd_usize_t src_idx, kd_usize_t byte_count);
 
-KDAPI(kd_bool_t) kdGenMemOpsConcat(void *dst, kd_usize_t dst_sz, void *src_1, kd_usize_t src_1_sz, void *src_2, kd_usize_t src_2_sz);
-
-KDAPI(kd_bool_t) kdGenMemOpsConcatBytesRange(void *dst, kd_usize_t dst_sz, void *src_base_1, kd_usize_t src_base_1_begin_idx, kd_usize_t src_base_1_byte_count, void *src_base_2, kd_usize_t src_base_2_begin_idx, kd_usize_t src_base_2_byte_count);
-KDAPI(kd_bool_t) kdGenMemOpsConcatBlocksRange(void *dst, kd_usize_t dst_sz, void *src_base_1, kd_usize_t src_base_1_begin_idx, kd_usize_t src_base_1_byte_count, void *src_base_2, kd_usize_t src_base_2_begin_idx, kd_usize_t src_base_2_byte_count, kd_usize_t block_sz);
+KDAPI(kd_bool_t) kdGenMemOpsConcat(void *dst, kd_usize_t dst_sz, kd_usize_t *concat_sz, void *src_1, kd_usize_t src_1_sz, void *src_2, kd_usize_t src_2_sz);
+KDAPI(kd_bool_t) kdGenMemOpsConcatRange(void *dst_base, kd_usize_t dst_base_sz, kd_usize_t dst_idx, kd_usize_t *concat_sz, void *src_base_1, kd_usize_t src_base_1_sz, kd_usize_t src_1_begin_idx, kd_usize_t src_1_byte_count, void *src_base_2, kd_usize_t src_base_2_sz, kd_usize_t src_2_begin_idx, kd_usize_t src_2_byte_count);
 
 KDAPI(kd_bool_t) kdGenMemOpsSetBytes(void *dst, kd_usize_t dst_sz, kd_byte_t val);
-KDAPI(kd_bool_t) kdGenMemOpsSetBytesRange(void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t byte_count, kd_byte_t val);
+KDAPI(kd_bool_t) kdGenMemOpsSetBytesRange(void *base, kd_usize_t base_sz, kd_usize_t *set_sz, kd_usize_t begin_idx, kd_usize_t count, kd_byte_t val);
 
-KDAPI(kd_bool_t) kdGenMemOpsSetZeroBytes(void *dst, kd_usize_t dst_sz);
-KDAPI(kd_bool_t) kdGenMemOpsSetZeroBytesRange(void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t byte_count);
+#define kdGenMemOpsSetZerosBytes(dst, sz)                                      kdGenMemOpsSetBytes(KD_PTR_C(dst), KD_USIZE_C(sz), 0)
+#define kdGenMemOpsSetZerosBytesRange(base, base_sz, set_sz, begin_idx, count) kdGenMemOpsSetBytesRange(KD_PTR_C(base), KD_USIZE_C(base_sz), KD_PUSIZE_C(set_sz), KD_USIZE_C(begin_idx), KD_USIZE_C(count), 0)
+
+#define kdGenMemOpsSetOnesBytes(dst, sz)                                       kdGenMemOpsSetBytes(KD_PTR_C(dst), KD_USIZE_C(sz), 0xFF)
+#define kdGenMemOpsSetOnesBytesRange(base, base_sz, set_sz, begin_idx, count)  kdGenMemOpsSetBytesRange(KD_PTR_C(base), KD_USIZE_C(base_sz), KD_PUSIZE_C(set_sz), KD_USIZE_C(begin_idx), KD_USIZE_C(count), 0xFF)
 
 KDAPI(kd_bool_t) kdGenMemOpsSetBlocks(void *dst, kd_usize_t dst_sz, void *block, kd_usize_t block_sz);
-KDAPI(kd_bool_t) kdGenMemOpsSetBlocksRange(void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t byte_count, void *block, kd_usize_t block_sz);
+KDAPI(kd_bool_t) kdGenMemOpsSetBlocksRange(void *base, kd_usize_t base_sz, kd_usize_t *set_sz, kd_usize_t begin_idx, kd_usize_t byte_count, void *block, kd_usize_t block_sz);
 
 KDAPI(kd_bool_t) kdGenMemOpsFill(void *dst, kd_usize_t dst_sz, void *sequence, kd_usize_t sequence_sz);
 KDAPI(kd_bool_t) kdGenMemOpsFillRange(void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t byte_count, void *sequence, kd_usize_t sequence_sz);
@@ -241,12 +242,13 @@ KDAPI(kd_bool_t) kdGenMemOpsRotateBlocksLeft(void *ptr, kd_usize_t dst_sz, kd_us
 #define GenMemOpsMoveRegion               kdGenMemOpsMoveRegion
 #define GenMemOpsMoveRange                kdGenMemOpsMoveRange
 #define GenMemOpsConcat                   kdGenMemOpsConcat
-#define GenMemOpsConcatBytesRange         kdGenMemOpsConcatBytesRange
-#define GenMemOpsConcatBlocksRange        kdGenMemOpsConcatBlocksRange
+#define GenMemOpsConcatRange              kdGenMemOpsConcatRange
 #define GenMemOpsSetBytes                 kdGenMemOpsSetBytes
 #define GenMemOpsSetBytesRange            kdGenMemOpsSetBytesRange
-#define GenMemOpsSetZeroBytes             kdGenMemOpsSetZeroBytes
-#define GenMemOpsSetZeroBytesRange        kdGenMemOpsSetZeroBytesRange
+#define GenMemOpsSetZerosBytes            kdGenMemOpsSetZerosBytes
+#define GenMemOpsSetZerosBytesRange       kdGenMemOpsSetZerosBytesRange
+#define GenMemOpsSetOnesBytes             kdGenMemOpsSetOnesBytes
+#define GenMemOpsSetOnesBytesRange        kdGenMemOpsSetOnesBytesRange
 #define GenMemOpsSetBlocks                kdGenMemOpsSetBlocks
 #define GenMemOpsSetBlocksRange           kdGenMemOpsSetBlocksRange
 #define GenMemOpsFill                     kdGenMemOpsFill

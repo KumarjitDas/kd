@@ -23,7 +23,7 @@ GenMemOpsCopy(void *dst, void *src, usize sz)
         return RESULT_FAILURE;
     }
 
-    kdi_GenMemOpsCopy(dst, src, sz);
+    kdi_GenMemOpsCopy(PBYTE_C(dst), PBYTE_C(src), sz);
 
     return RESULT_SUCCESS;
 }
@@ -46,7 +46,7 @@ GenMemOpsCopyRegion(void *dst, usize dst_sz, usize *copied_sz, void *src, usize 
 
     *copied_sz = dst_sz < src_sz ? dst_sz : src_sz;
 
-    kdi_GenMemOpsCopy(dst, src, *copied_sz);
+    kdi_GenMemOpsCopy(PBYTE_C(dst), PBYTE_C(src), *copied_sz);
 
     return RESULT_SUCCESS;
 }
@@ -64,7 +64,7 @@ GenMemOpsCopyRange(void *dst_base, usize dst_base_sz, usize *copied_sz, void *sr
 
     *copied_sz = 0;
 
-    if (!dst_base || !dst_base_sz || !src_base || !src_base_sz || dst_idx >= dst_base_sz || src_idx >= src_base_sz || !byte_count)
+    if (!dst_base || !src_base || !src_base_sz || dst_idx >= dst_base_sz || src_idx >= src_base_sz || !byte_count)
     {
         return RESULT_FAILURE;
     }
@@ -77,7 +77,7 @@ GenMemOpsCopyRange(void *dst_base, usize dst_base_sz, usize *copied_sz, void *sr
 
     *copied_sz   = final_dst_sz < final_src_sz ? final_dst_sz : final_src_sz;
 
-    kdi_GenMemOpsCopy(PU8_C(dst_base) + dst_idx, PU8_C(src_base) + src_idx, *copied_sz);
+    kdi_GenMemOpsCopy(PBYTE_C(dst_base) + dst_idx, PBYTE_C(src_base) + src_idx, *copied_sz);
 
     return RESULT_SUCCESS;
 }
@@ -91,7 +91,7 @@ GenMemOpsMove(void *dst, void *src, usize sz)
         return RESULT_FAILURE;
     }
 
-    kdi_GenMemOpsMove(dst, src, sz);
+    kdi_GenMemOpsMove(PBYTE_C(dst), PBYTE_C(src), sz);
 
     return RESULT_SUCCESS;
 }
@@ -114,7 +114,7 @@ GenMemOpsMoveRegion(void *dst, usize dst_sz, usize *moved_sz, void *src, usize s
 
     *moved_sz = dst_sz < src_sz ? dst_sz : src_sz;
 
-    kdi_GenMemOpsMove(dst, src, *moved_sz);
+    kdi_GenMemOpsMove(PBYTE_C(dst), PBYTE_C(src), *moved_sz);
 
     return RESULT_SUCCESS;
 }
@@ -132,7 +132,7 @@ GenMemOpsMoveRange(void *dst_base, usize dst_base_sz, usize *moved_sz, void *src
 
     *moved_sz = 0;
 
-    if (!dst_base || !dst_base_sz || !src_base || !src_base_sz || dst_idx >= dst_base_sz || src_idx >= src_base_sz || !byte_count)
+    if (!dst_base || !src_base || !src_base_sz || dst_idx >= dst_base_sz || src_idx >= src_base_sz || !byte_count)
     {
         return RESULT_FAILURE;
     }
@@ -145,7 +145,211 @@ GenMemOpsMoveRange(void *dst_base, usize dst_base_sz, usize *moved_sz, void *src
 
     *moved_sz    = final_dst_sz < final_src_sz ? final_dst_sz : final_src_sz;
 
-    kdi_GenMemOpsMove(PU8_C(dst_base) + dst_idx, PU8_C(src_base) + src_idx, *moved_sz);
+    kdi_GenMemOpsMove(PBYTE_C(dst_base) + dst_idx, PBYTE_C(src_base) + src_idx, *moved_sz);
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsConcat(void *dst, usize dst_sz, usize *concat_sz, void *src_1, usize src_1_sz, void *src_2, usize src_2_sz)
+{
+    if (!concat_sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    *concat_sz = 0;
+
+    if (!dst || !dst_sz || !src_1 || !src_1_sz || !src_2 || !src_2_sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    *concat_sz = src_1_sz + src_2_sz;
+    *concat_sz = dst_sz < *concat_sz ? dst_sz : *concat_sz;
+
+    kdi_GenMemOpsConcat(PBYTE_C(dst), dst_sz, PBYTE_C(src_1), src_1_sz, PBYTE_C(src_2), src_2_sz);
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsConcatRange(void *dst_base, usize dst_base_sz, usize dst_idx, usize *concat_sz, void *src_base_1, usize src_base_1_sz, usize src_1_begin_idx, usize src_1_byte_count, void *src_base_2, usize src_base_2_sz, usize src_2_begin_idx, usize src_2_byte_count)
+{
+    usize final_dst_sz, final_src_1_sz, final_src_2_sz;
+
+    if (!concat_sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    *concat_sz = 0;
+
+    if (!dst_base || dst_idx >= dst_base_sz || !src_base_1 || src_1_begin_idx >= src_base_1_sz || !src_1_byte_count || !src_base_2 || src_2_begin_idx >= src_base_2_sz || !src_2_byte_count)
+    {
+        return RESULT_FAILURE;
+    }
+
+    final_dst_sz   = dst_base_sz - dst_idx;
+
+    final_src_1_sz = src_base_1_sz - src_1_begin_idx;
+    final_src_1_sz = final_src_1_sz > src_1_byte_count ? src_1_byte_count : final_src_1_sz;
+
+    final_src_2_sz = src_base_1_sz - src_2_begin_idx;
+    final_src_2_sz = final_src_2_sz > src_2_byte_count ? src_2_byte_count : final_src_2_sz;
+
+    *concat_sz     = final_src_1_sz + final_src_2_sz;
+    *concat_sz     = final_dst_sz < *concat_sz ? final_dst_sz : *concat_sz;
+
+    kdi_GenMemOpsConcat(PBYTE_C(dst_base) + dst_idx, final_dst_sz, PBYTE_C(src_base_1) + src_1_begin_idx, final_src_1_sz, PBYTE_C(src_base_2) + src_2_begin_idx, final_src_2_sz);
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsSetBytes(void *dst, usize sz, byte val)
+{
+    if (!dst || !sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    kdi_GenMemOpsSetBytes(PBYTE_C(dst), sz, val);
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+kdGenMemOpsSetBytesRange(void *base, usize base_sz, usize *set_sz, usize begin_idx, usize count, byte val)
+{
+    if (!set_sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    *set_sz = 0;
+
+    if (!base || !base_sz || begin_idx >= base_sz || !count)
+    {
+        return RESULT_FAILURE;
+    }
+
+    *set_sz = base_sz - begin_idx;
+    *set_sz = count < *set_sz ? count : *set_sz;
+
+    kdi_GenMemOpsSetBytes(PBYTE_C(base) + begin_idx, *set_sz, val);
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+kdGenMemOpsSetBlocks(void *dst, usize dst_sz, void *block, usize block_sz)
+{
+    u8  block_val_u8;
+    u16 block_val_u16;
+    u32 block_val_u32;
+#if defined ARCH_64BIT_INT
+    u64 block_val_u64;
+#endif
+
+    if (!dst || !dst_sz || !block || !block_sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    if (dst_sz % block_sz)
+    {
+        kdi_GenMemOpsSetBlocks_Un(dst, dst_sz, block, block_sz);
+        return RESULT_SUCCESS;
+    }
+
+    switch (block_sz)
+    {
+        case 1:
+            block_val_u8 = *PU8_C(block);
+            kdi_GenMemOpsSetBlocks_U8(dst, dst_sz, block_val_u8);
+            break;
+        case 2:
+            block_val_u16 = *PU16_C(block);
+            kdi_GenMemOpsSetBlocks_U16(dst, dst_sz, block_val_u16);
+            break;
+        case 4:
+            block_val_u32 = *PU32_C(block);
+            kdi_GenMemOpsSetBlocks_U32(dst, dst_sz, block_val_u32);
+            break;
+#if defined ARCH_64BIT_INT
+        case 8:
+            block_val_u64 = *PU64_C(block);
+            kdi_GenMemOpsSetBlocks_U64(dst, dst_sz, block_val_u64);
+            break;
+#endif
+        default:
+            kdi_GenMemOpsSetBlocks_Un(dst, dst_sz, block, block_sz);
+    }
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+kdGenMemOpsSetBlocksRange(void *base, usize base_sz, usize *set_sz, usize begin_idx, usize byte_count, void *block, usize block_sz)
+{
+    u8  block_val_u8;
+    u16 block_val_u16;
+    u32 block_val_u32;
+#if defined ARCH_64BIT_INT
+    u64 block_val_u64;
+#endif
+
+    if (!set_sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    *set_sz = 0;
+
+    if (!base || !base_sz || begin_idx >= base_sz || !byte_count || !block || !block_sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    *set_sz = base_sz - begin_idx;
+    *set_sz = byte_count < *set_sz ? byte_count : *set_sz;
+
+    if (*set_sz % block_sz)
+    {
+        kdi_GenMemOpsSetBlocks_Un(PBYTE_C(base) + begin_idx, *set_sz, block, block_sz);
+        return RESULT_SUCCESS;
+    }
+
+    switch (block_sz)
+    {
+        case 1:
+            block_val_u8 = *PU8_C(block);
+            kdi_GenMemOpsSetBlocks_U8(PBYTE_C(base) + begin_idx, *set_sz, block_val_u8);
+            break;
+        case 2:
+            block_val_u16 = *PU16_C(block);
+            kdi_GenMemOpsSetBlocks_U16(PU16_C(PBYTE_C(base) + begin_idx), *set_sz, block_val_u16);
+            break;
+        case 4:
+            block_val_u32 = *PU32_C(block);
+            kdi_GenMemOpsSetBlocks_U32(PU32_C(PBYTE_C(base) + begin_idx), *set_sz, block_val_u32);
+            break;
+#if defined ARCH_64BIT_INT
+        case 8:
+            block_val_u64 = *PU64_C(block);
+            kdi_GenMemOpsSetBlocks_U64(PU64_C(PBYTE_C(base) + begin_idx), *set_sz, block_val_u64);
+            break;
+#endif
+        default:
+            kdi_GenMemOpsSetBlocks_Un(PBYTE_C(base) + begin_idx, *set_sz, block, block_sz);
+    }
 
     return RESULT_SUCCESS;
 }
