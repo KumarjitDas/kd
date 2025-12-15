@@ -3,8 +3,7 @@
  * @author Kumarjit Das
  * @brief KD_GEN_MEM_OPS library kdGenMemOpsSetBlocksRange function test.
  * @license BSD 3-Clause License
- * @copyright
- *  Copyright (c) 2025, Kumarjit Das.
+ * @copyright Copyright (c) 2025, Kumarjit Das.
  */
 
 

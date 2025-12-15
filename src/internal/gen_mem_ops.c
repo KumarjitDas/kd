@@ -76,17 +76,6 @@ kdi_GenMemOpsConcat(byte *dst, usize dst_sz, byte *src_1, usize src_1_sz, byte *
 
 
 void
-kdi_GenMemOpsSetBytes(byte *dst, usize sz, byte val)
-{
-    while (sz--)
-    {
-        *dst = val;
-        ++dst;
-    }
-}
-
-
-void
 kdi_GenMemOpsSetBlocks_U8(u8 *dst, usize sz, u8 val)
 {
     while (sz--)
@@ -149,76 +138,160 @@ kdi_GenMemOpsSetBlocks_Un(byte *dst, usize dst_sz, byte *block, usize block_sz)
 }
 
 
-/*
 void
-kdi_GenMemOpsSwapBlocks_U8(u8 *ptr, usize idx1, usize idx2)
+kdi_GenMemOpsSwapBlocks_U8(u8 *ptr, usize idx_1, usize idx_2)
 {
-    u8 *ptr1  = ptr + idx1;
-    u8  temp  = *ptr1;
+    u8 *temp_ptr  = ptr + idx_1;
+    u8  temp_val  = *temp_ptr;
 
-    ptr      += idx2;
-    *ptr1     = *ptr;
-    *ptr      = temp;
+    ptr          += idx_2;
+    *temp_ptr     = *ptr;
+    *ptr          = temp_val;
 }
 
 
 void
-kdi_GenMemOpsSwapBlocks_U16(u16 *ptr, usize idx1, usize idx2)
+kdi_GenMemOpsSwapBlocks_U16(u16 *ptr, usize idx_1, usize idx_2)
 {
-    u16 *ptr1 = PU16_C(PU8_C(ptr) + idx1);
-    u16  temp = *ptr1;
+    u16 *temp_ptr = PU16_C(PU8_C(ptr) + idx_1);
+    u16  temp_val = *temp_ptr;
 
-    ptr       = PU16_C(PU8_C(ptr) + idx2);
-    *ptr1     = *ptr;
-    *ptr      = temp;
+    ptr           = PU16_C(PU8_C(ptr) + idx_2);
+    *temp_ptr     = *ptr;
+    *ptr          = temp_val;
 }
 
 
 void
-kdi_GenMemOpsSwapBlocks_U32(u32 *ptr, usize idx1, usize idx2)
+kdi_GenMemOpsSwapBlocks_U32(u32 *ptr, usize idx_1, usize idx_2)
 {
-    u32 *ptr1 = PU32_C(PU8_C(ptr) + idx1);
-    u32  temp = *ptr1;
+    u32 *temp_ptr = PU32_C(PU8_C(ptr) + idx_1);
+    u32  temp_val = *temp_ptr;
 
-    ptr       = PU32_C(PU8_C(ptr) + idx2);
-    *ptr1     = *ptr;
-    *ptr      = temp;
+    ptr           = PU32_C(PU8_C(ptr) + idx_2);
+    *temp_ptr     = *ptr;
+    *ptr          = temp_val;
 }
 
 
 #if defined ARCH_64BIT_INT
 void
-kdi_GenMemOpsSwapBlocks_U64(u64 *ptr, usize idx1, usize idx2)
+kdi_GenMemOpsSwapBlocks_U64(u64 *ptr, usize idx_1, usize idx_2)
 {
-    u64 *ptr1 = PU64_C(PU8_C(ptr) + idx1);
-    u64  temp = *ptr1;
+    u64 *temp_ptr = PU64_C(PU8_C(ptr) + idx_1);
+    u64  temp_val = *temp_ptr;
 
-    ptr       = PU64_C(PU8_C(ptr) + idx2);
-    *ptr1     = *ptr;
-    *ptr      = temp;
+    ptr           = PU64_C(PU8_C(ptr) + idx_2);
+    *temp_ptr     = *ptr;
+    *ptr          = temp_val;
 }
 #endif
 
 
 void
-kdi_GenMemOpsSwapBlocks_Un(void *ptr, usize idx1, usize idx2, usize block_sz)
+kdi_GenMemOpsSwapBlocks_Un(byte *ptr, usize idx_1, usize idx_2, usize block_sz)
 {
-    u8 *ptr1 = PU8_C(ptr) + idx1;
-    u8 *ptr2 = PU8_C(ptr) + idx2;
-    u8  temp;
+    byte *temp_ptr = ptr + idx_2;
+    byte  temp_val;
+
+    ptr += idx_1;
 
     while (block_sz--)
     {
-        temp  = *ptr1;
-        *ptr1 = *ptr2;
-        *ptr2 = temp;
+        temp_val  = *ptr;
+        *ptr      = *temp_ptr;
+        *temp_ptr = temp_val;
 
-        ++ptr1;
-        ++ptr2;
+        ++ptr;
+        ++temp_ptr;
     }
 }
 
 
+void
+kdi_GenMemOpsSwapBlockRefs_U8(u8 *ptr_1, u8 *ptr_2)
+{
+    u8 temp_val = *ptr_1;
+    *ptr_1      = *ptr_2;
+    *ptr_2      = temp_val;
+}
+
+
+void
+kdi_GenMemOpsSwapBlockRefs_U16(u16 *ptr_1, u16 *ptr_2)
+{
+    u16 temp_val = *ptr_1;
+    *ptr_1       = *ptr_2;
+    *ptr_2       = temp_val;
+}
+
+
+void
+kdi_GenMemOpsSwapBlockRefs_U32(u32 *ptr_1, u32 *ptr_2)
+{
+    u32 temp_val = *ptr_1;
+    *ptr_1       = *ptr_2;
+    *ptr_2       = temp_val;
+}
+
+
+#if defined ARCH_64BIT_INT
+void
+kdi_GenMemOpsSwapBlockRefs_U64(u64 *ptr_1, u64 *ptr_2)
+{
+    u64 temp_val = *ptr_1;
+    *ptr_1       = *ptr_2;
+    *ptr_2       = temp_val;
+}
+#endif
+
+
+void
+kdi_GenMemOpsSwapBlockRefs_Un(byte *ptr_1, byte *ptr_2, usize block_sz)
+{
+    byte temp_val;
+
+    while (block_sz--)
+    {
+        temp_val = *ptr_1;
+        *ptr_1   = *ptr_2;
+        *ptr_2   = temp_val;
+
+        ++ptr_1;
+        ++ptr_2;
+    }
+}
+
+
+void
+kdi_GenMemOpsIsEqual(bool *result, byte *ptr_1, byte *ptr_2, usize sz)
+{
+    *result = RESULT_EQUALS;
+
+    while (sz-- && *result)
+    {
+        *result = *ptr_1 == *ptr_2;
+
+        ++ptr_1;
+        ++ptr_2;
+    }
+}
+
+
+void
+kdi_GenMemOpsIsVal(bool *result, byte *ptr, usize sz, byte val)
+{
+    *result = RESULT_EQUALS;
+
+    while (sz-- && *result)
+    {
+        *result = *ptr == val;
+        ++ptr;
+    }
+}
+
+
+/*
 void
 kdi_GenMemOpsReverseBlocks_U8(u8 *ptr, usize sz)
 {

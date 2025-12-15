@@ -459,8 +459,11 @@ typedef kd_u32_t kd_bool_t;
     #undef KD_RESULT_FAILURE
 #endif
 
-#define KD_RESULT_SUCCESS kd_false
-#define KD_RESULT_FAILURE kd_true
+#define KD_RESULT_SUCCESS    kd_false
+#define KD_RESULT_FAILURE    kd_true
+
+#define KD_RESULT_EQUALS     kd_true
+#define KD_RESULT_NOT_EQUALS kd_false
 
 
 /**
@@ -712,8 +715,11 @@ typedef kd_u32_t kd_bool_t;
     #undef RESULT_FAILURE
 #endif
 
-#define RESULT_SUCCESS KD_RESULT_SUCCESS
-#define RESULT_FAILURE KD_RESULT_FAILURE
+#define RESULT_SUCCESS    KD_RESULT_SUCCESS
+#define RESULT_FAILURE    KD_RESULT_FAILURE
+
+#define RESULT_EQUALS     KD_RESULT_EQUALS
+#define RESULT_NOT_EQUALS KD_RESULT_NOT_EQUALS
 
 
 KD_EXTERN_END

@@ -217,14 +217,14 @@ GenMemOpsSetBytes(void *dst, usize sz, byte val)
         return RESULT_FAILURE;
     }
 
-    kdi_GenMemOpsSetBytes(PBYTE_C(dst), sz, val);
+    kdi_GenMemOpsSetBlocks_U8(PBYTE_C(dst), sz, val);
 
     return RESULT_SUCCESS;
 }
 
 
 bool
-kdGenMemOpsSetBytesRange(void *base, usize base_sz, usize *set_sz, usize begin_idx, usize count, byte val)
+GenMemOpsSetBytesRange(void *base, usize base_sz, usize *set_sz, usize begin_idx, usize count, byte val)
 {
     if (!set_sz)
     {
@@ -241,14 +241,14 @@ kdGenMemOpsSetBytesRange(void *base, usize base_sz, usize *set_sz, usize begin_i
     *set_sz = base_sz - begin_idx;
     *set_sz = count < *set_sz ? count : *set_sz;
 
-    kdi_GenMemOpsSetBytes(PBYTE_C(base) + begin_idx, *set_sz, val);
+    kdi_GenMemOpsSetBlocks_U8(PBYTE_C(base) + begin_idx, *set_sz, val);
 
     return RESULT_SUCCESS;
 }
 
 
 bool
-kdGenMemOpsSetBlocks(void *dst, usize dst_sz, void *block, usize block_sz)
+GenMemOpsSetBlocks(void *dst, usize dst_sz, void *block, usize block_sz)
 {
     u8  block_val_u8;
     u16 block_val_u16;
@@ -297,7 +297,7 @@ kdGenMemOpsSetBlocks(void *dst, usize dst_sz, void *block, usize block_sz)
 
 
 bool
-kdGenMemOpsSetBlocksRange(void *base, usize base_sz, usize *set_sz, usize begin_idx, usize byte_count, void *block, usize block_sz)
+GenMemOpsSetBlocksRange(void *base, usize base_sz, usize *set_sz, usize begin_idx, usize byte_count, void *block, usize block_sz)
 {
     u8  block_val_u8;
     u16 block_val_u16;
@@ -355,25 +355,37 @@ kdGenMemOpsSetBlocksRange(void *base, usize base_sz, usize *set_sz, usize begin_
 }
 
 
-/*
 bool
-kdGenMemOpsSwapBytes(void *ptr, usize sz, usize idx1, usize idx2)
+GenMemOpsInnerSwapBytes(void *ptr, usize idx_1, usize idx_2)
 {
-    if (!ptr || !sz || idx1 >= sz || idx2 >= sz)
+    if (!ptr)
     {
         return RESULT_FAILURE;
     }
 
-    kdi_GenMemOpsSwapBlocks_U8(ptr, idx1, idx2);
+    kdi_GenMemOpsSwapBlocks_U8(ptr, idx_1, idx_2);
 
     return RESULT_SUCCESS;
 }
 
 
 bool
-kdGenMemOpsSwapBlocks(void *ptr, usize sz, usize idx1, usize idx2, usize block_sz)
+GenMemOpsInnerSwapBytesRange(void *base, usize base_sz, usize idx_1, usize idx_2)
 {
-    if (!ptr || !sz || !block_sz || idx1 >= sz || idx2 >= sz)
+    if (!base || !base_sz || idx_1 >= base_sz || idx_2 >= base_sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    kdi_GenMemOpsSwapBlocks_U8(base, idx_1, idx_2);
+
+    return RESULT_SUCCESS;
+}
+
+
+KDAPI(bool) GenMemOpsInnerSwapBlocks(void *ptr, usize idx_1, usize idx_2, usize block_sz)
+{
+    if (!ptr || !block_sz)
     {
         return RESULT_FAILURE;
     }
@@ -381,27 +393,326 @@ kdGenMemOpsSwapBlocks(void *ptr, usize sz, usize idx1, usize idx2, usize block_s
     switch (block_sz)
     {
         case 1:
-            kdi_GenMemOpsSwapBlocks_U8(ptr, idx1, idx2);
+            kdi_GenMemOpsSwapBlocks_U8(ptr, idx_1, idx_2);
             break;
         case 2:
-            kdi_GenMemOpsSwapBlocks_U16(ptr, idx1, idx2);
+            kdi_GenMemOpsSwapBlocks_U16(ptr, idx_1, idx_2);
             break;
         case 4:
-            kdi_GenMemOpsSwapBlocks_U32(ptr, idx1, idx2);
+            kdi_GenMemOpsSwapBlocks_U32(ptr, idx_1, idx_2);
             break;
 #if defined ARCH_64BIT_INT
         case 8:
-            kdi_GenMemOpsSwapBlocks_U64(ptr, idx1, idx2);
+            kdi_GenMemOpsSwapBlocks_U64(ptr, idx_1, idx_2);
             break;
 #endif
         default:
-            kdi_GenMemOpsSwapBlocks_Un(ptr, idx1, idx2, block_sz);
+            kdi_GenMemOpsSwapBlocks_Un(ptr, idx_1, idx_2, block_sz);
     }
 
     return RESULT_SUCCESS;
 }
 
 
+bool
+GenMemOpsInnerSwapBlocksRange(void *base, usize base_sz, usize idx_1, usize idx_2, usize block_sz)
+{
+    if (!base || idx_1 >= base_sz || idx_2 >= base_sz || !block_sz || block_sz > base_sz || (idx_1 + block_sz) > base_sz || (idx_2 + block_sz) > base_sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    switch (block_sz)
+    {
+        case 1:
+            kdi_GenMemOpsSwapBlocks_U8(base, idx_1, idx_2);
+            break;
+        case 2:
+            kdi_GenMemOpsSwapBlocks_U16(base, idx_1, idx_2);
+            break;
+        case 4:
+            kdi_GenMemOpsSwapBlocks_U32(base, idx_1, idx_2);
+            break;
+#if defined ARCH_64BIT_INT
+        case 8:
+            kdi_GenMemOpsSwapBlocks_U64(base, idx_1, idx_2);
+            break;
+#endif
+        default:
+            kdi_GenMemOpsSwapBlocks_Un(base, idx_1, idx_2, block_sz);
+    }
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsSwapBytes(void *ptr_1, void *ptr_2)
+{
+    if (!ptr_1 || !ptr_2)
+    {
+        return RESULT_FAILURE;
+    }
+
+    kdi_GenMemOpsSwapBlockRefs_U8(ptr_1, ptr_2);
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsSwapBytesRange(void *base_1, usize base_1_sz, usize base_1_idx, void *base_2, usize base_2_sz, usize base_2_idx)
+{
+    if (!base_1 || base_1_idx >= base_1_sz || !base_2 || base_2_idx >= base_2_sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    kdi_GenMemOpsSwapBlockRefs_U8(PBYTE_C(base_1) + base_1_idx, PBYTE_C(base_2) + base_2_idx);
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsSwapBlocks(void *ptr_1, void *ptr_2, usize block_sz)
+{
+    if (!ptr_1 || !ptr_2 || !block_sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    switch (block_sz)
+    {
+        case 1:
+            kdi_GenMemOpsSwapBlockRefs_U8(ptr_1, ptr_2);
+            break;
+        case 2:
+            kdi_GenMemOpsSwapBlockRefs_U16(ptr_1, ptr_2);
+            break;
+        case 4:
+            kdi_GenMemOpsSwapBlockRefs_U32(ptr_1, ptr_2);
+            break;
+#if defined ARCH_64BIT_INT
+        case 8:
+            kdi_GenMemOpsSwapBlockRefs_U64(ptr_1, ptr_2);
+            break;
+#endif
+        default:
+            kdi_GenMemOpsSwapBlockRefs_Un(ptr_1, ptr_2, block_sz);
+    }
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsSwapBlocksRange(void *base_1, usize base_1_sz, usize base_1_idx, void *base_2, usize base_2_sz, usize base_2_idx, usize block_sz)
+{
+    if (!base_1 || block_sz > base_1_sz || base_1_idx >= base_1_sz || !base_2 || block_sz > base_2_sz || base_2_idx >= base_2_sz || !block_sz || (base_1_idx + block_sz) > base_1_sz || (base_2_idx + block_sz) > base_2_sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    switch (block_sz)
+    {
+        case 1:
+            kdi_GenMemOpsSwapBlockRefs_U8(PU8_C(PBYTE_C(base_1) + base_1_idx), PU8_C(PBYTE_C(base_2) + base_2_idx));
+            break;
+        case 2:
+            kdi_GenMemOpsSwapBlockRefs_U16(PU16_C(PBYTE_C(base_1) + base_1_idx), PU16_C(PBYTE_C(base_2) + base_2_idx));
+            break;
+        case 4:
+            kdi_GenMemOpsSwapBlockRefs_U32(PU32_C(PBYTE_C(base_1) + base_1_idx), PU32_C(PBYTE_C(base_2) + base_2_idx));
+            break;
+#if defined ARCH_64BIT_INT
+        case 8:
+            kdi_GenMemOpsSwapBlockRefs_U64(PU64_C(PBYTE_C(base_1) + base_1_idx), PU64_C(PBYTE_C(base_2) + base_2_idx));
+            break;
+#endif
+        default:
+            kdi_GenMemOpsSwapBlockRefs_Un(PBYTE_C(base_1) + base_1_idx, PBYTE_C(base_2) + base_2_idx, block_sz);
+    }
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsIsEqual(bool *result, void *ptr_1, void *ptr_2, usize sz)
+{
+    if (!result || !ptr_1 || !ptr_2)
+    {
+        return RESULT_FAILURE;
+    }
+
+    if (!sz)
+    {
+        *result = RESULT_EQUALS;
+        return RESULT_SUCCESS;
+    }
+
+    kdi_GenMemOpsIsEqual(result, ptr_1, ptr_2, sz);
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsIsEqualRegion(bool *result, void *ptr_1, usize ptr_1_sz, void *ptr_2, usize ptr_2_sz)
+{
+    if (!result || !ptr_1 || !ptr_2)
+    {
+        return RESULT_FAILURE;
+    }
+
+    if (ptr_1_sz != ptr_2_sz)
+    {
+        *result = RESULT_NOT_EQUALS;
+        return RESULT_SUCCESS;
+    }
+    else if (!ptr_1_sz)
+    {
+        *result = RESULT_EQUALS;
+        return RESULT_SUCCESS;
+    }
+
+    kdi_GenMemOpsIsEqual(result, ptr_1, ptr_2, ptr_1_sz);
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+kdGenMemOpsIsEqualRange(bool *result, void *base_1, usize base_1_sz, usize base_1_idx, void *base_2, usize base_2_sz, usize base_2_idx, usize byte_count)
+{
+    usize base_1_final_sz, base_2_final_sz;
+
+    if (!result || !base_1 || base_1_idx >= base_1_sz || !base_2 || base_2_idx >= base_2_sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    if (!byte_count)
+    {
+        *result = RESULT_EQUALS;
+        return RESULT_SUCCESS;
+    }
+
+    base_1_final_sz = base_1_sz - base_1_idx;
+    base_1_final_sz = base_1_final_sz > byte_count ? byte_count : base_1_final_sz;
+
+    base_2_final_sz = base_2_sz - base_2_idx;
+    base_2_final_sz = base_2_final_sz > byte_count ? byte_count : base_2_final_sz;
+
+    if (base_1_final_sz != base_2_final_sz)
+    {
+        *result = RESULT_NOT_EQUALS;
+        return RESULT_SUCCESS;
+    }
+    else if (!base_1_final_sz)
+    {
+        *result = RESULT_EQUALS;
+        return RESULT_SUCCESS;
+    }
+
+    kdi_GenMemOpsIsEqual(result, PBYTE_C(base_1) + base_1_idx, PBYTE_C(base_2) + base_2_idx, base_1_final_sz);
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsIsZeros(bool *result, void *ptr, usize sz)
+{
+    if (!result || !ptr)
+    {
+        return RESULT_FAILURE;
+    }
+
+    if (!sz)
+    {
+        *result = RESULT_EQUALS;
+        return RESULT_SUCCESS;
+    }
+
+    kdi_GenMemOpsIsVal(result, ptr, sz, 0);
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsIsZerosRange(bool *result, void *base, usize base_sz, usize begin_idx, usize byte_count)
+{
+    usize final_sz;
+
+    if (!result || !base || begin_idx >= base_sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    if (!byte_count)
+    {
+        *result = RESULT_EQUALS;
+        return RESULT_SUCCESS;
+    }
+
+    final_sz = base_sz - begin_idx;
+    final_sz = final_sz > byte_count ? byte_count : final_sz;
+
+    kdi_GenMemOpsIsVal(result, PBYTE_C(base) + begin_idx, final_sz, 0);
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsIsOnes(bool *result, void *ptr, usize sz)
+{
+    if (!result || !ptr)
+    {
+        return RESULT_FAILURE;
+    }
+
+    if (!sz)
+    {
+        *result = RESULT_EQUALS;
+        return RESULT_SUCCESS;
+    }
+
+    kdi_GenMemOpsIsVal(result, ptr, sz, 0xFF);
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsIsOnesRange(bool *result, void *base, usize base_sz, usize begin_idx, usize byte_count)
+{
+    usize final_sz;
+
+    if (!result || !base || begin_idx >= base_sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    if (!byte_count)
+    {
+        *result = RESULT_EQUALS;
+        return RESULT_SUCCESS;
+    }
+
+    final_sz = base_sz - begin_idx;
+    final_sz = final_sz > byte_count ? byte_count : final_sz;
+
+    kdi_GenMemOpsIsVal(result, PBYTE_C(base) + begin_idx, final_sz, 0xFF);
+
+    return RESULT_SUCCESS;
+}
+
+
+/*
 bool
 kdGenMemOpsReverseBytes(void *ptr, usize sz)
 {

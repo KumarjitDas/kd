@@ -35,34 +35,42 @@ KDAPI(kd_bool_t) kdGenMemOpsConcatRange(void *dst_base, kd_usize_t dst_base_sz, 
 KDAPI(kd_bool_t) kdGenMemOpsSetBytes(void *dst, kd_usize_t dst_sz, kd_byte_t val);
 KDAPI(kd_bool_t) kdGenMemOpsSetBytesRange(void *base, kd_usize_t base_sz, kd_usize_t *set_sz, kd_usize_t begin_idx, kd_usize_t count, kd_byte_t val);
 
-#define kdGenMemOpsSetZerosBytes(dst, sz)                                      kdGenMemOpsSetBytes(KD_PTR_C(dst), KD_USIZE_C(sz), 0)
-#define kdGenMemOpsSetZerosBytesRange(base, base_sz, set_sz, begin_idx, count) kdGenMemOpsSetBytesRange(KD_PTR_C(base), KD_USIZE_C(base_sz), KD_PUSIZE_C(set_sz), KD_USIZE_C(begin_idx), KD_USIZE_C(count), 0)
+#define kdGenMemOpsSetZerosBytes(dst, sz)                                      kdGenMemOpsSetBytes((dst), (sz), 0)
+#define kdGenMemOpsSetZerosBytesRange(base, base_sz, set_sz, begin_idx, count) kdGenMemOpsSetBytesRange((base), (base_sz), (set_sz), (begin_idx), (count), 0)
 
-#define kdGenMemOpsSetOnesBytes(dst, sz)                                       kdGenMemOpsSetBytes(KD_PTR_C(dst), KD_USIZE_C(sz), 0xFF)
-#define kdGenMemOpsSetOnesBytesRange(base, base_sz, set_sz, begin_idx, count)  kdGenMemOpsSetBytesRange(KD_PTR_C(base), KD_USIZE_C(base_sz), KD_PUSIZE_C(set_sz), KD_USIZE_C(begin_idx), KD_USIZE_C(count), 0xFF)
+#define kdGenMemOpsSetOnesBytes(dst, sz)                                       kdGenMemOpsSetBytes((dst), (sz), 0xFF)
+#define kdGenMemOpsSetOnesBytesRange(base, base_sz, set_sz, begin_idx, count)  kdGenMemOpsSetBytesRange((base), (base_sz), (set_sz), (begin_idx), (count), 0xFF)
 
 KDAPI(kd_bool_t) kdGenMemOpsSetBlocks(void *dst, kd_usize_t dst_sz, void *block, kd_usize_t block_sz);
 KDAPI(kd_bool_t) kdGenMemOpsSetBlocksRange(void *base, kd_usize_t base_sz, kd_usize_t *set_sz, kd_usize_t begin_idx, kd_usize_t byte_count, void *block, kd_usize_t block_sz);
 
-KDAPI(kd_bool_t) kdGenMemOpsFill(void *dst, kd_usize_t dst_sz, void *sequence, kd_usize_t sequence_sz);
-KDAPI(kd_bool_t) kdGenMemOpsFillRange(void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t byte_count, void *sequence, kd_usize_t sequence_sz);
+#define kdGenMemOpsFill(dst, dst_sz, sequence, sequence_sz)                               kdGenMemOpsSetBlocks((dst), (dst_sz), (sequence), (sequence_sz))
+#define kdGenMemOpsFillRange(base, base_sz, begin_idx, byte_count, sequence, sequence_sz) kdGenMemOpsSetBlocksRange((base), (base_sz), (begin_idx), (byte_count), (sequence), (sequence_sz))
 
-KDAPI(kd_bool_t) kdGenMemOpsSwapBytes(void *base, kd_usize_t base_sz, kd_usize_t idx_1, kd_usize_t idx_2);
-KDAPI(kd_bool_t) kdGenMemOpsSwapBlocks(void *base, kd_usize_t base_sz, kd_usize_t idx_1, kd_usize_t idx_2, kd_usize_t block_sz);
-KDAPI(kd_bool_t) kdGenMemOpsSwapRegions(void *ptr_1, void *ptr_2, kd_usize_t sz);
+KDAPI(kd_bool_t) kdGenMemOpsInnerSwapBytes(void *ptr, kd_usize_t idx_1, kd_usize_t idx_2);
+KDAPI(kd_bool_t) kdGenMemOpsInnerSwapBytesRange(void *base, kd_usize_t base_sz, kd_usize_t idx_1, kd_usize_t idx_2);
 
-KDAPI(kd_bool_t) kdGenMemOpsSwapByteRanges(void *dst, kd_usize_t dst_sz, kd_usize_t begin_idx_1, kd_usize_t end_idx_1, kd_usize_t begin_idx_2, kd_usize_t end_idx_2, kd_usize_t *swapped_sz_addr);
-KDAPI(kd_bool_t) kdGenMemOpsSwapBlockRanges(void *dst, kd_usize_t dst_sz, kd_usize_t begin_idx_1, kd_usize_t end_idx_1, kd_usize_t begin_idx_2, kd_usize_t end_idx_2, kd_usize_t block_sz, kd_usize_t *swapped_sz_addr);
-KDAPI(kd_bool_t) kdGenMemOpsSwapRegionRanges(void *ptr_1, kd_usize_t ptr_1_sz, void *ptr_2, kd_usize_t ptr_2_sz, kd_usize_t *swapped_sz_addr);
+KDAPI(kd_bool_t) kdGenMemOpsInnerSwapBlocks(void *ptr, kd_usize_t idx_1, kd_usize_t idx_2, kd_usize_t block_sz);
+KDAPI(kd_bool_t) kdGenMemOpsInnerSwapBlocksRange(void *base, kd_usize_t base_sz, kd_usize_t idx_1, kd_usize_t idx_2, kd_usize_t block_sz);
 
-KDAPI(kd_word_t) kdGenMemOpsCompare(void *ptr_1, void *ptr_2, kd_usize_t sz);
-KDAPI(kd_word_t) kdGenMemOpsCompareRegion(void *ptr_1, kd_usize_t ptr_1_sz, void *ptr_2, kd_usize_t ptr_2_sz);
+KDAPI(kd_bool_t) kdGenMemOpsSwapBytes(void *ptr_1, void *ptr_2);
+KDAPI(kd_bool_t) kdGenMemOpsSwapBytesRange(void *base_1, kd_usize_t base_1_sz, kd_usize_t base_1_idx, void *base_2, kd_usize_t base_2_sz, kd_usize_t base_2_idx);
 
-KDAPI(kd_bool_t) kdGenMemOpsEqual(void *ptr_1, void *ptr_2, kd_usize_t sz);
-KDAPI(kd_bool_t) kdGenMemOpsEqualRegion(void *ptr_1, kd_usize_t ptr_1_sz, void *ptr_2, kd_usize_t ptr_2_sz);
+KDAPI(kd_bool_t) kdGenMemOpsSwapBlocks(void *ptr_1, void *ptr_2, kd_usize_t block_sz);
+KDAPI(kd_bool_t) kdGenMemOpsSwapBlocksRange(void *base_1, kd_usize_t base_1_sz, kd_usize_t base_1_idx, void *base_2, kd_usize_t base_2_sz, kd_usize_t base_2_idx, kd_usize_t block_sz);
 
-KDAPI(kd_bool_t) kdGenMemOpsIsZero(void *ptr, kd_usize_t sz);
-KDAPI(kd_bool_t) kdGenMemOpsIsZeroRange(void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t byte_count);
+#define kdGenMemOpsSequenceSwap(ptr_1, ptr_2, sz)                                                           kdGenMemOpsSwapBlocks((ptr_1), (ptr_2), (sz))
+#define kdGenMemOpsSequenceSwapRange(base_1, base_1_sz, base_1_idx, base_2, base_2_sz, base_2_idx, swap_sz) kdGenMemOpsSwapBlocksRange((base_1), (base_1_sz), (base_1_idx), (base_2), (base_2_sz), (base_2_idx), (swap_sz))
+
+KDAPI(kd_bool_t) kdGenMemOpsIsEqual(kd_bool_t *result, void *ptr_1, void *ptr_2, kd_usize_t sz);
+KDAPI(kd_bool_t) kdGenMemOpsIsEqualRegion(kd_bool_t *result, void *ptr_1, kd_usize_t ptr_1_sz, void *ptr_2, kd_usize_t ptr_2_sz);
+KDAPI(kd_bool_t) kdGenMemOpsIsEqualRange(kd_bool_t *result, void *base_1, kd_usize_t base_1_sz, kd_usize_t base_1_idx, void *base_2, kd_usize_t base_2_sz, kd_usize_t base_2_idx, kd_usize_t byte_count);
+
+KDAPI(kd_bool_t) kdGenMemOpsIsZeros(kd_bool_t *result, void *ptr, kd_usize_t sz);
+KDAPI(kd_bool_t) kdGenMemOpsIsZerosRange(kd_bool_t *result, void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t byte_count);
+
+KDAPI(kd_bool_t) kdGenMemOpsIsOnes(kd_bool_t *result, void *ptr, kd_usize_t sz);
+KDAPI(kd_bool_t) kdGenMemOpsIsOnesRange(kd_bool_t *result, void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t byte_count);
 
 KDAPI(kd_bool_t) kdGenMemOpsHasPrefix(void *ptr, kd_usize_t ptr_sz, void *prefix, kd_usize_t prefix_sz);
 KDAPI(kd_bool_t) kdGenMemOpsHasSuffix(void *ptr, kd_usize_t ptr_sz, void *suffix, kd_usize_t suffix_sz);
@@ -238,33 +246,54 @@ KDAPI(kd_bool_t) kdGenMemOpsRotateBlocksLeft(void *ptr, kd_usize_t dst_sz, kd_us
 #define GenMemOpsCopy                     kdGenMemOpsCopy
 #define GenMemOpsCopyRegion               kdGenMemOpsCopyRegion
 #define GenMemOpsCopyRange                kdGenMemOpsCopyRange
+
 #define GenMemOpsMove                     kdGenMemOpsMove
 #define GenMemOpsMoveRegion               kdGenMemOpsMoveRegion
 #define GenMemOpsMoveRange                kdGenMemOpsMoveRange
+
 #define GenMemOpsConcat                   kdGenMemOpsConcat
 #define GenMemOpsConcatRange              kdGenMemOpsConcatRange
+
 #define GenMemOpsSetBytes                 kdGenMemOpsSetBytes
 #define GenMemOpsSetBytesRange            kdGenMemOpsSetBytesRange
+
 #define GenMemOpsSetZerosBytes            kdGenMemOpsSetZerosBytes
 #define GenMemOpsSetZerosBytesRange       kdGenMemOpsSetZerosBytesRange
+
 #define GenMemOpsSetOnesBytes             kdGenMemOpsSetOnesBytes
 #define GenMemOpsSetOnesBytesRange        kdGenMemOpsSetOnesBytesRange
+
 #define GenMemOpsSetBlocks                kdGenMemOpsSetBlocks
 #define GenMemOpsSetBlocksRange           kdGenMemOpsSetBlocksRange
+
 #define GenMemOpsFill                     kdGenMemOpsFill
 #define GenMemOpsFillRange                kdGenMemOpsFillRange
+
+#define GenMemOpsInnerSwapBytes           kdGenMemOpsInnerSwapBytes
+#define GenMemOpsInnerSwapBytesRange      kdGenMemOpsInnerSwapBytesRange
+
+#define GenMemOpsInnerSwapBlocks          kdGenMemOpsInnerSwapBlocks
+#define GenMemOpsInnerSwapBlocksRange     kdGenMemOpsInnerSwapBlocksRange
+
 #define GenMemOpsSwapBytes                kdGenMemOpsSwapBytes
+#define GenMemOpsSwapBytesRange           kdGenMemOpsSwapBytesRange
+
 #define GenMemOpsSwapBlocks               kdGenMemOpsSwapBlocks
-#define GenMemOpsSwapRegions              kdGenMemOpsSwapRegions
-#define GenMemOpsSwapByteRanges           kdGenMemOpsSwapByteRanges
-#define GenMemOpsSwapBlockRanges          kdGenMemOpsSwapBlockRanges
-#define GenMemOpsSwapRegionRanges         kdGenMemOpsSwapRegionRanges
-#define GenMemOpsCompare                  kdGenMemOpsCompare
-#define GenMemOpsCompareRegion            kdGenMemOpsCompareRegion
-#define GenMemOpsEqual                    kdGenMemOpsEqual
-#define GenMemOpsEqualRegion              kdGenMemOpsEqualRegion
-#define GenMemOpsIsZero                   kdGenMemOpsIsZero
-#define GenMemOpsIsZeroRange              kdGenMemOpsIsZeroRange
+#define GenMemOpsSwapBlocksRange          kdGenMemOpsSwapBlocksRange
+
+#define GenMemOpsSequenceSwap             kdGenMemOpsSequenceSwap
+#define GenMemOpsSequenceSwapRange        kdGenMemOpsSequenceSwapRange
+
+#define GenMemOpsIsEqual                  kdGenMemOpsIsEqual
+#define GenMemOpsIsEqualRegion            kdGenMemOpsIsEqualRegion
+#define GenMemOpsIsEqualRange             kdGenMemOpsIsEqualRange
+
+#define GenMemOpsIsZeros                  kdGenMemOpsIsZeros
+#define GenMemOpsIsZerosRange             kdGenMemOpsIsZerosRange
+
+#define GenMemOpsIsOnes                   kdGenMemOpsIsOnes
+#define GenMemOpsIsOnesRange              kdGenMemOpsIsOnesRange
+
 #define GenMemOpsHasPrefix                kdGenMemOpsHasPrefix
 #define GenMemOpsHasSuffix                kdGenMemOpsHasSuffix
 #define GenMemOpsRegionOverlap            kdGenMemOpsRegionOverlap
