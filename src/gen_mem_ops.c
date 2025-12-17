@@ -331,7 +331,7 @@ GenMemOpsSetBlocksRange(void *base, usize base_sz, usize *set_sz, usize begin_id
     {
         case 1:
             block_val_u8 = *PU8_C(block);
-            kdi_GenMemOpsSetBlocks_U8(PBYTE_C(base) + begin_idx, *set_sz, block_val_u8);
+            kdi_GenMemOpsSetBlocks_U8(PU8_C(PBYTE_C(base) + begin_idx), *set_sz, block_val_u8);
             break;
         case 2:
             block_val_u16 = *PU16_C(block);
@@ -349,6 +349,131 @@ GenMemOpsSetBlocksRange(void *base, usize base_sz, usize *set_sz, usize begin_id
 #endif
         default:
             kdi_GenMemOpsSetBlocks_Un(PBYTE_C(base) + begin_idx, *set_sz, block, block_sz);
+    }
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsReverseBytes(void *ptr, usize sz)
+{
+    if (!ptr)
+    {
+        return RESULT_FAILURE;
+    }
+
+    if (!sz)
+    {
+        return RESULT_SUCCESS;
+    }
+
+    kdi_GenMemOpsReverseBlocks_U8(ptr, sz);
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsReverseBytesRange(void *base, usize base_sz, usize begin_idx, usize count)
+{
+    usize final_sz;
+
+    if (!base || begin_idx >= base_sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    if (!count)
+    {
+        return RESULT_SUCCESS;
+    }
+
+    final_sz = base_sz - begin_idx;
+    final_sz = count < final_sz ? count : final_sz;
+
+    kdi_GenMemOpsReverseBlocks_U8(PBYTE_C(base) + begin_idx, final_sz);
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsReverseBlocks(void *ptr, usize ptr_sz, usize block_sz)
+{
+    if (!ptr || !block_sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    if (!ptr_sz)
+    {
+        return RESULT_SUCCESS;
+    }
+
+    ptr_sz /= block_sz;
+
+    switch (block_sz)
+    {
+        case 1:
+            kdi_GenMemOpsReverseBlocks_U8(ptr, ptr_sz * block_sz);
+            break;
+        case 2:
+            kdi_GenMemOpsReverseBlocks_U16(ptr, ptr_sz * block_sz);
+            break;
+        case 4:
+            kdi_GenMemOpsReverseBlocks_U32(ptr, ptr_sz * block_sz);
+            break;
+#if defined ARCH_64BIT_INT
+        case 8:
+            kdi_GenMemOpsReverseBlocks_U64(ptr, ptr_sz * block_sz);
+            break;
+#endif
+        default:
+            kdi_GenMemOpsReverseBlocks_Un(ptr, ptr_sz * block_sz, block_sz);
+    }
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsReverseBlocksRange(void *base, usize base_sz, usize begin_idx, usize byte_count, usize block_sz)
+{
+    usize final_sz;
+
+    if (!base || begin_idx >= base_sz || !block_sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    if (!byte_count)
+    {
+        return RESULT_SUCCESS;
+    }
+
+    final_sz  = base_sz - begin_idx;
+    final_sz  = byte_count < final_sz ? byte_count : final_sz;
+    final_sz /= block_sz;
+
+    switch (block_sz)
+    {
+        case 1:
+            kdi_GenMemOpsReverseBlocks_U8(PU8_C(PBYTE_C(base) + begin_idx), final_sz * block_sz);
+            break;
+        case 2:
+            kdi_GenMemOpsReverseBlocks_U16(PU16_C(PBYTE_C(base) + begin_idx), final_sz * block_sz);
+            break;
+        case 4:
+            kdi_GenMemOpsReverseBlocks_U32(PU32_C(PBYTE_C(base) + begin_idx), final_sz * block_sz);
+            break;
+#if defined ARCH_64BIT_INT
+        case 8:
+            kdi_GenMemOpsReverseBlocks_U64(PU64_C(PBYTE_C(base) + begin_idx), final_sz * block_sz);
+            break;
+#endif
+        default:
+            kdi_GenMemOpsReverseBlocks_Un(PBYTE_C(base) + begin_idx, final_sz * block_sz, block_sz);
     }
 
     return RESULT_SUCCESS;
@@ -539,6 +664,120 @@ GenMemOpsSwapBlocksRange(void *base_1, usize base_1_sz, usize base_1_idx, void *
 
 
 bool
+GenMemOpsRotateRight(void *ptr, usize sz, usize k)
+{
+    if (!ptr)
+    {
+        return RESULT_FAILURE;
+    }
+
+    if (!sz)
+    {
+        return RESULT_SUCCESS;
+    }
+
+    k %= sz;
+
+    if (!k)
+    {
+        return RESULT_SUCCESS;
+    }
+
+    kdi_GenMemOpsRotateRight(ptr, sz, k);
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsRotateRightRange(void *base, usize base_sz, usize begin_idx, usize byte_count, usize k)
+{
+    usize final_sz;
+
+    if (!base || begin_idx >= base_sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    if (!base_sz || !byte_count)
+    {
+        return RESULT_SUCCESS;
+    }
+
+    final_sz  = base_sz - begin_idx;
+    final_sz  = final_sz > byte_count ? byte_count : final_sz;
+
+    k        %= final_sz;
+
+    if (!k)
+    {
+        return RESULT_SUCCESS;
+    }
+
+    kdi_GenMemOpsRotateRight(PBYTE_C(base) + begin_idx, final_sz, k);
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsRotateLeft(void *ptr, usize sz, usize k)
+{
+    if (!ptr)
+    {
+        return RESULT_FAILURE;
+    }
+
+    if (!sz)
+    {
+        return RESULT_SUCCESS;
+    }
+
+    k %= sz;
+
+    if (!k)
+    {
+        return RESULT_SUCCESS;
+    }
+
+    kdi_GenMemOpsRotateLeft(ptr, sz, k);
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsRotateLeftRange(void *base, usize base_sz, usize begin_idx, usize byte_count, usize k)
+{
+    usize final_sz;
+
+    if (!base || begin_idx >= base_sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    if (!base_sz || !byte_count)
+    {
+        return RESULT_SUCCESS;
+    }
+
+    final_sz  = base_sz - begin_idx;
+    final_sz  = final_sz > byte_count ? byte_count : final_sz;
+
+    k        %= final_sz;
+
+    if (!k)
+    {
+        return RESULT_SUCCESS;
+    }
+
+    kdi_GenMemOpsRotateLeft(PBYTE_C(base) + begin_idx, final_sz, k);
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
 GenMemOpsIsEqual(bool *result, void *ptr_1, void *ptr_2, usize sz)
 {
     if (!result || !ptr_1 || !ptr_2)
@@ -548,7 +787,7 @@ GenMemOpsIsEqual(bool *result, void *ptr_1, void *ptr_2, usize sz)
 
     if (!sz)
     {
-        *result = RESULT_EQUALS;
+        *result = true;
         return RESULT_SUCCESS;
     }
 
@@ -568,12 +807,12 @@ GenMemOpsIsEqualRegion(bool *result, void *ptr_1, usize ptr_1_sz, void *ptr_2, u
 
     if (ptr_1_sz != ptr_2_sz)
     {
-        *result = RESULT_NOT_EQUALS;
+        *result = false;
         return RESULT_SUCCESS;
     }
     else if (!ptr_1_sz)
     {
-        *result = RESULT_EQUALS;
+        *result = true;
         return RESULT_SUCCESS;
     }
 
@@ -595,7 +834,7 @@ kdGenMemOpsIsEqualRange(bool *result, void *base_1, usize base_1_sz, usize base_
 
     if (!byte_count)
     {
-        *result = RESULT_EQUALS;
+        *result = true;
         return RESULT_SUCCESS;
     }
 
@@ -607,12 +846,12 @@ kdGenMemOpsIsEqualRange(bool *result, void *base_1, usize base_1_sz, usize base_
 
     if (base_1_final_sz != base_2_final_sz)
     {
-        *result = RESULT_NOT_EQUALS;
+        *result = false;
         return RESULT_SUCCESS;
     }
     else if (!base_1_final_sz)
     {
-        *result = RESULT_EQUALS;
+        *result = true;
         return RESULT_SUCCESS;
     }
 
@@ -632,7 +871,7 @@ GenMemOpsIsZeros(bool *result, void *ptr, usize sz)
 
     if (!sz)
     {
-        *result = RESULT_EQUALS;
+        *result = true;
         return RESULT_SUCCESS;
     }
 
@@ -654,7 +893,7 @@ GenMemOpsIsZerosRange(bool *result, void *base, usize base_sz, usize begin_idx, 
 
     if (!byte_count)
     {
-        *result = RESULT_EQUALS;
+        *result = true;
         return RESULT_SUCCESS;
     }
 
@@ -677,7 +916,7 @@ GenMemOpsIsOnes(bool *result, void *ptr, usize sz)
 
     if (!sz)
     {
-        *result = RESULT_EQUALS;
+        *result = true;
         return RESULT_SUCCESS;
     }
 
@@ -699,7 +938,7 @@ GenMemOpsIsOnesRange(bool *result, void *base, usize base_sz, usize begin_idx, u
 
     if (!byte_count)
     {
-        *result = RESULT_EQUALS;
+        *result = true;
         return RESULT_SUCCESS;
     }
 
@@ -707,6 +946,147 @@ GenMemOpsIsOnesRange(bool *result, void *base, usize base_sz, usize begin_idx, u
     final_sz = final_sz > byte_count ? byte_count : final_sz;
 
     kdi_GenMemOpsIsVal(result, PBYTE_C(base) + begin_idx, final_sz, 0xFF);
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsHasPrefix(bool *result, void *ptr, usize ptr_sz, void *prefix, usize prefix_sz)
+{
+    if (!result || !ptr || !prefix)
+    {
+        return RESULT_FAILURE;
+    }
+
+    if (prefix_sz > ptr_sz)
+    {
+        *result = false;
+        return RESULT_SUCCESS;
+    }
+
+    if (!ptr_sz || !prefix_sz)
+    {
+        *result = true;
+        return RESULT_SUCCESS;
+    }
+
+    kdi_GenMemOpsIsEqual(result, ptr, prefix, prefix_sz);
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsHasSuffix(bool *result, void *ptr, usize ptr_sz, void *suffix, usize suffix_sz)
+{
+    if (!result || !ptr || !suffix)
+    {
+        return RESULT_FAILURE;
+    }
+
+    if (suffix_sz > ptr_sz)
+    {
+        *result = false;
+        return RESULT_SUCCESS;
+    }
+
+    if (!ptr_sz || !suffix_sz)
+    {
+        *result = true;
+        return RESULT_SUCCESS;
+    }
+
+    kdi_GenMemOpsIsEqual(result, PBYTE_C(ptr) + ptr_sz - suffix_sz, suffix, suffix_sz);
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsRegionOverlap(bool *result, void *ptr_1, usize ptr_1_sz, void *ptr_2, usize ptr_2_sz)
+{
+    if (!result || !ptr_1 || !ptr_2)
+    {
+        return RESULT_FAILURE;
+    }
+
+    if (!ptr_1_sz || !ptr_2_sz)
+    {
+        *result = false;
+        return RESULT_SUCCESS;
+    }
+
+    kdi_GenMemOpsRegionOverlap(result, ptr_1, ptr_1_sz, ptr_2, ptr_2_sz);
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsRegionContains(bool *result, void *base, usize base_sz, void *ptr, usize ptr_sz)
+{
+    if (!result || !base || !ptr)
+    {
+        return RESULT_FAILURE;
+    }
+
+    if (!ptr_sz)
+    {
+        *result = true;
+        return RESULT_SUCCESS;
+    }
+
+    if (!base_sz)
+    {
+        *result = false;
+        return RESULT_SUCCESS;
+    }
+
+    kdi_GenMemOpsRegionContains(result, base, base_sz, ptr, ptr_sz);
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsCheckBounds(usize total_sz, usize offset, usize sz)
+{
+    return offset <= total_sz && (offset + sz) <= total_sz;
+}
+
+
+bool
+GenMemOpsGetOffsetChecked(void *dst_addr, void *base, usize base_sz, usize offset, usize sz)
+{
+    byte **temp_dst_addr = dst_addr;
+
+    if (!temp_dst_addr || !base)
+    {
+        return RESULT_FAILURE;
+    }
+
+    if (GenMemOpsCheckBounds(base_sz, offset, sz))
+    {
+        *temp_dst_addr = PBYTE_C(base) + offset;
+        return RESULT_SUCCESS;
+    }
+
+    *temp_dst_addr = null;
+
+    return RESULT_FAILURE;
+}
+
+
+bool
+GenMemOpsElemCountFromBytes(usize *count, usize base_sz, usize elem_sz)
+{
+    if (!count || !elem_sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    kdi_GenMemOpsElemCountFromBytes(count, base_sz, elem_sz);
 
     return RESULT_SUCCESS;
 }

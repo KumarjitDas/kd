@@ -139,6 +139,117 @@ kdi_GenMemOpsSetBlocks_Un(byte *dst, usize dst_sz, byte *block, usize block_sz)
 
 
 void
+kdi_GenMemOpsReverseBlocks_U8(u8 *ptr, usize sz)
+{
+    u8 *end = ptr + sz;
+    u8  temp;
+
+    while (sz-- && ptr < end)
+    {
+        --end;
+
+        temp = *ptr;
+        *ptr = *end;
+        *end = temp;
+
+        ++ptr;
+    }
+}
+
+
+void
+kdi_GenMemOpsReverseBlocks_U16(u16 *ptr, usize sz)
+{
+    u16 *end = PU16_C(PBYTE_C(ptr) + sz);
+    u16  temp;
+
+    while (sz-- && ptr < end)
+    {
+        --end;
+
+        temp = *ptr;
+        *ptr = *end;
+        *end = temp;
+
+        ++ptr;
+    }
+}
+
+
+void
+kdi_GenMemOpsReverseBlocks_U32(u32 *ptr, usize sz)
+{
+    u32 *end = PU32_C(PBYTE_C(ptr) + sz);
+    u32  temp;
+
+    while (sz-- && ptr < end)
+    {
+        --end;
+
+        temp = *ptr;
+        *ptr = *end;
+        *end = temp;
+
+        ++ptr;
+    }
+}
+
+
+#if defined ARCH_64BIT_INT
+void
+kdi_GenMemOpsReverseBlocks_U64(u64 *ptr, usize sz)
+{
+    u64 *end = PU64_C(PBYTE_C(ptr) + sz);
+    u64  temp;
+
+    while (sz-- && ptr < end)
+    {
+        --end;
+
+        temp = *ptr;
+        *ptr = *end;
+        *end = temp;
+
+        ++ptr;
+    }
+}
+#endif
+
+
+void
+kdi_GenMemOpsReverseBlocks_Un(byte *ptr, usize ptr_sz, usize block_sz)
+{
+    byte *end       = ptr + ptr_sz;
+    byte *end_begin = end - block_sz;
+    byte *end_end   = end - 1;
+    byte *temp_end  = end_begin;
+    byte  temp_val;
+
+    while (ptr_sz-- && ptr < end)
+    {
+        --end;
+
+        temp_val  = *ptr;
+        *ptr      = *temp_end;
+        *temp_end = temp_val;
+
+        if (temp_end == end_end)
+        {
+            end_begin = end - block_sz;
+            end_end   = end - 1;
+            temp_end  = end_begin;
+        }
+        else
+        {
+            ++temp_end;
+        }
+
+        ++ptr;
+    }
+}
+
+
+void
 kdi_GenMemOpsSwapBlocks_U8(u8 *ptr, usize idx_1, usize idx_2)
 {
     u8 *temp_ptr  = ptr + idx_1;
@@ -264,9 +375,68 @@ kdi_GenMemOpsSwapBlockRefs_Un(byte *ptr_1, byte *ptr_2, usize block_sz)
 
 
 void
+kdi_GenMemOpsRotateRight(byte *ptr, usize sz, usize k)
+{
+    byte *ptr_end = ptr + sz;
+    byte  temp;
+    usize left;
+
+    sz   -= k;
+    ptr  += sz;
+    left  = sz % k;
+
+    while (sz--)
+    {
+        --ptr_end;
+        --ptr;
+
+        temp     = *ptr_end;
+        *ptr_end = *ptr;
+        *ptr     = temp;
+    }
+
+    if (!left)
+    {
+        return;
+    }
+
+    kdi_GenMemOpsRotateRight(ptr, k, k - left);
+}
+
+
+void
+kdi_GenMemOpsRotateLeft(byte *ptr, usize sz, usize k)
+{
+    byte *ptr_begin = ptr + k;
+    byte  temp;
+    usize right;
+
+    sz    -= k;
+    right  = sz % k;
+
+    while (sz--)
+    {
+        temp       = *ptr_begin;
+        *ptr_begin = *ptr;
+        *ptr       = temp;
+
+        ++ptr_begin;
+        ++ptr;
+    }
+
+    if (!right)
+    {
+        return;
+    }
+
+    kdi_GenMemOpsRotateLeft(ptr, k, k - right);
+}
+
+
+void
 kdi_GenMemOpsIsEqual(bool *result, byte *ptr_1, byte *ptr_2, usize sz)
 {
-    *result = RESULT_EQUALS;
+    *result = true;
 
     while (sz-- && *result)
     {
@@ -281,7 +451,7 @@ kdi_GenMemOpsIsEqual(bool *result, byte *ptr_1, byte *ptr_2, usize sz)
 void
 kdi_GenMemOpsIsVal(bool *result, byte *ptr, usize sz, byte val)
 {
-    *result = RESULT_EQUALS;
+    *result = true;
 
     while (sz-- && *result)
     {
@@ -291,111 +461,43 @@ kdi_GenMemOpsIsVal(bool *result, byte *ptr, usize sz, byte val)
 }
 
 
+void
+kdi_GenMemOpsRegionOverlap(bool *result, byte *ptr_1, usize ptr_1_sz, byte *ptr_2, usize ptr_2_sz)
+{
+    byte *temp_ptr;
+    usize temp_sz;
+
+    if (ptr_1 > ptr_2)
+    {
+        temp_ptr = ptr_1;
+        ptr_1    = ptr_2;
+        ptr_2    = temp_ptr;
+
+        temp_sz  = ptr_1_sz;
+        ptr_1_sz = ptr_2_sz;
+        ptr_2_sz = temp_sz;
+    }
+
+    *result = ptr_2 >= ptr_1 && ptr_2 < (ptr_1 + ptr_1_sz);
+}
+
+
+void
+kdi_GenMemOpsRegionContains(bool *result, byte *base, usize base_sz, byte *ptr, usize ptr_sz)
+{
+    byte *base_end = base + base_sz;
+    *result        = ptr >= base && ptr < base_end && (ptr + ptr_sz) <= base_end;
+}
+
+
+void
+kdi_GenMemOpsElemCountFromBytes(usize *count, usize base_sz, usize elem_sz)
+{
+    *count = base_sz / elem_sz;
+}
+
+
 /*
-void
-kdi_GenMemOpsReverseBlocks_U8(u8 *ptr, usize sz)
-{
-    u8 *end = ptr + sz;
-    u8  temp;
-
-    while (sz-- && ptr < end)
-    {
-        --end;
-
-        temp = *ptr;
-        *ptr = *end;
-        *end = temp;
-
-        ++ptr;
-    }
-}
-
-
-void
-kdi_GenMemOpsReverseBlocks_U16(u16 *ptr, usize sz)
-{
-    u16 *end = PU16_C(PU8_C(ptr) + sz);
-    u16  temp;
-
-    while (sz-- && ptr < end)
-    {
-        --end;
-
-        temp = *ptr;
-        *ptr = *end;
-        *end = temp;
-
-        ++ptr;
-    }
-}
-
-
-void
-kdi_GenMemOpsReverseBlocks_U32(u32 *ptr, usize sz)
-{
-    u32 *end = PU32_C(PU8_C(ptr) + sz);
-    u32  temp;
-
-    while (sz-- && ptr < end)
-    {
-        --end;
-
-        temp = *ptr;
-        *ptr = *end;
-        *end = temp;
-
-        ++ptr;
-    }
-}
-
-
-#if defined ARCH_64BIT_INT
-void
-kdi_GenMemOpsReverseBlocks_U64(u64 *ptr, usize sz)
-{
-    u64 *end = PU64_C(PU8_C(ptr) + sz);
-    u64  temp;
-
-    while (sz-- && ptr < end)
-    {
-        --end;
-
-        temp = *ptr;
-        *ptr = *end;
-        *end = temp;
-
-        ++ptr;
-    }
-}
-#endif
-
-
-void
-kdi_GenMemOpsReverseBlocks_Un(void *ptr, usize sz, usize block_sz)
-{
-    u8   *begin = ptr, *temp_end, temp;
-    u8   *end   = begin + sz;
-    usize temp_block_sz;
-
-    while (sz-- && begin < end)
-    {
-        end           -= block_sz;
-        temp_end       = end;
-        temp_block_sz  = block_sz;
-
-        while (temp_block_sz--)
-        {
-            temp      = *begin;
-            *begin    = *temp_end;
-            *temp_end = temp;
-
-            ++begin;
-            ++temp_end;
-        }
-    }
-}
-
-
 void
 kdi_GenMemOpsCpy(byte *dst, byte *src, usize sz)
 {
