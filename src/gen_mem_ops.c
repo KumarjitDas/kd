@@ -1092,6 +1092,375 @@ GenMemOpsElemCountFromBytes(usize *count, usize base_sz, usize elem_sz)
 }
 
 
+bool
+GenMemOpsByteAt(void *dst, void *base, usize base_sz, usize idx)
+{
+    if (!dst || !base || idx >= base_sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    kdi_GenMemOpsBlockAt_U8(dst, base, idx);
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsBlockAt(void *dst, void *base, usize base_sz, usize idx, usize block_sz)
+{
+    if (!dst || !base || idx >= base_sz || !block_sz || block_sz > base_sz || (idx + block_sz) > base_sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    switch (block_sz)
+    {
+        case 1:
+            kdi_GenMemOpsBlockAt_U8(dst, base, idx);
+            break;
+        case 2:
+            kdi_GenMemOpsBlockAt_U16(dst, base, idx);
+            break;
+        case 4:
+            kdi_GenMemOpsBlockAt_U32(dst, base, idx);
+            break;
+#if defined ARCH_64BIT_INT
+        case 8:
+            kdi_GenMemOpsBlockAt_U64(dst, base, idx);
+            break;
+#endif
+        default:
+            kdi_GenMemOpsBlockAt_Un(dst, base, idx, block_sz);
+    }
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsSetByteAt(void *base, usize base_sz, usize idx, byte val)
+{
+    if (!base || idx >= base_sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    kdi_GenMemOpsSetBlockAt_U8(base, idx, val);
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsSetBlockAt(void *base, usize base_sz, usize idx, void *block, usize block_sz)
+{
+    u8  block_val_u8;
+    u16 block_val_u16;
+    u32 block_val_u32;
+#if defined ARCH_64BIT_INT
+    u64 block_val_u64;
+#endif
+
+    if (!base || idx >= base_sz || !block || !block_sz || block_sz > base_sz || (idx + block_sz) > base_sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    switch (block_sz)
+    {
+        case 1:
+            block_val_u8 = *PU8_C(block);
+            kdi_GenMemOpsSetBlockAt_U8(base, idx, block_val_u8);
+            break;
+        case 2:
+            block_val_u16 = *PU16_C(block);
+            kdi_GenMemOpsSetBlockAt_U16(base, idx, block_val_u16);
+            break;
+        case 4:
+            block_val_u32 = *PU32_C(block);
+            kdi_GenMemOpsSetBlockAt_U32(base, idx, block_val_u32);
+            break;
+#if defined ARCH_64BIT_INT
+        case 8:
+            block_val_u64 = *PU64_C(block);
+            kdi_GenMemOpsSetBlockAt_U64(base, idx, block_val_u64);
+            break;
+#endif
+        default:
+            kdi_GenMemOpsSetBlockAt_Un(base, idx, block, block_sz);
+    }
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsInsertByteAt(void *base, usize base_cap, usize *base_elems, usize idx, byte val, bool truncate)
+{
+    bool buffer_full;
+
+    if (!base || !base_elems || idx >= base_cap || idx > *base_elems)
+    {
+        return RESULT_FAILURE;
+    }
+
+    buffer_full = *base_elems >= base_cap;
+
+    if (!truncate && buffer_full)
+    {
+        return RESULT_FAILURE;
+    }
+
+    *base_elems = *base_elems - (buffer_full ? 1 : 0);
+
+    kdi_GenMemOpsInsertBlockAt_U8(base, base_elems, idx, val);
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsInsertBlockAt(void *base, usize base_cap, usize *base_elems, usize idx, void *block, usize block_sz, bool truncate)
+{
+    bool buffer_full;
+    u8   block_val_u8;
+    u16  block_val_u16;
+    u32  block_val_u32;
+#if defined ARCH_64BIT_INT
+    u64 block_val_u64;
+#endif
+
+    if (!base || !base_elems || idx >= base_cap || idx > *base_elems || !block || !block_sz || block_sz > base_cap || (idx + block_sz) > base_cap)
+    {
+        return RESULT_FAILURE;
+    }
+
+    buffer_full = *base_elems >= base_cap;
+
+    if (!truncate && buffer_full)
+    {
+        return RESULT_FAILURE;
+    }
+
+    *base_elems = *base_elems - (buffer_full ? block_sz : 0);
+
+    switch (block_sz)
+    {
+        case 1:
+            block_val_u8 = *PU8_C(block);
+            kdi_GenMemOpsInsertBlockAt_U8(base, base_elems, idx, block_val_u8);
+            break;
+        case 2:
+            block_val_u16 = *PU16_C(block);
+            kdi_GenMemOpsInsertBlockAt_U16(base, base_elems, idx, block_val_u16);
+            break;
+        case 4:
+            block_val_u32 = *PU32_C(block);
+            kdi_GenMemOpsInsertBlockAt_U32(base, base_elems, idx, block_val_u32);
+            break;
+#if defined ARCH_64BIT_INT
+        case 8:
+            block_val_u64 = *PU64_C(block);
+            kdi_GenMemOpsInsertBlockAt_U64(base, base_elems, idx, block_val_u64);
+            break;
+#endif
+        default:
+            kdi_GenMemOpsInsertBlockAt_Un(base, base_elems, idx, block, block_sz);
+    }
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsRemoveByteAt(void *base, usize base_cap, usize *base_elems, usize idx)
+{
+    if (!base || !base_elems || idx >= base_cap || idx >= *base_elems)
+    {
+        return RESULT_FAILURE;
+    }
+
+    kdi_GenMemOpsRemoveBlockAt_U8(base, base_elems, idx);
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsRemoveBlockAt(void *base, usize base_cap, usize *base_elems, usize idx, usize block_sz)
+{
+    if (!base || !base_elems || idx >= base_cap || idx >= *base_elems || !block_sz || block_sz > base_cap || (idx + block_sz) > base_cap || (idx + block_sz) > *base_elems)
+    {
+        return RESULT_FAILURE;
+    }
+
+    switch (block_sz)
+    {
+        case 1:
+            kdi_GenMemOpsRemoveBlockAt_U8(base, base_elems, idx);
+            break;
+        case 2:
+            kdi_GenMemOpsRemoveBlockAt_U16(base, base_elems, idx);
+            break;
+        case 4:
+            kdi_GenMemOpsRemoveBlockAt_U32(base, base_elems, idx);
+            break;
+#if defined ARCH_64BIT_INT
+        case 8:
+            kdi_GenMemOpsRemoveBlockAt_U64(base, base_elems, idx);
+            break;
+#endif
+        default:
+            kdi_GenMemOpsRemoveBlockAt_Un(base, base_elems, idx, block_sz);
+    }
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsCountBytes(usize *count, void *ptr, usize sz, byte item)
+{
+    if (!count || !ptr)
+    {
+        return RESULT_FAILURE;
+    }
+
+    *count = 0;
+
+    if (!sz)
+    {
+        return RESULT_SUCCESS;
+    }
+
+    kdi_GenMemOpsCountBlocks_U8(count, ptr, sz, item);
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsCountBlocks(usize *count, void *ptr, usize ptr_sz, void *block, usize block_sz)
+{
+    u8  block_val_u8;
+    u16 block_val_u16;
+    u32 block_val_u32;
+#if defined ARCH_64BIT_INT
+    u64 block_val_u64;
+#endif
+
+    if (!count || !ptr || !block || !block_sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    *count = 0;
+
+    if (!ptr_sz || block_sz > ptr_sz)
+    {
+        return RESULT_SUCCESS;
+    }
+
+    switch (block_sz)
+    {
+        case 1:
+            block_val_u8 = *PU8_C(block);
+            kdi_GenMemOpsCountBlocks_U8(count, ptr, ptr_sz, block_val_u8);
+            break;
+        case 2:
+            block_val_u16 = *PU16_C(block);
+            kdi_GenMemOpsCountBlocks_U16(count, ptr, ptr_sz, block_val_u16);
+            break;
+        case 4:
+            block_val_u32 = *PU32_C(block);
+            kdi_GenMemOpsCountBlocks_U32(count, ptr, ptr_sz, block_val_u32);
+            break;
+#if defined ARCH_64BIT_INT
+        case 8:
+            block_val_u64 = *PU64_C(block);
+            kdi_GenMemOpsCountBlocks_U64(count, ptr, ptr_sz, block_val_u64);
+            break;
+#endif
+        default:
+            kdi_GenMemOpsCountBlocks_Un(count, ptr, ptr_sz, block, block_sz);
+    }
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsCountNotBytes(usize *count, void *ptr, usize sz, byte item)
+{
+    if (!count || !ptr)
+    {
+        return RESULT_FAILURE;
+    }
+
+    *count = 0;
+
+    if (!sz)
+    {
+        return RESULT_SUCCESS;
+    }
+
+    kdi_GenMemOpsCountNotBlocks_U8(count, ptr, sz, item);
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsCountNotBlocks(usize *count, void *ptr, usize ptr_sz, void *block, usize block_sz)
+{
+    u8  block_val_u8;
+    u16 block_val_u16;
+    u32 block_val_u32;
+#if defined ARCH_64BIT_INT
+    u64 block_val_u64;
+#endif
+
+    if (!count || !ptr || !block || !block_sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    *count = 0;
+
+    if (!ptr_sz || block_sz > ptr_sz)
+    {
+        return RESULT_SUCCESS;
+    }
+
+    switch (block_sz)
+    {
+        case 1:
+            block_val_u8 = *PU8_C(block);
+            kdi_GenMemOpsCountNotBlocks_U8(count, ptr, ptr_sz, block_val_u8);
+            break;
+        case 2:
+            block_val_u16 = *PU16_C(block);
+            kdi_GenMemOpsCountNotBlocks_U16(count, ptr, ptr_sz, block_val_u16);
+            break;
+        case 4:
+            block_val_u32 = *PU32_C(block);
+            kdi_GenMemOpsCountNotBlocks_U32(count, ptr, ptr_sz, block_val_u32);
+            break;
+#if defined ARCH_64BIT_INT
+        case 8:
+            block_val_u64 = *PU64_C(block);
+            kdi_GenMemOpsCountNotBlocks_U64(count, ptr, ptr_sz, block_val_u64);
+            break;
+#endif
+        default:
+            kdi_GenMemOpsCountNotBlocks_Un(count, ptr, ptr_sz, block, block_sz);
+    }
+
+    return RESULT_SUCCESS;
+}
+
+
 /*
 bool
 kdGenMemOpsReverseBytes(void *ptr, usize sz)

@@ -71,6 +71,54 @@ KDAPI(void) kdi_GenMemOpsRegionContains(bool *result, byte *base, usize base_sz,
 
 KDAPI(void) kdi_GenMemOpsElemCountFromBytes(usize *count, usize base_sz, usize elem_sz);
 
+KDAPI(void) kdi_GenMemOpsBlockAt_U8(u8 *dst, u8 *src, usize idx);
+KDAPI(void) kdi_GenMemOpsBlockAt_U16(u16 *dst, u16 *src, usize idx);
+KDAPI(void) kdi_GenMemOpsBlockAt_U32(u32 *dst, u32 *src, usize idx);
+#if defined ARCH_64BIT_INT
+KDAPI(void) kdi_GenMemOpsBlockAt_U64(u64 *dst, u64 *src, usize idx);
+#endif
+KDAPI(void) kdi_GenMemOpsBlockAt_Un(byte *dst, byte *src, usize idx, usize block_sz);
+
+KDAPI(void) kdi_GenMemOpsSetBlockAt_U8(u8 *dst, usize idx, u8 val);
+KDAPI(void) kdi_GenMemOpsSetBlockAt_U16(u16 *dst, usize idx, u16 val);
+KDAPI(void) kdi_GenMemOpsSetBlockAt_U32(u32 *dst, usize idx, u32 val);
+#if defined ARCH_64BIT_INT
+KDAPI(void) kdi_GenMemOpsSetBlockAt_U64(u64 *dst, usize idx, u64 val);
+#endif
+KDAPI(void) kdi_GenMemOpsSetBlockAt_Un(byte *dst, usize idx, byte *block, usize block_sz);
+
+KDAPI(void) kdi_GenMemOpsInsertBlockAt_U8(u8 *dst, usize *dst_sz, usize idx, u8 val);
+KDAPI(void) kdi_GenMemOpsInsertBlockAt_U16(u16 *dst, usize *dst_sz, usize idx, u16 val);
+KDAPI(void) kdi_GenMemOpsInsertBlockAt_U32(u32 *dst, usize *dst_sz, usize idx, u32 val);
+#if defined ARCH_64BIT_INT
+KDAPI(void) kdi_GenMemOpsInsertBlockAt_U64(u64 *dst, usize *dst_sz, usize idx, u64 val);
+#endif
+KDAPI(void) kdi_GenMemOpsInsertBlockAt_Un(byte *dst, usize *dst_sz, usize idx, byte *block, usize block_sz);
+
+KDAPI(void) kdi_GenMemOpsRemoveBlockAt_U8(u8 *dst, usize *dst_sz, usize idx);
+KDAPI(void) kdi_GenMemOpsRemoveBlockAt_U16(u16 *dst, usize *dst_sz, usize idx);
+KDAPI(void) kdi_GenMemOpsRemoveBlockAt_U32(u32 *dst, usize *dst_sz, usize idx);
+#if defined ARCH_64BIT_INT
+KDAPI(void) kdi_GenMemOpsRemoveBlockAt_U64(u64 *dst, usize *dst_sz, usize idx);
+#endif
+KDAPI(void) kdi_GenMemOpsRemoveBlockAt_Un(byte *dst, usize *dst_sz, usize idx, usize block_sz);
+
+KDAPI(void) kdi_GenMemOpsCountBlocks_U8(usize *count, u8 *ptr, usize sz, u8 item);
+KDAPI(void) kdi_GenMemOpsCountBlocks_U16(usize *count, u16 *ptr, usize sz, u16 item);
+KDAPI(void) kdi_GenMemOpsCountBlocks_U32(usize *count, u32 *ptr, usize sz, u32 item);
+#if defined ARCH_64BIT_INT
+KDAPI(void) kdi_GenMemOpsCountBlocks_U64(usize *count, u64 *ptr, usize sz, u64 item);
+#endif
+KDAPI(void) kdi_GenMemOpsCountBlocks_Un(usize *count, byte *ptr, usize sz, byte *block, usize block_sz);
+
+KDAPI(void) kdi_GenMemOpsCountNotBlocks_U8(usize *count, u8 *ptr, usize sz, u8 item);
+KDAPI(void) kdi_GenMemOpsCountNotBlocks_U16(usize *count, u16 *ptr, usize sz, u16 item);
+KDAPI(void) kdi_GenMemOpsCountNotBlocks_U32(usize *count, u32 *ptr, usize sz, u32 item);
+#if defined ARCH_64BIT_INT
+KDAPI(void) kdi_GenMemOpsCountNotBlocks_U64(usize *count, u64 *ptr, usize sz, u64 item);
+#endif
+KDAPI(void) kdi_GenMemOpsCountNotBlocks_Un(usize *count, byte *ptr, usize sz, byte *block, usize block_sz);
+
 
 EXTERN_END
 

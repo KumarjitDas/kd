@@ -272,6 +272,18 @@ IF "!BUILD_TESTS!"=="1" (
 	SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsRotateRightRange"
 	SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsRotateLeft"
 	SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsRotateLeftRange"
+	SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsByteAt"
+	SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsBlockAt"
+	SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsSetByteAt"
+	SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsSetBlockAt"
+	SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsInsertByteAt"
+	SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsInsertBlockAt"
+	SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsRemoveByteAt"
+	SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsRemoveBlockAt"
+	SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsCountBytes"
+	SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsCountBlocks"
+	SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsCountNotBytes"
+	SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsCountNotBlocks"
 
 	FOR %%T IN (!TESTS!) DO (
 	    SET "TARGET_NAME=%%T"

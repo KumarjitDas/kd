@@ -127,13 +127,13 @@ kdi_GenMemOpsSetBlocks_U64(u64 *dst, usize sz, u64 val)
 void
 kdi_GenMemOpsSetBlocks_Un(byte *dst, usize dst_sz, byte *block, usize block_sz)
 {
-    byte *temp_block = block, *block_end = block + block_sz - 1;
+    byte *block_begin = block, *block_end = block + block_sz - 1;
 
     while (dst_sz--)
     {
-        *dst = *temp_block;
+        *dst = *block_begin;
         ++dst;
-        temp_block = temp_block == block_end ? block : (temp_block + 1);
+        block_begin = block_begin == block_end ? block : (block_begin + 1);
     }
 }
 
@@ -497,50 +497,455 @@ kdi_GenMemOpsElemCountFromBytes(usize *count, usize base_sz, usize elem_sz)
 }
 
 
-/*
 void
-kdi_GenMemOpsCpy(byte *dst, byte *src, usize sz)
+kdi_GenMemOpsBlockAt_U8(u8 *dst, u8 *src, usize idx)
 {
-    while (sz--)
+    *dst = *(src + idx);
+}
+
+
+void
+kdi_GenMemOpsBlockAt_U16(u16 *dst, u16 *src, usize idx)
+{
+    *dst = *PU16_C(PBYTE_C(src) + idx);
+}
+
+
+void
+kdi_GenMemOpsBlockAt_U32(u32 *dst, u32 *src, usize idx)
+{
+    *dst = *PU32_C(PBYTE_C(src) + idx);
+}
+
+
+#if defined ARCH_64BIT_INT
+void
+kdi_GenMemOpsBlockAt_U64(u64 *dst, u64 *src, usize idx)
+{
+    *dst = *PU64_C(PBYTE_C(src) + idx);
+}
+#endif
+
+
+void
+kdi_GenMemOpsBlockAt_Un(byte *dst, byte *src, usize idx, usize block_sz)
+{
+    kdi_GenMemOpsCopy(dst, src + idx, block_sz);
+}
+
+
+void
+kdi_GenMemOpsSetBlockAt_U8(u8 *dst, usize idx, u8 val)
+{
+    dst  += idx;
+    *dst  = val;
+}
+
+
+void
+kdi_GenMemOpsSetBlockAt_U16(u16 *dst, usize idx, u16 val)
+{
+    dst  = PU16_C(PBYTE_C(dst) + idx);
+    *dst = val;
+}
+
+
+void
+kdi_GenMemOpsSetBlockAt_U32(u32 *dst, usize idx, u32 val)
+{
+    dst  = PU32_C(PBYTE_C(dst) + idx);
+    *dst = val;
+}
+
+
+#if defined ARCH_64BIT_INT
+void
+kdi_GenMemOpsSetBlockAt_U64(u64 *dst, usize idx, u64 val)
+{
+    dst  = PU64_C(PBYTE_C(dst) + idx);
+    *dst = val;
+}
+#endif
+
+
+void
+kdi_GenMemOpsSetBlockAt_Un(byte *dst, usize idx, byte *block, usize block_sz)
+{
+    kdi_GenMemOpsCopy(dst + idx, block, block_sz);
+}
+
+
+void
+kdi_GenMemOpsInsertBlockAt_U8(u8 *dst, usize *dst_sz, usize idx, u8 val)
+{
+    u8   *ptr        = dst + *dst_sz;
+    u8   *ptr_before = ptr - 1;
+    usize temp_sz    = *dst_sz - idx;
+
+    while (temp_sz--)
     {
-        *dst = *src;
+        *ptr = *ptr_before;
+
+        --ptr;
+        --ptr_before;
+    }
+
+    *ptr    = val;
+    *dst_sz = *dst_sz + 1;
+}
+
+
+void
+kdi_GenMemOpsInsertBlockAt_U16(u16 *dst, usize *dst_sz, usize idx, u16 val)
+{
+    u16  *ptr        = PU16_C(PBYTE_C(dst) + *dst_sz);
+    u16  *ptr_before = ptr - 1;
+    usize temp_sz    = *dst_sz - idx;
+
+    while (temp_sz)
+    {
+        *ptr = *ptr_before;
+
+        --ptr;
+        --ptr_before;
+        temp_sz -= SZ_U16;
+    }
+
+    *ptr    = val;
+    *dst_sz = *dst_sz + SZ_U16;
+}
+
+
+void
+kdi_GenMemOpsInsertBlockAt_U32(u32 *dst, usize *dst_sz, usize idx, u32 val)
+{
+    u32  *ptr        = PU32_C(PBYTE_C(dst) + *dst_sz);
+    u32  *ptr_before = ptr - 1;
+    usize temp_sz    = *dst_sz - idx;
+
+    while (temp_sz)
+    {
+        *ptr = *ptr_before;
+
+        --ptr;
+        --ptr_before;
+        temp_sz -= SZ_U32;
+    }
+
+    *ptr    = val;
+    *dst_sz = *dst_sz + SZ_U32;
+}
+
+
+#if defined ARCH_64BIT_INT
+void
+kdi_GenMemOpsInsertBlockAt_U64(u64 *dst, usize *dst_sz, usize idx, u64 val)
+{
+    u64  *ptr        = PU64_C(PBYTE_C(dst) + *dst_sz);
+    u64  *ptr_before = ptr - 1;
+    usize temp_sz    = *dst_sz - idx;
+
+    while (temp_sz)
+    {
+        *ptr = *ptr_before;
+
+        --ptr;
+        --ptr_before;
+        temp_sz -= SZ_U64;
+    }
+
+    *ptr    = val;
+    *dst_sz = *dst_sz + SZ_U64;
+}
+#endif
+
+
+void
+kdi_GenMemOpsInsertBlockAt_Un(byte *dst, usize *dst_sz, usize idx, byte *block, usize block_sz)
+{
+    byte *ptr        = dst + *dst_sz + block_sz;
+    byte *ptr_before = ptr - block_sz;
+    usize temp_sz    = *dst_sz - idx;
+
+    while (temp_sz--)
+    {
+        --ptr;
+        --ptr_before;
+
+        *ptr = *ptr_before;
+    }
+
+    kdi_GenMemOpsCopy(ptr_before, block, block_sz);
+
+    *dst_sz = *dst_sz + block_sz;
+}
+
+
+void
+kdi_GenMemOpsRemoveBlockAt_U8(u8 *dst, usize *dst_sz, usize idx)
+{
+    u8   *ptr_after;
+    usize temp_sz  = *dst_sz - idx;
+
+    dst           += idx;
+    ptr_after      = dst + 1;
+
+    while (temp_sz--)
+    {
+        *dst = *ptr_after;
+
         ++dst;
-        ++src;
+        ++ptr_after;
+    }
+
+    *dst_sz = *dst_sz - 1;
+}
+
+
+void
+kdi_GenMemOpsRemoveBlockAt_U16(u16 *dst, usize *dst_sz, usize idx)
+{
+    u16  *ptr_after;
+    usize temp_sz = *dst_sz - idx;
+
+    dst           = PU16_C(PBYTE_C(dst) + idx);
+    ptr_after     = dst + 1;
+
+    while (temp_sz)
+    {
+        *dst = *ptr_after;
+
+        ++dst;
+        ++ptr_after;
+        temp_sz -= SZ_U16;
+    }
+
+    *dst_sz = *dst_sz - SZ_U16;
+}
+
+
+void
+kdi_GenMemOpsRemoveBlockAt_U32(u32 *dst, usize *dst_sz, usize idx)
+{
+    u32  *ptr_after;
+    usize temp_sz = *dst_sz - idx;
+
+    dst           = PU32_C(PBYTE_C(dst) + idx);
+    ptr_after     = dst + 1;
+
+    while (temp_sz)
+    {
+        *dst = *ptr_after;
+
+        ++dst;
+        ++ptr_after;
+        temp_sz -= SZ_U32;
+    }
+
+    *dst_sz = *dst_sz - SZ_U32;
+}
+
+
+#if defined ARCH_64BIT_INT
+void
+kdi_GenMemOpsRemoveBlockAt_U64(u64 *dst, usize *dst_sz, usize idx)
+{
+    u64  *ptr_after;
+    usize temp_sz = *dst_sz - idx;
+
+    dst           = PU64_C(PBYTE_C(dst) + idx);
+    ptr_after     = dst + 1;
+
+    while (temp_sz)
+    {
+        *dst = *ptr_after;
+
+        ++dst;
+        ++ptr_after;
+        temp_sz -= SZ_U64;
+    }
+
+    *dst_sz = *dst_sz - SZ_U64;
+}
+#endif
+
+
+void
+kdi_GenMemOpsRemoveBlockAt_Un(byte *dst, usize *dst_sz, usize idx, usize block_sz)
+{
+    byte *ptr_after;
+    usize temp_sz  = *dst_sz - idx;
+
+    dst           += idx;
+    ptr_after      = dst + block_sz;
+
+    while (temp_sz--)
+    {
+        *dst = *ptr_after;
+
+        ++dst;
+        ++ptr_after;
+    }
+
+    *dst_sz = *dst_sz - block_sz;
+}
+
+
+void
+kdi_GenMemOpsCountBlocks_U8(usize *count, u8 *ptr, usize sz, u8 item)
+{
+    while (sz--)
+    {
+        *count += *ptr == item;
+        ++ptr;
     }
 }
 
 
 void
-kdi_GenMemOpsMove(byte *dst, byte *src, usize sz)
+kdi_GenMemOpsCountBlocks_U16(usize *count, u16 *ptr, usize sz, u16 item)
 {
-    if (dst == src)
+    while (sz)
     {
-        return;
-    }
+        *count += *ptr == item;
 
-    if (dst < src)
-    {
-        while (sz--)
-        {
-            *dst = *src;
-            ++dst;
-            ++src;
-        }
-        return;
-    }
-
-    dst += sz;
-    src += sz;
-
-    while (sz--)
-    {
-        --dst;
-        --src;
-        *dst = *src;
+        ++ptr;
+        sz -= SZ_U16;
     }
 }
 
 
+void
+kdi_GenMemOpsCountBlocks_U32(usize *count, u32 *ptr, usize sz, u32 item)
+{
+    while (sz)
+    {
+        *count += *ptr == item;
+
+        ++ptr;
+        sz -= SZ_U32;
+    }
+}
+
+
+#if defined ARCH_64BIT_INT
+void
+kdi_GenMemOpsCountBlocks_U64(usize *count, u64 *ptr, usize sz, u64 item)
+{
+    while (sz)
+    {
+        *count += *ptr == item;
+
+        ++ptr;
+        sz -= SZ_U64;
+    }
+}
+#endif
+
+
+void
+kdi_GenMemOpsCountBlocks_Un(usize *count, byte *ptr, usize sz, byte *block, usize block_sz)
+{
+    byte *block_begin = block;
+    byte *block_end   = block + block_sz - 1;
+    usize match_count = 0;
+    bool  block_sz_reached, match;
+
+    while (sz--)
+    {
+        match_count      += *ptr == *block_begin;
+
+        match             = match_count == block_sz;
+        block_sz_reached  = block_begin == block_end;
+
+        *count           += USIZE_C(match);
+
+        match_count       = (match || block_sz_reached) ? 0 : match_count;
+
+        ++ptr;
+        block_begin = block_sz_reached ? block : (block_begin + 1);
+    }
+}
+
+
+void
+kdi_GenMemOpsCountNotBlocks_U8(usize *count, u8 *ptr, usize sz, u8 item)
+{
+    while (sz--)
+    {
+        *count += *ptr != item;
+        ++ptr;
+    }
+}
+
+
+void
+kdi_GenMemOpsCountNotBlocks_U16(usize *count, u16 *ptr, usize sz, u16 item)
+{
+    while (sz)
+    {
+        *count += *ptr != item;
+
+        ++ptr;
+        sz -= SZ_U16;
+    }
+}
+
+
+void
+kdi_GenMemOpsCountNotBlocks_U32(usize *count, u32 *ptr, usize sz, u32 item)
+{
+    while (sz)
+    {
+        *count += *ptr != item;
+
+        ++ptr;
+        sz -= SZ_U32;
+    }
+}
+
+
+#if defined ARCH_64BIT_INT
+void
+kdi_GenMemOpsCountNotBlocks_U64(usize *count, u64 *ptr, usize sz, u64 item)
+{
+    while (sz)
+    {
+        *count += *ptr != item;
+
+        ++ptr;
+        sz -= SZ_U64;
+    }
+}
+#endif
+
+
+void
+kdi_GenMemOpsCountNotBlocks_Un(usize *count, byte *ptr, usize sz, byte *block, usize block_sz)
+{
+    byte *block_begin = block;
+    byte *block_end   = block + block_sz - 1;
+    usize match_count = 0;
+    bool  block_sz_reached, match;
+
+    while (sz--)
+    {
+        match_count      += *ptr == *block_begin;
+
+        match             = match_count == block_sz;
+        block_sz_reached  = block_begin == block_end;
+
+        *count           += !match && block_sz_reached;
+
+        match_count       = (match || block_sz_reached) ? 0 : match_count;
+
+        ++ptr;
+        block_begin = block_sz_reached ? block : (block_begin + 1);
+    }
+}
+
+
+/*
 void *
 kdi_GenMemOpsFindBlockWithIndex_U8(usize *idx_ptr, u8 *ptr, usize sz, u8 val)
 {
