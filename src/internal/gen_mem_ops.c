@@ -1464,7 +1464,7 @@ kdi_GenMemOpsFindBlockIndicesUn_IdxU16(u16 *idxs, usize idxs_sz, usize *found, b
         if (block_begin == block_end)
         {
             match_count  = 0;
-            curr_idx    += U8_C(block_sz);
+            curr_idx    += U16_C(block_sz);
             block_begin  = block;
         }
         else
@@ -1597,7 +1597,7 @@ kdi_GenMemOpsFindBlockIndicesUn_IdxU32(u32 *idxs, usize idxs_sz, usize *found, b
         if (block_begin == block_end)
         {
             match_count  = 0;
-            curr_idx    += U8_C(block_sz);
+            curr_idx    += U32_C(block_sz);
             block_begin  = block;
         }
         else
@@ -1729,7 +1729,7 @@ kdi_GenMemOpsFindBlockIndicesUn_IdxU64(u64 *idxs, usize idxs_sz, usize *found, b
         if (block_begin == block_end)
         {
             match_count  = 0;
-            curr_idx    += U8_C(block_sz);
+            curr_idx    += U64_C(block_sz);
             block_begin  = block;
         }
         else

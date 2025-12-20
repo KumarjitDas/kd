@@ -1992,47 +1992,10 @@ GenMemOpsFindBlockIndices(usize *idxs, usize idxs_sz, usize *found, void *ptr, u
 }
 
 
-/*
 bool
-GenMemOpsFindByteIndicesRangeU8(u8 *idxs, usize idxs_sz, usize *found, void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end, byte item)
+GenMemOpsFindByteIndicesRangeU8(u8 *idxs, usize idxs_sz, usize *found, void *base, usize base_sz, usize begin_idx, usize end, byte item)
 {
-    if (!found)
-    {
-        return RESULT_FAILURE;
-    }
-
-    *found = 0;
-
-    if (!idxs || !ptr)
-    {
-        return RESULT_FAILURE;
-    }
-
-    if (!idxs_sz || !ptr_sz)
-    {
-        return RESULT_SUCCESS;
-    }
-
-    if (idxs_sz > MAX_U8)
-    {
-        idxs_sz = MAX_U8;
-    }
-
-    if (ptr_sz > MAX_U8)
-    {
-        ptr_sz = MAX_U8;
-    }
-
-    kdi_GenMemOpsFindBlockIndicesU8_IdxU8(idxs, idxs_sz, found, ptr, ptr_sz, item);
-
-    return RESULT_SUCCESS;
-}
-
-
-bool
-GenMemOpsFindByteIndicesRangeU16(u16 *idxs, usize idxs_sz, usize *found, void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end, byte item)
-{
-    bool exceeds_max;
+    usize final_sz, found_items, temp_idx;
 
     if (!found)
     {
@@ -2041,127 +2004,17 @@ GenMemOpsFindByteIndicesRangeU16(u16 *idxs, usize idxs_sz, usize *found, void *b
 
     *found = 0;
 
-    if (!idxs || !ptr)
+    if (!idxs || !base)
     {
         return RESULT_FAILURE;
     }
 
-    if (!idxs_sz || idxs_sz < SZ_U16 || !ptr_sz)
+    if (!idxs_sz || !base_sz)
     {
         return RESULT_SUCCESS;
     }
 
-    if (idxs_sz > MAX_U16)
-    {
-        idxs_sz = MAX_U16;
-    }
-
-    exceeds_max = ptr_sz > MAX_U16;
-
-    if (exceeds_max)
-    {
-        ptr_sz = MAX_U16 / SZ_U16;
-    }
-
-    kdi_GenMemOpsFindBlockIndicesU8_IdxU16(idxs, idxs_sz, found, ptr, ptr_sz * (exceeds_max ? SZ_U16 : 1), item);
-
-    return RESULT_SUCCESS;
-}
-
-
-bool
-GenMemOpsFindByteIndicesRangeU32(u32 *idxs, usize idxs_sz, usize *found, void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end, byte item)
-{
-    bool exceeds_max;
-
-    if (!found)
-    {
-        return RESULT_FAILURE;
-    }
-
-    *found = 0;
-
-    if (!idxs || !ptr)
-    {
-        return RESULT_FAILURE;
-    }
-
-    if (!idxs_sz || idxs_sz < SZ_U32 || !ptr_sz)
-    {
-        return RESULT_SUCCESS;
-    }
-
-    if (idxs_sz > MAX_U32)
-    {
-        idxs_sz = MAX_U32;
-    }
-
-    exceeds_max = ptr_sz > MAX_U32;
-
-    if (exceeds_max)
-    {
-        ptr_sz = MAX_U32 / SZ_U32;
-    }
-
-    kdi_GenMemOpsFindBlockIndicesU8_IdxU32(idxs, idxs_sz, found, ptr, ptr_sz * (exceeds_max ? SZ_U32 : 1), item);
-
-    return RESULT_SUCCESS;
-}
-
-
-#if defined ARCH_64BIT_INT
-bool
-GenMemOpsFindByteIndicesRangeU64(u64 *idxs, usize idxs_sz, usize *found, void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end, byte item)
-{
-    if (!found)
-    {
-        return RESULT_FAILURE;
-    }
-
-    *found = 0;
-
-    if (!idxs || !ptr)
-    {
-        return RESULT_FAILURE;
-    }
-
-    if (!idxs_sz || idxs_sz < SZ_U64 || !ptr_sz)
-    {
-        return RESULT_SUCCESS;
-    }
-
-    ptr_sz /= SZ_U64;
-
-    kdi_GenMemOpsFindBlockIndicesU8_IdxU64(idxs, idxs_sz, found, ptr, ptr_sz * SZ_U64, item);
-
-    return RESULT_SUCCESS;
-}
-#endif
-
-
-bool
-GenMemOpsFindBlockIndicesU8(u8 *idxs, usize idxs_sz, usize *found, void *ptr, usize ptr_sz, void *block, usize block_sz)
-{
-    bool exceeds_max;
-
-    if (!found)
-    {
-        return RESULT_FAILURE;
-    }
-
-    *found = 0;
-
-    if (!idxs || !ptr || !block || !block_sz)
-    {
-        return RESULT_FAILURE;
-    }
-
-    if (idxs_sz < SZ_U8 || !ptr_sz)
-    {
-        return RESULT_SUCCESS;
-    }
-
-    if (block_sz > ptr_sz)
+    if (begin_idx >= base_sz || begin_idx >= end || end > base_sz)
     {
         return RESULT_FAILURE;
     }
@@ -2171,31 +2024,31 @@ GenMemOpsFindBlockIndicesU8(u8 *idxs, usize idxs_sz, usize *found, void *ptr, us
         idxs_sz = MAX_U8;
     }
 
-    exceeds_max = ptr_sz > MAX_U8;
+    final_sz = end - begin_idx;
 
-    if (exceeds_max)
+    if (final_sz > MAX_U8)
     {
-        ptr_sz = MAX_U8 / block_sz;
+        final_sz = MAX_U8;
     }
 
-    switch (block_sz)
+    kdi_GenMemOpsFindBlockIndicesU8_IdxU8(idxs, idxs_sz, found, PBYTE_C(base) + begin_idx, final_sz, item);
+
+    found_items = *found;
+
+    while (found_items)
     {
-        case 1:
-            kdi_GenMemOpsFindBlockIndicesU8_IdxU8(idxs, idxs_sz, found, ptr, ptr_sz * (exceeds_max ? block_sz : 1), *PU8_C(block));
+        temp_idx = *idxs + begin_idx;
+
+        if (temp_idx >= MAX_U8)
+        {
+            *found -= found_items;
             break;
-        case 2:
-            kdi_GenMemOpsFindBlockIndicesU16_IdxU8(idxs, idxs_sz, found, ptr, ptr_sz * (exceeds_max ? block_sz : 1), *PU16_C(block));
-            break;
-        case 4:
-            kdi_GenMemOpsFindBlockIndicesU32_IdxU8(idxs, idxs_sz, found, ptr, ptr_sz * (exceeds_max ? block_sz : 1), *PU32_C(block));
-            break;
-#if defined ARCH_64BIT_INT
-        case 8:
-            kdi_GenMemOpsFindBlockIndicesU64_IdxU8(idxs, idxs_sz, found, ptr, ptr_sz * (exceeds_max ? block_sz : 1), *PU64_C(block));
-            break;
-#endif
-        default:
-            kdi_GenMemOpsFindBlockIndicesUn_IdxU8(idxs, idxs_sz, found, ptr, ptr_sz * (exceeds_max ? block_sz : 1), block, block_sz);
+        }
+
+        *idxs = U8_C(temp_idx);
+
+        ++idxs;
+        --found_items;
     }
 
     return RESULT_SUCCESS;
@@ -2203,9 +2056,9 @@ GenMemOpsFindBlockIndicesU8(u8 *idxs, usize idxs_sz, usize *found, void *ptr, us
 
 
 bool
-GenMemOpsFindBlockIndicesU16(u16 *idxs, usize idxs_sz, usize *found, void *ptr, usize ptr_sz, void *block, usize block_sz)
+GenMemOpsFindByteIndicesRangeU16(u16 *idxs, usize idxs_sz, usize *found, void *base, usize base_sz, usize begin_idx, usize end, byte item)
 {
-    bool exceeds_max;
+    usize final_sz, found_items, temp_idx;
 
     if (!found)
     {
@@ -2214,17 +2067,17 @@ GenMemOpsFindBlockIndicesU16(u16 *idxs, usize idxs_sz, usize *found, void *ptr, 
 
     *found = 0;
 
-    if (!idxs || !ptr || !block || !block_sz)
+    if (!idxs || !base)
     {
         return RESULT_FAILURE;
     }
 
-    if (idxs_sz < SZ_U16 || !ptr_sz)
+    if (idxs_sz < SZ_U16 || !base_sz)
     {
         return RESULT_SUCCESS;
     }
 
-    if (block_sz > ptr_sz)
+    if (begin_idx >= base_sz || begin_idx >= end || end > base_sz)
     {
         return RESULT_FAILURE;
     }
@@ -2234,31 +2087,31 @@ GenMemOpsFindBlockIndicesU16(u16 *idxs, usize idxs_sz, usize *found, void *ptr, 
         idxs_sz = MAX_U16;
     }
 
-    exceeds_max = ptr_sz > MAX_U16;
+    final_sz = end - begin_idx;
 
-    if (exceeds_max)
+    if (final_sz > MAX_U16)
     {
-        ptr_sz = MAX_U16 / block_sz;
+        final_sz = MAX_U16;
     }
 
-    switch (block_sz)
+    kdi_GenMemOpsFindBlockIndicesU8_IdxU16(idxs, idxs_sz, found, PBYTE_C(base) + begin_idx, final_sz, item);
+
+    found_items = *found;
+
+    while (found_items)
     {
-        case 1:
-            kdi_GenMemOpsFindBlockIndicesU8_IdxU16(idxs, idxs_sz, found, ptr, ptr_sz * (exceeds_max ? block_sz : 1), *PU8_C(block));
+        temp_idx = *idxs + begin_idx;
+
+        if (temp_idx >= MAX_U16)
+        {
+            *found -= found_items;
             break;
-        case 2:
-            kdi_GenMemOpsFindBlockIndicesU16_IdxU16(idxs, idxs_sz, found, ptr, ptr_sz * (exceeds_max ? block_sz : 1), *PU16_C(block));
-            break;
-        case 4:
-            kdi_GenMemOpsFindBlockIndicesU32_IdxU16(idxs, idxs_sz, found, ptr, ptr_sz * (exceeds_max ? block_sz : 1), *PU32_C(block));
-            break;
-#if defined ARCH_64BIT_INT
-        case 8:
-            kdi_GenMemOpsFindBlockIndicesU64_IdxU16(idxs, idxs_sz, found, ptr, ptr_sz * (exceeds_max ? block_sz : 1), *PU64_C(block));
-            break;
-#endif
-        default:
-            kdi_GenMemOpsFindBlockIndicesUn_IdxU16(idxs, idxs_sz, found, ptr, ptr_sz * (exceeds_max ? block_sz : 1), block, block_sz);
+        }
+
+        *idxs = U16_C(temp_idx);
+
+        ++idxs;
+        --found_items;
     }
 
     return RESULT_SUCCESS;
@@ -2266,9 +2119,9 @@ GenMemOpsFindBlockIndicesU16(u16 *idxs, usize idxs_sz, usize *found, void *ptr, 
 
 
 bool
-GenMemOpsFindBlockIndicesU32(u32 *idxs, usize idxs_sz, usize *found, void *ptr, usize ptr_sz, void *block, usize block_sz)
+GenMemOpsFindByteIndicesRangeU32(u32 *idxs, usize idxs_sz, usize *found, void *base, usize base_sz, usize begin_idx, usize end, byte item)
 {
-    bool exceeds_max;
+    usize final_sz, found_items, temp_idx;
 
     if (!found)
     {
@@ -2277,17 +2130,17 @@ GenMemOpsFindBlockIndicesU32(u32 *idxs, usize idxs_sz, usize *found, void *ptr, 
 
     *found = 0;
 
-    if (!idxs || !ptr || !block || !block_sz)
+    if (!idxs || !base)
     {
         return RESULT_FAILURE;
     }
 
-    if (idxs_sz < SZ_U32 || !ptr_sz)
+    if (idxs_sz < SZ_U32 || !base_sz)
     {
         return RESULT_SUCCESS;
     }
 
-    if (block_sz > ptr_sz)
+    if (begin_idx >= base_sz || begin_idx >= end || end > base_sz)
     {
         return RESULT_FAILURE;
     }
@@ -2297,31 +2150,31 @@ GenMemOpsFindBlockIndicesU32(u32 *idxs, usize idxs_sz, usize *found, void *ptr, 
         idxs_sz = MAX_U32;
     }
 
-    exceeds_max = ptr_sz > MAX_U32;
+    final_sz = end - begin_idx;
 
-    if (exceeds_max)
+    if (final_sz > MAX_U32)
     {
-        ptr_sz = MAX_U32 / block_sz;
+        final_sz = MAX_U32;
     }
 
-    switch (block_sz)
+    kdi_GenMemOpsFindBlockIndicesU8_IdxU32(idxs, idxs_sz, found, PBYTE_C(base) + begin_idx, final_sz, item);
+
+    found_items = *found;
+
+    while (found_items)
     {
-        case 1:
-            kdi_GenMemOpsFindBlockIndicesU8_IdxU32(idxs, idxs_sz, found, ptr, ptr_sz * (exceeds_max ? block_sz : 1), *PU8_C(block));
+        temp_idx = *idxs + begin_idx;
+
+        if (temp_idx >= MAX_U32)
+        {
+            *found -= found_items;
             break;
-        case 2:
-            kdi_GenMemOpsFindBlockIndicesU16_IdxU32(idxs, idxs_sz, found, ptr, ptr_sz * (exceeds_max ? block_sz : 1), *PU16_C(block));
-            break;
-        case 4:
-            kdi_GenMemOpsFindBlockIndicesU32_IdxU32(idxs, idxs_sz, found, ptr, ptr_sz * (exceeds_max ? block_sz : 1), *PU32_C(block));
-            break;
-#if defined ARCH_64BIT_INT
-        case 8:
-            kdi_GenMemOpsFindBlockIndicesU64_IdxU32(idxs, idxs_sz, found, ptr, ptr_sz * (exceeds_max ? block_sz : 1), *PU64_C(block));
-            break;
-#endif
-        default:
-            kdi_GenMemOpsFindBlockIndicesUn_IdxU32(idxs, idxs_sz, found, ptr, ptr_sz * (exceeds_max ? block_sz : 1), block, block_sz);
+        }
+
+        *idxs = U32_C(temp_idx);
+
+        ++idxs;
+        --found_items;
     }
 
     return RESULT_SUCCESS;
@@ -2330,8 +2183,10 @@ GenMemOpsFindBlockIndicesU32(u32 *idxs, usize idxs_sz, usize *found, void *ptr, 
 
 #if defined ARCH_64BIT_INT
 bool
-GenMemOpsFindBlockIndicesU64(u64 *idxs, usize idxs_sz, usize *found, void *ptr, usize ptr_sz, void *block, usize block_sz)
+GenMemOpsFindByteIndicesRangeU64(u64 *idxs, usize idxs_sz, usize *found, void *base, usize base_sz, usize begin_idx, usize end, byte item)
 {
+    usize found_items, temp_idx;
+
     if (!found)
     {
         return RESULT_FAILURE;
@@ -2339,39 +2194,39 @@ GenMemOpsFindBlockIndicesU64(u64 *idxs, usize idxs_sz, usize *found, void *ptr, 
 
     *found = 0;
 
-    if (!idxs || !ptr || !block || !block_sz)
+    if (!idxs || !base)
     {
         return RESULT_FAILURE;
     }
 
-    if (idxs_sz < SZ_U64 || !ptr_sz)
+    if (idxs_sz < SZ_U64 || !base_sz)
     {
         return RESULT_SUCCESS;
     }
 
-    if (block_sz > ptr_sz)
+    if (begin_idx >= base_sz || begin_idx >= end || end > base_sz)
     {
         return RESULT_FAILURE;
     }
 
-    ptr_sz /= block_sz;
+    kdi_GenMemOpsFindBlockIndicesU8_IdxU64(idxs, idxs_sz, found, PBYTE_C(base) + begin_idx, end - begin_idx, item);
 
-    switch (block_sz)
+    found_items = *found;
+
+    while (found_items)
     {
-        case 1:
-            kdi_GenMemOpsFindBlockIndicesU8_IdxU64(idxs, idxs_sz, found, ptr, ptr_sz * block_sz, *PU8_C(block));
+        temp_idx = *idxs + begin_idx;
+
+        if (temp_idx >= MAX_U64)
+        {
+            *found -= found_items;
             break;
-        case 2:
-            kdi_GenMemOpsFindBlockIndicesU16_IdxU64(idxs, idxs_sz, found, ptr, ptr_sz * block_sz, *PU16_C(block));
-            break;
-        case 4:
-            kdi_GenMemOpsFindBlockIndicesU32_IdxU64(idxs, idxs_sz, found, ptr, ptr_sz * block_sz, *PU32_C(block));
-            break;
-        case 8:
-            kdi_GenMemOpsFindBlockIndicesU64_IdxU64(idxs, idxs_sz, found, ptr, ptr_sz * block_sz, *PU64_C(block));
-            break;
-        default:
-            kdi_GenMemOpsFindBlockIndicesUn_IdxU64(idxs, idxs_sz, found, ptr, ptr_sz * block_sz, block, block_sz);
+        }
+
+        *idxs = U64_C(temp_idx);
+
+        ++idxs;
+        --found_items;
     }
 
     return RESULT_SUCCESS;
@@ -2380,23 +2235,347 @@ GenMemOpsFindBlockIndicesU64(u64 *idxs, usize idxs_sz, usize *found, void *ptr, 
 
 
 bool
-GenMemOpsFindByteIndicesRange(usize *idxs, usize idxs_sz, usize *found, void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end, byte item)
+GenMemOpsFindBlockIndicesRangeU8(u8 *idxs, usize idxs_sz, usize *found, void *base, usize base_sz, usize begin_idx, usize end, void *block, usize block_sz)
+{
+    usize final_sz, found_items, temp_idx;
+    bool  exceeds_max;
+
+    if (!found)
+    {
+        return RESULT_FAILURE;
+    }
+
+    *found = 0;
+
+    if (!idxs || !base || !block || !block_sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    if (idxs_sz < SZ_U8 || !base_sz)
+    {
+        return RESULT_SUCCESS;
+    }
+
+    if (begin_idx >= base_sz || begin_idx >= end || end > base_sz || block_sz > base_sz || begin_idx % block_sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    if (idxs_sz > MAX_U8)
+    {
+        idxs_sz = MAX_U8;
+    }
+
+    final_sz    = end - begin_idx;
+    exceeds_max = final_sz > MAX_U8;
+
+    if (exceeds_max)
+    {
+        final_sz = MAX_U8 / block_sz;
+    }
+
+    switch (block_sz)
+    {
+        case 1:
+            kdi_GenMemOpsFindBlockIndicesU8_IdxU8(idxs, idxs_sz, found, PU8_C(base) + begin_idx, final_sz * (exceeds_max ? block_sz : 1), *PU8_C(block));
+            break;
+        case 2:
+            kdi_GenMemOpsFindBlockIndicesU16_IdxU8(idxs, idxs_sz, found, PU16_C(PBYTE_C(base) + begin_idx), final_sz * (exceeds_max ? block_sz : 1), *PU16_C(block));
+            break;
+        case 4:
+            kdi_GenMemOpsFindBlockIndicesU32_IdxU8(idxs, idxs_sz, found, PU32_C(PBYTE_C(base) + begin_idx), final_sz * (exceeds_max ? block_sz : 1), *PU32_C(block));
+            break;
+#if defined ARCH_64BIT_INT
+        case 8:
+            kdi_GenMemOpsFindBlockIndicesU64_IdxU8(idxs, idxs_sz, found, PU64_C(PBYTE_C(base) + begin_idx), final_sz * (exceeds_max ? block_sz : 1), *PU64_C(block));
+            break;
+#endif
+        default:
+            kdi_GenMemOpsFindBlockIndicesUn_IdxU8(idxs, idxs_sz, found, PBYTE_C(base) + begin_idx, final_sz * (exceeds_max ? block_sz : 1), block, block_sz);
+    }
+
+    found_items = *found;
+
+    while (found_items)
+    {
+        temp_idx = *idxs + begin_idx;
+
+        if (temp_idx >= MAX_U8)
+        {
+            *found -= found_items;
+            break;
+        }
+
+        *idxs = U8_C(temp_idx);
+
+        ++idxs;
+        found_items -= block_sz;
+    }
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsFindBlockIndicesRangeU16(u16 *idxs, usize idxs_sz, usize *found, void *base, usize base_sz, usize begin_idx, usize end, void *block, usize block_sz)
+{
+    usize final_sz, found_items, temp_idx;
+    bool  exceeds_max;
+
+    if (!found)
+    {
+        return RESULT_FAILURE;
+    }
+
+    *found = 0;
+
+    if (!idxs || !base || !block || !block_sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    if (idxs_sz < SZ_U16 || !base_sz)
+    {
+        return RESULT_SUCCESS;
+    }
+
+    if (begin_idx >= base_sz || begin_idx >= end || end > base_sz || block_sz > base_sz || begin_idx % block_sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    if (idxs_sz > MAX_U16)
+    {
+        idxs_sz = MAX_U16;
+    }
+
+    final_sz    = end - begin_idx;
+    exceeds_max = final_sz > MAX_U16;
+
+    if (exceeds_max)
+    {
+        final_sz = MAX_U16 / block_sz;
+    }
+
+    switch (block_sz)
+    {
+        case 1:
+            kdi_GenMemOpsFindBlockIndicesU8_IdxU16(idxs, idxs_sz, found, PU8_C(base) + begin_idx, final_sz * (exceeds_max ? block_sz : 1), *PU8_C(block));
+            break;
+        case 2:
+            kdi_GenMemOpsFindBlockIndicesU16_IdxU16(idxs, idxs_sz, found, PU16_C(PBYTE_C(base) + begin_idx), final_sz * (exceeds_max ? block_sz : 1), *PU16_C(block));
+            break;
+        case 4:
+            kdi_GenMemOpsFindBlockIndicesU32_IdxU16(idxs, idxs_sz, found, PU32_C(PBYTE_C(base) + begin_idx), final_sz * (exceeds_max ? block_sz : 1), *PU32_C(block));
+            break;
+#if defined ARCH_64BIT_INT
+        case 8:
+            kdi_GenMemOpsFindBlockIndicesU64_IdxU16(idxs, idxs_sz, found, PU64_C(PBYTE_C(base) + begin_idx), final_sz * (exceeds_max ? block_sz : 1), *PU64_C(block));
+            break;
+#endif
+        default:
+            kdi_GenMemOpsFindBlockIndicesUn_IdxU16(idxs, idxs_sz, found, PBYTE_C(base) + begin_idx, final_sz * (exceeds_max ? block_sz : 1), block, block_sz);
+    }
+
+    found_items = *found;
+
+    while (found_items)
+    {
+        temp_idx = *idxs + begin_idx;
+
+        if (temp_idx >= MAX_U16)
+        {
+            *found -= found_items;
+            break;
+        }
+
+        *idxs = U16_C(temp_idx);
+
+        ++idxs;
+        found_items -= block_sz;
+    }
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsFindBlockIndicesRangeU32(u32 *idxs, usize idxs_sz, usize *found, void *base, usize base_sz, usize begin_idx, usize end, void *block, usize block_sz)
+{
+    usize final_sz, found_items, temp_idx;
+    bool  exceeds_max;
+
+    if (!found)
+    {
+        return RESULT_FAILURE;
+    }
+
+    *found = 0;
+
+    if (!idxs || !base || !block || !block_sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    if (idxs_sz < SZ_U32 || !base_sz)
+    {
+        return RESULT_SUCCESS;
+    }
+
+    if (begin_idx >= base_sz || begin_idx >= end || end > base_sz || block_sz > base_sz || begin_idx % block_sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    if (idxs_sz > MAX_U32)
+    {
+        idxs_sz = MAX_U32;
+    }
+
+    final_sz    = end - begin_idx;
+    exceeds_max = final_sz > MAX_U32;
+
+    if (exceeds_max)
+    {
+        final_sz = MAX_U32 / block_sz;
+    }
+
+    switch (block_sz)
+    {
+        case 1:
+            kdi_GenMemOpsFindBlockIndicesU8_IdxU32(idxs, idxs_sz, found, PU8_C(base) + begin_idx, final_sz * (exceeds_max ? block_sz : 1), *PU8_C(block));
+            break;
+        case 2:
+            kdi_GenMemOpsFindBlockIndicesU16_IdxU32(idxs, idxs_sz, found, PU16_C(PBYTE_C(base) + begin_idx), final_sz * (exceeds_max ? block_sz : 1), *PU16_C(block));
+            break;
+        case 4:
+            kdi_GenMemOpsFindBlockIndicesU32_IdxU32(idxs, idxs_sz, found, PU32_C(PBYTE_C(base) + begin_idx), final_sz * (exceeds_max ? block_sz : 1), *PU32_C(block));
+            break;
+#if defined ARCH_64BIT_INT
+        case 8:
+            kdi_GenMemOpsFindBlockIndicesU64_IdxU32(idxs, idxs_sz, found, PU64_C(PBYTE_C(base) + begin_idx), final_sz * (exceeds_max ? block_sz : 1), *PU64_C(block));
+            break;
+#endif
+        default:
+            kdi_GenMemOpsFindBlockIndicesUn_IdxU32(idxs, idxs_sz, found, PBYTE_C(base) + begin_idx, final_sz * (exceeds_max ? block_sz : 1), block, block_sz);
+    }
+
+    found_items = *found;
+
+    while (found_items)
+    {
+        temp_idx = *idxs + begin_idx;
+
+        if (temp_idx >= MAX_U32)
+        {
+            *found -= found_items;
+            break;
+        }
+
+        *idxs = U32_C(temp_idx);
+
+        ++idxs;
+        found_items -= block_sz;
+    }
+
+    return RESULT_SUCCESS;
+}
+
+
+#if defined ARCH_64BIT_INT
+bool
+GenMemOpsFindBlockIndicesRangeU64(u64 *idxs, usize idxs_sz, usize *found, void *base, usize base_sz, usize begin_idx, usize end, void *block, usize block_sz)
+{
+    usize final_sz, found_items, temp_idx;
+
+    if (!found)
+    {
+        return RESULT_FAILURE;
+    }
+
+    *found = 0;
+
+    if (!idxs || !base || !block || !block_sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    if (idxs_sz < SZ_U64 || !base_sz)
+    {
+        return RESULT_SUCCESS;
+    }
+
+    if (begin_idx >= base_sz || begin_idx >= end || end > base_sz || block_sz > base_sz || begin_idx % block_sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    if (idxs_sz > MAX_U64)
+    {
+        idxs_sz = MAX_U64;
+    }
+
+    final_sz = (end - begin_idx) / block_sz;
+
+    switch (block_sz)
+    {
+        case 1:
+            kdi_GenMemOpsFindBlockIndicesU8_IdxU64(idxs, idxs_sz, found, PU8_C(base) + begin_idx, final_sz * block_sz, *PU8_C(block));
+            break;
+        case 2:
+            kdi_GenMemOpsFindBlockIndicesU16_IdxU64(idxs, idxs_sz, found, PU16_C(PBYTE_C(base) + begin_idx), final_sz * block_sz, *PU16_C(block));
+            break;
+        case 4:
+            kdi_GenMemOpsFindBlockIndicesU32_IdxU64(idxs, idxs_sz, found, PU32_C(PBYTE_C(base) + begin_idx), final_sz * block_sz, *PU32_C(block));
+            break;
+        case 8:
+            kdi_GenMemOpsFindBlockIndicesU64_IdxU64(idxs, idxs_sz, found, PU64_C(PBYTE_C(base) + begin_idx), final_sz * block_sz, *PU64_C(block));
+            break;
+        default:
+            kdi_GenMemOpsFindBlockIndicesUn_IdxU64(idxs, idxs_sz, found, PBYTE_C(base) + begin_idx, final_sz * block_sz, block, block_sz);
+    }
+
+    found_items = *found;
+
+    while (found_items)
+    {
+        temp_idx = *idxs + begin_idx;
+
+        if (temp_idx >= MAX_U64)
+        {
+            *found -= found_items;
+            break;
+        }
+
+        *idxs = U64_C(temp_idx);
+
+        ++idxs;
+        found_items -= block_sz;
+    }
+
+    return RESULT_SUCCESS;
+}
+#endif
+
+
+bool
+GenMemOpsFindByteIndicesRange(usize *idxs, usize idxs_sz, usize *found, void *base, usize base_sz, usize begin_idx, usize end, byte item)
 {
 #if defined ARCH_64BIT_INT
-    return GenMemOpsFindByteIndicesU64(idxs, idxs_sz, found, ptr, ptr_sz, item);
+    return GenMemOpsFindByteIndicesRangeU64(idxs, idxs_sz, found, base, base_sz, begin_idx, end, item);
 #else
-    return GenMemOpsFindByteIndicesU32(idxs, idxs_sz, found, ptr, ptr_sz, item);
+    return GenMemOpsFindByteIndicesRangeU32(idxs, idxs_sz, found, base, base_sz, begin_idx, end, item);
 #endif
 }
 
 
 bool
-GenMemOpsFindBlockIndicesRange(usize *idxs, usize idxs_sz, usize *found, void *ptr, usize ptr_sz, void *block, usize block_sz)
+GenMemOpsFindBlockIndicesRange(usize *idxs, usize idxs_sz, usize *found, void *base, usize base_sz, usize begin_idx, usize end, void *block, usize block_sz)
 {
 #if defined ARCH_64BIT_INT
-    return GenMemOpsFindBlockIndicesU64(idxs, idxs_sz, found, ptr, ptr_sz, block, block_sz);
+    return GenMemOpsFindBlockIndicesRangeU64(idxs, idxs_sz, found, base, base_sz, begin_idx, end, block, block_sz);
 #else
-    return GenMemOpsFindBlockIndicesU32(idxs, idxs_sz, found, ptr, ptr_sz, block, block_sz);
+    return GenMemOpsFindBlockIndicesRangeU32(idxs, idxs_sz, found, base, base_sz, begin_idx, end, block, block_sz);
 #endif
 }
-*/
