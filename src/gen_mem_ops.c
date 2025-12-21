@@ -2579,3 +2579,354 @@ GenMemOpsFindBlockIndicesRange(usize *idxs, usize idxs_sz, usize *found, void *b
     return GenMemOpsFindBlockIndicesRangeU32(idxs, idxs_sz, found, base, base_sz, begin_idx, end, block, block_sz);
 #endif
 }
+
+
+bool
+GenMemOpsReplaceByte(void *ptr, usize sz, byte find_item, byte new_item)
+{
+    if (!ptr || !sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    kdi_GenMemOpsReplaceBlock_U8(ptr, sz, find_item, new_item);
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsReplaceBlock(void *ptr, usize ptr_sz, void *find_block, void *new_block, usize block_sz)
+{
+    if (!ptr || !ptr_sz || !find_block || !new_block || !block_sz || block_sz > ptr_sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    switch (block_sz)
+    {
+        case 1:
+            kdi_GenMemOpsReplaceBlock_U8(ptr, ptr_sz, *PU8_C(find_block), *PU8_C(new_block));
+            break;
+        case 2:
+            kdi_GenMemOpsReplaceBlock_U16(ptr, ptr_sz, *PU16_C(find_block), *PU16_C(new_block));
+            break;
+        case 4:
+            kdi_GenMemOpsReplaceBlock_U32(ptr, ptr_sz, *PU32_C(find_block), *PU32_C(new_block));
+            break;
+#if defined ARCH_64BIT_INT
+        case 8:
+            kdi_GenMemOpsReplaceBlock_U64(ptr, ptr_sz, *PU64_C(find_block), *PU64_C(new_block));
+            break;
+#endif
+        default:
+            kdi_GenMemOpsReplaceBlock_Un(ptr, ptr_sz, find_block, new_block, block_sz);
+    }
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsReplaceByteRange(void *base, usize base_sz, usize begin_idx, usize end, byte find_item, byte new_item)
+{
+    usize final_sz;
+
+    if (!base || begin_idx >= base_sz || !end)
+    {
+        return RESULT_FAILURE;
+    }
+
+    final_sz = end - begin_idx;
+
+    if (final_sz > base_sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    kdi_GenMemOpsReplaceBlock_U8(PU8_C(base) + begin_idx, final_sz, find_item, new_item);
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsReplaceBlockRange(void *base, usize base_sz, usize begin_idx, usize end, void *find_block, void *new_block, usize block_sz)
+{
+    usize final_sz;
+
+    if (!base || begin_idx >= base_sz || end > base_sz || !find_block || !new_block || !block_sz || (begin_idx % block_sz))
+    {
+        return RESULT_FAILURE;
+    }
+
+    final_sz = end - begin_idx;
+
+    if (final_sz > base_sz || block_sz > final_sz || (final_sz % block_sz))
+    {
+        return RESULT_FAILURE;
+    }
+
+    switch (block_sz)
+    {
+        case 1:
+            kdi_GenMemOpsReplaceBlock_U8(PU8_C(base) + begin_idx, final_sz, *PU8_C(find_block), *PU8_C(new_block));
+            break;
+        case 2:
+            kdi_GenMemOpsReplaceBlock_U16(PU16_C(PBYTE_C(base) + begin_idx), final_sz, *PU16_C(find_block), *PU16_C(new_block));
+            break;
+        case 4:
+            kdi_GenMemOpsReplaceBlock_U32(PU32_C(PBYTE_C(base) + begin_idx), final_sz, *PU32_C(find_block), *PU32_C(new_block));
+            break;
+#if defined ARCH_64BIT_INT
+        case 8:
+            kdi_GenMemOpsReplaceBlock_U64(PU64_C(PBYTE_C(base) + begin_idx), final_sz, *PU64_C(find_block), *PU64_C(new_block));
+            break;
+#endif
+        default:
+            kdi_GenMemOpsReplaceBlock_Un(PBYTE_C(base) + begin_idx, final_sz, find_block, new_block, block_sz);
+    }
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsReplaceLastByte(void *ptr, usize sz, byte find_item, byte new_item)
+{
+    if (!ptr || !sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    kdi_GenMemOpsReplaceLastBlock_U8(ptr, sz, find_item, new_item);
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsReplaceLastBlock(void *ptr, usize ptr_sz, void *find_block, void *new_block, usize block_sz)
+{
+    if (!ptr || !ptr_sz || !find_block || !new_block || !block_sz || block_sz > ptr_sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    switch (block_sz)
+    {
+        case 1:
+            kdi_GenMemOpsReplaceLastBlock_U8(ptr, ptr_sz, *PU8_C(find_block), *PU8_C(new_block));
+            break;
+        case 2:
+            kdi_GenMemOpsReplaceLastBlock_U16(ptr, ptr_sz, *PU16_C(find_block), *PU16_C(new_block));
+            break;
+        case 4:
+            kdi_GenMemOpsReplaceLastBlock_U32(ptr, ptr_sz, *PU32_C(find_block), *PU32_C(new_block));
+            break;
+#if defined ARCH_64BIT_INT
+        case 8:
+            kdi_GenMemOpsReplaceLastBlock_U64(ptr, ptr_sz, *PU64_C(find_block), *PU64_C(new_block));
+            break;
+#endif
+        default:
+            kdi_GenMemOpsReplaceLastBlock_Un(ptr, ptr_sz, find_block, new_block, block_sz);
+    }
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsReplaceLastByteRange(void *base, usize base_sz, usize begin_idx, usize end, byte find_item, byte new_item)
+{
+    usize final_sz;
+
+    if (!base || begin_idx >= base_sz || !end)
+    {
+        return RESULT_FAILURE;
+    }
+
+    final_sz = end - begin_idx;
+
+    if (final_sz > base_sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    kdi_GenMemOpsReplaceLastBlock_U8(PU8_C(base) + begin_idx, final_sz, find_item, new_item);
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsReplaceLastBlockRange(void *base, usize base_sz, usize begin_idx, usize end, void *find_block, void *new_block, usize block_sz)
+{
+    usize final_sz;
+
+    if (!base || begin_idx >= base_sz || end > base_sz || !find_block || !new_block || !block_sz || (begin_idx % block_sz))
+    {
+        return RESULT_FAILURE;
+    }
+
+    final_sz = end - begin_idx;
+
+    if (final_sz > base_sz || block_sz > final_sz || (final_sz % block_sz))
+    {
+        return RESULT_FAILURE;
+    }
+
+    switch (block_sz)
+    {
+        case 1:
+            kdi_GenMemOpsReplaceLastBlock_U8(PU8_C(base) + begin_idx, final_sz, *PU8_C(find_block), *PU8_C(new_block));
+            break;
+        case 2:
+            kdi_GenMemOpsReplaceLastBlock_U16(PU16_C(PBYTE_C(base) + begin_idx), final_sz, *PU16_C(find_block), *PU16_C(new_block));
+            break;
+        case 4:
+            kdi_GenMemOpsReplaceLastBlock_U32(PU32_C(PBYTE_C(base) + begin_idx), final_sz, *PU32_C(find_block), *PU32_C(new_block));
+            break;
+#if defined ARCH_64BIT_INT
+        case 8:
+            kdi_GenMemOpsReplaceLastBlock_U64(PU64_C(PBYTE_C(base) + begin_idx), final_sz, *PU64_C(find_block), *PU64_C(new_block));
+            break;
+#endif
+        default:
+            kdi_GenMemOpsReplaceLastBlock_Un(PBYTE_C(base) + begin_idx, final_sz, find_block, new_block, block_sz);
+    }
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsReplaceAllBytes(void *ptr, usize sz, usize *count, byte find_item, byte new_item)
+{
+    if (!count)
+    {
+        return RESULT_FAILURE;
+    }
+
+    *count = 0;
+
+    if (!ptr || !sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    kdi_GenMemOpsReplaceAllBlocks_U8(ptr, sz, count, find_item, new_item);
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsReplaceAllBlocks(void *ptr, usize ptr_sz, usize *byte_count, void *find_block, void *new_block, usize block_sz)
+{
+    if (!byte_count)
+    {
+        return RESULT_FAILURE;
+    }
+
+    *byte_count = 0;
+
+    if (!ptr || !ptr_sz || !find_block || !new_block || !block_sz || block_sz > ptr_sz || (ptr_sz % block_sz))
+    {
+        return RESULT_FAILURE;
+    }
+
+    switch (block_sz)
+    {
+        case 1:
+            kdi_GenMemOpsReplaceAllBlocks_U8(ptr, ptr_sz, byte_count, *PU8_C(find_block), *PU8_C(new_block));
+            break;
+        case 2:
+            kdi_GenMemOpsReplaceAllBlocks_U16(ptr, ptr_sz, byte_count, *PU16_C(find_block), *PU16_C(new_block));
+            break;
+        case 4:
+            kdi_GenMemOpsReplaceAllBlocks_U32(ptr, ptr_sz, byte_count, *PU32_C(find_block), *PU32_C(new_block));
+            break;
+#if defined ARCH_64BIT_INT
+        case 8:
+            kdi_GenMemOpsReplaceAllBlocks_U64(ptr, ptr_sz, byte_count, *PU64_C(find_block), *PU64_C(new_block));
+            break;
+#endif
+        default:
+            kdi_GenMemOpsReplaceAllBlocks_Un(ptr, ptr_sz, byte_count, find_block, new_block, block_sz);
+    }
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsReplaceAllBytesBound(void *base, usize base_sz, usize begin_idx, usize end, usize *count, byte find_item, byte new_item)
+{
+    if (!count)
+    {
+        return RESULT_FAILURE;
+    }
+
+    *count = 0;
+
+    if (!base || begin_idx >= base_sz || !end)
+    {
+        return RESULT_FAILURE;
+    }
+
+    if ((begin_idx + end) > base_sz)
+    {
+        end = base_sz - begin_idx;
+    }
+
+    kdi_GenMemOpsReplaceAllBlocks_U8(PU8_C(base) + begin_idx, end, count, find_item, new_item);
+
+    return RESULT_SUCCESS;
+}
+
+bool
+GenMemOpsReplaceAllBlocksBound(void *base, usize base_sz, usize begin_idx, usize end, usize *byte_count, void *find_block, void *new_block, usize block_sz)
+{
+    if (!byte_count)
+    {
+        return RESULT_FAILURE;
+    }
+
+    *byte_count = 0;
+
+    if (!base || begin_idx >= base_sz || !find_block || !new_block || !block_sz || block_sz > base_sz || base_sz % block_sz || begin_idx % block_sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    end -= end % block_sz;
+
+    if ((begin_idx + end) > base_sz)
+    {
+        end = base_sz - begin_idx;
+    }
+
+    switch (block_sz)
+    {
+        case 1:
+            kdi_GenMemOpsReplaceAllBlocks_U8(PU8_C(base) + begin_idx, end, byte_count, *PU8_C(find_block), *PU8_C(new_block));
+            break;
+        case 2:
+            kdi_GenMemOpsReplaceAllBlocks_U16(PU16_C(PBYTE_C(base) + begin_idx), end, byte_count, *PU16_C(find_block), *PU16_C(new_block));
+            break;
+        case 4:
+            kdi_GenMemOpsReplaceAllBlocks_U32(PU32_C(PBYTE_C(base) + begin_idx), end, byte_count, *PU32_C(find_block), *PU32_C(new_block));
+            break;
+#if defined ARCH_64BIT_INT
+        case 8:
+            kdi_GenMemOpsReplaceAllBlocks_U64(PU64_C(PBYTE_C(base) + begin_idx), end, byte_count, *PU64_C(find_block), *PU64_C(new_block));
+            break;
+#endif
+        default:
+            kdi_GenMemOpsReplaceAllBlocks_Un(PBYTE_C(base) + begin_idx, end, byte_count, find_block, new_block, block_sz);
+    }
+
+    return RESULT_SUCCESS;
+}

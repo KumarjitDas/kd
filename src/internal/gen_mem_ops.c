@@ -1742,3 +1742,351 @@ kdi_GenMemOpsFindBlockIndicesUn_IdxU64(u64 *idxs, usize idxs_sz, usize *found, b
     }
 }
 #endif
+
+
+void
+kdi_GenMemOpsReplaceBlock_U8(u8 *ptr, usize sz, u8 find_item, u8 new_item)
+{
+    while (sz--)
+    {
+        if (*ptr == find_item)
+        {
+            *ptr = new_item;
+            break;
+        }
+
+        ++ptr;
+    }
+}
+
+
+void
+kdi_GenMemOpsReplaceBlock_U16(u16 *ptr, usize sz, u16 find_item, u16 new_item)
+{
+    while (sz)
+    {
+        if (*ptr == find_item)
+        {
+            *ptr = new_item;
+            break;
+        }
+
+        ++ptr;
+        sz -= SZ_U16;
+    }
+}
+
+
+void
+kdi_GenMemOpsReplaceBlock_U32(u32 *ptr, usize sz, u32 find_item, u32 new_item)
+{
+    while (sz)
+    {
+        if (*ptr == find_item)
+        {
+            *ptr = new_item;
+            break;
+        }
+
+        ++ptr;
+        sz -= SZ_U32;
+    }
+}
+
+
+#if defined ARCH_64BIT_INT
+void
+kdi_GenMemOpsReplaceBlock_U64(u64 *ptr, usize sz, u64 find_item, u64 new_item)
+{
+    while (sz)
+    {
+        if (*ptr == find_item)
+        {
+            *ptr = new_item;
+            break;
+        }
+
+        ++ptr;
+        sz -= SZ_U64;
+    }
+}
+#endif
+
+
+void
+kdi_GenMemOpsReplaceBlock_Un(byte *ptr, usize ptr_sz, byte *find_block, byte *new_block, usize block_sz)
+{
+    byte *find_block_begin = find_block;
+    byte *find_block_end   = find_block + block_sz - 1;
+    usize match_count      = 0;
+    bool  match;
+
+    while (ptr_sz--)
+    {
+        match_count += *ptr == *find_block_begin;
+        match        = match_count == block_sz;
+
+        if (match)
+        {
+            ptr -= block_sz;
+
+            while (block_sz--)
+            {
+                ++ptr;
+                *ptr = *new_block;
+                ++new_block;
+            }
+
+            break;
+        }
+
+        if (find_block_begin == find_block_end)
+        {
+            match_count      = 0;
+            find_block_begin = find_block;
+        }
+        else
+        {
+            match_count = match ? 0 : match_count;
+            ++find_block_begin;
+        }
+
+        ++ptr;
+    }
+}
+
+
+void
+kdi_GenMemOpsReplaceLastBlock_U8(u8 *ptr, usize sz, u8 find_item, u8 new_item)
+{
+    ptr += sz;
+
+    while (sz--)
+    {
+        --ptr;
+
+        if (*ptr == find_item)
+        {
+            *ptr = new_item;
+            break;
+        }
+    }
+}
+
+
+void
+kdi_GenMemOpsReplaceLastBlock_U16(u16 *ptr, usize sz, u16 find_item, u16 new_item)
+{
+    ptr = PU16_C(PBYTE_C(ptr) + sz);
+
+    while (sz)
+    {
+        --ptr;
+        sz -= SZ_U16;
+
+        if (*ptr == find_item)
+        {
+            *ptr = new_item;
+            break;
+        }
+    }
+}
+
+
+void
+kdi_GenMemOpsReplaceLastBlock_U32(u32 *ptr, usize sz, u32 find_item, u32 new_item)
+{
+    ptr = PU32_C(PBYTE_C(ptr) + sz);
+
+    while (sz)
+    {
+        --ptr;
+        sz -= SZ_U32;
+
+        if (*ptr == find_item)
+        {
+            *ptr = new_item;
+            break;
+        }
+    }
+}
+
+
+#if defined ARCH_64BIT_INT
+void
+kdi_GenMemOpsReplaceLastBlock_U64(u64 *ptr, usize sz, u64 find_item, u64 new_item)
+{
+    ptr = PU64_C(PBYTE_C(ptr) + sz);
+
+    while (sz)
+    {
+        --ptr;
+        sz -= SZ_U64;
+
+        if (*ptr == find_item)
+        {
+            *ptr = new_item;
+            break;
+        }
+    }
+}
+#endif
+
+
+void
+kdi_GenMemOpsReplaceLastBlock_Un(byte *ptr, usize ptr_sz, byte *find_block, byte *new_block, usize block_sz)
+{
+    byte *find_block_begin  = find_block, *find_block_end;
+    usize match_count       = 0;
+    bool  match             = false;
+
+    ptr                    += ptr_sz - 1;
+    find_block             += block_sz - 1;
+    find_block_end          = find_block;
+
+    while (ptr_sz--)
+    {
+        match_count += *ptr == *find_block_end;
+        match        = match_count == block_sz;
+
+        if (match)
+        {
+            while (block_sz--)
+            {
+                *ptr = *new_block;
+                ++ptr;
+                ++new_block;
+            }
+
+            break;
+        }
+
+        if (find_block_begin == find_block_end)
+        {
+            match_count    = 0;
+            find_block_end = find_block;
+        }
+        else
+        {
+            match_count = match ? 0 : match_count;
+            --find_block_end;
+        }
+
+        --ptr;
+    }
+}
+
+
+void
+kdi_GenMemOpsReplaceAllBlocks_U8(u8 *ptr, usize sz, usize *count, u8 find_item, u8 new_item)
+{
+    while (sz--)
+    {
+        if (*ptr == find_item)
+        {
+            *ptr    = new_item;
+            *count += 1;
+        }
+
+        ++ptr;
+    }
+}
+
+
+void
+kdi_GenMemOpsReplaceAllBlocks_U16(u16 *ptr, usize sz, usize *count, u16 find_item, u16 new_item)
+{
+    while (sz)
+    {
+        if (*ptr == find_item)
+        {
+            *ptr    = new_item;
+            *count += SZ_U16;
+        }
+
+        ++ptr;
+        sz -= SZ_U16;
+    }
+}
+
+
+void
+kdi_GenMemOpsReplaceAllBlocks_U32(u32 *ptr, usize sz, usize *count, u32 find_item, u32 new_item)
+{
+    while (sz)
+    {
+        if (*ptr == find_item)
+        {
+            *ptr    = new_item;
+            *count += SZ_U32;
+        }
+
+        ++ptr;
+        sz -= SZ_U32;
+    }
+}
+
+
+#if defined ARCH_64BIT_INT
+void
+kdi_GenMemOpsReplaceAllBlocks_U64(u64 *ptr, usize sz, usize *count, u64 find_item, u64 new_item)
+{
+    while (sz)
+    {
+        if (*ptr == find_item)
+        {
+            *ptr    = new_item;
+            *count += SZ_U64;
+        }
+
+        ++ptr;
+        sz -= SZ_U64;
+    }
+}
+#endif
+
+
+void
+kdi_GenMemOpsReplaceAllBlocks_Un(byte *ptr, usize ptr_sz, usize *count, byte *find_block, byte *new_block, usize block_sz)
+{
+    byte *find_block_begin = find_block;
+    byte *find_block_end   = find_block + block_sz - 1;
+    usize match_count      = 0;
+    usize temp_block_sz;
+    byte *temp_new_block, *temp_ptr;
+    bool  match;
+
+    while (ptr_sz--)
+    {
+        match_count += *ptr == *find_block_begin;
+        match        = match_count == block_sz;
+
+        if (match)
+        {
+            temp_block_sz   = block_sz;
+            temp_ptr        = ptr - temp_block_sz;
+            temp_new_block  = new_block;
+            *count         += temp_block_sz;
+
+            while (temp_block_sz--)
+            {
+                ++temp_ptr;
+                *temp_ptr = *temp_new_block;
+                ++temp_new_block;
+            }
+        }
+
+        if (find_block_begin == find_block_end)
+        {
+            match_count      = 0;
+            find_block_begin = find_block;
+        }
+        else
+        {
+            match_count = match ? 0 : match_count;
+            ++find_block_begin;
+        }
+
+        ++ptr;
+    }
+}
