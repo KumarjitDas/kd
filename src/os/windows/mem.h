@@ -15,7 +15,9 @@
 
 #include "../../../include/kd/version.h"
 #include "../../../include/kd/platform.h"
+#include "../../../include/kd/api.h"
 #include "../../../include/kd/fixed_width.h"
+#include "../../../include/kd/bool.h"
 
 
 #if !defined OS_WINDOWS && !(defined OS_WIN32 || defined OS_WIN64)

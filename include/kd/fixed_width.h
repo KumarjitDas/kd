@@ -15,6 +15,7 @@
 
 #include "./version.h"
 #include "./platform.h"
+#include "./api.h"
 
 
 KD_EXTERN_BEGIN
@@ -91,7 +92,6 @@ typedef kd_u32_t kd_usize_t;
 
 typedef kd_u8_t  kd_byte_t;
 typedef kd_u32_t kd_chr_t;
-typedef kd_u32_t kd_bool_t;
 
 #if defined KD_ARCH_64BIT_INT
     #define KD_BASE_INT_T  kd_i64_t
@@ -108,11 +108,10 @@ typedef kd_u32_t kd_bool_t;
  * ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
  */
 
-#define KD_LIT_BOOL(x) (kd_bool_t)(x)
-#define KD_LIT_I8(x)   (kd_i8_t)(x)
-#define KD_LIT_I16(x)  (kd_i16_t)(x)
-#define KD_LIT_U8(x)   (kd_u8_t)(x)
-#define KD_LIT_U16(x)  (kd_u16_t)(x)
+#define KD_LIT_I8(x)  (kd_i8_t)(x)
+#define KD_LIT_I16(x) (kd_i16_t)(x)
+#define KD_LIT_U8(x)  (kd_u8_t)(x)
+#define KD_LIT_U16(x) (kd_u16_t)(x)
 
 #if defined KD_ARCH_32BIT_INT && __SIZEOF_INT__ == 2 && __SIZEOF_LONG__ == 4
     #define KD_LIT_I32(x) x##L
@@ -161,7 +160,6 @@ typedef kd_u32_t kd_bool_t;
  * ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
  */
 
-#define KD_BOOL_C(X)  ((kd_bool_t)(!!(X)))
 #define KD_I8_C(X)    ((kd_i8_t)(X))
 #define KD_I16_C(X)   ((kd_i16_t)(X))
 #define KD_I32_C(X)   ((kd_i32_t)(X))
@@ -183,7 +181,6 @@ typedef kd_u32_t kd_bool_t;
     #define KD_U64_C(X) ((kd_u64_t)(X))
 #endif
 
-#define KD_PBOOL_C(X)  ((kd_bool_t *)(X))
 #define KD_PI8_C(X)    ((kd_i8_t *)(X))
 #define KD_PI16_C(X)   ((kd_i16_t *)(X))
 #define KD_PI32_C(X)   ((kd_i32_t *)(X))
@@ -301,7 +298,6 @@ typedef kd_u32_t kd_bool_t;
  * ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
  */
 
-#define KD_SZ_BOOL  sizeof(kd_bool_t)
 #define KD_SZ_I8    sizeof(kd_i8_t)
 #define KD_SZ_I16   sizeof(kd_i16_t)
 #define KD_SZ_I32   sizeof(kd_i32_t)
@@ -330,7 +326,6 @@ typedef kd_u32_t kd_bool_t;
  * ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
  */
 
-#define KD_FMTSP_BOOL "%s"
 #define KD_FMTSP_I8   "%d"
 #define KD_FMTSP_I16  "%d"
 #define KD_FMTSP_IMIN "%d"
@@ -391,7 +386,6 @@ typedef kd_u32_t kd_bool_t;
  * ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
  */
 
-#define KD_FSBTC_BOOL(x) ((x) ? "kd_true" : "kd_false")
 #define KD_FSBTC_I8(x)   (int)(x)
 #define KD_FSBTC_I16(x)  (int)(x)
 #define KD_FSBTC_IMIN(x) (int)(x)
@@ -446,8 +440,6 @@ typedef kd_u32_t kd_bool_t;
  * ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
  */
 
-#define kd_true     1
-#define kd_false    0
 #define kd_null     KD_LIT_PTR(0x00)
 
 #define KD_LAST_IDX (-1)
@@ -459,12 +451,6 @@ typedef kd_u32_t kd_bool_t;
     #undef KD_RESULT_FAILURE
 #endif
 
-#define KD_RESULT_SUCCESS    kd_false
-#define KD_RESULT_FAILURE    kd_true
-
-#define KD_RESULT_EQUALS     kd_true
-#define KD_RESULT_NOT_EQUALS kd_false
-
 
 /**
  * ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -472,13 +458,6 @@ typedef kd_u32_t kd_bool_t;
  * ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
  */
 
-#ifndef KD_CPLUSPLUS
-    #undef true
-    #define true kd_true
-    #undef false
-    #define false kd_false
-    #define bool  kd_bool_t
-#endif
 #undef null
 #define null  kd_null
 #define i8    kd_i8_t
@@ -501,7 +480,6 @@ typedef kd_u32_t kd_bool_t;
     #define u64 kd_u64_t
 #endif
 
-#define LIT_BOOL(x) KD_LIT_BOOL(x)
 #define LIT_I8(x)   KD_LIT_I8(x)
 #define LIT_I16(x)  KD_LIT_I16(x)
 #define LIT_U8(x)   KD_LIT_U8(x)
@@ -528,7 +506,6 @@ typedef kd_u32_t kd_bool_t;
     #define LIT_USIZE(x) KD_LIT_USIZE(x)
 #endif
 
-#define BOOL_C(x)  KD_BOOL_C(x)
 #define I8_C(x)    KD_I8_C(x)
 #define I16_C(x)   KD_I16_C(x)
 #define I32_C(x)   KD_I32_C(x)
@@ -550,7 +527,6 @@ typedef kd_u32_t kd_bool_t;
     #define U64_C(x) KD_U64_C(x)
 #endif
 
-#define PBOOL_C(x)  KD_PBOOL_C(x)
 #define PI8_C(x)    KD_PI8_C(x)
 #define PI16_C(x)   KD_PI16_C(x)
 #define PI32_C(x)   KD_PI32_C(x)
@@ -631,7 +607,6 @@ typedef kd_u32_t kd_bool_t;
 
 #define MAX_PTR  KD_MAX_PTR
 
-#define SZ_BOOL  KD_SZ_BOOL
 #define SZ_I8    KD_SZ_I8
 #define SZ_I16   KD_SZ_I16
 #define SZ_I32   KD_SZ_I32
@@ -653,7 +628,6 @@ typedef kd_u32_t kd_bool_t;
     #define SZ_U64 KD_SZ_U64
 #endif
 
-#define FMTSP_BOOL KD_FMTSP_BOOL
 #define FMTSP_I8   KD_FMTSP_I8
 #define FMTSP_I16  KD_FMTSP_I16
 #define FMTSP_IMIN KD_FMTSP_IMIN
@@ -679,7 +653,6 @@ typedef kd_u32_t kd_bool_t;
     #define FMTSP_USIZE KD_FMTSP_USIZE
 #endif
 
-#define FSBTC_BOOL(x) KD_FSBTC_BOOL(x)
 #define FSBTC_I8(x)   KD_FSBTC_I8(x)
 #define FSBTC_I16(x)  KD_FSBTC_I16(x)
 #define FSBTC_IMIN(x) KD_FSBTC_IMIN(x)
@@ -707,19 +680,6 @@ typedef kd_u32_t kd_bool_t;
 #endif
 
 #define LAST_IDX KD_LAST_IDX
-
-#if defined RESULT_SUCCESS
-    #undef RESULT_SUCCESS
-#endif
-#if defined RESULT_FAILURE
-    #undef RESULT_FAILURE
-#endif
-
-#define RESULT_SUCCESS    KD_RESULT_SUCCESS
-#define RESULT_FAILURE    KD_RESULT_FAILURE
-
-#define RESULT_EQUALS     KD_RESULT_EQUALS
-#define RESULT_NOT_EQUALS KD_RESULT_NOT_EQUALS
 
 
 KD_EXTERN_END

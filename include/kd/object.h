@@ -15,6 +15,7 @@
 
 #include "./version.h"
 #include "./platform.h"
+#include "./api.h"
 #include "./eltype.h"
 #include "./any.h"
 

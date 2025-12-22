@@ -15,7 +15,9 @@
 
 #include "./kd/version.h"
 #include "./kd/platform.h"
+#include "./kd/api.h"
 #include "./kd/fixed_width.h"
+#include "./kd/bool.h"
 #include "./kd/floating_point.h"
 #include "./kd/eltype.h"
 #include "./kd/mem.h"

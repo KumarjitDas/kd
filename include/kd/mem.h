@@ -15,7 +15,9 @@
 
 #include "./version.h"
 #include "./platform.h"
+#include "./api.h"
 #include "./fixed_width.h"
+#include "./bool.h"
 
 
 KD_EXTERN_BEGIN

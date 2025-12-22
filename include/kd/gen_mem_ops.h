@@ -15,7 +15,9 @@
 
 #include "./version.h"
 #include "./platform.h"
+#include "./api.h"
 #include "./fixed_width.h"
+#include "./bool.h"
 
 
 KD_EXTERN_BEGIN
@@ -64,9 +66,6 @@ KDAPI(kd_bool_t) kdGenMemOpsSwapBytesRange(void *base_1, kd_usize_t base_1_sz, k
 
 KDAPI(kd_bool_t) kdGenMemOpsSwapBlocks(void *ptr_1, void *ptr_2, kd_usize_t block_sz);
 KDAPI(kd_bool_t) kdGenMemOpsSwapBlocksRange(void *base_1, kd_usize_t base_1_sz, kd_usize_t base_1_idx, void *base_2, kd_usize_t base_2_sz, kd_usize_t base_2_idx, kd_usize_t block_sz);
-
-#define kdGenMemOpsSequenceSwap(ptr_1, ptr_2, sz)                                                           kdGenMemOpsSwapBlocks((ptr_1), (ptr_2), (sz))
-#define kdGenMemOpsSequenceSwapRange(base_1, base_1_sz, base_1_idx, base_2, base_2_sz, base_2_idx, swap_sz) kdGenMemOpsSwapBlocksRange((base_1), (base_1_sz), (base_1_idx), (base_2), (base_2_sz), (base_2_idx), (swap_sz))
 
 KDAPI(kd_bool_t) kdGenMemOpsRotateRight(void *ptr, kd_usize_t sz, kd_usize_t k);
 KDAPI(kd_bool_t) kdGenMemOpsRotateRightRange(void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t byte_count, kd_usize_t k);
@@ -187,13 +186,51 @@ KDAPI(kd_bool_t) kdGenMemOpsReplaceAllBlocks(void *ptr, kd_usize_t ptr_sz, kd_us
 KDAPI(kd_bool_t) kdGenMemOpsReplaceAllBytesBound(void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end, kd_usize_t *count, kd_byte_t find_item, kd_byte_t new_item);
 KDAPI(kd_bool_t) kdGenMemOpsReplaceAllBlocksBound(void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end, kd_usize_t *byte_count, void *find_block, void *new_block, kd_usize_t block_sz);
 
-KDAPI(kd_bool_t) kdGenMemOpsFindNotByte(void *dst, void *ptr, kd_usize_t sz, kd_byte_t item);
-KDAPI(kd_bool_t) kdGenMemOpsFindNotByteIndex(kd_usize_t *idx_addr, void *ptr, kd_usize_t sz, kd_byte_t item);
+/* --- */
 
-KDAPI(kd_bool_t) kdGenMemOpsFindNotLastByte(void *dst, void *ptr, kd_usize_t sz, kd_byte_t item);
-KDAPI(kd_bool_t) kdGenMemOpsFindNotLastByteIndex(kd_usize_t *idx_addr, void *ptr, kd_usize_t sz, kd_byte_t item);
+KDAPI(kd_bool_t) kdGenMemOpsFindIndexPredicate(kd_usize_t *idx, void *ptr, kd_usize_t ptr_sz, void *block, kd_usize_t block_sz, void (*predicate)(kd_bool_t *result, void *block));
+KDAPI(kd_bool_t) kdGenMemOpsFindIndexBoundPredicate(kd_usize_t *idx, void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end, void *block, kd_usize_t block_sz, void (*predicate)(kd_bool_t *result, void *block));
 
-KDAPI(kd_bool_t) kdGenMemOpsFindNotAllBytes(void *dst, kd_usize_t dst_sz, kd_usize_t *dst_elems, void *ptr, kd_usize_t ptr_sz, kd_byte_t item);
+KDAPI(kd_bool_t) kdGenMemOpsFindLastIndexPredicate(kd_usize_t *idx, void *ptr, kd_usize_t ptr_sz, void *block, kd_usize_t block_sz, void (*predicate)(kd_bool_t *result, void *block));
+KDAPI(kd_bool_t) kdGenMemOpsFindLastIndexBoundPredicate(kd_usize_t *idx, void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end, void *block, kd_usize_t block_sz, void (*predicate)(kd_bool_t *result, void *block));
+
+KDAPI(kd_bool_t) kdGenMemOpsFindIndicesPredicateU8(kd_u8_t *idxs, kd_usize_t idxs_sz, kd_usize_t *found, void *ptr, kd_usize_t ptr_sz, void *block, kd_usize_t block_sz, void (*predicate)(kd_bool_t *result, void *block));
+KDAPI(kd_bool_t) kdGenMemOpsFindIndicesPredicateU16(kd_u16_t *idxs, kd_usize_t idxs_sz, kd_usize_t *found, void *ptr, kd_usize_t ptr_sz, void *block, kd_usize_t block_sz, void (*predicate)(kd_bool_t *result, void *block));
+KDAPI(kd_bool_t) kdGenMemOpsFindIndicesPredicateU32(kd_u32_t *idxs, kd_usize_t idxs_sz, kd_usize_t *found, void *ptr, kd_usize_t ptr_sz, void *block, kd_usize_t block_sz, void (*predicate)(kd_bool_t *result, void *block));
+#if defined KD_ARCH_64BIT_INT
+KDAPI(kd_bool_t) kdGenMemOpsFindIndicesPredicateU64(kd_u64_t *idxs, kd_usize_t idxs_sz, kd_usize_t *found, void *ptr, kd_usize_t ptr_sz, void *block, kd_usize_t block_sz, void (*predicate)(kd_bool_t *result, void *block));
+#endif
+
+KDAPI(kd_bool_t) kdGenMemOpsFindIndicesPredicate(kd_usize_t *idxs, kd_usize_t idxs_sz, kd_usize_t *found, void *ptr, kd_usize_t ptr_sz, void *block, kd_usize_t block_sz, void (*predicate)(kd_bool_t *result, void *block));
+
+KDAPI(kd_bool_t) kdGenMemOpsFindIndicesBoundPredicateU8(kd_u8_t *idxs, kd_usize_t idxs_sz, kd_usize_t *found, void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end, void *block, kd_usize_t block_sz, void (*predicate)(kd_bool_t *result, void *block));
+KDAPI(kd_bool_t) kdGenMemOpsFindIndicesBoundPredicateU16(kd_u16_t *idxs, kd_usize_t idxs_sz, kd_usize_t *found, void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end, void *block, kd_usize_t block_sz, void (*predicate)(kd_bool_t *result, void *block));
+KDAPI(kd_bool_t) kdGenMemOpsFindIndicesBoundPredicateU32(kd_u32_t *idxs, kd_usize_t idxs_sz, kd_usize_t *found, void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end, void *block, kd_usize_t block_sz, void (*predicate)(kd_bool_t *result, void *block));
+#if defined KD_ARCH_64BIT_INT
+KDAPI(kd_bool_t) kdGenMemOpsFindIndicesBoundPredicateU64(kd_u64_t *idxs, kd_usize_t idxs_sz, kd_usize_t *found, void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end, void *block, kd_usize_t block_sz, void (*predicate)(kd_bool_t *result, void *block));
+#endif
+
+KDAPI(kd_bool_t) kdGenMemOpsFindIndicesBoundPredicate(kd_usize_t *idxs, kd_usize_t idxs_sz, kd_usize_t *found, void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end, void *block, kd_usize_t block_sz, void (*predicate)(kd_bool_t *result, void *block));
+
+KDAPI(kd_bool_t) kdGenMemOpsFindPredicate(void *dst, void *ptr, kd_usize_t ptr_sz, kd_usize_t block_sz, void (*predicate)(kd_bool_t *result, void *block));
+KDAPI(kd_bool_t) kdGenMemOpsFindBoundPredicate(void *dst, void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end, kd_usize_t block_sz, void (*predicate)(kd_bool_t *result, void *block));
+
+KDAPI(kd_bool_t) kdGenMemOpsFindLastPredicate(void *dst, void *ptr, kd_usize_t ptr_sz, kd_usize_t block_sz, void (*predicate)(kd_bool_t *result, void *block));
+KDAPI(kd_bool_t) kdGenMemOpsFindLastBoundPredicate(void *dst, void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end, kd_usize_t block_sz, void (*predicate)(kd_bool_t *result, void *block));
+
+KDAPI(kd_bool_t) kdGenMemOpsFindAllPredicate(void *dst, kd_usize_t dst_sz, kd_usize_t *found, void *ptr, kd_usize_t ptr_sz, kd_usize_t block_sz, void (*predicate)(kd_bool_t *result, void *block));
+KDAPI(kd_bool_t) kdGenMemOpsFindAllBoundPredicate(void *dst, kd_usize_t dst_sz, kd_usize_t *found, void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end, kd_usize_t block_sz, void (*predicate)(kd_bool_t *result, void *block));
+
+KDAPI(kd_bool_t) kdGenMemOpsReplacePredicate(void *ptr, kd_usize_t ptr_sz, void *new_block, kd_usize_t block_sz, void (*predicate)(kd_bool_t *result, void *block));
+KDAPI(kd_bool_t) kdGenMemOpsReplaceBoundPredicate(void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end, void *new_block, kd_usize_t block_sz, void (*predicate)(kd_bool_t *result, void *block));
+
+KDAPI(kd_bool_t) kdGenMemOpsReplaceLastPredicate(void *ptr, kd_usize_t ptr_sz, void *new_block, kd_usize_t block_sz, void (*predicate)(kd_bool_t *result, void *block));
+KDAPI(kd_bool_t) kdGenMemOpsReplaceLastBoundPredicate(void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end, void *new_block, kd_usize_t block_sz, void (*predicate)(kd_bool_t *result, void *block));
+
+KDAPI(kd_bool_t) kdGenMemOpsReplaceAllPredicate(void *ptr, kd_usize_t ptr_sz, kd_usize_t *byte_count, void *new_block, kd_usize_t block_sz, void (*predicate)(kd_bool_t *result, void *block));
+KDAPI(kd_bool_t) kdGenMemOpsReplaceAllBoundPredicate(void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end, kd_usize_t *byte_count, void *new_block, kd_usize_t block_sz, void (*predicate)(kd_bool_t *result, void *block));
+
+/* --- */
 
 KDAPI(kd_bool_t) kdGenMemOpsFindAnyByte(void *dst, void *ptr, kd_usize_t sz, kd_byte_t *set, kd_byte_t item);
 KDAPI(kd_bool_t) kdGenMemOpsFindAnyByteIndex(kd_usize_t *idx_addr, void *ptr, kd_usize_t sz, kd_byte_t *set, kd_byte_t item);
@@ -202,18 +239,6 @@ KDAPI(kd_bool_t) kdGenMemOpsFindAnyLastByte(void *dst, void *ptr, kd_usize_t sz,
 KDAPI(kd_bool_t) kdGenMemOpsFindAnyLastByteIndex(kd_usize_t *idx_addr, void *ptr, kd_usize_t sz, kd_byte_t *set, kd_byte_t item);
 
 KDAPI(kd_bool_t) kdGenMemOpsFindAnyOfTheBytes(void *dst, kd_usize_t dst_sz, kd_usize_t *dst_elems, void *ptr, kd_usize_t ptr_sz, kd_byte_t *set, kd_byte_t item);
-
-KDAPI(kd_bool_t) kdGenMemOpsFindNotAnyByte(void *dst, void *ptr, kd_usize_t sz, kd_byte_t *set, kd_byte_t item);
-KDAPI(kd_bool_t) kdGenMemOpsFindNotAnyByteIndex(kd_usize_t *idx_addr, void *ptr, kd_usize_t sz, kd_byte_t *set, kd_byte_t item);
-
-KDAPI(kd_bool_t) kdGenMemOpsFindNotAnyLastByte(void *dst, void *ptr, kd_usize_t sz, kd_byte_t *set, kd_byte_t item);
-KDAPI(kd_bool_t) kdGenMemOpsFindNotAnyLastByteIndex(kd_usize_t *idx_addr, void *ptr, kd_usize_t sz, kd_byte_t *set, kd_byte_t item);
-
-KDAPI(kd_bool_t) kdGenMemOpsFindNotAnyOfTheBytes(void *dst, kd_usize_t dst_sz, kd_usize_t *dst_elems, void *ptr, kd_usize_t ptr_sz, kd_byte_t *set, kd_byte_t item);
-
-KDAPI(kd_bool_t) kdGenMemOpsFindBlock(void *dst, void *ptr, kd_usize_t ptr_sz, void *block, kd_usize_t block_sz);
-
-KDAPI(kd_bool_t) kdGenMemOpsFindBlocks(void *dst, kd_usize_t dst_sz, kd_usize_t *dst_elems, void *ptr, kd_usize_t ptr_sz, void *block, kd_usize_t block_sz);
 
 KDAPI(kd_bool_t) kdGenMemOpsSequenceAt(void *dst, void *base, kd_usize_t base_sz, kd_usize_t idx, kd_usize_t sequence_sz);
 KDAPI(kd_bool_t) kdGenMemOpsSetSequenceAt(void *base, kd_usize_t base_sz, kd_usize_t idx, void *sequence, kd_usize_t sequence_sz);
