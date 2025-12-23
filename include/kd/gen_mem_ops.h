@@ -119,20 +119,38 @@ KDAPI(kd_bool_t) kdGenMemOpsRemoveBlocks(void *base, kd_usize_t base_cap, kd_usi
 KDAPI(kd_bool_t) kdGenMemOpsCountBytes(kd_usize_t *count, void *ptr, kd_usize_t sz, kd_byte_t item);
 KDAPI(kd_bool_t) kdGenMemOpsCountBlocks(kd_usize_t *count, void *ptr, kd_usize_t ptr_sz, void *block, kd_usize_t block_sz);
 
+KDAPI(kd_bool_t) kdGenMemOpsCountBytesBound(kd_usize_t *count, void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end_count, kd_byte_t item);
+KDAPI(kd_bool_t) kdGenMemOpsCountBlocksBound(kd_usize_t *count, void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end_count_byte, void *block, kd_usize_t block_sz);
+
 KDAPI(kd_bool_t) kdGenMemOpsCountNotBytes(kd_usize_t *count, void *ptr, kd_usize_t sz, kd_byte_t item);
 KDAPI(kd_bool_t) kdGenMemOpsCountNotBlocks(kd_usize_t *count, void *ptr, kd_usize_t ptr_sz, void *block, kd_usize_t block_sz);
+
+KDAPI(kd_bool_t) kdGenMemOpsCountNotBytesBound(kd_usize_t *count, void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end_count, kd_byte_t item);
+KDAPI(kd_bool_t) kdGenMemOpsCountNotBlocksBound(kd_usize_t *count, void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end_count_byte, void *block, kd_usize_t block_sz);
 
 KDAPI(kd_bool_t) kdGenMemOpsFindByteIndex(kd_usize_t *idx, void *ptr, kd_usize_t sz, kd_byte_t item);
 KDAPI(kd_bool_t) kdGenMemOpsFindBlockIndex(kd_usize_t *idx, void *ptr, kd_usize_t ptr_sz, void *block, kd_usize_t block_sz);
 
+KDAPI(kd_bool_t) kdGenMemOpsFindNotByteIndex(kd_usize_t *idx, void *ptr, kd_usize_t sz, kd_byte_t item);
+KDAPI(kd_bool_t) kdGenMemOpsFindNotBlockIndex(kd_usize_t *idx, void *ptr, kd_usize_t ptr_sz, void *block, kd_usize_t block_sz);
+
 KDAPI(kd_bool_t) kdGenMemOpsFindByteIndexRange(kd_usize_t *idx, void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end, kd_byte_t item);
 KDAPI(kd_bool_t) kdGenMemOpsFindBlockIndexRange(kd_usize_t *idx, void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end, void *block, kd_usize_t block_sz);
+
+KDAPI(kd_bool_t) kdGenMemOpsFindNotByteIndexBound(kd_usize_t *idx, void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end_count, kd_byte_t item);
+KDAPI(kd_bool_t) kdGenMemOpsFindNotBlockIndexBound(kd_usize_t *idx, void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end_count_byte, void *block, kd_usize_t block_sz);
 
 KDAPI(kd_bool_t) kdGenMemOpsFindLastByteIndex(kd_usize_t *idx, void *ptr, kd_usize_t sz, kd_byte_t item);
 KDAPI(kd_bool_t) kdGenMemOpsFindLastBlockIndex(kd_usize_t *idx, void *ptr, kd_usize_t ptr_sz, void *block, kd_usize_t block_sz);
 
+KDAPI(kd_bool_t) kdGenMemOpsFindLastNotByteIndex(kd_usize_t *idx, void *ptr, kd_usize_t sz, kd_byte_t item);
+KDAPI(kd_bool_t) kdGenMemOpsFindLastNotBlockIndex(kd_usize_t *idx, void *ptr, kd_usize_t ptr_sz, void *block, kd_usize_t block_sz);
+
 KDAPI(kd_bool_t) kdGenMemOpsFindLastByteIndexRange(kd_usize_t *idx, void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end, kd_byte_t item);
 KDAPI(kd_bool_t) kdGenMemOpsFindLastBlockIndexRange(kd_usize_t *idx, void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end, void *block, kd_usize_t block_sz);
+
+KDAPI(kd_bool_t) kdGenMemOpsFindLastNotByteIndexBound(kd_usize_t *idx, void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end_count, kd_byte_t item);
+KDAPI(kd_bool_t) kdGenMemOpsFindLastNotBlockIndexBound(kd_usize_t *idx, void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end_count_byte, void *block, kd_usize_t block_sz);
 
 KDAPI(kd_bool_t) kdGenMemOpsFindByteIndicesU8(kd_u8_t *idxs, kd_usize_t idxs_sz, kd_usize_t *found, void *ptr, kd_usize_t ptr_sz, kd_byte_t item);
 KDAPI(kd_bool_t) kdGenMemOpsFindByteIndicesU16(kd_u16_t *idxs, kd_usize_t idxs_sz, kd_usize_t *found, void *ptr, kd_usize_t ptr_sz, kd_byte_t item);
@@ -148,8 +166,25 @@ KDAPI(kd_bool_t) kdGenMemOpsFindBlockIndicesU32(kd_u32_t *idxs, kd_usize_t idxs_
 KDAPI(kd_bool_t) kdGenMemOpsFindBlockIndicesU64(kd_u64_t *idxs, kd_usize_t idxs_sz, kd_usize_t *found, void *ptr, kd_usize_t ptr_sz, void *block, kd_usize_t block_sz);
 #endif
 
+KDAPI(kd_bool_t) kdGenMemOpsFindNotByteIndicesU8(kd_u8_t *idxs, kd_usize_t idxs_sz, kd_usize_t *found, void *ptr, kd_usize_t ptr_sz, kd_byte_t item);
+KDAPI(kd_bool_t) kdGenMemOpsFindNotByteIndicesU16(kd_u16_t *idxs, kd_usize_t idxs_sz, kd_usize_t *found, void *ptr, kd_usize_t ptr_sz, kd_byte_t item);
+KDAPI(kd_bool_t) kdGenMemOpsFindNotByteIndicesU32(kd_u32_t *idxs, kd_usize_t idxs_sz, kd_usize_t *found, void *ptr, kd_usize_t ptr_sz, kd_byte_t item);
+#if defined KD_ARCH_64BIT_INT
+KDAPI(kd_bool_t) kdGenMemOpsFindNotByteIndicesU64(kd_u64_t *idxs, kd_usize_t idxs_sz, kd_usize_t *found, void *ptr, kd_usize_t ptr_sz, kd_byte_t item);
+#endif
+
+KDAPI(kd_bool_t) kdGenMemOpsFindNotBlockIndicesU8(kd_u8_t *idxs, kd_usize_t idxs_sz, kd_usize_t *found, void *ptr, kd_usize_t ptr_sz, void *block, kd_usize_t block_sz);
+KDAPI(kd_bool_t) kdGenMemOpsFindNotBlockIndicesU16(kd_u16_t *idxs, kd_usize_t idxs_sz, kd_usize_t *found, void *ptr, kd_usize_t ptr_sz, void *block, kd_usize_t block_sz);
+KDAPI(kd_bool_t) kdGenMemOpsFindNotBlockIndicesU32(kd_u32_t *idxs, kd_usize_t idxs_sz, kd_usize_t *found, void *ptr, kd_usize_t ptr_sz, void *block, kd_usize_t block_sz);
+#if defined KD_ARCH_64BIT_INT
+KDAPI(kd_bool_t) kdGenMemOpsFindNotBlockIndicesU64(kd_u64_t *idxs, kd_usize_t idxs_sz, kd_usize_t *found, void *ptr, kd_usize_t ptr_sz, void *block, kd_usize_t block_sz);
+#endif
+
 KDAPI(kd_bool_t) kdGenMemOpsFindByteIndices(kd_usize_t *idxs, kd_usize_t idxs_sz, kd_usize_t *found, void *ptr, kd_usize_t ptr_sz, kd_byte_t item);
 KDAPI(kd_bool_t) kdGenMemOpsFindBlockIndices(kd_usize_t *idxs, kd_usize_t idxs_sz, kd_usize_t *found, void *ptr, kd_usize_t ptr_sz, void *block, kd_usize_t block_sz);
+
+KDAPI(kd_bool_t) kdGenMemOpsFindNotByteIndices(kd_usize_t *idxs, kd_usize_t idxs_sz, kd_usize_t *found, void *ptr, kd_usize_t ptr_sz, kd_byte_t item);
+KDAPI(kd_bool_t) kdGenMemOpsFindNotBlockIndices(kd_usize_t *idxs, kd_usize_t idxs_sz, kd_usize_t *found, void *ptr, kd_usize_t ptr_sz, void *block, kd_usize_t block_sz);
 
 KDAPI(kd_bool_t) kdGenMemOpsFindByteIndicesRangeU8(kd_u8_t *idxs, kd_usize_t idxs_sz, kd_usize_t *found, void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end, kd_byte_t item);
 KDAPI(kd_bool_t) kdGenMemOpsFindByteIndicesRangeU16(kd_u16_t *idxs, kd_usize_t idxs_sz, kd_usize_t *found, void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end, kd_byte_t item);
@@ -165,26 +200,61 @@ KDAPI(kd_bool_t) kdGenMemOpsFindBlockIndicesRangeU32(kd_u32_t *idxs, kd_usize_t 
 KDAPI(kd_bool_t) kdGenMemOpsFindBlockIndicesRangeU64(kd_u64_t *idxs, kd_usize_t idxs_sz, kd_usize_t *found, void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end, void *block, kd_usize_t block_sz);
 #endif
 
+KDAPI(kd_bool_t) kdGenMemOpsFindNotByteIndicesBoundU8(kd_u8_t *idxs, kd_usize_t idxs_sz, kd_usize_t *found, void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end_count, kd_byte_t item);
+KDAPI(kd_bool_t) kdGenMemOpsFindNotByteIndicesBoundU16(kd_u16_t *idxs, kd_usize_t idxs_sz, kd_usize_t *found, void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end_count, kd_byte_t item);
+KDAPI(kd_bool_t) kdGenMemOpsFindNotByteIndicesBoundU32(kd_u32_t *idxs, kd_usize_t idxs_sz, kd_usize_t *found, void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end_count, kd_byte_t item);
+#if defined KD_ARCH_64BIT_INT
+KDAPI(kd_bool_t) kdGenMemOpsFindNotByteIndicesBoundU64(kd_u64_t *idxs, kd_usize_t idxs_sz, kd_usize_t *found, void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end_count, kd_byte_t item);
+#endif
+
+KDAPI(kd_bool_t) kdGenMemOpsFindNotBlockIndicesBoundU8(kd_u8_t *idxs, kd_usize_t idxs_sz, kd_usize_t *found, void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end_count_byte, void *block, kd_usize_t block_sz);
+KDAPI(kd_bool_t) kdGenMemOpsFindNotBlockIndicesBoundU16(kd_u16_t *idxs, kd_usize_t idxs_sz, kd_usize_t *found, void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end_count_byte, void *block, kd_usize_t block_sz);
+KDAPI(kd_bool_t) kdGenMemOpsFindNotBlockIndicesBoundU32(kd_u32_t *idxs, kd_usize_t idxs_sz, kd_usize_t *found, void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end_count_byte, void *block, kd_usize_t block_sz);
+#if defined KD_ARCH_64BIT_INT
+KDAPI(kd_bool_t) kdGenMemOpsFindNotBlockIndicesBoundU64(kd_u64_t *idxs, kd_usize_t idxs_sz, kd_usize_t *found, void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end_count_byte, void *block, kd_usize_t block_sz);
+#endif
+
 KDAPI(kd_bool_t) kdGenMemOpsFindByteIndicesRange(kd_usize_t *idxs, kd_usize_t idxs_sz, kd_usize_t *found, void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end, kd_byte_t item);
 KDAPI(kd_bool_t) kdGenMemOpsFindBlockIndicesRange(kd_usize_t *idxs, kd_usize_t idxs_sz, kd_usize_t *found, void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end, void *block, kd_usize_t block_sz);
+
+KDAPI(kd_bool_t) kdGenMemOpsFindNotByteIndicesBound(kd_usize_t *idxs, kd_usize_t idxs_sz, kd_usize_t *found, void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end_count_byte, kd_byte_t item);
+KDAPI(kd_bool_t) kdGenMemOpsFindNotBlockIndicesBound(kd_usize_t *idxs, kd_usize_t idxs_sz, kd_usize_t *found, void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end_count_byte, void *block, kd_usize_t block_sz);
 
 KDAPI(kd_bool_t) kdGenMemOpsReplaceByte(void *ptr, kd_usize_t sz, kd_byte_t find_item, kd_byte_t new_item);
 KDAPI(kd_bool_t) kdGenMemOpsReplaceBlock(void *ptr, kd_usize_t ptr_sz, void *find_block, void *new_block, kd_usize_t block_sz);
 
+KDAPI(kd_bool_t) kdGenMemOpsReplaceNotByte(void *ptr, kd_usize_t sz, kd_byte_t find_item, kd_byte_t new_item);
+KDAPI(kd_bool_t) kdGenMemOpsReplaceNotBlock(void *ptr, kd_usize_t ptr_sz, void *find_block, void *new_block, kd_usize_t block_sz);
+
 KDAPI(kd_bool_t) kdGenMemOpsReplaceByteRange(void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end, kd_byte_t find_item, kd_byte_t new_item);
 KDAPI(kd_bool_t) kdGenMemOpsReplaceBlockRange(void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end, void *find_block, void *new_block, kd_usize_t block_sz);
+
+KDAPI(kd_bool_t) kdGenMemOpsReplaceNotByteBound(void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end_count, kd_byte_t find_item, kd_byte_t new_item);
+KDAPI(kd_bool_t) kdGenMemOpsReplaceNotBlockBound(void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end_count_byte, void *find_block, void *new_block, kd_usize_t block_sz);
 
 KDAPI(kd_bool_t) kdGenMemOpsReplaceLastByte(void *ptr, kd_usize_t sz, kd_byte_t find_item, kd_byte_t new_item);
 KDAPI(kd_bool_t) kdGenMemOpsReplaceLastBlock(void *ptr, kd_usize_t ptr_sz, void *find_block, void *new_block, kd_usize_t block_sz);
 
+KDAPI(kd_bool_t) kdGenMemOpsReplaceLastNotByte(void *ptr, kd_usize_t sz, kd_byte_t find_item, kd_byte_t new_item);
+KDAPI(kd_bool_t) kdGenMemOpsReplaceLastNotBlock(void *ptr, kd_usize_t ptr_sz, void *find_block, void *new_block, kd_usize_t block_sz);
+
 KDAPI(kd_bool_t) kdGenMemOpsReplaceLastByteRange(void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end, kd_byte_t find_item, kd_byte_t new_item);
 KDAPI(kd_bool_t) kdGenMemOpsReplaceLastBlockRange(void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end, void *find_block, void *new_block, kd_usize_t block_sz);
+
+KDAPI(kd_bool_t) kdGenMemOpsReplaceLastNotByteBound(void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end_count, kd_byte_t find_item, kd_byte_t new_item);
+KDAPI(kd_bool_t) kdGenMemOpsReplaceLastNotBlockBound(void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end_count_byte, void *find_block, void *new_block, kd_usize_t block_sz);
 
 KDAPI(kd_bool_t) kdGenMemOpsReplaceAllBytes(void *ptr, kd_usize_t sz, kd_usize_t *count, kd_byte_t find_item, kd_byte_t new_item);
 KDAPI(kd_bool_t) kdGenMemOpsReplaceAllBlocks(void *ptr, kd_usize_t ptr_sz, kd_usize_t *byte_count, void *find_block, void *new_block, kd_usize_t block_sz);
 
+KDAPI(kd_bool_t) kdGenMemOpsReplaceAllNotBytes(void *ptr, kd_usize_t sz, kd_usize_t *count, kd_byte_t find_item, kd_byte_t new_item);
+KDAPI(kd_bool_t) kdGenMemOpsReplaceAllNotBlocks(void *ptr, kd_usize_t ptr_sz, kd_usize_t *byte_count, void *find_block, void *new_block, kd_usize_t block_sz);
+
 KDAPI(kd_bool_t) kdGenMemOpsReplaceAllBytesBound(void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end, kd_usize_t *count, kd_byte_t find_item, kd_byte_t new_item);
 KDAPI(kd_bool_t) kdGenMemOpsReplaceAllBlocksBound(void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end, kd_usize_t *byte_count, void *find_block, void *new_block, kd_usize_t block_sz);
+
+KDAPI(kd_bool_t) kdGenMemOpsReplaceAllNotBytesBound(void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end_count, kd_usize_t *count, kd_byte_t find_item, kd_byte_t new_item);
+KDAPI(kd_bool_t) kdGenMemOpsReplaceAllNotBlocksBound(void *base, kd_usize_t base_sz, kd_usize_t begin_idx, kd_usize_t end_count_byte, kd_usize_t *byte_count, void *find_block, void *new_block, kd_usize_t block_sz);
 
 /* --- */
 
@@ -263,156 +333,274 @@ KDAPI(kd_bool_t) kdGenMemOpsFindSequencesU32(kd_u32_t *idxs, kd_usize_t idxs_sz,
 KDAPI(kd_bool_t) kdGenMemOpsFindSequencesU64(kd_u64_t *idxs, kd_usize_t idxs_sz, kd_usize_t *idx_elems, void *ptr, kd_usize_t ptr_sz, void *sequence, kd_usize_t sequence_sz);
 #endif
 
-#define GenMemOpsCopy                     kdGenMemOpsCopy
-#define GenMemOpsCopyRegion               kdGenMemOpsCopyRegion
-#define GenMemOpsCopyRange                kdGenMemOpsCopyRange
+#define GenMemOpsCopy                       kdGenMemOpsCopy
+#define GenMemOpsCopyRegion                 kdGenMemOpsCopyRegion
+#define GenMemOpsCopyRange                  kdGenMemOpsCopyRange
 
-#define GenMemOpsMove                     kdGenMemOpsMove
-#define GenMemOpsMoveRegion               kdGenMemOpsMoveRegion
-#define GenMemOpsMoveRange                kdGenMemOpsMoveRange
+#define GenMemOpsMove                       kdGenMemOpsMove
+#define GenMemOpsMoveRegion                 kdGenMemOpsMoveRegion
+#define GenMemOpsMoveRange                  kdGenMemOpsMoveRange
 
-#define GenMemOpsConcat                   kdGenMemOpsConcat
-#define GenMemOpsConcatRange              kdGenMemOpsConcatRange
+#define GenMemOpsConcat                     kdGenMemOpsConcat
+#define GenMemOpsConcatRange                kdGenMemOpsConcatRange
 
-#define GenMemOpsSetBytes                 kdGenMemOpsSetBytes
-#define GenMemOpsSetBytesRange            kdGenMemOpsSetBytesRange
+#define GenMemOpsSetBytes                   kdGenMemOpsSetBytes
+#define GenMemOpsSetBytesRange              kdGenMemOpsSetBytesRange
 
-#define GenMemOpsSetZerosBytes            kdGenMemOpsSetZerosBytes
-#define GenMemOpsSetZerosBytesRange       kdGenMemOpsSetZerosBytesRange
+#define GenMemOpsSetZerosBytes              kdGenMemOpsSetZerosBytes
+#define GenMemOpsSetZerosBytesRange         kdGenMemOpsSetZerosBytesRange
 
-#define GenMemOpsSetOnesBytes             kdGenMemOpsSetOnesBytes
-#define GenMemOpsSetOnesBytesRange        kdGenMemOpsSetOnesBytesRange
+#define GenMemOpsSetOnesBytes               kdGenMemOpsSetOnesBytes
+#define GenMemOpsSetOnesBytesRange          kdGenMemOpsSetOnesBytesRange
 
-#define GenMemOpsSetBlocks                kdGenMemOpsSetBlocks
-#define GenMemOpsSetBlocksRange           kdGenMemOpsSetBlocksRange
+#define GenMemOpsSetBlocks                  kdGenMemOpsSetBlocks
+#define GenMemOpsSetBlocksRange             kdGenMemOpsSetBlocksRange
 
-#define GenMemOpsFill                     kdGenMemOpsFill
-#define GenMemOpsFillRange                kdGenMemOpsFillRange
+#define GenMemOpsFill                       kdGenMemOpsFill
+#define GenMemOpsFillRange                  kdGenMemOpsFillRange
 
-#define GenMemOpsReverseBytes             kdGenMemOpsReverseBytes
-#define GenMemOpsReverseBytesRange        kdGenMemOpsReverseBytesRange
+#define GenMemOpsReverseBytes               kdGenMemOpsReverseBytes
+#define GenMemOpsReverseBytesRange          kdGenMemOpsReverseBytesRange
 
-#define GenMemOpsReverseBlocks            kdGenMemOpsReverseBlocks
-#define GenMemOpsReverseBlocksRange       kdGenMemOpsReverseBlocksRange
+#define GenMemOpsReverseBlocks              kdGenMemOpsReverseBlocks
+#define GenMemOpsReverseBlocksRange         kdGenMemOpsReverseBlocksRange
 
-#define GenMemOpsRotateRight              kdGenMemOpsRotateRight
-#define GenMemOpsRotateRightRange         kdGenMemOpsRotateRightRange
+#define GenMemOpsRotateRight                kdGenMemOpsRotateRight
+#define GenMemOpsRotateRightRange           kdGenMemOpsRotateRightRange
 
-#define GenMemOpsRotateLeft               kdGenMemOpsRotateLeft
-#define GenMemOpsRotateLeftRange          kdGenMemOpsRotateLeftRange
+#define GenMemOpsRotateLeft                 kdGenMemOpsRotateLeft
+#define GenMemOpsRotateLeftRange            kdGenMemOpsRotateLeftRange
 
-#define GenMemOpsInnerSwapBytes           kdGenMemOpsInnerSwapBytes
-#define GenMemOpsInnerSwapBytesRange      kdGenMemOpsInnerSwapBytesRange
+#define GenMemOpsInnerSwapBytes             kdGenMemOpsInnerSwapBytes
+#define GenMemOpsInnerSwapBytesRange        kdGenMemOpsInnerSwapBytesRange
 
-#define GenMemOpsInnerSwapBlocks          kdGenMemOpsInnerSwapBlocks
-#define GenMemOpsInnerSwapBlocksRange     kdGenMemOpsInnerSwapBlocksRange
+#define GenMemOpsInnerSwapBlocks            kdGenMemOpsInnerSwapBlocks
+#define GenMemOpsInnerSwapBlocksRange       kdGenMemOpsInnerSwapBlocksRange
 
-#define GenMemOpsSwapBytes                kdGenMemOpsSwapBytes
-#define GenMemOpsSwapBytesRange           kdGenMemOpsSwapBytesRange
+#define GenMemOpsSwapBytes                  kdGenMemOpsSwapBytes
+#define GenMemOpsSwapBytesRange             kdGenMemOpsSwapBytesRange
 
-#define GenMemOpsSwapBlocks               kdGenMemOpsSwapBlocks
-#define GenMemOpsSwapBlocksRange          kdGenMemOpsSwapBlocksRange
+#define GenMemOpsSwapBlocks                 kdGenMemOpsSwapBlocks
+#define GenMemOpsSwapBlocksRange            kdGenMemOpsSwapBlocksRange
 
-#define GenMemOpsSequenceSwap             kdGenMemOpsSequenceSwap
-#define GenMemOpsSequenceSwapRange        kdGenMemOpsSequenceSwapRange
+#define GenMemOpsSequenceSwap               kdGenMemOpsSequenceSwap
+#define GenMemOpsSequenceSwapRange          kdGenMemOpsSequenceSwapRange
 
-#define GenMemOpsIsEqual                  kdGenMemOpsIsEqual
-#define GenMemOpsIsEqualRegion            kdGenMemOpsIsEqualRegion
-#define GenMemOpsIsEqualRange             kdGenMemOpsIsEqualRange
+#define GenMemOpsIsEqual                    kdGenMemOpsIsEqual
+#define GenMemOpsIsEqualRegion              kdGenMemOpsIsEqualRegion
+#define GenMemOpsIsEqualRange               kdGenMemOpsIsEqualRange
 
-#define GenMemOpsIsZeros                  kdGenMemOpsIsZeros
-#define GenMemOpsIsZerosRange             kdGenMemOpsIsZerosRange
+#define GenMemOpsIsZeros                    kdGenMemOpsIsZeros
+#define GenMemOpsIsZerosRange               kdGenMemOpsIsZerosRange
 
-#define GenMemOpsIsOnes                   kdGenMemOpsIsOnes
-#define GenMemOpsIsOnesRange              kdGenMemOpsIsOnesRange
+#define GenMemOpsIsOnes                     kdGenMemOpsIsOnes
+#define GenMemOpsIsOnesRange                kdGenMemOpsIsOnesRange
 
-#define GenMemOpsHasPrefix                kdGenMemOpsHasPrefix
-#define GenMemOpsHasSuffix                kdGenMemOpsHasSuffix
+#define GenMemOpsHasPrefix                  kdGenMemOpsHasPrefix
+#define GenMemOpsHasSuffix                  kdGenMemOpsHasSuffix
 
-#define GenMemOpsRegionOverlap            kdGenMemOpsRegionOverlap
-#define GenMemOpsRegionContains           kdGenMemOpsRegionContains
+#define GenMemOpsRegionOverlap              kdGenMemOpsRegionOverlap
+#define GenMemOpsRegionContains             kdGenMemOpsRegionContains
 
-#define GenMemOpsGetOffsetChecked         kdGenMemOpsGetOffsetChecked
-#define GenMemOpsCheckBounds              kdGenMemOpsCheckBounds
+#define GenMemOpsGetOffsetChecked           kdGenMemOpsGetOffsetChecked
+#define GenMemOpsCheckBounds                kdGenMemOpsCheckBounds
 
-#define GenMemOpsElemCountFromBytes       kdGenMemOpsElemCountFromBytes
+#define GenMemOpsElemCountFromBytes         kdGenMemOpsElemCountFromBytes
 
-#define GenMemOpsByteAt                   kdGenMemOpsByteAt
-#define GenMemOpsBlockAt                  kdGenMemOpsBlockAt
+#define GenMemOpsByteAt                     kdGenMemOpsByteAt
+#define GenMemOpsBlockAt                    kdGenMemOpsBlockAt
 
-#define GenMemOpsSetByteAt                kdGenMemOpsSetByteAt
-#define GenMemOpsSetBlockAt               kdGenMemOpsSetBlockAt
+#define GenMemOpsSetByteAt                  kdGenMemOpsSetByteAt
+#define GenMemOpsSetBlockAt                 kdGenMemOpsSetBlockAt
 
-#define GenMemOpsInsertByteAt             kdGenMemOpsInsertByteAt
-#define GenMemOpsInsertBlockAt            kdGenMemOpsInsertBlockAt
+#define GenMemOpsInsertByteAt               kdGenMemOpsInsertByteAt
+#define GenMemOpsInsertBlockAt              kdGenMemOpsInsertBlockAt
 
-#define GenMemOpsRemoveByteAt             kdGenMemOpsRemoveByteAt
-#define GenMemOpsRemoveBlockAt            kdGenMemOpsRemoveBlockAt
+#define GenMemOpsRemoveByteAt               kdGenMemOpsRemoveByteAt
+#define GenMemOpsRemoveBlockAt              kdGenMemOpsRemoveBlockAt
 
-#define GenMemOpsRemoveBytes              kdGenMemOpsRemoveBytes
-#define GenMemOpsRemoveBlocks             kdGenMemOpsRemoveBlocks
+#define GenMemOpsRemoveBytes                kdGenMemOpsRemoveBytes
+#define GenMemOpsRemoveBlocks               kdGenMemOpsRemoveBlocks
 
-#define GenMemOpsCountBytes               kdGenMemOpsCountBytes
-#define GenMemOpsCountBlocks              kdGenMemOpsCountBlocks
+#define GenMemOpsCountBytes                 kdGenMemOpsCountBytes
+#define GenMemOpsCountBlocks                kdGenMemOpsCountBlocks
+#define GenMemOpsCountBytesBound            kdGenMemOpsCountBytesBound
+#define GenMemOpsCountBlocksBound           kdGenMemOpsCountBlocksBound
 
-#define GenMemOpsCountNotBytes            kdGenMemOpsCountNotBytes
-#define GenMemOpsCountNotBlocks           kdGenMemOpsCountNotBlocks
+#define GenMemOpsCountNotBytes              kdGenMemOpsCountNotBytes
+#define GenMemOpsCountNotBlocks             kdGenMemOpsCountNotBlocks
+#define GenMemOpsCountNotBytesBound         kdGenMemOpsCountNotBytesBound
+#define GenMemOpsCountNotBlocksBound        kdGenMemOpsCountNotBlocksBound
 
-#define GenMemOpsFindByteIndex            kdGenMemOpsFindByteIndex
-#define GenMemOpsFindBlockIndex           kdGenMemOpsFindBlockIndex
+#define GenMemOpsFindByteIndex              kdGenMemOpsFindByteIndex
+#define GenMemOpsFindBlockIndex             kdGenMemOpsFindBlockIndex
 
-#define GenMemOpsFindByteIndexRange       kdGenMemOpsFindByteIndexRange
-#define GenMemOpsFindBlockIndexRange      kdGenMemOpsFindBlockIndexRange
+#define GenMemOpsFindNotByteIndex           kdGenMemOpsFindNotByteIndex
+#define GenMemOpsFindNotBlockIndex          kdGenMemOpsFindNotBlockIndex
 
-#define GenMemOpsFindLastByteIndex        kdGenMemOpsFindLastByteIndex
-#define GenMemOpsFindLastBlockIndex       kdGenMemOpsFindLastBlockIndex
+#define GenMemOpsFindByteIndexRange         kdGenMemOpsFindByteIndexRange
+#define GenMemOpsFindBlockIndexRange        kdGenMemOpsFindBlockIndexRange
 
-#define GenMemOpsFindLastByteIndexRange   kdGenMemOpsFindLastByteIndexRange
-#define GenMemOpsFindLastBlockIndexRange  kdGenMemOpsFindLastBlockIndexRange
+#define GenMemOpsFindNotByteIndexBound      kdGenMemOpsFindNotByteIndexBound
+#define GenMemOpsFindNotBlockIndexBound     kdGenMemOpsFindNotBlockIndexBound
 
-#define GenMemOpsFindByteIndicesU8        kdGenMemOpsFindByteIndicesU8
-#define GenMemOpsFindByteIndicesU16       kdGenMemOpsFindByteIndicesU16
-#define GenMemOpsFindByteIndicesU32       kdGenMemOpsFindByteIndicesU32
-#define GenMemOpsFindByteIndicesU64       kdGenMemOpsFindByteIndicesU64
+#define GenMemOpsFindLastByteIndex          kdGenMemOpsFindLastByteIndex
+#define GenMemOpsFindLastBlockIndex         kdGenMemOpsFindLastBlockIndex
 
-#define GenMemOpsFindBlockIndicesU8       kdGenMemOpsFindBlockIndicesU8
-#define GenMemOpsFindBlockIndicesU16      kdGenMemOpsFindBlockIndicesU16
-#define GenMemOpsFindBlockIndicesU32      kdGenMemOpsFindBlockIndicesU32
-#define GenMemOpsFindBlockIndicesU64      kdGenMemOpsFindBlockIndicesU64
+#define GenMemOpsFindLastNotByteIndex       kdGenMemOpsFindLastNotByteIndex
+#define GenMemOpsFindLastNotBlockIndex      kdGenMemOpsFindLastNotBlockIndex
 
-#define GenMemOpsFindByteIndices          kdGenMemOpsFindByteIndices
-#define GenMemOpsFindBlockIndices         kdGenMemOpsFindBlockIndices
+#define GenMemOpsFindLastByteIndexRange     kdGenMemOpsFindLastByteIndexRange
+#define GenMemOpsFindLastBlockIndexRange    kdGenMemOpsFindLastBlockIndexRange
 
-#define GenMemOpsFindByteIndicesRangeU8   kdGenMemOpsFindByteIndicesRangeU8
-#define GenMemOpsFindByteIndicesRangeU16  kdGenMemOpsFindByteIndicesRangeU16
-#define GenMemOpsFindByteIndicesRangeU32  kdGenMemOpsFindByteIndicesRangeU32
-#define GenMemOpsFindByteIndicesRangeU64  kdGenMemOpsFindByteIndicesRangeU64
+#define GenMemOpsFindLastNotByteIndexBound  kdGenMemOpsFindLastNotByteIndexBound
+#define GenMemOpsFindLastNotBlockIndexBound kdGenMemOpsFindLastNotBlockIndexBound
+
+#define GenMemOpsFindByteIndicesU8          kdGenMemOpsFindByteIndicesU8
+#define GenMemOpsFindByteIndicesU16         kdGenMemOpsFindByteIndicesU16
+#define GenMemOpsFindByteIndicesU32         kdGenMemOpsFindByteIndicesU32
+#if defined KD_ARCH_64BIT_INT
+    #define GenMemOpsFindByteIndicesU64 kdGenMemOpsFindByteIndicesU64
+#endif
+
+#define GenMemOpsFindBlockIndicesU8  kdGenMemOpsFindBlockIndicesU8
+#define GenMemOpsFindBlockIndicesU16 kdGenMemOpsFindBlockIndicesU16
+#define GenMemOpsFindBlockIndicesU32 kdGenMemOpsFindBlockIndicesU32
+#if defined KD_ARCH_64BIT_INT
+    #define GenMemOpsFindBlockIndicesU64 kdGenMemOpsFindBlockIndicesU64
+#endif
+
+#define GenMemOpsFindNotByteIndicesU8  kdGenMemOpsFindNotByteIndicesU8
+#define GenMemOpsFindNotByteIndicesU16 kdGenMemOpsFindNotByteIndicesU16
+#define GenMemOpsFindNotByteIndicesU32 kdGenMemOpsFindNotByteIndicesU32
+#if defined KD_ARCH_64BIT_INT
+    #define GenMemOpsFindNotByteIndicesU64 kdGenMemOpsFindNotByteIndicesU64
+#endif
+
+#define GenMemOpsFindNotBlockIndicesU8  kdGenMemOpsFindNotBlockIndicesU8
+#define GenMemOpsFindNotBlockIndicesU16 kdGenMemOpsFindNotBlockIndicesU16
+#define GenMemOpsFindNotBlockIndicesU32 kdGenMemOpsFindNotBlockIndicesU32
+#if defined KD_ARCH_64BIT_INT
+    #define GenMemOpsFindNotBlockIndicesU64 kdGenMemOpsFindNotBlockIndicesU64
+#endif
+
+#define GenMemOpsFindByteIndices         kdGenMemOpsFindByteIndices
+#define GenMemOpsFindBlockIndices        kdGenMemOpsFindBlockIndices
+
+#define GenMemOpsFindNotByteIndices      kdGenMemOpsFindNotByteIndices
+#define GenMemOpsFindNotBlockIndices     kdGenMemOpsFindNotBlockIndices
+
+#define GenMemOpsFindByteIndicesRangeU8  kdGenMemOpsFindByteIndicesRangeU8
+#define GenMemOpsFindByteIndicesRangeU16 kdGenMemOpsFindByteIndicesRangeU16
+#define GenMemOpsFindByteIndicesRangeU32 kdGenMemOpsFindByteIndicesRangeU32
+#if defined KD_ARCH_64BIT_INT
+    #define GenMemOpsFindByteIndicesRangeU64 kdGenMemOpsFindByteIndicesRangeU64
+#endif
 
 #define GenMemOpsFindBlockIndicesRangeU8  kdGenMemOpsFindBlockIndicesRangeU8
 #define GenMemOpsFindBlockIndicesRangeU16 kdGenMemOpsFindBlockIndicesRangeU16
 #define GenMemOpsFindBlockIndicesRangeU32 kdGenMemOpsFindBlockIndicesRangeU32
-#define GenMemOpsFindBlockIndicesRangeU64 kdGenMemOpsFindBlockIndicesRangeU64
+#if defined KD_ARCH_64BIT_INT
+    #define GenMemOpsFindBlockIndicesRangeU64 kdGenMemOpsFindBlockIndicesRangeU64
+#endif
 
-#define GenMemOpsFindByteIndicesRange     kdGenMemOpsFindByteIndicesRange
-#define GenMemOpsFindBlockIndicesRange    kdGenMemOpsFindBlockIndicesRange
+#define GenMemOpsFindNotByteIndicesBoundU8  kdGenMemOpsFindNotByteIndicesBoundU8
+#define GenMemOpsFindNotByteIndicesBoundU16 kdGenMemOpsFindNotByteIndicesBoundU16
+#define GenMemOpsFindNotByteIndicesBoundU32 kdGenMemOpsFindNotByteIndicesBoundU32
+#if defined KD_ARCH_64BIT_INT
+    #define GenMemOpsFindNotByteIndicesBoundU64 kdGenMemOpsFindNotByteIndicesBoundU64
+#endif
 
-#define GenMemOpsReplaceByte              kdGenMemOpsReplaceByte
-#define GenMemOpsReplaceBlock             kdGenMemOpsReplaceBlock
+#define GenMemOpsFindNotBlockIndicesBoundU8  kdGenMemOpsFindNotBlockIndicesBoundU8
+#define GenMemOpsFindNotBlockIndicesBoundU16 kdGenMemOpsFindNotBlockIndicesBoundU16
+#define GenMemOpsFindNotBlockIndicesBoundU32 kdGenMemOpsFindNotBlockIndicesBoundU32
+#if defined KD_ARCH_64BIT_INT
+    #define GenMemOpsFindNotBlockIndicesBoundU64 kdGenMemOpsFindNotBlockIndicesBoundU64
+#endif
 
-#define GenMemOpsReplaceByteRange         kdGenMemOpsReplaceByteRange
-#define GenMemOpsReplaceBlockRange        kdGenMemOpsReplaceBlockRange
+#define GenMemOpsFindByteIndicesRange        kdGenMemOpsFindByteIndicesRange
+#define GenMemOpsFindBlockIndicesRange       kdGenMemOpsFindBlockIndicesRange
 
-#define GenMemOpsReplaceLastByte          kdGenMemOpsReplaceLastByte
-#define GenMemOpsReplaceLastBlock         kdGenMemOpsReplaceLastBlock
+#define GenMemOpsFindNotByteIndicesBound     kdGenMemOpsFindNotByteIndicesBound
+#define GenMemOpsFindNotBlockIndicesBound    kdGenMemOpsFindNotBlockIndicesBound
 
-#define GenMemOpsReplaceLastByteRange     kdGenMemOpsReplaceLastByteRange
-#define GenMemOpsReplaceLastBlockRange    kdGenMemOpsReplaceLastBlockRange
+#define GenMemOpsReplaceByte                 kdGenMemOpsReplaceByte
+#define GenMemOpsReplaceBlock                kdGenMemOpsReplaceBlock
 
-#define GenMemOpsReplaceAllBytes          kdGenMemOpsReplaceAllBytes
-#define GenMemOpsReplaceAllBlocks         kdGenMemOpsReplaceAllBlocks
+#define GenMemOpsReplaceNotByte              kdGenMemOpsReplaceNotByte
+#define GenMemOpsReplaceNotBlock             kdGenMemOpsReplaceNotBlock
 
-#define GenMemOpsReplaceAllBytesBound     kdGenMemOpsReplaceAllBytesBound
-#define GenMemOpsReplaceAllBlocksBound    kdGenMemOpsReplaceAllBlocksBound
+#define GenMemOpsReplaceNotByteBound         kdGenMemOpsReplaceNotByteBound
+#define GenMemOpsReplaceNotBlockBound        kdGenMemOpsReplaceNotBlockBound
+
+#define GenMemOpsReplaceByteRange            kdGenMemOpsReplaceByteRange
+#define GenMemOpsReplaceBlockRange           kdGenMemOpsReplaceBlockRange
+
+#define GenMemOpsReplaceLastByte             kdGenMemOpsReplaceLastByte
+#define GenMemOpsReplaceLastBlock            kdGenMemOpsReplaceLastBlock
+
+#define GenMemOpsReplaceLastNotByte          kdGenMemOpsReplaceLastNotByte
+#define GenMemOpsReplaceLastNotBlock         kdGenMemOpsReplaceLastNotBlock
+
+#define GenMemOpsReplaceLastByteRange        kdGenMemOpsReplaceLastByteRange
+#define GenMemOpsReplaceLastBlockRange       kdGenMemOpsReplaceLastBlockRange
+
+#define GenMemOpsReplaceLastNotByteBound     kdGenMemOpsReplaceLastNotByteBound
+#define GenMemOpsReplaceLastNotBlockBound    kdGenMemOpsReplaceLastNotBlockBound
+
+#define GenMemOpsReplaceAllBytes             kdGenMemOpsReplaceAllBytes
+#define GenMemOpsReplaceAllBlocks            kdGenMemOpsReplaceAllBlocks
+
+#define GenMemOpsReplaceAllNotBytes          kdGenMemOpsReplaceAllNotBytes
+#define GenMemOpsReplaceAllNotBlocks         kdGenMemOpsReplaceAllNotBlocks
+
+#define GenMemOpsReplaceAllBytesBound        kdGenMemOpsReplaceAllBytesBound
+#define GenMemOpsReplaceAllBlocksBound       kdGenMemOpsReplaceAllBlocksBound
+
+#define GenMemOpsReplaceAllNotBytesBound     kdGenMemOpsReplaceAllNotBytesBound
+#define GenMemOpsReplaceAllNotBlocksBound    kdGenMemOpsReplaceAllNotBlocksBound
+
+#define GenMemOpsFindIndexPredicate          kdGenMemOpsFindIndexPredicate
+#define GenMemOpsFindIndexBoundPredicate     kdGenMemOpsFindIndexBoundPredicate
+
+#define GenMemOpsFindLastIndexPredicate      kdGenMemOpsFindLastIndexPredicate
+#define GenMemOpsFindLastIndexBoundPredicate kdGenMemOpsFindLastIndexBoundPredicate
+
+#define GenMemOpsFindIndicesPredicateU8      kdGenMemOpsFindIndicesPredicateU8
+#define GenMemOpsFindIndicesPredicateU16     kdGenMemOpsFindIndicesPredicateU16
+#define GenMemOpsFindIndicesPredicateU32     kdGenMemOpsFindIndicesPredicateU32
+#if defined KD_ARCH_64BIT_INT
+    #define GenMemOpsFindIndicesPredicateU64 kdGenMemOpsFindIndicesPredicateU64
+#endif
+
+#define GenMemOpsFindIndicesPredicate         kdGenMemOpsFindIndicesPredicate
+
+#define GenMemOpsFindIndicesBoundPredicateU8  kdGenMemOpsFindIndicesBoundPredicateU8
+#define GenMemOpsFindIndicesBoundPredicateU16 kdGenMemOpsFindIndicesBoundPredicateU16
+#define GenMemOpsFindIndicesBoundPredicateU32 kdGenMemOpsFindIndicesBoundPredicateU32
+#if defined KD_ARCH_64BIT_INT
+    #define GenMemOpsFindIndicesBoundPredicateU64 kdGenMemOpsFindIndicesBoundPredicateU64
+#endif
+
+#define GenMemOpsFindIndicesBoundPredicate kdGenMemOpsFindIndicesBoundPredicate
+
+#define GenMemOpsFindPredicate             kdGenMemOpsFindPredicate
+#define GenMemOpsFindBoundPredicate        kdGenMemOpsFindBoundPredicate
+
+#define GenMemOpsFindLastPredicate         kdGenMemOpsFindLastPredicate
+#define GenMemOpsFindLastBoundPredicate    kdGenMemOpsFindLastBoundPredicate
+
+#define GenMemOpsFindAllPredicate          kdGenMemOpsFindAllPredicate
+#define GenMemOpsFindAllBoundPredicate     kdGenMemOpsFindAllBoundPredicate
+
+#define GenMemOpsReplacePredicate          kdGenMemOpsReplacePredicate
+#define GenMemOpsReplaceBoundPredicate     kdGenMemOpsReplaceBoundPredicate
+
+#define GenMemOpsReplaceLastPredicate      kdGenMemOpsReplaceLastPredicate
+#define GenMemOpsReplaceLastBoundPredicate kdGenMemOpsReplaceLastBoundPredicate
+
+#define GenMemOpsReplaceAllPredicate       kdGenMemOpsReplaceAllPredicate
+#define GenMemOpsReplaceAllBoundPredicate  kdGenMemOpsReplaceAllBoundPredicate
 
 
 KD_EXTERN_END

@@ -233,23 +233,29 @@ IF "!BUILD_TESTS!"=="1" (
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsCopy"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsCopyRegion"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsCopyRange"
+
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsMove"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsMoveRegion"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsMoveRange"
+
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsConcat"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsConcatRange"
+
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsSetBytes"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsSetBytesRange"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsSetBlocks"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsSetBlocksRange"
+
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsInnerSwapBytes"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsInnerSwapBytesRange"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsInnerSwapBlocks"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsInnerSwapBlocksRange"
+
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsSwapBytes"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsSwapBytesRange"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsSwapBlocks"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsSwapBlocksRange"
+
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsIsEqual"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsIsEqualRegion"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsIsEqualRange"
@@ -257,21 +263,26 @@ IF "!BUILD_TESTS!"=="1" (
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsIsZerosRange"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsIsOnes"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsIsOnesRange"
+
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsHasPrefix"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsHasSuffix"
+
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsRegionOverlap"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsRegionContains"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsCheckBounds"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsGetOffsetChecked"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsElemCountFromBytes"
+
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReverseBytes"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReverseBytesRange"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReverseBlocks"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReverseBlocksRange"
+
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsRotateRight"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsRotateRightRange"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsRotateLeft"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsRotateLeftRange"
+
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsByteAt"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsBlockAt"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsSetByteAt"
@@ -280,46 +291,106 @@ IF "!BUILD_TESTS!"=="1" (
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsInsertBlockAt"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsRemoveByteAt"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsRemoveBlockAt"
+
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsCountBytes"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsCountBlocks"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsCountBytesBound"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsCountBlocksBound"
+
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsCountNotBytes"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsCountNotBlocks"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsCountNotBytesBound"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsCountNotBlocksBound"
+
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindByteIndex"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindBlockIndex"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindNotByteIndex"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindNotBlockIndex"
+
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindByteIndexRange"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindBlockIndexRange"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindNotByteIndexBound"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindNotBlockIndexBound"
+
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindLastByteIndex"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindLastBlockIndex"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindLastNotByteIndex"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindLastNotBlockIndex"
+
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindLastByteIndexRange"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindLastBlockIndexRange"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindLastNotByteIndexBound"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindLastNotBlockIndexBound"
+
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindByteIndicesU8"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindByteIndicesU16"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindByteIndicesU32"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindByteIndicesU64"
+
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindBlockIndicesU8"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindBlockIndicesU16"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindBlockIndicesU32"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindBlockIndicesU64"
+
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindNotByteIndicesU8"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindNotByteIndicesU16"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindNotByteIndicesU32"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindNotByteIndicesU64"
+
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindNotBlockIndicesU8"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindNotBlockIndicesU16"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindNotBlockIndicesU32"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindNotBlockIndicesU64"
+
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindByteIndicesRangeU8"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindByteIndicesRangeU16"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindByteIndicesRangeU32"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindByteIndicesRangeU64"
+
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindBlockIndicesRangeU8"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindBlockIndicesRangeU16"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindBlockIndicesRangeU32"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindBlockIndicesRangeU64"
+
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindNotByteIndicesBoundU8"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindNotByteIndicesBoundU16"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindNotByteIndicesBoundU32"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindNotByteIndicesBoundU64"
+
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindNotBlockIndicesBoundU8"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindNotBlockIndicesBoundU16"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindNotBlockIndicesBoundU32"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindNotBlockIndicesBoundU64"
+
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReplaceByte"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReplaceBlock"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReplaceNotByte"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReplaceNotBlock"
+
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReplaceByteRange"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReplaceBlockRange"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReplaceNotByteBound"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReplaceNotBlockBound"
+
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReplaceLastByte"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReplaceLastBlock"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReplaceLastNotByte"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReplaceLastNotBlock"
+
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReplaceLastByteRange"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReplaceLastBlockRange"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReplaceLastNotByteBound"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReplaceLastNotBlockBound"
+
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReplaceAllBytes"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReplaceAllBlocks"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReplaceAllNotBytes"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReplaceAllNotBlocks"
+
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReplaceAllBytesBound"
-	SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReplaceAllBlocksBound"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReplaceAllBlocksBound"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReplaceAllNotBytesBound"
+	SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReplaceAllNotBlocksBound"
 
 	FOR %%T IN (!TESTS!) DO (
 	    SET "TARGET_NAME=%%T"

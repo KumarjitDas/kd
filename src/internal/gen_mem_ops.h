@@ -129,6 +129,14 @@ KDAPI(bool) kdi_GenMemOpsFindBlockIndex_U64(usize *idx, u64 *ptr, usize sz, u64 
 #endif
 KDAPI(bool) kdi_GenMemOpsFindBlockIndex_Un(usize *idx, byte *ptr, usize sz, byte *block, usize block_sz);
 
+KDAPI(bool) kdi_GenMemOpsFindNotBlockIndex_U8(usize *idx, u8 *ptr, usize sz, u8 item);
+KDAPI(bool) kdi_GenMemOpsFindNotBlockIndex_U16(usize *idx, u16 *ptr, usize sz, u16 item);
+KDAPI(bool) kdi_GenMemOpsFindNotBlockIndex_U32(usize *idx, u32 *ptr, usize sz, u32 item);
+#if defined ARCH_64BIT_INT
+KDAPI(bool) kdi_GenMemOpsFindNotBlockIndex_U64(usize *idx, u64 *ptr, usize sz, u64 item);
+#endif
+KDAPI(bool) kdi_GenMemOpsFindNotBlockIndex_Un(usize *idx, byte *ptr, usize sz, byte *block, usize block_sz);
+
 KDAPI(bool) kdi_GenMemOpsFindLastBlockIndex_U8(usize *idx, u8 *ptr, usize sz, u8 item);
 KDAPI(bool) kdi_GenMemOpsFindLastBlockIndex_U16(usize *idx, u16 *ptr, usize sz, u16 item);
 KDAPI(bool) kdi_GenMemOpsFindLastBlockIndex_U32(usize *idx, u32 *ptr, usize sz, u32 item);
@@ -136,6 +144,14 @@ KDAPI(bool) kdi_GenMemOpsFindLastBlockIndex_U32(usize *idx, u32 *ptr, usize sz, 
 KDAPI(bool) kdi_GenMemOpsFindLastBlockIndex_U64(usize *idx, u64 *ptr, usize sz, u64 item);
 #endif
 KDAPI(bool) kdi_GenMemOpsFindLastBlockIndex_Un(usize *idx, byte *ptr, usize sz, byte *block, usize block_sz);
+
+KDAPI(bool) kdi_GenMemOpsFindLastNotBlockIndex_U8(usize *idx, u8 *ptr, usize sz, u8 item);
+KDAPI(bool) kdi_GenMemOpsFindLastNotBlockIndex_U16(usize *idx, u16 *ptr, usize sz, u16 item);
+KDAPI(bool) kdi_GenMemOpsFindLastNotBlockIndex_U32(usize *idx, u32 *ptr, usize sz, u32 item);
+#if defined ARCH_64BIT_INT
+KDAPI(bool) kdi_GenMemOpsFindLastNotBlockIndex_U64(usize *idx, u64 *ptr, usize sz, u64 item);
+#endif
+KDAPI(bool) kdi_GenMemOpsFindLastNotBlockIndex_Un(usize *idx, byte *ptr, usize sz, byte *block, usize block_sz);
 
 KDAPI(void) kdi_GenMemOpsFindBlockIndicesU8_IdxU8(u8 *idxs, usize idxs_sz, usize *found, u8 *ptr, usize ptr_sz, u8 item);
 KDAPI(void) kdi_GenMemOpsFindBlockIndicesU16_IdxU8(u8 *idxs, usize idxs_sz, usize *found, u16 *ptr, usize ptr_sz, u16 item);
@@ -169,6 +185,38 @@ KDAPI(void) kdi_GenMemOpsFindBlockIndicesU64_IdxU64(u64 *idxs, usize idxs_sz, us
 KDAPI(void) kdi_GenMemOpsFindBlockIndicesUn_IdxU64(u64 *idxs, usize idxs_sz, usize *found, byte *ptr, usize ptr_sz, byte *block, usize block_sz);
 #endif
 
+KDAPI(void) kdi_GenMemOpsFindNotBlockIndicesU8_IdxU8(u8 *idxs, usize idxs_sz, usize *found, u8 *ptr, usize ptr_sz, u8 item);
+KDAPI(void) kdi_GenMemOpsFindNotBlockIndicesU16_IdxU8(u8 *idxs, usize idxs_sz, usize *found, u16 *ptr, usize ptr_sz, u16 item);
+KDAPI(void) kdi_GenMemOpsFindNotBlockIndicesU32_IdxU8(u8 *idxs, usize idxs_sz, usize *found, u32 *ptr, usize ptr_sz, u32 item);
+#if defined ARCH_64BIT_INT
+KDAPI(void) kdi_GenMemOpsFindNotBlockIndicesU64_IdxU8(u8 *idxs, usize idxs_sz, usize *found, u64 *ptr, usize ptr_sz, u64 item);
+#endif
+KDAPI(void) kdi_GenMemOpsFindNotBlockIndicesUn_IdxU8(u8 *idxs, usize idxs_sz, usize *found, byte *ptr, usize ptr_sz, byte *block, usize block_sz);
+
+KDAPI(void) kdi_GenMemOpsFindNotBlockIndicesU8_IdxU16(u16 *idxs, usize idxs_sz, usize *found, u8 *ptr, usize ptr_sz, u8 item);
+KDAPI(void) kdi_GenMemOpsFindNotBlockIndicesU16_IdxU16(u16 *idxs, usize idxs_sz, usize *found, u16 *ptr, usize ptr_sz, u16 item);
+KDAPI(void) kdi_GenMemOpsFindNotBlockIndicesU32_IdxU16(u16 *idxs, usize idxs_sz, usize *found, u32 *ptr, usize ptr_sz, u32 item);
+#if defined ARCH_64BIT_INT
+KDAPI(void) kdi_GenMemOpsFindNotBlockIndicesU64_IdxU16(u16 *idxs, usize idxs_sz, usize *found, u64 *ptr, usize ptr_sz, u64 item);
+#endif
+KDAPI(void) kdi_GenMemOpsFindNotBlockIndicesUn_IdxU16(u16 *idxs, usize idxs_sz, usize *found, byte *ptr, usize ptr_sz, byte *block, usize block_sz);
+
+KDAPI(void) kdi_GenMemOpsFindNotBlockIndicesU8_IdxU32(u32 *idxs, usize idxs_sz, usize *found, u8 *ptr, usize ptr_sz, u8 item);
+KDAPI(void) kdi_GenMemOpsFindNotBlockIndicesU16_IdxU32(u32 *idxs, usize idxs_sz, usize *found, u16 *ptr, usize ptr_sz, u16 item);
+KDAPI(void) kdi_GenMemOpsFindNotBlockIndicesU32_IdxU32(u32 *idxs, usize idxs_sz, usize *found, u32 *ptr, usize ptr_sz, u32 item);
+#if defined ARCH_64BIT_INT
+KDAPI(void) kdi_GenMemOpsFindNotBlockIndicesU64_IdxU32(u32 *idxs, usize idxs_sz, usize *found, u64 *ptr, usize ptr_sz, u64 item);
+#endif
+KDAPI(void) kdi_GenMemOpsFindNotBlockIndicesUn_IdxU32(u32 *idxs, usize idxs_sz, usize *found, byte *ptr, usize ptr_sz, byte *block, usize block_sz);
+
+#if defined ARCH_64BIT_INT
+KDAPI(void) kdi_GenMemOpsFindNotBlockIndicesU8_IdxU64(u64 *idxs, usize idxs_sz, usize *found, u8 *ptr, usize ptr_sz, u8 item);
+KDAPI(void) kdi_GenMemOpsFindNotBlockIndicesU16_IdxU64(u64 *idxs, usize idxs_sz, usize *found, u16 *ptr, usize ptr_sz, u16 item);
+KDAPI(void) kdi_GenMemOpsFindNotBlockIndicesU32_IdxU64(u64 *idxs, usize idxs_sz, usize *found, u32 *ptr, usize ptr_sz, u32 item);
+KDAPI(void) kdi_GenMemOpsFindNotBlockIndicesU64_IdxU64(u64 *idxs, usize idxs_sz, usize *found, u64 *ptr, usize ptr_sz, u64 item);
+KDAPI(void) kdi_GenMemOpsFindNotBlockIndicesUn_IdxU64(u64 *idxs, usize idxs_sz, usize *found, byte *ptr, usize ptr_sz, byte *block, usize block_sz);
+#endif
+
 KDAPI(void) kdi_GenMemOpsReplaceBlock_U8(u8 *ptr, usize sz, u8 find_item, u8 new_item);
 KDAPI(void) kdi_GenMemOpsReplaceBlock_U16(u16 *ptr, usize sz, u16 find_item, u16 new_item);
 KDAPI(void) kdi_GenMemOpsReplaceBlock_U32(u32 *ptr, usize sz, u32 find_item, u32 new_item);
@@ -176,6 +224,14 @@ KDAPI(void) kdi_GenMemOpsReplaceBlock_U32(u32 *ptr, usize sz, u32 find_item, u32
 KDAPI(void) kdi_GenMemOpsReplaceBlock_U64(u64 *ptr, usize sz, u64 find_item, u64 new_item);
 #endif
 KDAPI(void) kdi_GenMemOpsReplaceBlock_Un(byte *ptr, usize ptr_sz, byte *find_block, byte *new_block, usize block_sz);
+
+KDAPI(void) kdi_GenMemOpsReplaceNotBlock_U8(u8 *ptr, usize sz, u8 find_item, u8 new_item);
+KDAPI(void) kdi_GenMemOpsReplaceNotBlock_U16(u16 *ptr, usize sz, u16 find_item, u16 new_item);
+KDAPI(void) kdi_GenMemOpsReplaceNotBlock_U32(u32 *ptr, usize sz, u32 find_item, u32 new_item);
+#if defined ARCH_64BIT_INT
+KDAPI(void) kdi_GenMemOpsReplaceNotBlock_U64(u64 *ptr, usize sz, u64 find_item, u64 new_item);
+#endif
+KDAPI(void) kdi_GenMemOpsReplaceNotBlock_Un(byte *ptr, usize ptr_sz, byte *find_block, byte *new_block, usize block_sz);
 
 KDAPI(void) kdi_GenMemOpsReplaceLastBlock_U8(u8 *ptr, usize sz, u8 find_item, u8 new_item);
 KDAPI(void) kdi_GenMemOpsReplaceLastBlock_U16(u16 *ptr, usize sz, u16 find_item, u16 new_item);
@@ -185,6 +241,14 @@ KDAPI(void) kdi_GenMemOpsReplaceLastBlock_U64(u64 *ptr, usize sz, u64 find_item,
 #endif
 KDAPI(void) kdi_GenMemOpsReplaceLastBlock_Un(byte *ptr, usize ptr_sz, byte *find_block, byte *new_block, usize block_sz);
 
+KDAPI(void) kdi_GenMemOpsReplaceLastNotBlock_U8(u8 *ptr, usize sz, u8 find_item, u8 new_item);
+KDAPI(void) kdi_GenMemOpsReplaceLastNotBlock_U16(u16 *ptr, usize sz, u16 find_item, u16 new_item);
+KDAPI(void) kdi_GenMemOpsReplaceLastNotBlock_U32(u32 *ptr, usize sz, u32 find_item, u32 new_item);
+#if defined ARCH_64BIT_INT
+KDAPI(void) kdi_GenMemOpsReplaceLastNotBlock_U64(u64 *ptr, usize sz, u64 find_item, u64 new_item);
+#endif
+KDAPI(void) kdi_GenMemOpsReplaceLastNotBlock_Un(byte *ptr, usize ptr_sz, byte *find_block, byte *new_block, usize block_sz);
+
 KDAPI(void) kdi_GenMemOpsReplaceAllBlocks_U8(u8 *ptr, usize sz, usize *count, u8 find_item, u8 new_item);
 KDAPI(void) kdi_GenMemOpsReplaceAllBlocks_U16(u16 *ptr, usize sz, usize *count, u16 find_item, u16 new_item);
 KDAPI(void) kdi_GenMemOpsReplaceAllBlocks_U32(u32 *ptr, usize sz, usize *count, u32 find_item, u32 new_item);
@@ -192,6 +256,14 @@ KDAPI(void) kdi_GenMemOpsReplaceAllBlocks_U32(u32 *ptr, usize sz, usize *count, 
 KDAPI(void) kdi_GenMemOpsReplaceAllBlocks_U64(u64 *ptr, usize sz, usize *count, u64 find_item, u64 new_item);
 #endif
 KDAPI(void) kdi_GenMemOpsReplaceAllBlocks_Un(byte *ptr, usize ptr_sz, usize *count, byte *find_block, byte *new_block, usize block_sz);
+
+KDAPI(void) kdi_GenMemOpsReplaceAllNotBlocks_U8(u8 *ptr, usize sz, usize *count, u8 find_item, u8 new_item);
+KDAPI(void) kdi_GenMemOpsReplaceAllNotBlocks_U16(u16 *ptr, usize sz, usize *count, u16 find_item, u16 new_item);
+KDAPI(void) kdi_GenMemOpsReplaceAllNotBlocks_U32(u32 *ptr, usize sz, usize *count, u32 find_item, u32 new_item);
+#if defined ARCH_64BIT_INT
+KDAPI(void) kdi_GenMemOpsReplaceAllNotBlocks_U64(u64 *ptr, usize sz, usize *count, u64 find_item, u64 new_item);
+#endif
+KDAPI(void) kdi_GenMemOpsReplaceAllNotBlocks_Un(byte *ptr, usize ptr_sz, usize *count, byte *find_block, byte *new_block, usize block_sz);
 
 
 EXTERN_END
