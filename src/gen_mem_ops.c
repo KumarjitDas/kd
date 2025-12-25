@@ -53,7 +53,7 @@ GenMemOpsCopyRegion(void *dst, usize dst_sz, usize *copied_sz, void *src, usize 
 
 
 bool
-GenMemOpsCopyRange(void *dst_base, usize dst_base_sz, usize *copied_sz, void *src_base, usize src_base_sz, usize dst_idx, usize src_idx, usize byte_count)
+GenMemOpsCopyBound(void *dst_base, usize dst_base_sz, usize *copied_sz, void *src_base, usize src_base_sz, usize dst_idx, usize src_idx, usize byte_count)
 {
     usize final_dst_sz, final_src_sz;
 
@@ -64,7 +64,7 @@ GenMemOpsCopyRange(void *dst_base, usize dst_base_sz, usize *copied_sz, void *sr
 
     *copied_sz = 0;
 
-    if (!dst_base || !src_base || !src_base_sz || dst_idx >= dst_base_sz || src_idx >= src_base_sz || !byte_count)
+    if (!dst_base || !src_base || dst_idx >= dst_base_sz || src_idx >= src_base_sz || !byte_count)
     {
         return RESULT_FAILURE;
     }
@@ -121,7 +121,7 @@ GenMemOpsMoveRegion(void *dst, usize dst_sz, usize *moved_sz, void *src, usize s
 
 
 bool
-GenMemOpsMoveRange(void *dst_base, usize dst_base_sz, usize *moved_sz, void *src_base, usize src_base_sz, usize dst_idx, usize src_idx, usize byte_count)
+GenMemOpsMoveBound(void *dst_base, usize dst_base_sz, usize *moved_sz, void *src_base, usize src_base_sz, usize dst_idx, usize src_idx, usize byte_count)
 {
     usize final_dst_sz, final_src_sz;
 
@@ -152,7 +152,21 @@ GenMemOpsMoveRange(void *dst_base, usize dst_base_sz, usize *moved_sz, void *src
 
 
 bool
-GenMemOpsConcat(void *dst, usize dst_sz, usize *concat_sz, void *src_1, usize src_1_sz, void *src_2, usize src_2_sz)
+GenMemOpsConcat(void *dst, usize dst_sz, void *src_1, void *src_2, usize concat_sz)
+{
+    if (!dst || !dst_sz || !src_1 || !src_2 || !concat_sz)
+    {
+        return RESULT_FAILURE;
+    }
+
+    kdi_GenMemOpsConcat(PBYTE_C(dst), dst_sz, PBYTE_C(src_1), concat_sz, PBYTE_C(src_2), concat_sz);
+
+    return RESULT_SUCCESS;
+}
+
+
+bool
+GenMemOpsConcatRegion(void *dst, usize dst_sz, usize *concat_sz, void *src_1, usize src_1_sz, void *src_2, usize src_2_sz)
 {
     if (!concat_sz)
     {
@@ -176,7 +190,7 @@ GenMemOpsConcat(void *dst, usize dst_sz, usize *concat_sz, void *src_1, usize sr
 
 
 bool
-GenMemOpsConcatRange(void *dst_base, usize dst_base_sz, usize dst_idx, usize *concat_sz, void *src_base_1, usize src_base_1_sz, usize src_1_begin_idx, usize src_1_byte_count, void *src_base_2, usize src_base_2_sz, usize src_2_begin_idx, usize src_2_byte_count)
+GenMemOpsConcatBound(void *dst_base, usize dst_base_sz, usize dst_idx, usize *concat_sz, void *src_base_1, usize src_base_1_sz, usize src_1_begin_idx, usize src_1_byte_count, void *src_base_2, usize src_base_2_sz, usize src_2_begin_idx, usize src_2_byte_count)
 {
     usize final_dst_sz, final_src_1_sz, final_src_2_sz;
 
@@ -197,7 +211,7 @@ GenMemOpsConcatRange(void *dst_base, usize dst_base_sz, usize dst_idx, usize *co
     final_src_1_sz = src_base_1_sz - src_1_begin_idx;
     final_src_1_sz = final_src_1_sz > src_1_byte_count ? src_1_byte_count : final_src_1_sz;
 
-    final_src_2_sz = src_base_1_sz - src_2_begin_idx;
+    final_src_2_sz = src_base_2_sz - src_2_begin_idx;
     final_src_2_sz = final_src_2_sz > src_2_byte_count ? src_2_byte_count : final_src_2_sz;
 
     *concat_sz     = final_src_1_sz + final_src_2_sz;
@@ -224,7 +238,7 @@ GenMemOpsSetBytes(void *dst, usize sz, byte val)
 
 
 bool
-GenMemOpsSetBytesRange(void *base, usize base_sz, usize *set_sz, usize begin_idx, usize count, byte val)
+GenMemOpsSetBytesBound(void *base, usize base_sz, usize *set_sz, usize begin_idx, usize count, byte val)
 {
     if (!set_sz)
     {
@@ -233,7 +247,7 @@ GenMemOpsSetBytesRange(void *base, usize base_sz, usize *set_sz, usize begin_idx
 
     *set_sz = 0;
 
-    if (!base || !base_sz || begin_idx >= base_sz || !count)
+    if (!base || begin_idx >= base_sz || !count)
     {
         return RESULT_FAILURE;
     }
@@ -250,15 +264,9 @@ GenMemOpsSetBytesRange(void *base, usize base_sz, usize *set_sz, usize begin_idx
 bool
 GenMemOpsSetBlocks(void *dst, usize dst_sz, void *block, usize block_sz)
 {
-    if (!dst || !dst_sz || !block || !block_sz)
+    if (!dst || !dst_sz || !block || !block_sz || dst_sz % block_sz)
     {
         return RESULT_FAILURE;
-    }
-
-    if (dst_sz % block_sz)
-    {
-        kdi_GenMemOpsSetBlocks_Un(dst, dst_sz, block, block_sz);
-        return RESULT_SUCCESS;
     }
 
     switch (block_sz)
@@ -286,7 +294,7 @@ GenMemOpsSetBlocks(void *dst, usize dst_sz, void *block, usize block_sz)
 
 
 bool
-GenMemOpsSetBlocksRange(void *base, usize base_sz, usize *set_sz, usize begin_idx, usize byte_count, void *block, usize block_sz)
+GenMemOpsSetBlocksBound(void *base, usize base_sz, usize *set_sz, usize begin_idx, usize byte_count, void *block, usize block_sz)
 {
     if (!set_sz)
     {
@@ -295,19 +303,15 @@ GenMemOpsSetBlocksRange(void *base, usize base_sz, usize *set_sz, usize begin_id
 
     *set_sz = 0;
 
-    if (!base || !base_sz || begin_idx >= base_sz || !byte_count || !block || !block_sz)
+    if (!base || begin_idx >= base_sz || !byte_count || !block || !block_sz || base_sz % block_sz || begin_idx % block_sz)
     {
         return RESULT_FAILURE;
     }
 
-    *set_sz = base_sz - begin_idx;
-    *set_sz = byte_count < *set_sz ? byte_count : *set_sz;
+    byte_count -= byte_count % block_sz;
 
-    if (*set_sz % block_sz)
-    {
-        kdi_GenMemOpsSetBlocks_Un(PBYTE_C(base) + begin_idx, *set_sz, block, block_sz);
-        return RESULT_SUCCESS;
-    }
+    *set_sz     = base_sz - begin_idx;
+    *set_sz     = byte_count < *set_sz ? byte_count : *set_sz;
 
     switch (block_sz)
     {
@@ -336,14 +340,9 @@ GenMemOpsSetBlocksRange(void *base, usize base_sz, usize *set_sz, usize begin_id
 bool
 GenMemOpsReverseBytes(void *ptr, usize sz)
 {
-    if (!ptr)
+    if (!ptr || !sz)
     {
         return RESULT_FAILURE;
-    }
-
-    if (!sz)
-    {
-        return RESULT_SUCCESS;
     }
 
     kdi_GenMemOpsReverseBlocks_U8(ptr, sz);
@@ -353,18 +352,13 @@ GenMemOpsReverseBytes(void *ptr, usize sz)
 
 
 bool
-GenMemOpsReverseBytesRange(void *base, usize base_sz, usize begin_idx, usize count)
+GenMemOpsReverseBytesBound(void *base, usize base_sz, usize begin_idx, usize count)
 {
     usize final_sz;
 
-    if (!base || begin_idx >= base_sz)
+    if (!base || begin_idx >= base_sz || !count)
     {
         return RESULT_FAILURE;
-    }
-
-    if (!count)
-    {
-        return RESULT_SUCCESS;
     }
 
     final_sz = base_sz - begin_idx;
@@ -379,36 +373,29 @@ GenMemOpsReverseBytesRange(void *base, usize base_sz, usize begin_idx, usize cou
 bool
 GenMemOpsReverseBlocks(void *ptr, usize ptr_sz, usize block_sz)
 {
-    if (!ptr || !block_sz)
+    if (!ptr || !block_sz || ptr_sz % block_sz)
     {
         return RESULT_FAILURE;
     }
 
-    if (!ptr_sz)
-    {
-        return RESULT_SUCCESS;
-    }
-
-    ptr_sz /= block_sz;
-
     switch (block_sz)
     {
         case 1:
-            kdi_GenMemOpsReverseBlocks_U8(ptr, ptr_sz * block_sz);
+            kdi_GenMemOpsReverseBlocks_U8(ptr, ptr_sz);
             break;
         case 2:
-            kdi_GenMemOpsReverseBlocks_U16(ptr, ptr_sz * block_sz);
+            kdi_GenMemOpsReverseBlocks_U16(ptr, ptr_sz);
             break;
         case 4:
-            kdi_GenMemOpsReverseBlocks_U32(ptr, ptr_sz * block_sz);
+            kdi_GenMemOpsReverseBlocks_U32(ptr, ptr_sz);
             break;
 #if defined ARCH_64BIT_INT
         case 8:
-            kdi_GenMemOpsReverseBlocks_U64(ptr, ptr_sz * block_sz);
+            kdi_GenMemOpsReverseBlocks_U64(ptr, ptr_sz);
             break;
 #endif
         default:
-            kdi_GenMemOpsReverseBlocks_Un(ptr, ptr_sz * block_sz, block_sz);
+            kdi_GenMemOpsReverseBlocks_Un(ptr, ptr_sz, block_sz);
     }
 
     return RESULT_SUCCESS;
@@ -416,42 +403,38 @@ GenMemOpsReverseBlocks(void *ptr, usize ptr_sz, usize block_sz)
 
 
 bool
-GenMemOpsReverseBlocksRange(void *base, usize base_sz, usize begin_idx, usize byte_count, usize block_sz)
+GenMemOpsReverseBlocksBound(void *base, usize base_sz, usize begin_idx, usize byte_count, usize block_sz)
 {
     usize final_sz;
 
-    if (!base || begin_idx >= base_sz || !block_sz)
+    if (!base || begin_idx >= base_sz || !block_sz || base_sz % block_sz || begin_idx % block_sz || !byte_count)
     {
         return RESULT_FAILURE;
     }
 
-    if (!byte_count)
-    {
-        return RESULT_SUCCESS;
-    }
+    byte_count -= byte_count % block_sz;
 
-    final_sz  = base_sz - begin_idx;
-    final_sz  = byte_count < final_sz ? byte_count : final_sz;
-    final_sz /= block_sz;
+    final_sz    = base_sz - begin_idx;
+    final_sz    = byte_count < final_sz ? byte_count : final_sz;
 
     switch (block_sz)
     {
         case 1:
-            kdi_GenMemOpsReverseBlocks_U8(PU8_C(PBYTE_C(base) + begin_idx), final_sz * block_sz);
+            kdi_GenMemOpsReverseBlocks_U8(PU8_C(PBYTE_C(base) + begin_idx), final_sz);
             break;
         case 2:
-            kdi_GenMemOpsReverseBlocks_U16(PU16_C(PBYTE_C(base) + begin_idx), final_sz * block_sz);
+            kdi_GenMemOpsReverseBlocks_U16(PU16_C(PBYTE_C(base) + begin_idx), final_sz);
             break;
         case 4:
-            kdi_GenMemOpsReverseBlocks_U32(PU32_C(PBYTE_C(base) + begin_idx), final_sz * block_sz);
+            kdi_GenMemOpsReverseBlocks_U32(PU32_C(PBYTE_C(base) + begin_idx), final_sz);
             break;
 #if defined ARCH_64BIT_INT
         case 8:
-            kdi_GenMemOpsReverseBlocks_U64(PU64_C(PBYTE_C(base) + begin_idx), final_sz * block_sz);
+            kdi_GenMemOpsReverseBlocks_U64(PU64_C(PBYTE_C(base) + begin_idx), final_sz);
             break;
 #endif
         default:
-            kdi_GenMemOpsReverseBlocks_Un(PBYTE_C(base) + begin_idx, final_sz * block_sz, block_sz);
+            kdi_GenMemOpsReverseBlocks_Un(PBYTE_C(base) + begin_idx, final_sz, block_sz);
     }
 
     return RESULT_SUCCESS;
@@ -473,9 +456,9 @@ GenMemOpsInnerSwapBytes(void *ptr, usize idx_1, usize idx_2)
 
 
 bool
-GenMemOpsInnerSwapBytesRange(void *base, usize base_sz, usize idx_1, usize idx_2)
+GenMemOpsInnerSwapBytesBound(void *base, usize base_sz, usize idx_1, usize idx_2)
 {
-    if (!base || !base_sz || idx_1 >= base_sz || idx_2 >= base_sz)
+    if (!base || idx_1 >= base_sz || idx_2 >= base_sz)
     {
         return RESULT_FAILURE;
     }
@@ -488,7 +471,7 @@ GenMemOpsInnerSwapBytesRange(void *base, usize base_sz, usize idx_1, usize idx_2
 
 KDAPI(bool) GenMemOpsInnerSwapBlocks(void *ptr, usize idx_1, usize idx_2, usize block_sz)
 {
-    if (!ptr || !block_sz)
+    if (!ptr || !block_sz || idx_1 % block_sz || idx_2 % block_sz)
     {
         return RESULT_FAILURE;
     }
@@ -518,9 +501,9 @@ KDAPI(bool) GenMemOpsInnerSwapBlocks(void *ptr, usize idx_1, usize idx_2, usize 
 
 
 bool
-GenMemOpsInnerSwapBlocksRange(void *base, usize base_sz, usize idx_1, usize idx_2, usize block_sz)
+GenMemOpsInnerSwapBlocksBound(void *base, usize base_sz, usize idx_1, usize idx_2, usize block_sz)
 {
-    if (!base || idx_1 >= base_sz || idx_2 >= base_sz || !block_sz || block_sz > base_sz || (idx_1 + block_sz) > base_sz || (idx_2 + block_sz) > base_sz)
+    if (!base || idx_1 >= base_sz || idx_2 >= base_sz || !block_sz || base_sz % block_sz || idx_1 % block_sz || idx_2 % block_sz || (idx_1 + block_sz) > base_sz || (idx_2 + block_sz) > base_sz)
     {
         return RESULT_FAILURE;
     }
@@ -564,7 +547,7 @@ GenMemOpsSwapBytes(void *ptr_1, void *ptr_2)
 
 
 bool
-GenMemOpsSwapBytesRange(void *base_1, usize base_1_sz, usize base_1_idx, void *base_2, usize base_2_sz, usize base_2_idx)
+GenMemOpsSwapBytesBound(void *base_1, usize base_1_sz, usize base_1_idx, void *base_2, usize base_2_sz, usize base_2_idx)
 {
     if (!base_1 || base_1_idx >= base_1_sz || !base_2 || base_2_idx >= base_2_sz)
     {
@@ -610,9 +593,9 @@ GenMemOpsSwapBlocks(void *ptr_1, void *ptr_2, usize block_sz)
 
 
 bool
-GenMemOpsSwapBlocksRange(void *base_1, usize base_1_sz, usize base_1_idx, void *base_2, usize base_2_sz, usize base_2_idx, usize block_sz)
+GenMemOpsSwapBlocksBound(void *base_1, usize base_1_sz, usize base_1_idx, void *base_2, usize base_2_sz, usize base_2_idx, usize block_sz)
 {
-    if (!base_1 || block_sz > base_1_sz || base_1_idx >= base_1_sz || !base_2 || block_sz > base_2_sz || base_2_idx >= base_2_sz || !block_sz || (base_1_idx + block_sz) > base_1_sz || (base_2_idx + block_sz) > base_2_sz)
+    if (!base_1 || base_1_idx >= base_1_sz || !base_2 || base_2_idx >= base_2_sz || !block_sz || base_1_sz % block_sz || base_1_idx % block_sz || base_2_sz % block_sz || base_2_idx % block_sz || (base_1_idx + block_sz) > base_1_sz || (base_2_idx + block_sz) > base_2_sz)
     {
         return RESULT_FAILURE;
     }
@@ -644,14 +627,9 @@ GenMemOpsSwapBlocksRange(void *base_1, usize base_1_sz, usize base_1_idx, void *
 bool
 GenMemOpsRotateRight(void *ptr, usize sz, usize k)
 {
-    if (!ptr)
+    if (!ptr || !sz)
     {
         return RESULT_FAILURE;
-    }
-
-    if (!sz)
-    {
-        return RESULT_SUCCESS;
     }
 
     k %= sz;
@@ -668,18 +646,13 @@ GenMemOpsRotateRight(void *ptr, usize sz, usize k)
 
 
 bool
-GenMemOpsRotateRightRange(void *base, usize base_sz, usize begin_idx, usize byte_count, usize k)
+GenMemOpsRotateRightBound(void *base, usize base_sz, usize begin_idx, usize byte_count, usize k)
 {
     usize final_sz;
 
-    if (!base || begin_idx >= base_sz)
+    if (!base || begin_idx >= base_sz || !byte_count)
     {
         return RESULT_FAILURE;
-    }
-
-    if (!base_sz || !byte_count)
-    {
-        return RESULT_SUCCESS;
     }
 
     final_sz  = base_sz - begin_idx;
@@ -701,14 +674,9 @@ GenMemOpsRotateRightRange(void *base, usize base_sz, usize begin_idx, usize byte
 bool
 GenMemOpsRotateLeft(void *ptr, usize sz, usize k)
 {
-    if (!ptr)
+    if (!ptr || !sz)
     {
         return RESULT_FAILURE;
-    }
-
-    if (!sz)
-    {
-        return RESULT_SUCCESS;
     }
 
     k %= sz;
@@ -725,18 +693,13 @@ GenMemOpsRotateLeft(void *ptr, usize sz, usize k)
 
 
 bool
-GenMemOpsRotateLeftRange(void *base, usize base_sz, usize begin_idx, usize byte_count, usize k)
+GenMemOpsRotateLeftBound(void *base, usize base_sz, usize begin_idx, usize byte_count, usize k)
 {
     usize final_sz;
 
-    if (!base || begin_idx >= base_sz)
+    if (!base || begin_idx >= base_sz || !byte_count)
     {
         return RESULT_FAILURE;
-    }
-
-    if (!base_sz || !byte_count)
-    {
-        return RESULT_SUCCESS;
     }
 
     final_sz  = base_sz - begin_idx;
@@ -801,7 +764,7 @@ GenMemOpsIsEqualRegion(bool *result, void *ptr_1, usize ptr_1_sz, void *ptr_2, u
 
 
 bool
-kdGenMemOpsIsEqualRange(bool *result, void *base_1, usize base_1_sz, usize base_1_idx, void *base_2, usize base_2_sz, usize base_2_idx, usize byte_count)
+kdGenMemOpsIsEqualBound(bool *result, void *base_1, usize base_1_sz, usize base_1_idx, void *base_2, usize base_2_sz, usize base_2_idx, usize byte_count)
 {
     usize base_1_final_sz, base_2_final_sz;
 
@@ -860,7 +823,7 @@ GenMemOpsIsZeros(bool *result, void *ptr, usize sz)
 
 
 bool
-GenMemOpsIsZerosRange(bool *result, void *base, usize base_sz, usize begin_idx, usize byte_count)
+GenMemOpsIsZerosBound(bool *result, void *base, usize base_sz, usize begin_idx, usize byte_count)
 {
     usize final_sz;
 
@@ -905,7 +868,7 @@ GenMemOpsIsOnes(bool *result, void *ptr, usize sz)
 
 
 bool
-GenMemOpsIsOnesRange(bool *result, void *base, usize base_sz, usize begin_idx, usize byte_count)
+GenMemOpsIsOnesBound(bool *result, void *base, usize base_sz, usize begin_idx, usize byte_count)
 {
     usize final_sz;
 
@@ -1617,7 +1580,7 @@ GenMemOpsFindNotBlockIndex(usize *idx, void *ptr, usize ptr_sz, void *block, usi
 
 
 bool
-GenMemOpsFindByteIndexRange(usize *idx, void *base, usize base_sz, usize begin_idx, usize end, byte item)
+GenMemOpsFindByteIndexBound(usize *idx, void *base, usize base_sz, usize begin_idx, usize end, byte item)
 {
     bool result;
 
@@ -1638,7 +1601,7 @@ GenMemOpsFindByteIndexRange(usize *idx, void *base, usize base_sz, usize begin_i
 
 
 bool
-GenMemOpsFindBlockIndexRange(usize *idx, void *base, usize base_sz, usize begin_idx, usize end, void *block, usize block_sz)
+GenMemOpsFindBlockIndexBound(usize *idx, void *base, usize base_sz, usize begin_idx, usize end, void *block, usize block_sz)
 {
     bool result;
 
@@ -1827,7 +1790,7 @@ GenMemOpsFindLastNotBlockIndex(usize *idx, void *ptr, usize ptr_sz, void *block,
 
 
 bool
-GenMemOpsFindLastByteIndexRange(usize *idx, void *base, usize base_sz, usize begin_idx, usize end, byte item)
+GenMemOpsFindLastByteIndexBound(usize *idx, void *base, usize base_sz, usize begin_idx, usize end, byte item)
 {
     bool result;
 
@@ -1848,7 +1811,7 @@ GenMemOpsFindLastByteIndexRange(usize *idx, void *base, usize base_sz, usize beg
 
 
 bool
-GenMemOpsFindLastBlockIndexRange(usize *idx, void *base, usize base_sz, usize begin_idx, usize end, void *block, usize block_sz)
+GenMemOpsFindLastBlockIndexBound(usize *idx, void *base, usize base_sz, usize begin_idx, usize end, void *block, usize block_sz)
 {
     bool result;
 
@@ -2695,7 +2658,7 @@ GenMemOpsFindNotBlockIndices(usize *idxs, usize idxs_sz, usize *found, void *ptr
 
 
 bool
-GenMemOpsFindByteIndicesRangeU8(u8 *idxs, usize idxs_sz, usize *found, void *base, usize base_sz, usize begin_idx, usize end, byte item)
+GenMemOpsFindByteIndicesBoundU8(u8 *idxs, usize idxs_sz, usize *found, void *base, usize base_sz, usize begin_idx, usize end, byte item)
 {
     usize final_sz, found_items, temp_idx;
 
@@ -2758,7 +2721,7 @@ GenMemOpsFindByteIndicesRangeU8(u8 *idxs, usize idxs_sz, usize *found, void *bas
 
 
 bool
-GenMemOpsFindByteIndicesRangeU16(u16 *idxs, usize idxs_sz, usize *found, void *base, usize base_sz, usize begin_idx, usize end, byte item)
+GenMemOpsFindByteIndicesBoundU16(u16 *idxs, usize idxs_sz, usize *found, void *base, usize base_sz, usize begin_idx, usize end, byte item)
 {
     usize final_sz, found_items, temp_idx;
 
@@ -2821,7 +2784,7 @@ GenMemOpsFindByteIndicesRangeU16(u16 *idxs, usize idxs_sz, usize *found, void *b
 
 
 bool
-GenMemOpsFindByteIndicesRangeU32(u32 *idxs, usize idxs_sz, usize *found, void *base, usize base_sz, usize begin_idx, usize end, byte item)
+GenMemOpsFindByteIndicesBoundU32(u32 *idxs, usize idxs_sz, usize *found, void *base, usize base_sz, usize begin_idx, usize end, byte item)
 {
     usize final_sz, found_items, temp_idx;
 
@@ -2885,7 +2848,7 @@ GenMemOpsFindByteIndicesRangeU32(u32 *idxs, usize idxs_sz, usize *found, void *b
 
 #if defined ARCH_64BIT_INT
 bool
-GenMemOpsFindByteIndicesRangeU64(u64 *idxs, usize idxs_sz, usize *found, void *base, usize base_sz, usize begin_idx, usize end, byte item)
+GenMemOpsFindByteIndicesBoundU64(u64 *idxs, usize idxs_sz, usize *found, void *base, usize base_sz, usize begin_idx, usize end, byte item)
 {
     usize found_items, temp_idx;
 
@@ -2937,7 +2900,7 @@ GenMemOpsFindByteIndicesRangeU64(u64 *idxs, usize idxs_sz, usize *found, void *b
 
 
 bool
-GenMemOpsFindBlockIndicesRangeU8(u8 *idxs, usize idxs_sz, usize *found, void *base, usize base_sz, usize begin_idx, usize end, void *block, usize block_sz)
+GenMemOpsFindBlockIndicesBoundU8(u8 *idxs, usize idxs_sz, usize *found, void *base, usize base_sz, usize begin_idx, usize end, void *block, usize block_sz)
 {
     usize final_sz, found_items, temp_idx;
     bool  exceeds_max;
@@ -3020,7 +2983,7 @@ GenMemOpsFindBlockIndicesRangeU8(u8 *idxs, usize idxs_sz, usize *found, void *ba
 
 
 bool
-GenMemOpsFindBlockIndicesRangeU16(u16 *idxs, usize idxs_sz, usize *found, void *base, usize base_sz, usize begin_idx, usize end, void *block, usize block_sz)
+GenMemOpsFindBlockIndicesBoundU16(u16 *idxs, usize idxs_sz, usize *found, void *base, usize base_sz, usize begin_idx, usize end, void *block, usize block_sz)
 {
     usize final_sz, found_items, temp_idx;
     bool  exceeds_max;
@@ -3103,7 +3066,7 @@ GenMemOpsFindBlockIndicesRangeU16(u16 *idxs, usize idxs_sz, usize *found, void *
 
 
 bool
-GenMemOpsFindBlockIndicesRangeU32(u32 *idxs, usize idxs_sz, usize *found, void *base, usize base_sz, usize begin_idx, usize end, void *block, usize block_sz)
+GenMemOpsFindBlockIndicesBoundU32(u32 *idxs, usize idxs_sz, usize *found, void *base, usize base_sz, usize begin_idx, usize end, void *block, usize block_sz)
 {
     usize final_sz, found_items, temp_idx;
     bool  exceeds_max;
@@ -3187,7 +3150,7 @@ GenMemOpsFindBlockIndicesRangeU32(u32 *idxs, usize idxs_sz, usize *found, void *
 
 #if defined ARCH_64BIT_INT
 bool
-GenMemOpsFindBlockIndicesRangeU64(u64 *idxs, usize idxs_sz, usize *found, void *base, usize base_sz, usize begin_idx, usize end, void *block, usize block_sz)
+GenMemOpsFindBlockIndicesBoundU64(u64 *idxs, usize idxs_sz, usize *found, void *base, usize base_sz, usize begin_idx, usize end, void *block, usize block_sz)
 {
     usize final_sz, found_items, temp_idx;
 
@@ -3770,23 +3733,23 @@ GenMemOpsFindNotBlockIndicesBoundU64(u64 *idxs, usize idxs_sz, usize *found, voi
 
 
 bool
-GenMemOpsFindByteIndicesRange(usize *idxs, usize idxs_sz, usize *found, void *base, usize base_sz, usize begin_idx, usize end, byte item)
+GenMemOpsFindByteIndicesBound(usize *idxs, usize idxs_sz, usize *found, void *base, usize base_sz, usize begin_idx, usize end, byte item)
 {
 #if defined ARCH_64BIT_INT
-    return GenMemOpsFindByteIndicesRangeU64(idxs, idxs_sz, found, base, base_sz, begin_idx, end, item);
+    return GenMemOpsFindByteIndicesBoundU64(idxs, idxs_sz, found, base, base_sz, begin_idx, end, item);
 #else
-    return GenMemOpsFindByteIndicesRangeU32(idxs, idxs_sz, found, base, base_sz, begin_idx, end, item);
+    return GenMemOpsFindByteIndicesBoundU32(idxs, idxs_sz, found, base, base_sz, begin_idx, end, item);
 #endif
 }
 
 
 bool
-GenMemOpsFindBlockIndicesRange(usize *idxs, usize idxs_sz, usize *found, void *base, usize base_sz, usize begin_idx, usize end, void *block, usize block_sz)
+GenMemOpsFindBlockIndicesBound(usize *idxs, usize idxs_sz, usize *found, void *base, usize base_sz, usize begin_idx, usize end, void *block, usize block_sz)
 {
 #if defined ARCH_64BIT_INT
-    return GenMemOpsFindBlockIndicesRangeU64(idxs, idxs_sz, found, base, base_sz, begin_idx, end, block, block_sz);
+    return GenMemOpsFindBlockIndicesBoundU64(idxs, idxs_sz, found, base, base_sz, begin_idx, end, block, block_sz);
 #else
-    return GenMemOpsFindBlockIndicesRangeU32(idxs, idxs_sz, found, base, base_sz, begin_idx, end, block, block_sz);
+    return GenMemOpsFindBlockIndicesBoundU32(idxs, idxs_sz, found, base, base_sz, begin_idx, end, block, block_sz);
 #endif
 }
 
@@ -3906,7 +3869,7 @@ GenMemOpsReplaceNotBlock(void *ptr, usize ptr_sz, void *find_block, void *new_bl
 
 
 bool
-GenMemOpsReplaceByteRange(void *base, usize base_sz, usize begin_idx, usize end, byte find_item, byte new_item)
+GenMemOpsReplaceByteBound(void *base, usize base_sz, usize begin_idx, usize end, byte find_item, byte new_item)
 {
     usize final_sz;
 
@@ -3929,7 +3892,7 @@ GenMemOpsReplaceByteRange(void *base, usize base_sz, usize begin_idx, usize end,
 
 
 bool
-GenMemOpsReplaceBlockRange(void *base, usize base_sz, usize begin_idx, usize end, void *find_block, void *new_block, usize block_sz)
+GenMemOpsReplaceBlockBound(void *base, usize base_sz, usize begin_idx, usize end, void *find_block, void *new_block, usize block_sz)
 {
     usize final_sz;
 
@@ -4120,7 +4083,7 @@ GenMemOpsReplaceLastNotBlock(void *ptr, usize ptr_sz, void *find_block, void *ne
 
 
 bool
-GenMemOpsReplaceLastByteRange(void *base, usize base_sz, usize begin_idx, usize end, byte find_item, byte new_item)
+GenMemOpsReplaceLastByteBound(void *base, usize base_sz, usize begin_idx, usize end, byte find_item, byte new_item)
 {
     usize final_sz;
 
@@ -4143,7 +4106,7 @@ GenMemOpsReplaceLastByteRange(void *base, usize base_sz, usize begin_idx, usize 
 
 
 bool
-GenMemOpsReplaceLastBlockRange(void *base, usize base_sz, usize begin_idx, usize end, void *find_block, void *new_block, usize block_sz)
+GenMemOpsReplaceLastBlockBound(void *base, usize base_sz, usize begin_idx, usize end, void *find_block, void *new_block, usize block_sz)
 {
     usize final_sz;
 

@@ -232,37 +232,55 @@ IF "!BUILD_TESTS!"=="1" (
 
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsCopy"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsCopyRegion"
-	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsCopyRange"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsCopyBound"
 
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsMove"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsMoveRegion"
-	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsMoveRange"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsMoveBound"
 
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsConcat"
-	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsConcatRange"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsConcatRegion"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsConcatBound"
 
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsSetBytes"
-	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsSetBytesRange"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsSetBytesBound"
+
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsSetBlocks"
-	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsSetBlocksRange"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsSetBlocksBound"
+
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReverseBytes"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReverseBytesBound"
+
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReverseBlocks"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReverseBlocksBound"
 
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsInnerSwapBytes"
-	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsInnerSwapBytesRange"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsInnerSwapBytesBound"
+
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsInnerSwapBlocks"
-	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsInnerSwapBlocksRange"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsInnerSwapBlocksBound"
 
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsSwapBytes"
-	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsSwapBytesRange"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsSwapBytesBound"
+
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsSwapBlocks"
-	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsSwapBlocksRange"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsSwapBlocksBound"
+
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsRotateRight"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsRotateRightBound"
+
+	REM Tests till this point are done.
+
+	SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsRotateLeft"
+	SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsRotateLeftBound"
 
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsIsEqual"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsIsEqualRegion"
-	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsIsEqualRange"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsIsEqualBound"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsIsZeros"
-	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsIsZerosRange"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsIsZerosBound"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsIsOnes"
-	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsIsOnesRange"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsIsOnesBound"
 
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsHasPrefix"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsHasSuffix"
@@ -272,16 +290,6 @@ IF "!BUILD_TESTS!"=="1" (
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsCheckBounds"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsGetOffsetChecked"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsElemCountFromBytes"
-
-	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReverseBytes"
-	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReverseBytesRange"
-	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReverseBlocks"
-	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReverseBlocksRange"
-
-	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsRotateRight"
-	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsRotateRightRange"
-	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsRotateLeft"
-	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsRotateLeftRange"
 
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsByteAt"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsBlockAt"
@@ -307,8 +315,8 @@ IF "!BUILD_TESTS!"=="1" (
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindNotByteIndex"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindNotBlockIndex"
 
-	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindByteIndexRange"
-	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindBlockIndexRange"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindByteIndexBound"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindBlockIndexBound"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindNotByteIndexBound"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindNotBlockIndexBound"
 
@@ -317,8 +325,8 @@ IF "!BUILD_TESTS!"=="1" (
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindLastNotByteIndex"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindLastNotBlockIndex"
 
-	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindLastByteIndexRange"
-	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindLastBlockIndexRange"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindLastByteIndexBound"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindLastBlockIndexBound"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindLastNotByteIndexBound"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindLastNotBlockIndexBound"
 
@@ -342,15 +350,15 @@ IF "!BUILD_TESTS!"=="1" (
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindNotBlockIndicesU32"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindNotBlockIndicesU64"
 
-	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindByteIndicesRangeU8"
-	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindByteIndicesRangeU16"
-	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindByteIndicesRangeU32"
-	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindByteIndicesRangeU64"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindByteIndicesBoundU8"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindByteIndicesBoundU16"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindByteIndicesBoundU32"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindByteIndicesBoundU64"
 
-	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindBlockIndicesRangeU8"
-	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindBlockIndicesRangeU16"
-	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindBlockIndicesRangeU32"
-	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindBlockIndicesRangeU64"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindBlockIndicesBoundU8"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindBlockIndicesBoundU16"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindBlockIndicesBoundU32"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindBlockIndicesBoundU64"
 
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindNotByteIndicesBoundU8"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindNotByteIndicesBoundU16"
@@ -367,8 +375,8 @@ IF "!BUILD_TESTS!"=="1" (
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReplaceNotByte"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReplaceNotBlock"
 
-	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReplaceByteRange"
-	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReplaceBlockRange"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReplaceByteBound"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReplaceBlockBound"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReplaceNotByteBound"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReplaceNotBlockBound"
 
@@ -377,8 +385,8 @@ IF "!BUILD_TESTS!"=="1" (
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReplaceLastNotByte"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReplaceLastNotBlock"
 
-	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReplaceLastByteRange"
-	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReplaceLastBlockRange"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReplaceLastByteBound"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReplaceLastBlockBound"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReplaceLastNotByteBound"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReplaceLastNotBlockBound"
 
@@ -390,7 +398,15 @@ IF "!BUILD_TESTS!"=="1" (
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReplaceAllBytesBound"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReplaceAllBlocksBound"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReplaceAllNotBytesBound"
-	SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReplaceAllNotBlocksBound"
+	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsReplaceAllNotBlocksBound"
+
+	ECHO [BUILD] Compiling test utilities: !TESTS_DIR!\utils.c
+	CL !COMMON_FLAGS! /c "!TESTS_DIR!\utils.c" /Fo:!BUILD_DIR!\
+	IF !ERRORLEVEL! NEQ 0 (
+		ECHO [ERROR] Failed to compile test utilities
+		EXIT /B 1
+	)
+	ECHO [BUILD] Test utilities compiled successfully
 
 	FOR %%T IN (!TESTS!) DO (
 	    SET "TARGET_NAME=%%T"
@@ -399,7 +415,7 @@ IF "!BUILD_TESTS!"=="1" (
 		ECHO "!TARGET_NAME!" | FIND "\" >NUL
 		IF ERRORLEVEL 1 (
 	    	CL !COMMON_FLAGS! /c "!TESTS_DIR!\!TARGET_NAME!.c" /Fo:!BUILD_DIR!\
-			CL !COMMON_EXE_FLAGS! "!BUILD_DIR!\!TARGET_NAME!.obj" "!BUILD_DIR!\!LIB_NAME!.lib" /Fe:"!BUILD_DIR!\!TESTS_DIR!\!TARGET_NAME!.exe"
+			CL !COMMON_EXE_FLAGS! "!BUILD_DIR!\!TARGET_NAME!.obj" "!BUILD_DIR!\utils.obj" "!BUILD_DIR!\!LIB_NAME!.lib" /Fe:"!BUILD_DIR!\!TESTS_DIR!\!TARGET_NAME!.exe"
 		) ELSE (
 			FOR /F "tokens=1,2 delims=\\" %%A IN ("!TARGET_NAME!") DO (
 				SET "TEST_SUBDIR_NAME=%%A"
@@ -411,7 +427,7 @@ IF "!BUILD_TESTS!"=="1" (
 				)
 
 				CL !COMMON_FLAGS! /c "!TESTS_DIR!\!TEST_SUBDIR_NAME!\!TEST_TARGET_NAME!.c" /Fo:!BUILD_DIR!\
-				CL !COMMON_EXE_FLAGS! "!BUILD_DIR!\!TEST_TARGET_NAME!.obj" "!BUILD_DIR!\!LIB_NAME!.lib" /Fe:"!BUILD_DIR!\!TESTS_DIR!\!TEST_SUBDIR_NAME!\!TEST_TARGET_NAME!.exe"
+				CL !COMMON_EXE_FLAGS! "!BUILD_DIR!\!TEST_TARGET_NAME!.obj" "!BUILD_DIR!\utils.obj" "!BUILD_DIR!\!LIB_NAME!.lib" /Fe:"!BUILD_DIR!\!TESTS_DIR!\!TEST_SUBDIR_NAME!\!TEST_TARGET_NAME!.exe"
 			)
 		)
 

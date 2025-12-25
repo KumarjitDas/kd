@@ -413,8 +413,9 @@
 #endif
 
 #if defined KD_CPLUSPLUS
-    /* clang-format off */
-    #define KD_EXTERN_BEGIN  extern "C" {
+    #define KD_EXTERN_BEGIN \
+        extern "C"          \
+        {
     #define KD_EXTERN_END }
 #else
     #define KD_EXTERN_BEGIN
@@ -513,301 +514,300 @@
  * ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
  */
 
-#define RESULT_SUCCESS KD_RESULT_SUCCESS
-#define RESULT_FAILURE KD_RESULT_FAILURE
-#define EXIT_SUCCESS   KD_EXIT_SUCCESS
-#define EXIT_FAILURE   KD_EXIT_FAILURE
+#define RESULT_SUCCESS  KD_RESULT_SUCCESS
+#define RESULT_FAILURE  KD_RESULT_FAILURE
+#define EXIT_SUCCESS    KD_EXIT_SUCCESS
+#define EXIT_FAILURE    KD_EXIT_FAILURE
 
-#define COMP_CSTR KD_COMP_CSTR
+#define COMP_CSTR       KD_COMP_CSTR
 
 #if defined KD_COMP_INTEL
-  #define COMP_INTEL KD_COMP_INTEL
+    #define COMP_INTEL KD_COMP_INTEL
 #endif
 
 #if defined KD_COMP_MIPSPRO
-  #define COMP_MIPSPRO KD_COMP_MIPSPRO
+    #define COMP_MIPSPRO KD_COMP_MIPSPRO
 #endif
 
 #if defined KD_COMP_HPCC
-  #define COMP_HPCC KD_COMP_HPCC
+    #define COMP_HPCC KD_COMP_HPCC
 #endif
 
 #if defined KD_COMP_GCC
-  #define COMP_GCC KD_COMP_GCC
+    #define COMP_GCC KD_COMP_GCC
 #endif
 
 #if defined KD_COMP_APPLECC
-  #define COMP_APPLECC KD_COMP_APPLECC
+    #define COMP_APPLECC KD_COMP_APPLECC
 #endif
 
 #if defined KD_COMP_IBM
-  #define COMP_IBM KD_COMP_IBM
+    #define COMP_IBM KD_COMP_IBM
 #endif
 
 #if defined KD_COMP_MSVC
-  #define COMP_MSVC KD_COMP_MSVC
+    #define COMP_MSVC KD_COMP_MSVC
 #endif
 
 #if defined KD_COMP_SUN
-  #define COMP_SUN KD_COMP_SUN
+    #define COMP_SUN KD_COMP_SUN
 #endif
 
 #if defined KD_COMP_BORLAND
-  #define COMP_BORLAND KD_COMP_BORLAND
+    #define COMP_BORLAND KD_COMP_BORLAND
 #endif
 
 #if defined KD_COMP_METROWERKS
-  #define COMP_METROWERKS KD_COMP_METROWERKS
+    #define COMP_METROWERKS KD_COMP_METROWERKS
 #endif
 
 #if defined KD_COMP_DEC
-  #define COMP_DEC KD_COMP_DEC
+    #define COMP_DEC KD_COMP_DEC
 #endif
 
 #if defined KD_COMP_WATCOM
-  #define COMP_WATCOM KD_COMP_WATCOM
+    #define COMP_WATCOM KD_COMP_WATCOM
 #endif
 
 #define C_STD_NO   KD_C_STD_NO
 #define C_STD_CSTR KD_C_STD_CSTR
 
 #if defined KD_C_STD_23
-  #define C_STD_23 KD_C_STD_23
+    #define C_STD_23 KD_C_STD_23
 #endif
 
 #if defined KD_C_STD_17
-  #define C_STD_17 KD_C_STD_17
+    #define C_STD_17 KD_C_STD_17
 #endif
 
 #if defined KD_C_STD_11
-  #define C_STD_11 KD_C_STD_11
+    #define C_STD_11 KD_C_STD_11
 #endif
 
 #if defined KD_C_STD_99
-  #define C_STD_99 KD_C_STD_99
+    #define C_STD_99 KD_C_STD_99
 #endif
 
 #if defined KD_C_STD_90
-  #define C_STD_90 KD_C_STD_90
+    #define C_STD_90 KD_C_STD_90
 #endif
 
 #if defined KD_C_STD_89
-  #define C_STD_89 KD_C_STD_89
+    #define C_STD_89 KD_C_STD_89
 #endif
 
 #if defined KD_C_STD_89_90
-  #define C_STD_89_90 KD_C_STD_89_90
+    #define C_STD_89_90 KD_C_STD_89_90
 #endif
 
 #define OS_CSTR KD_OS_CSTR
 
 #if defined KD_OS_LINUX
-  #define OS_LINUX KD_OS_LINUX
+    #define OS_LINUX KD_OS_LINUX
 #endif
 
 #if defined KD_OS_CYGWIN32
-  #define OS_CYGWIN32 KD_OS_CYGWIN32
+    #define OS_CYGWIN32 KD_OS_CYGWIN32
 #endif
 
 #if defined KD_OS_GAMECUBE
-  #define OS_GAMECUBE KD_OS_GAMECUBE
+    #define OS_GAMECUBE KD_OS_GAMECUBE
 #endif
 
 #if defined KD_OS_MINGW
-  #define OS_MINGW KD_OS_MINGW
+    #define OS_MINGW KD_OS_MINGW
 #endif
 
 #if defined KD_OS_MINGW32
-  #define OS_MINGW32 KD_OS_MINGW32
+    #define OS_MINGW32 KD_OS_MINGW32
 #endif
 
 #if defined KD_OS_MINGW64
-  #define OS_MINGW64 KD_OS_MINGW64
+    #define OS_MINGW64 KD_OS_MINGW64
 #endif
 
 #if defined KD_OS_GO32
-  #define OS_GO32 KD_OS_GO32
+    #define OS_GO32 KD_OS_GO32
 #endif
 
 #if defined KD_OS_DOS32
-  #define OS_DOS32 KD_OS_DOS32
+    #define OS_DOS32 KD_OS_DOS32
 #endif
 
 #if defined KD_OS_UNICOS
-  #define OS_UNICOS KD_OS_UNICOS
+    #define OS_UNICOS KD_OS_UNICOS
 #endif
 
 #if defined KD_OS_OSX
-  #define OS_OSX KD_OS_OSX
+    #define OS_OSX KD_OS_OSX
 #endif
 
 #if defined KD_OS_SOLARIS
-  #define OS_SOLARIS KD_OS_SOLARIS
+    #define OS_SOLARIS KD_OS_SOLARIS
 #endif
 
 #if defined KD_OS_SUNOS
-  #define OS_SUNOS KD_OS_SUNOS
+    #define OS_SUNOS KD_OS_SUNOS
 #endif
 
 #if defined KD_OS_IRIX
-  #define OS_IRIX KD_OS_IRIX
+    #define OS_IRIX KD_OS_IRIX
 #endif
 
 #if defined KD_OS_HPUX
-  #define OS_HPUX KD_OS_HPUX
+    #define OS_HPUX KD_OS_HPUX
 #endif
 
 #if defined KD_OS_AIX
-  #define OS_AIX KD_OS_AIX
+    #define OS_AIX KD_OS_AIX
 #endif
 
 #if defined KD_OS_TRU64
-  #define OS_TRU64 KD_OS_TRU64
+    #define OS_TRU64 KD_OS_TRU64
 #endif
 
 #if defined KD_OS_BEOS
-  #define OS_BEOS KD_OS_BEOS
+    #define OS_BEOS KD_OS_BEOS
 #endif
 
 #if defined KD_OS_AMIGA
-  #define OS_AMIGA KD_OS_AMIGA
+    #define OS_AMIGA KD_OS_AMIGA
 #endif
 
 #if defined KD_OS_UNIX
-  #define OS_UNIX KD_OS_UNIX
+    #define OS_UNIX KD_OS_UNIX
 #endif
 
 #if defined KD_OS_WINDOWS
-  #define OS_WINDOWS KD_OS_WINDOWS
+    #define OS_WINDOWS KD_OS_WINDOWS
 #endif
 
 #if defined KD_OS_WIN32
-  #define OS_WIN32 KD_OS_WIN32
+    #define OS_WIN32 KD_OS_WIN32
 #endif
 
 #if defined KD_OS_WIN64
-  #define OS_WIN64 KD_OS_WIN64
+    #define OS_WIN64 KD_OS_WIN64
 #endif
 
 #if defined KD_OS_WINCE
-  #define OS_WINCE KD_OS_WINCE
+    #define OS_WINCE KD_OS_WINCE
 #endif
 
 #if defined KD_OS_XBOX
-  #define OS_XBOX KD_OS_XBOX
+    #define OS_XBOX KD_OS_XBOX
 #endif
 
 #if defined KD_OS_PALM
-  #define OS_PALM KD_OS_PALM
+    #define OS_PALM KD_OS_PALM
 #endif
 
 #if defined KD_OS_MACOS
-  #define OS_MACOS KD_OS_MACOS
+    #define OS_MACOS KD_OS_MACOS
 #endif
 
 #define CPU_CSTR KD_CPU_CSTR
 
 #if defined KD_CPU_68K
-  #define CPU_68K KD_CPU_68K
+    #define CPU_68K KD_CPU_68K
 #endif
 
 #if defined KD_CPU_PPC750
-  #define CPU_PPC750 KD_CPU_PPC750
+    #define CPU_PPC750 KD_CPU_PPC750
 #endif
 
 #if defined KD_CPU_PPC
-  #define CPU_PPC KD_CPU_PPC
+    #define CPU_PPC KD_CPU_PPC
 #endif
 
 #if defined KD_CPU_PPC32
-  #define CPU_PPC32 KD_CPU_PPC32
+    #define CPU_PPC32 KD_CPU_PPC32
 #endif
 
 #if defined KD_CPU_PPC64
-  #define CPU_PPC64 KD_CPU_PPC64
+    #define CPU_PPC64 KD_CPU_PPC64
 #endif
 
 #if defined KD_CPU_CRAYT3E
-  #define CPU_CRAYT3E KD_CPU_CRAYT3E
+    #define CPU_CRAYT3E KD_CPU_CRAYT3E
 #endif
 
 #if defined KD_CPU_SH3
-  #define CPU_SH3 KD_CPU_SH3
+    #define CPU_SH3 KD_CPU_SH3
 #endif
 
 #if defined KD_CPU_SH4
-  #define CPU_SH4 KD_CPU_SH4
+    #define CPU_SH4 KD_CPU_SH4
 #endif
 
 #if defined KD_CPU_SPARC
-  #define CPU_SPARC KD_CPU_SPARC
+    #define CPU_SPARC KD_CPU_SPARC
 #endif
 
 #if defined KD_CPU_SPARC64
-  #define CPU_SPARC64 KD_CPU_SPARC64
+    #define CPU_SPARC64 KD_CPU_SPARC64
 #endif
 
 #if defined KD_CPU_ARM
-  #define CPU_ARM KD_CPU_ARM
+    #define CPU_ARM KD_CPU_ARM
 #endif
 
 #if defined KD_CPU_MIPS
-  #define CPU_MIPS KD_CPU_MIPS
+    #define CPU_MIPS KD_CPU_MIPS
 #endif
 
 #if defined KD_CPU_IA64
-  #define CPU_IA64 KD_CPU_IA64
+    #define CPU_IA64 KD_CPU_IA64
 #endif
 
 #if defined KD_CPU_X86
-  #define CPU_X86 KD_CPU_X86
+    #define CPU_X86 KD_CPU_X86
 #endif
 
 #if defined KD_CPU_X86_64
-  #define CPU_X86_64 KD_CPU_X86_64
+    #define CPU_X86_64 KD_CPU_X86_64
 #endif
 
 #if defined KD_CPU_AXP
-  #define CPU_AXP KD_CPU_AXP
+    #define CPU_AXP KD_CPU_AXP
 #endif
 
 #if defined KD_CPU_HPPA
-  #define CPU_HPPA KD_CPU_HPPA
+    #define CPU_HPPA KD_CPU_HPPA
 #endif
 
 #define ENDIAN_CSTR KD_ENDIAN_CSTR
 
 #if defined KD_ENDIAN_LITTLE
-  #define ENDIAN_LITTLE KD_ENDIAN_LITTLE
+    #define ENDIAN_LITTLE KD_ENDIAN_LITTLE
 #endif
 
 #if defined KD_ENDIAN_BIG
-  #define ENDIAN_BIG KD_ENDIAN_BIG
+    #define ENDIAN_BIG KD_ENDIAN_BIG
 #endif
 
 #define ARCH_INT_CSTR KD_ARCH_INT_CSTR
 #define ARCH_PTR_CSTR KD_ARCH_PTR_CSTR
 
 #if defined KD_ARCH_64BIT_INT
-  #define ARCH_64BIT_INT KD_ARCH_64BIT_INT
+    #define ARCH_64BIT_INT KD_ARCH_64BIT_INT
 #endif
 
 #if defined KD_ARCH_32BIT_INT
-  #define ARCH_32BIT_INT KD_ARCH_32BIT_INT
+    #define ARCH_32BIT_INT KD_ARCH_32BIT_INT
 #endif
 
 #if defined KD_ARCH_64BIT_PTR
-  #define ARCH_64BIT_PTR KD_ARCH_64BIT_PTR
+    #define ARCH_64BIT_PTR KD_ARCH_64BIT_PTR
 #endif
 
 #if defined KD_ARCH_32BIT_PTR
-  #define ARCH_32BIT_PTR KD_ARCH_32BIT_PTR
+    #define ARCH_32BIT_PTR KD_ARCH_32BIT_PTR
 #endif
 
 #define EXTERN_BEGIN KD_EXTERN_BEGIN
 #define EXTERN_END   KD_EXTERN_END
 #define CPLUSPLUS    KD_CPLUSPLUS
-
 
 
 /**

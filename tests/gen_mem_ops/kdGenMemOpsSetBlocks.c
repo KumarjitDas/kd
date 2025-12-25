@@ -35,31 +35,8 @@ kdi_BytesEqual(const byte *a, const byte *b, usize sz)
 }
 
 
-/* Verifies dst[0..dst_sz) is block repeated. The last partial chunk (if any) must match block prefix. */
-static bool
-kdi_IsRepeatedBlockBytes(const byte *dst, usize dst_sz, const byte *block, usize block_sz)
-{
-    usize i;
-
-    if (!dst || !dst_sz || !block || !block_sz)
-    {
-        return RESULT_FAILURE;
-    }
-
-    for (i = USIZE_C(0); i < dst_sz; ++i)
-    {
-        if (dst[i] != block[i % block_sz])
-        {
-            return RESULT_FAILURE;
-        }
-    }
-
-    return RESULT_SUCCESS;
-}
-
-
 static void
-kdi_FillSeqBytes(byte *dst, usize sz, byte start)
+kdi_FillSeq(byte *dst, usize sz, byte start)
 {
     usize i;
 
@@ -70,259 +47,506 @@ kdi_FillSeqBytes(byte *dst, usize sz, byte start)
 }
 
 
-/* Build expected buffer = repeating block bytes. */
 static void
-kdi_BuildExpectedRepeat(byte *expected, usize expected_sz, const byte *block, usize block_sz)
+kdi_FillVal(byte *dst, usize sz, byte val)
 {
     usize i;
 
-    for (i = USIZE_C(0); i < expected_sz; ++i)
+    for (i = USIZE_C(0); i < sz; ++i)
     {
-        expected[i] = block[i % block_sz];
+        dst[i] = val;
     }
 }
 
 
-/* ---------------------------------------------------------------------------------------------- */
-/* Tests */
-/* ---------------------------------------------------------------------------------------------- */
-
 void
 BasicArguments(void)
 {
-    byte buf[16];
-    byte orig[16];
-    byte block4[4];
+    /*
+     * Test NULL pointer validation and zero-size parameters.
+     * All failure cases should leave destination unchanged.
+     * Note: dst_sz and block_sz are in bytes and must be aligned to block_sz.
+     */
+    byte dst[32];
+    byte block[4];
+    byte dst_orig[32];
     bool result;
 
     printf(LOG_PREFIX_CSTR "BasicArguments -> ");
 
-    kdi_FillSeqBytes(buf, USIZE_C(16), U8_C(0x10));
-    kdi_FillSeqBytes(orig, USIZE_C(16), U8_C(0x10));
-    kdi_FillSeqBytes(block4, USIZE_C(4), U8_C(0xA0));
+    kdi_FillVal(dst, USIZE_C(32), U8_C(0xAA));
+    kdi_FillVal(dst_orig, USIZE_C(32), U8_C(0xAA));
+    block[0] = U8_C(0x11);
+    block[1] = U8_C(0x22);
+    block[2] = U8_C(0x33);
+    block[3] = U8_C(0x44);
 
-    /* dst is null => failure */
-    result = GenMemOpsSetBlocks(null, USIZE_C(16), block4, USIZE_C(4));
+    /* dst is null */
+    result = GenMemOpsSetBlocks(null, USIZE_C(32), block, USIZE_C(4));
     assert(result == RESULT_FAILURE);
 
-    /* block is null => failure, dst unchanged */
-    result = GenMemOpsSetBlocks(buf, USIZE_C(16), null, USIZE_C(4));
+    /* block is null */
+    result = GenMemOpsSetBlocks(dst, USIZE_C(32), null, USIZE_C(4));
     assert(result == RESULT_FAILURE);
-    assert(kdi_BytesEqual(buf, orig, USIZE_C(16)) == RESULT_SUCCESS);
+    assert(kdi_BytesEqual(dst, dst_orig, USIZE_C(32)) == RESULT_SUCCESS);
 
-    /* dst_sz == 0 => failure, dst unchanged */
-    result = GenMemOpsSetBlocks(buf, USIZE_C(0), block4, USIZE_C(4));
+    /* dst_sz is zero */
+    result = GenMemOpsSetBlocks(dst, USIZE_C(0), block, USIZE_C(4));
     assert(result == RESULT_FAILURE);
-    assert(kdi_BytesEqual(buf, orig, USIZE_C(16)) == RESULT_SUCCESS);
+    assert(kdi_BytesEqual(dst, dst_orig, USIZE_C(32)) == RESULT_SUCCESS);
 
-    /* block_sz == 0 => failure, dst unchanged */
-    result = GenMemOpsSetBlocks(buf, USIZE_C(16), block4, USIZE_C(0));
+    /* block_sz is zero */
+    result = GenMemOpsSetBlocks(dst, USIZE_C(32), block, USIZE_C(0));
     assert(result == RESULT_FAILURE);
-    assert(kdi_BytesEqual(buf, orig, USIZE_C(16)) == RESULT_SUCCESS);
+    assert(kdi_BytesEqual(dst, dst_orig, USIZE_C(32)) == RESULT_SUCCESS);
+
+    /* dst_sz not aligned to block_sz */
+    result = GenMemOpsSetBlocks(dst, USIZE_C(33), block, USIZE_C(4));
+    assert(result == RESULT_FAILURE);
+    assert(kdi_BytesEqual(dst, dst_orig, USIZE_C(32)) == RESULT_SUCCESS);
 
     printf("PASSED\n");
 }
 
 
 void
-Bytes_ExactMultipleOfBlockSize(void)
+SingleBlockSet(void)
 {
-    byte buf[16];
-    byte block4[4];
-    bool result;
+    /*
+     * Minimal case: set exactly 1 block (4 bytes).
+     */
+    byte  dst[4];
+    byte  block[4];
+    bool  result;
+    usize i;
 
-    printf(LOG_PREFIX_CSTR "Bytes_ExactMultipleOfBlockSize -> ");
+    printf(LOG_PREFIX_CSTR "SingleBlockSet -> ");
 
-    kdi_FillSeqBytes(buf, USIZE_C(16), U8_C(0x00));
-    block4[0] = U8_C(0xDE);
-    block4[1] = U8_C(0xAD);
-    block4[2] = U8_C(0xBE);
-    block4[3] = U8_C(0xEF);
+    kdi_FillVal(dst, USIZE_C(4), U8_C(0x00));
+    block[0] = U8_C(0xAA);
+    block[1] = U8_C(0xBB);
+    block[2] = U8_C(0xCC);
+    block[3] = U8_C(0xDD);
 
-    result    = GenMemOpsSetBlocks(buf, USIZE_C(16), block4, USIZE_C(4));
+    result = GenMemOpsSetBlocks(dst, USIZE_C(4), block, USIZE_C(4));
+
     assert(result == RESULT_SUCCESS);
-    assert(kdi_IsRepeatedBlockBytes(buf, USIZE_C(16), block4, USIZE_C(4)) == RESULT_SUCCESS);
+    for (i = USIZE_C(0); i < USIZE_C(4); ++i)
+    {
+        assert(dst[i] == block[i]);
+    }
 
     printf("PASSED\n");
 }
 
 
 void
-Bytes_NonMultipleOfBlockSize_PartialTailMatchesPrefix(void)
+MultipleBlocks_U8(void)
 {
-    byte buf[10];
-    byte block4[4];
-    bool result;
+    /*
+     * Set multiple 1-byte blocks.
+     */
+    byte  dst[8];
+    byte  block[1];
+    bool  result;
+    usize i;
 
-    printf(LOG_PREFIX_CSTR "Bytes_NonMultipleOfBlockSize_PartialTailMatchesPrefix -> ");
+    printf(LOG_PREFIX_CSTR "MultipleBlocks_U8 -> ");
 
-    kdi_FillSeqBytes(buf, USIZE_C(10), U8_C(0x55));
-    block4[0] = U8_C(0x11);
-    block4[1] = U8_C(0x22);
-    block4[2] = U8_C(0x33);
-    block4[3] = U8_C(0x44);
+    kdi_FillVal(dst, USIZE_C(8), U8_C(0x00));
+    block[0] = U8_C(0x77);
 
-    result    = GenMemOpsSetBlocks(buf, USIZE_C(10), block4, USIZE_C(4));
+    result = GenMemOpsSetBlocks(dst, USIZE_C(8), block, USIZE_C(1));
+
     assert(result == RESULT_SUCCESS);
-    assert(kdi_IsRepeatedBlockBytes(buf, USIZE_C(10), block4, USIZE_C(4)) == RESULT_SUCCESS);
+    for (i = USIZE_C(0); i < USIZE_C(8); ++i)
+    {
+        assert(dst[i] == U8_C(0x77));
+    }
 
     printf("PASSED\n");
 }
 
 
 void
-Bytes_BlockSizeLargerThanDstSize_OnlyPrefixIsCopied(void)
+MultipleBlocks_U16(void)
 {
-    byte buf[6];
-    byte block8[8];
+    /*
+     * Set multiple 2-byte blocks.
+     * dst_sz = 16 bytes = 8 blocks of 2 bytes each.
+     */
+    u16  dst[8];
+    u16  block;
     bool result;
+    usize i;
 
-    printf(LOG_PREFIX_CSTR "Bytes_BlockSizeLargerThanDstSize_OnlyPrefixIsCopied -> ");
+    printf(LOG_PREFIX_CSTR "MultipleBlocks_U16 -> ");
 
-    kdi_FillSeqBytes(buf, USIZE_C(6), U8_C(0x77));
+    for (i = USIZE_C(0); i < USIZE_C(8); ++i)
+    {
+        dst[i] = U16_C(0x0000);
+    }
 
-    block8[0] = U8_C(0x01);
-    block8[1] = U8_C(0x02);
-    block8[2] = U8_C(0x03);
-    block8[3] = U8_C(0x04);
-    block8[4] = U8_C(0x05);
-    block8[5] = U8_C(0x06);
-    block8[6] = U8_C(0x07);
-    block8[7] = U8_C(0x08);
+    block = U16_C(0xABCD);
 
-    result    = GenMemOpsSetBlocks(buf, USIZE_C(6), block8, USIZE_C(8));
+    result = GenMemOpsSetBlocks(dst, USIZE_C(16), &block, USIZE_C(2));
+
     assert(result == RESULT_SUCCESS);
-    assert(kdi_IsRepeatedBlockBytes(buf, USIZE_C(6), block8, USIZE_C(8)) == RESULT_SUCCESS);
-
-    printf("PASSED\n");
-}
-
-
-/* ------------------------------ */
-/* Block-type coverage (u16/u32/u64/struct) */
-/* ------------------------------ */
-
-void
-U16_Blocks_AreRepeatedCorrectly(void)
-{
-    u16  buf[13];
-    u16  block2[2];
-    byte expected_bytes[sizeof(buf)];
-    bool result;
-
-    printf(LOG_PREFIX_CSTR "U16_Blocks_AreRepeatedCorrectly -> ");
-
-    block2[0] = U16_C(0x1122);
-    block2[1] = U16_C(0xA0B0);
-
-    /* Fill dst with non-zero junk first */
-    kdi_FillSeqBytes((byte *)buf, USIZE_C(sizeof(buf)), U8_C(0x33));
-
-    result = GenMemOpsSetBlocks(buf, USIZE_C(sizeof(buf)), block2, USIZE_C(sizeof(block2)));
-    assert(result == RESULT_SUCCESS);
-
-    kdi_BuildExpectedRepeat(expected_bytes, USIZE_C(sizeof(buf)), (const byte *)block2, USIZE_C(sizeof(block2)));
-    assert(kdi_BytesEqual((const byte *)buf, expected_bytes, USIZE_C(sizeof(buf))) == RESULT_SUCCESS);
+    for (i = USIZE_C(0); i < USIZE_C(8); ++i)
+    {
+        assert(dst[i] == U16_C(0xABCD));
+    }
 
     printf("PASSED\n");
 }
 
 
 void
-U32_Blocks_AreRepeatedCorrectly(void)
+MultipleBlocks_U32(void)
 {
-    u32  buf[11];
-    u32  block3[3];
-    byte expected_bytes[sizeof(buf)];
+    /*
+     * Set multiple 4-byte blocks.
+     * dst_sz = 32 bytes = 8 blocks of 4 bytes each.
+     */
+    u32  dst[8];
+    u32  block;
     bool result;
+    usize i;
 
-    printf(LOG_PREFIX_CSTR "U32_Blocks_AreRepeatedCorrectly -> ");
+    printf(LOG_PREFIX_CSTR "MultipleBlocks_U32 -> ");
 
-    block3[0] = U32_C(0x11223344);
-    block3[1] = U32_C(0xAABBCCDD);
-    block3[2] = U32_C(0x0F1E2D3C);
+    for (i = USIZE_C(0); i < USIZE_C(8); ++i)
+    {
+        dst[i] = U32_C(0x00000000);
+    }
 
-    kdi_FillSeqBytes((byte *)buf, USIZE_C(sizeof(buf)), U8_C(0x77));
+    block = U32_C(0x12345678);
 
-    result = GenMemOpsSetBlocks(buf, USIZE_C(sizeof(buf)), block3, USIZE_C(sizeof(block3)));
+    result = GenMemOpsSetBlocks(dst, USIZE_C(32), &block, USIZE_C(4));
+
     assert(result == RESULT_SUCCESS);
-
-    kdi_BuildExpectedRepeat(expected_bytes, USIZE_C(sizeof(buf)), (const byte *)block3, USIZE_C(sizeof(block3)));
-    assert(kdi_BytesEqual((const byte *)buf, expected_bytes, USIZE_C(sizeof(buf))) == RESULT_SUCCESS);
+    for (i = USIZE_C(0); i < USIZE_C(8); ++i)
+    {
+        assert(dst[i] == U32_C(0x12345678));
+    }
 
     printf("PASSED\n");
 }
 
 
-#if defined KD_ARCH_64BIT_INT || defined ARCH_64BIT_INT
 void
-U64_Blocks_AreRepeatedCorrectly(void)
+MultipleBlocks_U64(void)
 {
-    u64  buf[9];
-    u64  block2[2];
-    byte expected_bytes[sizeof(buf)];
+    /*
+     * Set multiple 8-byte blocks.
+     * dst_sz = 64 bytes = 8 blocks of 8 bytes each.
+     */
+#if defined KD_ARCH_64BIT_INT
+    u64  dst[8];
+    u64  block;
     bool result;
+    usize i;
 
-    printf(LOG_PREFIX_CSTR "U64_Blocks_AreRepeatedCorrectly -> ");
+    printf(LOG_PREFIX_CSTR "MultipleBlocks_U64 -> ");
 
-    block2[0] = U64_C(0x1122334455667788);
-    block2[1] = U64_C(0xAABBCCDDEEFF0011);
+    for (i = USIZE_C(0); i < USIZE_C(8); ++i)
+    {
+        dst[i] = U64_C(0x0000000000000000);
+    }
 
-    kdi_FillSeqBytes((byte *)buf, USIZE_C(sizeof(buf)), U8_C(0x19));
+    block = U64_C(0x123456789ABCDEF0);
 
-    result = GenMemOpsSetBlocks(buf, USIZE_C(sizeof(buf)), block2, USIZE_C(sizeof(block2)));
+    result = GenMemOpsSetBlocks(dst, USIZE_C(64), &block, USIZE_C(8));
+
     assert(result == RESULT_SUCCESS);
-
-    kdi_BuildExpectedRepeat(expected_bytes, USIZE_C(sizeof(buf)), (const byte *)block2, USIZE_C(sizeof(block2)));
-    assert(kdi_BytesEqual((const byte *)buf, expected_bytes, USIZE_C(sizeof(buf))) == RESULT_SUCCESS);
+    for (i = USIZE_C(0); i < USIZE_C(8); ++i)
+    {
+        assert(dst[i] == U64_C(0x123456789ABCDEF0));
+    }
 
     printf("PASSED\n");
-}
+#else
+    printf(LOG_PREFIX_CSTR "MultipleBlocks_U64 -> SKIPPED (no 64-bit int support)\n");
 #endif
-
-
-typedef struct kdi_BigStruct
-{
-    u32 a;
-    u32 b;
-    u32 c;
-    u32 d;
-    u16 e;
-    u16 f;
-} kdi_BigStruct; /* 20 bytes (>= 8 always, > 4 always) */
+}
 
 
 void
-Struct_Blocks_AreRepeatedCorrectly(void)
+CustomBlockSize_3Bytes(void)
 {
-    kdi_BigStruct buf[7];
-    kdi_BigStruct block2[2];
-    byte          expected_bytes[sizeof(buf)];
-    bool          result;
+    /*
+     * Set blocks with non-standard size (3 bytes).
+     * dst_sz = 15 bytes = 5 blocks of 3 bytes each.
+     */
+    byte  dst[15];
+    byte  block[3];
+    bool  result;
+    usize i;
 
-    printf(LOG_PREFIX_CSTR "Struct_Blocks_AreRepeatedCorrectly -> ");
+    printf(LOG_PREFIX_CSTR "CustomBlockSize_3Bytes -> ");
 
-    block2[0].a = U32_C(0x01020304);
-    block2[0].b = U32_C(0x11121314);
-    block2[0].c = U32_C(0x21222324);
-    block2[0].d = U32_C(0x31323334);
-    block2[0].e = U16_C(0x4546);
-    block2[0].f = U16_C(0x6768);
+    kdi_FillVal(dst, USIZE_C(15), U8_C(0x00));
+    block[0] = U8_C(0xAA);
+    block[1] = U8_C(0xBB);
+    block[2] = U8_C(0xCC);
 
-    block2[1].a = U32_C(0xA1A2A3A4);
-    block2[1].b = U32_C(0xB1B2B3B4);
-    block2[1].c = U32_C(0xC1C2C3C4);
-    block2[1].d = U32_C(0xD1D2D3D4);
-    block2[1].e = U16_C(0xE5E6);
-    block2[1].f = U16_C(0xF7F8);
+    result = GenMemOpsSetBlocks(dst, USIZE_C(15), block, USIZE_C(3));
 
-    kdi_FillSeqBytes((byte *)buf, USIZE_C(sizeof(buf)), U8_C(0x5C));
-
-    result = GenMemOpsSetBlocks(buf, USIZE_C(sizeof(buf)), block2, USIZE_C(sizeof(block2)));
     assert(result == RESULT_SUCCESS);
+    for (i = USIZE_C(0); i < USIZE_C(5); ++i)
+    {
+        assert(dst[i * USIZE_C(3) + USIZE_C(0)] == U8_C(0xAA));
+        assert(dst[i * USIZE_C(3) + USIZE_C(1)] == U8_C(0xBB));
+        assert(dst[i * USIZE_C(3) + USIZE_C(2)] == U8_C(0xCC));
+    }
 
-    kdi_BuildExpectedRepeat(expected_bytes, USIZE_C(sizeof(buf)), (const byte *)block2, USIZE_C(sizeof(block2)));
-    assert(kdi_BytesEqual((const byte *)buf, expected_bytes, USIZE_C(sizeof(buf))) == RESULT_SUCCESS);
+    printf("PASSED\n");
+}
+
+
+void
+CustomBlockSize_5Bytes(void)
+{
+    /*
+     * Set blocks with 5-byte size.
+     * dst_sz = 20 bytes = 4 blocks of 5 bytes each.
+     */
+    byte  dst[20];
+    byte  block[5];
+    bool  result;
+    usize i;
+
+    printf(LOG_PREFIX_CSTR "CustomBlockSize_5Bytes -> ");
+
+    kdi_FillVal(dst, USIZE_C(20), U8_C(0xFF));
+    block[0] = U8_C(0x11);
+    block[1] = U8_C(0x22);
+    block[2] = U8_C(0x33);
+    block[3] = U8_C(0x44);
+    block[4] = U8_C(0x55);
+
+    result = GenMemOpsSetBlocks(dst, USIZE_C(20), block, USIZE_C(5));
+
+    assert(result == RESULT_SUCCESS);
+    for (i = USIZE_C(0); i < USIZE_C(4); ++i)
+    {
+        assert(dst[i * USIZE_C(5) + USIZE_C(0)] == U8_C(0x11));
+        assert(dst[i * USIZE_C(5) + USIZE_C(1)] == U8_C(0x22));
+        assert(dst[i * USIZE_C(5) + USIZE_C(2)] == U8_C(0x33));
+        assert(dst[i * USIZE_C(5) + USIZE_C(3)] == U8_C(0x44));
+        assert(dst[i * USIZE_C(5) + USIZE_C(4)] == U8_C(0x55));
+    }
+
+    printf("PASSED\n");
+}
+
+
+void
+LargeBufferWithSmallBlock(void)
+{
+    /*
+     * Large destination with small block size.
+     * dst_sz = 128 bytes, block_sz = 2 bytes -> 64 blocks.
+     */
+    byte  dst[128];
+    byte  block[2];
+    bool  result;
+    usize i;
+
+    printf(LOG_PREFIX_CSTR "LargeBufferWithSmallBlock -> ");
+
+    kdi_FillVal(dst, USIZE_C(128), U8_C(0x00));
+    block[0] = U8_C(0xEE);
+    block[1] = U8_C(0xFF);
+
+    result = GenMemOpsSetBlocks(dst, USIZE_C(128), block, USIZE_C(2));
+
+    assert(result == RESULT_SUCCESS);
+    for (i = USIZE_C(0); i < USIZE_C(64); ++i)
+    {
+        assert(dst[i * USIZE_C(2) + USIZE_C(0)] == U8_C(0xEE));
+        assert(dst[i * USIZE_C(2) + USIZE_C(1)] == U8_C(0xFF));
+    }
+
+    printf("PASSED\n");
+}
+
+
+void
+LargeBufferWithLargeBlock(void)
+{
+    /*
+     * Large destination with large block size.
+     * dst_sz = 160 bytes, block_sz = 16 bytes -> 10 blocks.
+     */
+    byte  dst[160];
+    byte  block[16];
+    bool  result;
+    usize i, j;
+
+    printf(LOG_PREFIX_CSTR "LargeBufferWithLargeBlock -> ");
+
+    kdi_FillVal(dst, USIZE_C(160), U8_C(0x00));
+    kdi_FillSeq(block, USIZE_C(16), U8_C(0x10));
+
+    result = GenMemOpsSetBlocks(dst, USIZE_C(160), block, USIZE_C(16));
+
+    assert(result == RESULT_SUCCESS);
+    for (i = USIZE_C(0); i < USIZE_C(10); ++i)
+    {
+        for (j = USIZE_C(0); j < USIZE_C(16); ++j)
+        {
+            assert(dst[i * USIZE_C(16) + j] == block[j]);
+        }
+    }
+
+    printf("PASSED\n");
+}
+
+
+void
+AllZerosBlock(void)
+{
+    /*
+     * Set blocks where block contains all zeros.
+     */
+    byte  dst[16];
+    byte  block[4];
+    bool  result;
+    usize i;
+
+    printf(LOG_PREFIX_CSTR "AllZerosBlock -> ");
+
+    kdi_FillVal(dst, USIZE_C(16), U8_C(0xFF));
+    kdi_FillVal(block, USIZE_C(4), U8_C(0x00));
+
+    result = GenMemOpsSetBlocks(dst, USIZE_C(16), block, USIZE_C(4));
+
+    assert(result == RESULT_SUCCESS);
+    for (i = USIZE_C(0); i < USIZE_C(16); ++i)
+    {
+        assert(dst[i] == U8_C(0x00));
+    }
+
+    printf("PASSED\n");
+}
+
+
+void
+AllOnesBlock(void)
+{
+    /*
+     * Set blocks where block contains all 0xFF.
+     */
+    byte  dst[16];
+    byte  block[4];
+    bool  result;
+    usize i;
+
+    printf(LOG_PREFIX_CSTR "AllOnesBlock -> ");
+
+    kdi_FillVal(dst, USIZE_C(16), U8_C(0x00));
+    kdi_FillVal(block, USIZE_C(4), U8_C(0xFF));
+
+    result = GenMemOpsSetBlocks(dst, USIZE_C(16), block, USIZE_C(4));
+
+    assert(result == RESULT_SUCCESS);
+    for (i = USIZE_C(0); i < USIZE_C(16); ++i)
+    {
+        assert(dst[i] == U8_C(0xFF));
+    }
+
+    printf("PASSED\n");
+}
+
+
+void
+SequentialPatternBlock(void)
+{
+    /*
+     * Block contains sequential pattern.
+     */
+    byte  dst[24];
+    byte  block[6];
+    bool  result;
+    usize i, j;
+
+    printf(LOG_PREFIX_CSTR "SequentialPatternBlock -> ");
+
+    kdi_FillVal(dst, USIZE_C(24), U8_C(0x00));
+    kdi_FillSeq(block, USIZE_C(6), U8_C(0x00));
+
+    result = GenMemOpsSetBlocks(dst, USIZE_C(24), block, USIZE_C(6));
+
+    assert(result == RESULT_SUCCESS);
+    for (i = USIZE_C(0); i < USIZE_C(4); ++i)
+    {
+        for (j = USIZE_C(0); j < USIZE_C(6); ++j)
+        {
+            assert(dst[i * USIZE_C(6) + j] == (byte)j);
+        }
+    }
+
+    printf("PASSED\n");
+}
+
+
+void
+AlternatingPatternBlock(void)
+{
+    /*
+     * Block contains alternating byte pattern.
+     */
+    byte  dst[16];
+    byte  block[4];
+    bool  result;
+    usize i, j;
+
+    printf(LOG_PREFIX_CSTR "AlternatingPatternBlock -> ");
+
+    kdi_FillVal(dst, USIZE_C(16), U8_C(0x00));
+    block[0] = U8_C(0xAA);
+    block[1] = U8_C(0x55);
+    block[2] = U8_C(0xAA);
+    block[3] = U8_C(0x55);
+
+    result = GenMemOpsSetBlocks(dst, USIZE_C(16), block, USIZE_C(4));
+
+    assert(result == RESULT_SUCCESS);
+    for (i = USIZE_C(0); i < USIZE_C(4); ++i)
+    {
+        for (j = USIZE_C(0); j < USIZE_C(4); ++j)
+        {
+            assert(dst[i * USIZE_C(4) + j] == block[j]);
+        }
+    }
+
+    printf("PASSED\n");
+}
+
+
+void
+MismatchedAlignment(void)
+{
+    /*
+     * dst_sz not aligned to block_sz should fail.
+     * dst_sz = 17 bytes, block_sz = 4 bytes (17 % 4 != 0).
+     */
+    byte  dst[17];
+    byte  block[4];
+    byte  dst_orig[17];
+    bool  result;
+
+    printf(LOG_PREFIX_CSTR "MismatchedAlignment -> ");
+
+    kdi_FillVal(dst, USIZE_C(17), U8_C(0xAA));
+    kdi_FillVal(dst_orig, USIZE_C(17), U8_C(0xAA));
+    kdi_FillVal(block, USIZE_C(4), U8_C(0xFF));
+
+    result = GenMemOpsSetBlocks(dst, USIZE_C(17), block, USIZE_C(4));
+
+    assert(result == RESULT_FAILURE);
+    assert(kdi_BytesEqual(dst, dst_orig, USIZE_C(17)) == RESULT_SUCCESS);
 
     printf("PASSED\n");
 }
@@ -337,17 +561,20 @@ main(int argc, char **argv)
     printf("\n" TEST_NAME_CSTR " :: begin\n");
 
     BasicArguments();
-
-    Bytes_ExactMultipleOfBlockSize();
-    Bytes_NonMultipleOfBlockSize_PartialTailMatchesPrefix();
-    Bytes_BlockSizeLargerThanDstSize_OnlyPrefixIsCopied();
-
-    U16_Blocks_AreRepeatedCorrectly();
-    U32_Blocks_AreRepeatedCorrectly();
-#if defined KD_ARCH_64BIT_INT || defined ARCH_64BIT_INT
-    U64_Blocks_AreRepeatedCorrectly();
-#endif
-    Struct_Blocks_AreRepeatedCorrectly();
+    SingleBlockSet();
+    MultipleBlocks_U8();
+    MultipleBlocks_U16();
+    MultipleBlocks_U32();
+    MultipleBlocks_U64();
+    CustomBlockSize_3Bytes();
+    CustomBlockSize_5Bytes();
+    LargeBufferWithSmallBlock();
+    LargeBufferWithLargeBlock();
+    AllZerosBlock();
+    AllOnesBlock();
+    SequentialPatternBlock();
+    AlternatingPatternBlock();
+    MismatchedAlignment();
 
     printf("\n" TEST_NAME_CSTR " :: end\n\n");
 

@@ -49,18 +49,18 @@ ContinuationIndentWidth: 4
 SortIncludes: Never
 IncludeBlocks: Preserve
 IncludeCategories:
-  - Regex: '^<.*'
+  - Regex: "^<.*"
     Priority: 1
   - Regex: '^".*'
     Priority: 2
-  - Regex: '.*'
+  - Regex: ".*"
     Priority: 3
-IncludeIsMainRegex: '([-_](test|unittest))?$'
+IncludeIsMainRegex: "([-_](test|unittest))?$"
 IndentCaseLabels: true
 IndentPPDirectives: BeforeHash
 InsertNewlineAtEOF: true
-MacroBlockBegin: ''
-MacroBlockEnd: ''
+MacroBlockBegin: ""
+MacroBlockEnd: ""
 AlignConsecutiveMacros:
   Enabled: true
   AcrossComments: true
@@ -68,6 +68,7 @@ AlignConsecutiveMacros:
   AlignCompound: true
   AlignFunctionPointers: true
   PadOperators: true
+AlignEscapedNewlines: Left
 MaxEmptyLinesToKeep: 2
 AlignArrayOfStructures: Right
 NamespaceIndentation: All

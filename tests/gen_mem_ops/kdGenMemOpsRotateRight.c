@@ -11,40 +11,12 @@
 #include <assert.h>
 
 #include "../../include/kd/gen_mem_ops.h"
+#include "../utils.h"
 
 
 #define LIB_NAME_CSTR   "KD_GEN_MEM_OPS"
 #define TEST_NAME_CSTR  LIB_NAME_CSTR " library kdGenMemOpsRotateRight function test"
 #define LOG_PREFIX_CSTR "[" LIB_NAME_CSTR "] "
-
-
-static bool
-kdi_BytesEqual(const byte *a, const byte *b, usize sz)
-{
-    usize i;
-
-    for (i = USIZE_C(0); i < sz; ++i)
-    {
-        if (a[i] != b[i])
-        {
-            return RESULT_FAILURE;
-        }
-    }
-
-    return RESULT_SUCCESS;
-}
-
-
-static void
-kdi_FillSeq(u8 *dst, usize sz, u8 start)
-{
-    usize i;
-
-    for (i = USIZE_C(0); i < sz; ++i)
-    {
-        dst[i] = (u8)(start + (u8)i);
-    }
-}
 
 
 void
@@ -59,12 +31,12 @@ BasicArguments(void)
     status = GenMemOpsRotateRight(null, USIZE_C(16), USIZE_C(4));
     assert(status == RESULT_FAILURE);
 
-    /* sz is zero -> success (trivial) */
+    /* sz is zero -> failure */
     status = GenMemOpsRotateRight(buf, USIZE_C(0), USIZE_C(4));
-    assert(status == RESULT_SUCCESS);
+    assert(status == RESULT_FAILURE);
 
     /* k is zero -> success (no op) */
-    kdi_FillSeq(buf, USIZE_C(16), U8_C(0x00));
+    kdi_FillSeq_u8(buf, USIZE_C(16), U8_C(0x00));
     status = GenMemOpsRotateRight(buf, USIZE_C(16), USIZE_C(0));
     assert(status == RESULT_SUCCESS);
     assert(buf[0] == U8_C(0x00));
@@ -84,7 +56,7 @@ RotateRightSimple(void)
     printf(LOG_PREFIX_CSTR "RotateRightSimple -> ");
 
     /* Init: 1, 2, 3, 4, 5 */
-    kdi_FillSeq(buf, USIZE_C(5), U8_C(0x01));
+    kdi_FillSeq_u8(buf, USIZE_C(5), U8_C(0x01));
 
     /* Rotate Right by 2 */
     /* Expected: 4, 5, 1, 2, 3 */
@@ -113,7 +85,7 @@ RotateRightOne(void)
     printf(LOG_PREFIX_CSTR "RotateRightOne -> ");
 
     /* Init: 10, 11, 12, 13 */
-    kdi_FillSeq(buf, USIZE_C(4), U8_C(10));
+    kdi_FillSeq_u8(buf, USIZE_C(4), U8_C(10));
 
     /* Rotate Right by 1 */
     /* Expected: 13, 10, 11, 12 */
@@ -141,7 +113,7 @@ RotateRightModulo(void)
     printf(LOG_PREFIX_CSTR "RotateRightModulo -> ");
 
     /* Init: 1, 2, 3 */
-    kdi_FillSeq(buf, USIZE_C(3), U8_C(1));
+    kdi_FillSeq_u8(buf, USIZE_C(3), U8_C(1));
 
     /* Rotate Right by 4. (4 % 3 = 1) */
     /* Equivalent to Rotate Right by 1 */
@@ -175,7 +147,7 @@ RotateRightLargeShift(void)
     printf(LOG_PREFIX_CSTR "RotateRightLargeShift -> ");
 
     /* Init: 1, 2, 3, 4 */
-    kdi_FillSeq(buf, USIZE_C(4), U8_C(1));
+    kdi_FillSeq_u8(buf, USIZE_C(4), U8_C(1));
 
     /* Rotate Right by 10. (10 % 4 = 2) */
     /* Expected: 3, 4, 1, 2 */

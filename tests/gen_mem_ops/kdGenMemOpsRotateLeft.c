@@ -11,6 +11,7 @@
 #include <assert.h>
 
 #include "../../include/kd/gen_mem_ops.h"
+#include "../utils.h"
 
 
 #define LIB_NAME_CSTR   "KD_GEN_MEM_OPS"
@@ -18,53 +19,48 @@
 #define LOG_PREFIX_CSTR "[" LIB_NAME_CSTR "] "
 
 
-static bool
-kdi_BytesEqual(const byte *a, const byte *b, usize sz)
-{
-    usize i;
-
-    for (i = USIZE_C(0); i < sz; ++i)
-    {
-        if (a[i] != b[i])
-        {
-            return RESULT_FAILURE;
-        }
-    }
-
-    return RESULT_SUCCESS;
-}
-
-
-static void
-kdi_FillSeq(u8 *dst, usize sz, u8 start)
-{
-    usize i;
-
-    for (i = USIZE_C(0); i < sz; ++i)
-    {
-        dst[i] = (u8)(start + (u8)i);
-    }
-}
-
-
 void
-BasicArguments(void)
+PtrNull(void)
 {
-    u8   buf[16];
     bool status;
 
-    printf(LOG_PREFIX_CSTR "BasicArguments -> ");
+    printf(LOG_PREFIX_CSTR "PtrNull -> ");
 
     /* ptr is null -> failure */
     status = GenMemOpsRotateLeft(null, USIZE_C(16), USIZE_C(4));
     assert(status == RESULT_FAILURE);
 
-    /* sz is zero -> success (trivial) */
+    printf("PASSED\n");
+}
+
+
+void
+SizeZero(void)
+{
+    u8   buf[16];
+    bool status;
+
+    printf(LOG_PREFIX_CSTR "SizeZero -> ");
+
+    /* sz is zero -> failure */
     status = GenMemOpsRotateLeft(buf, USIZE_C(0), USIZE_C(4));
-    assert(status == RESULT_SUCCESS);
+    assert(status == RESULT_FAILURE);
+
+    printf("PASSED\n");
+}
+
+
+void
+KZero(void)
+{
+    u8   buf[16];
+    bool status;
+
+    printf(LOG_PREFIX_CSTR "KZero -> ");
+
+    kdi_FillSeq_u8(buf, USIZE_C(16), U8_C(0x00));
 
     /* k is zero -> success (no op) */
-    kdi_FillSeq(buf, USIZE_C(16), U8_C(0x00));
     status = GenMemOpsRotateLeft(buf, USIZE_C(16), USIZE_C(0));
     assert(status == RESULT_SUCCESS);
     assert(buf[0] == U8_C(0x00));
@@ -84,7 +80,7 @@ RotateLeftSimple(void)
     printf(LOG_PREFIX_CSTR "RotateLeftSimple -> ");
 
     /* Init: 1, 2, 3, 4, 5 */
-    kdi_FillSeq(buf, USIZE_C(5), U8_C(0x01));
+    kdi_FillSeq_u8(buf, USIZE_C(5), U8_C(0x01));
 
     /* Rotate Left by 2 */
     /* Expected: 3, 4, 5, 1, 2 */
@@ -113,7 +109,7 @@ RotateLeftOne(void)
     printf(LOG_PREFIX_CSTR "RotateLeftOne -> ");
 
     /* Init: 10, 11, 12, 13 */
-    kdi_FillSeq(buf, USIZE_C(4), U8_C(10));
+    kdi_FillSeq_u8(buf, USIZE_C(4), U8_C(10));
 
     /* Rotate Left by 1 */
     /* Expected: 11, 12, 13, 10 */
@@ -141,7 +137,7 @@ RotateLeftModulo(void)
     printf(LOG_PREFIX_CSTR "RotateLeftModulo -> ");
 
     /* Init: 1, 2, 3 */
-    kdi_FillSeq(buf, USIZE_C(3), U8_C(1));
+    kdi_FillSeq_u8(buf, USIZE_C(3), U8_C(1));
 
     /* Rotate Left by 4. (4 % 3 = 1) */
     /* Equivalent to Rotate Left by 1 */
@@ -175,7 +171,7 @@ RotateLeftLargeShift(void)
     printf(LOG_PREFIX_CSTR "RotateLeftLargeShift -> ");
 
     /* Init: 1, 2, 3, 4 */
-    kdi_FillSeq(buf, USIZE_C(4), U8_C(1));
+    kdi_FillSeq_u8(buf, USIZE_C(4), U8_C(1));
 
     /* Rotate Left by 10. (10 % 4 = 2) */
     /* Expected: 3, 4, 1, 2 */
@@ -188,6 +184,39 @@ RotateLeftLargeShift(void)
 
     assert(status == RESULT_SUCCESS);
     assert(kdi_BytesEqual(buf, expected, USIZE_C(4)) == RESULT_SUCCESS);
+
+    printf("PASSED\n");
+}
+
+
+void
+RotateLeftFullCycle(void)
+{
+    u8    buf[6];
+    u8    original[6];
+    bool  status;
+    usize i;
+
+    printf(LOG_PREFIX_CSTR "RotateLeftFullCycle -> ");
+
+    /* Init: 0, 1, 2, 3, 4, 5 */
+    kdi_FillSeq_u8(buf, USIZE_C(6), U8_C(0));
+
+    /* Keep copy of original */
+    for (i = USIZE_C(0); i < USIZE_C(6); ++i)
+    {
+        original[i] = buf[i];
+    }
+
+    /* Rotate Left by size (6) should return to original */
+    status = GenMemOpsRotateLeft(buf, USIZE_C(6), USIZE_C(6));
+    assert(status == RESULT_SUCCESS);
+
+    /* Verify restored to original */
+    for (i = USIZE_C(0); i < USIZE_C(6); ++i)
+    {
+        assert(buf[i] == original[i]);
+    }
 
     printf("PASSED\n");
 }
@@ -288,7 +317,6 @@ U64_RotateLeft(void)
 #endif
 
 
-/* Struct significantly larger than 64 bits (approx 24 bytes) */
 typedef struct kdi_LargeStruct
 {
     u64 a;
@@ -374,6 +402,43 @@ LargeArray_RotateLeft(void)
 }
 
 
+void
+DoubleRotate(void)
+{
+    u8    buf[8];
+    u8    original[8];
+    bool  status;
+    usize i;
+
+    printf(LOG_PREFIX_CSTR "DoubleRotate -> ");
+
+    /* Init: 0..7 */
+    kdi_FillSeq_u8(buf, USIZE_C(8), U8_C(0));
+
+    /* Keep copy of original */
+    for (i = USIZE_C(0); i < USIZE_C(8); ++i)
+    {
+        original[i] = buf[i];
+    }
+
+    /* Rotate Left by 3 */
+    status = GenMemOpsRotateLeft(buf, USIZE_C(8), USIZE_C(3));
+    assert(status == RESULT_SUCCESS);
+
+    /* Rotate Right by 3 (should restore) */
+    status = GenMemOpsRotateRight(buf, USIZE_C(8), USIZE_C(3));
+    assert(status == RESULT_SUCCESS);
+
+    /* Verify restored to original */
+    for (i = USIZE_C(0); i < USIZE_C(8); ++i)
+    {
+        assert(buf[i] == original[i]);
+    }
+
+    printf("PASSED\n");
+}
+
+
 int
 main(int argc, char **argv)
 {
@@ -382,11 +447,14 @@ main(int argc, char **argv)
 
     printf("\n" TEST_NAME_CSTR " :: begin\n");
 
-    BasicArguments();
+    PtrNull();
+    SizeZero();
+    KZero();
     RotateLeftSimple();
     RotateLeftOne();
     RotateLeftModulo();
     RotateLeftLargeShift();
+    RotateLeftFullCycle();
 
     U16_RotateLeft();
     U32_RotateLeft();
@@ -395,6 +463,7 @@ main(int argc, char **argv)
 #endif
     Struct_RotateLeft();
     LargeArray_RotateLeft();
+    DoubleRotate();
 
     printf("\n" TEST_NAME_CSTR " :: end\n\n");
 

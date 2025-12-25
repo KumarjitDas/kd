@@ -35,11 +35,12 @@ kdi_GenMemOpsMove(byte *dst, byte *src, usize sz)
 
     if (dst < src)
     {
-        while (sz--)
+        while (sz)
         {
             *dst = *src;
             ++dst;
             ++src;
+            --sz;
         }
         return;
     }
@@ -59,11 +60,12 @@ kdi_GenMemOpsMove(byte *dst, byte *src, usize sz)
 void
 kdi_GenMemOpsConcat(byte *dst, usize dst_sz, byte *src_1, usize src_1_sz, byte *src_2, usize src_2_sz)
 {
-    while (src_1_sz-- && dst_sz--)
+    while (src_1_sz-- && dst_sz)
     {
         *dst = *src_1;
         ++dst;
         ++src_1;
+        --dst_sz;
     }
 
     while (src_2_sz-- && dst_sz--)
