@@ -11,6 +11,7 @@
 #include <assert.h>
 
 #include "../../include/kd/gen_mem_ops.h"
+#include "../utils.h"
 
 
 #define LIB_NAME_CSTR   "KD_GEN_MEM_OPS"
@@ -18,125 +19,88 @@
 #define LOG_PREFIX_CSTR "[" LIB_NAME_CSTR "] "
 
 
-static void
-kdi_FillVal(u8 *dst, usize sz, u8 val)
-{
-    usize i;
-
-    for (i = USIZE_C(0); i < sz; ++i)
-    {
-        dst[i] = val;
-    }
-}
-
-
 void
 BasicArguments(void)
 {
-    u8    buf[16];
+    u8    buf[32];
     u8    blk[4];
     usize idx = 55;
     bool  status;
 
     printf(LOG_PREFIX_CSTR "BasicArguments -> ");
 
+    kdi_Fill_u8(buf, USIZE_C(32), U8_C(0x00));
+    kdi_Fill_u8(blk, USIZE_C(4), U8_C(0x00));
+
     /* idx pointer is null -> failure */
-    status = GenMemOpsFindNotBlockIndexBound(null, buf, USIZE_C(16), 0, 16, blk, USIZE_C(4));
+    status = kdGenMemOpsFindNotBlockIndexBound(null, buf, USIZE_C(32), USIZE_C(0), USIZE_C(32), blk, USIZE_C(4));
     assert(status == RESULT_FAILURE);
 
     /* base is null -> failure */
-    status = GenMemOpsFindNotBlockIndexBound(&idx, null, USIZE_C(16), 0, 16, blk, USIZE_C(4));
-    assert(status == RESULT_FAILURE);
-
-    /* base_sz is zero -> failure */
-    status = GenMemOpsFindNotBlockIndexBound(&idx, buf, USIZE_C(0), 0, 16, blk, USIZE_C(4));
+    idx    = 55;
+    status = kdGenMemOpsFindNotBlockIndexBound(&idx, null, USIZE_C(32), USIZE_C(0), USIZE_C(32), blk, USIZE_C(4));
     assert(status == RESULT_FAILURE);
 
     /* block is null -> failure */
-    status = GenMemOpsFindNotBlockIndexBound(&idx, buf, USIZE_C(16), 0, 16, null, USIZE_C(4));
+    idx    = 55;
+    status = kdGenMemOpsFindNotBlockIndexBound(&idx, buf, USIZE_C(32), USIZE_C(0), USIZE_C(32), null, USIZE_C(4));
+    assert(status == RESULT_FAILURE);
+
+    /* begin_idx >= base_sz -> failure */
+    idx    = 55;
+    status = kdGenMemOpsFindNotBlockIndexBound(&idx, buf, USIZE_C(32), USIZE_C(32), USIZE_C(16), blk, USIZE_C(4));
+    assert(status == RESULT_FAILURE);
+
+    /* end_count_byte is zero -> failure */
+    idx    = 55;
+    status = kdGenMemOpsFindNotBlockIndexBound(&idx, buf, USIZE_C(32), USIZE_C(0), USIZE_C(0), blk, USIZE_C(4));
     assert(status == RESULT_FAILURE);
 
     /* block_sz is zero -> failure */
-    status = GenMemOpsFindNotBlockIndexBound(&idx, buf, USIZE_C(16), 0, 16, blk, USIZE_C(0));
+    idx    = 55;
+    status = kdGenMemOpsFindNotBlockIndexBound(&idx, buf, USIZE_C(32), USIZE_C(0), USIZE_C(32), blk, USIZE_C(0));
     assert(status == RESULT_FAILURE);
 
-    /* block_sz > base_sz -> failure */
-    status = GenMemOpsFindNotBlockIndexBound(&idx, buf, USIZE_C(4), 0, 16, blk, USIZE_C(16));
+    /* base_sz not divisible by block_sz -> failure */
+    idx    = 55;
+    status = kdGenMemOpsFindNotBlockIndexBound(&idx, buf, USIZE_C(31), USIZE_C(0), USIZE_C(31), blk, USIZE_C(4));
     assert(status == RESULT_FAILURE);
 
-    printf("PASSED\n");
-}
-
-
-void
-StartAlignment(void)
-{
-    u8    buf[16];
-    u8    blk[4];
-    usize idx;
-    bool  status;
-
-    printf(LOG_PREFIX_CSTR "StartAlignment -> ");
-
-    /* Block size 4. Start index MUST be aligned. */
-
-    /* Case 1: Start 1 (1 % 4 != 0) -> Failure */
-    status = GenMemOpsFindNotBlockIndexBound(&idx, buf, USIZE_C(16), 1, 12, blk, USIZE_C(4));
+    /* begin_idx not aligned to block_sz -> failure */
+    idx    = 55;
+    status = kdGenMemOpsFindNotBlockIndexBound(&idx, buf, USIZE_C(32), USIZE_C(3), USIZE_C(29), blk, USIZE_C(4));
     assert(status == RESULT_FAILURE);
 
-    /* Case 2: Start 4 (4 % 4 == 0) -> Success (Arg check pass) */
-    /* Note: Returns failure here because uninitialized buf might match or logic returns not found,
-     * but strictly focusing on API not rejecting the call arguments.
-     * To be safe, let's fill matching data so it runs and returns Not Found (Failure) cleanly.
-     */
-    kdi_FillVal(buf, 16, 0xAA);
-    kdi_FillVal(blk, 4, 0xAA);
-    status = GenMemOpsFindNotBlockIndexBound(&idx, buf, USIZE_C(16), 4, 12, blk, USIZE_C(4));
-    /* Returns Failure because all match, but didn't crash or error on args */
-    assert(status == RESULT_FAILURE);
-
-    printf("PASSED\n");
-}
-
-
-void
-CountAlignmentRelaxed(void)
-{
-    u8    buf[16];
-    u8    blk[4];
-    usize idx;
-    bool  status;
-
-    printf(LOG_PREFIX_CSTR "CountAlignmentRelaxed -> ");
-
-    /* Block size 4.
-     * Count need NOT be aligned. It should process complete blocks fitting in count.
-     */
-
-    /* Fill buffer with matches */
-    kdi_FillVal(buf, 16, 0xAA);
-    kdi_FillVal(blk, 4, 0xAA);
-
-    /* Start 0. Count 7.
-     * Blocks fit: floor(7 / 4) = 1 block (Bytes 0-3).
-     * Bytes 4-7 require 8 bytes total. 7 is not enough.
-     * So it checks Offset 0.
-     */
-
-    /* Case 1: Mismatch at Offset 0. Should be found. */
-    kdi_FillVal(buf, 4, 0xBB);
-    status = GenMemOpsFindNotBlockIndexBound(&idx, buf, USIZE_C(16), 0, 7, blk, USIZE_C(4));
+    /* Valid arguments - Find NOT 0xFF in 0x00 buffer. Match at 0. */
+    kdi_Fill_u8(blk, USIZE_C(4), U8_C(0xFF));
+    idx    = 55;
+    status = kdGenMemOpsFindNotBlockIndexBound(&idx, buf, USIZE_C(32), USIZE_C(0), USIZE_C(32), blk, USIZE_C(4));
     assert(status == RESULT_SUCCESS);
-    assert(idx == 0);
+    assert(idx == USIZE_C(0));
 
-    /* Case 2: Mismatch at Offset 4.
-     * With count 7, Offset 4 is NOT checked (requires bytes up to 8).
-     * Should fail to find mismatch.
-     */
-    kdi_FillVal(buf, 4, 0xAA);     /* Restore 0 */
-    kdi_FillVal(buf + 4, 4, 0xBB); /* Mismatch at 4 */
+    printf("PASSED\n");
+}
 
-    status = GenMemOpsFindNotBlockIndexBound(&idx, buf, USIZE_C(16), 0, 7, blk, USIZE_C(4));
+
+void
+FindNone(void)
+{
+    u8    buf[32];
+    u8    blk[4];
+    usize idx;
+    bool  status;
+
+    printf(LOG_PREFIX_CSTR "FindNone -> ");
+
+    /* Init: all blocks are [0xFF, 0xFF, 0xFF, 0xFF] */
+    kdi_Fill_u8(buf, USIZE_C(32), U8_C(0xFF));
+
+    /* Search for NOT [0xFF, 0xFF, 0xFF, 0xFF] in range [0, 32) */
+    kdi_Fill_u8(blk, USIZE_C(4), U8_C(0xFF));
+
+    idx    = 999;
+    status = kdGenMemOpsFindNotBlockIndexBound(&idx, buf, USIZE_C(32), USIZE_C(0), USIZE_C(32), blk, USIZE_C(4));
+
     assert(status == RESULT_FAILURE);
 
     printf("PASSED\n");
@@ -144,52 +108,57 @@ CountAlignmentRelaxed(void)
 
 
 void
-EndValueClamping(void)
+FindFirst(void)
 {
-    u8    buf[16];
+    u8    buf[32];
     u8    blk[4];
     usize idx;
     bool  status;
 
-    printf(LOG_PREFIX_CSTR "EndValueClamping -> ");
+    printf(LOG_PREFIX_CSTR "FindFirst -> ");
 
-    kdi_FillVal(buf, USIZE_C(16), U8_C(0xAA));
-    kdi_FillVal(blk, 4, 0xAA);
+    /* Init: 0x00 */
+    kdi_Fill_u8(buf, USIZE_C(32), U8_C(0x00));
 
-    /* Mismatch at last block (Offset 12) */
-    kdi_FillVal(buf + 12, 4, 0xBB);
+    /* Set first block to [0xFF, 0xFF, 0xFF, 0xFF] */
+    kdi_Fill_u8(buf, USIZE_C(4), U8_C(0xFF));
 
-    /* Requesting 100 bytes starting at 0.
-     * 100 > 16. Clamps to 16.
-     * Range [0, 16). Contains offsets 0, 4, 8, 12.
-     * Should find 12.
-     */
-    status = GenMemOpsFindNotBlockIndexBound(&idx, buf, USIZE_C(16), 0, 100, blk, USIZE_C(4));
+    /* Search for NOT [0x00, 0x00, 0x00, 0x00] */
+    /* All are 0x00 except first which is 0xFF. Match 0xFF at 0. */
+    kdi_Fill_u8(blk, USIZE_C(4), U8_C(0x00));
+
+    status = kdGenMemOpsFindNotBlockIndexBound(&idx, buf, USIZE_C(32), USIZE_C(0), USIZE_C(32), blk, USIZE_C(4));
 
     assert(status == RESULT_SUCCESS);
-    assert(idx == 12);
+    assert(idx == USIZE_C(0));
 
     printf("PASSED\n");
 }
 
 
 void
-AllMatch(void)
+FindLast(void)
 {
-    u8    buf[16];
+    u8    buf[32];
     u8    blk[4];
     usize idx;
     bool  status;
 
-    printf(LOG_PREFIX_CSTR "AllMatch -> ");
+    printf(LOG_PREFIX_CSTR "FindLast -> ");
 
-    kdi_FillVal(buf, USIZE_C(16), U8_C(0xAA));
-    kdi_FillVal(blk, 4, 0xAA);
+    /* Init: 0x00 */
+    kdi_Fill_u8(buf, USIZE_C(32), U8_C(0x00));
 
-    /* Range [0, 16). All match. */
-    status = GenMemOpsFindNotBlockIndexBound(&idx, buf, USIZE_C(16), 0, 16, blk, USIZE_C(4));
+    /* Set last block to [0xFF, 0xFF, 0xFF, 0xFF] */
+    kdi_Fill_u8(buf + 28, USIZE_C(4), U8_C(0xFF));
 
-    assert(status == RESULT_FAILURE);
+    /* Search for NOT [0x00, 0x00, 0x00, 0x00] */
+    kdi_Fill_u8(blk, USIZE_C(4), U8_C(0x00));
+
+    status = kdGenMemOpsFindNotBlockIndexBound(&idx, buf, USIZE_C(32), USIZE_C(0), USIZE_C(32), blk, USIZE_C(4));
+
+    assert(status == RESULT_SUCCESS);
+    assert(idx == USIZE_C(28));
 
     printf("PASSED\n");
 }
@@ -205,91 +174,172 @@ RangeConstraints(void)
 
     printf(LOG_PREFIX_CSTR "RangeConstraints -> ");
 
-    kdi_FillVal(buf, USIZE_C(32), U8_C(0xAA));
-    kdi_FillVal(blk, 4, 0xAA);
+    /* Init: 0x00 */
+    kdi_Fill_u8(buf, USIZE_C(32), U8_C(0x00));
 
-    /* Mismatches at 4, 12, 20, 28 */
-    kdi_FillVal(buf + 4, 4, 0xBB);
-    kdi_FillVal(buf + 12, 4, 0xBB);
-    kdi_FillVal(buf + 20, 4, 0xBB);
-    kdi_FillVal(buf + 28, 4, 0xBB);
+    /* Set some blocks to 0xFF */
+    /* Block at 8 (idx 2) */
+    kdi_Fill_u8(buf + 8, USIZE_C(4), U8_C(0xFF));
+    /* Block at 20 (idx 5) */
+    kdi_Fill_u8(buf + 20, USIZE_C(4), U8_C(0xFF));
 
-    /* Start 8, Count 16.
-     * Effective Range: [8, 24).
-     * Offsets: 8, 12, 16, 20.
-     * Check 8: Match (0xAA).
-     * Check 12: Mismatch (0xBB). Found!
-     * * Offset 4 (before) ignored.
-     * Offset 20 (also mismatch) not reached because 12 found first.
-     */
-    status = GenMemOpsFindNotBlockIndexBound(&idx, buf, USIZE_C(32), 8, 16, blk, USIZE_C(4));
+    /* Target: NOT 0x00 */
+    kdi_Fill_u8(blk, USIZE_C(4), U8_C(0x00));
 
+    /* Range [0, 32). Should find 8. */
+    status = kdGenMemOpsFindNotBlockIndexBound(&idx, buf, USIZE_C(32), USIZE_C(0), USIZE_C(32), blk, USIZE_C(4));
     assert(status == RESULT_SUCCESS);
-    assert(idx == 12);
+    assert(idx == USIZE_C(8));
+
+    /* Range [12, 28). Begin_idx=12 (idx 3). End count 16 bytes.
+     * Blocks at 12, 16, 20, 24.
+     * 12 is 0x00.
+     * 16 is 0x00.
+     * 20 is 0xFF. Match 20. */
+    status = kdGenMemOpsFindNotBlockIndexBound(&idx, buf, USIZE_C(32), USIZE_C(12), USIZE_C(16), blk, USIZE_C(4));
+    assert(status == RESULT_SUCCESS);
+    assert(idx == USIZE_C(20));
+
+    /* Range [8, 12). Block at 8 is 0xFF. Match 8. */
+    status = kdGenMemOpsFindNotBlockIndexBound(&idx, buf, USIZE_C(32), USIZE_C(8), USIZE_C(4), blk, USIZE_C(4));
+    assert(status == RESULT_SUCCESS);
+    assert(idx == USIZE_C(8));
+
+    /* Range [12, 20). Blocks at 12, 16. Both 0x00. Fail. */
+    status = kdGenMemOpsFindNotBlockIndexBound(&idx, buf, USIZE_C(32), USIZE_C(12), USIZE_C(8), blk, USIZE_C(4));
+    assert(status == RESULT_FAILURE);
 
     printf("PASSED\n");
 }
 
 
 void
-FindNotBlockIndexBound_U16(void)
+EndValueClamping(void)
 {
-    u16   buf[10];
-    u16   blk = 0xAAAA;
+    u8    buf[32];
+    u8    blk[4];
     usize idx;
     bool  status;
 
-    printf(LOG_PREFIX_CSTR "FindNotBlockIndexBound_U16 -> ");
+    printf(LOG_PREFIX_CSTR "EndValueClamping -> ");
 
-    kdi_FillVal((u8 *)buf, sizeof(buf), 0);
-    {
-        int i;
-        for (i = 0; i < 10; ++i)
-            buf[i] = 0xAAAA;
-    }
+    /* Init 0x00 */
+    kdi_Fill_u8(buf, USIZE_C(32), U8_C(0x00));
+    /* Last block 0xFF */
+    kdi_Fill_u8(buf + 28, USIZE_C(4), U8_C(0xFF));
 
-    /* Set mismatch at Index 5 (Offset 10) */
-    buf[5] = 0xBBBB;
+    /* Target NOT 0x00 */
+    kdi_Fill_u8(blk, USIZE_C(4), U8_C(0x00));
 
-    /* Start 4 bytes (Index 2), Count 12 bytes (6 elements).
-     * Range [4, 16).
-     * Indices checked: 2, 3, 4, 5, 6, 7.
-     * Mismatch at 5 should be found.
-     */
-    status = GenMemOpsFindNotBlockIndexBound(&idx, buf, sizeof(buf), 4, 12, &blk, sizeof(u16));
+    /* Request 100 bytes. Clamps to 32. Range [0, 32). Match 28. */
+    status = kdGenMemOpsFindNotBlockIndexBound(&idx, buf, USIZE_C(32), USIZE_C(0), USIZE_C(100), blk, USIZE_C(4));
 
     assert(status == RESULT_SUCCESS);
-    /* Index 5 * 2 = 10 */
-    assert(idx == 10);
+    assert(idx == USIZE_C(28));
 
     printf("PASSED\n");
 }
 
 
 void
-FindNotBlockIndexBound_U32(void)
+FindMultiple(void)
 {
-    u32   buf[10];
-    u32   blk = 0x12345678;
+    u8    buf[32];
+    u8    blk[4];
     usize idx;
     bool  status;
 
-    printf(LOG_PREFIX_CSTR "FindNotBlockIndexBound_U32 -> ");
+    printf(LOG_PREFIX_CSTR "FindMultiple -> ");
 
-    {
-        int i;
-        for (i = 0; i < 10; ++i)
-            buf[i] = 0x12345678;
-    }
+    /* Init 0x00 */
+    kdi_Fill_u8(buf, USIZE_C(32), U8_C(0x00));
 
-    /* Mismatch at Index 8 (Offset 32) */
-    buf[8] = 0x99999999;
+    /* Set 0xFF at 4, 12, 20 */
+    kdi_Fill_u8(buf + 4, USIZE_C(4), U8_C(0xFF));
+    kdi_Fill_u8(buf + 12, USIZE_C(4), U8_C(0xFF));
+    kdi_Fill_u8(buf + 20, USIZE_C(4), U8_C(0xFF));
 
-    /* Start 0, Count 40. Range [0, 40). */
-    status = GenMemOpsFindNotBlockIndexBound(&idx, buf, sizeof(buf), 0, 40, &blk, sizeof(u32));
+    /* Target NOT 0x00 */
+    kdi_Fill_u8(blk, USIZE_C(4), U8_C(0x00));
 
+    /* Range [8, 24). Covers 8, 12, 16, 20.
+     * 8: 00 (skip)
+     * 12: FF (match) */
+    status = kdGenMemOpsFindNotBlockIndexBound(&idx, buf, USIZE_C(32), USIZE_C(8), USIZE_C(16), blk, USIZE_C(4));
     assert(status == RESULT_SUCCESS);
-    assert(idx == 32);
+    assert(idx == USIZE_C(12));
+
+    printf("PASSED\n");
+}
+
+
+void
+U16_FindNotBlockIndexBound(void)
+{
+    u16   buf[8];
+    u16   blk[1];
+    usize idx;
+    bool  status;
+
+    printf(LOG_PREFIX_CSTR "U16_FindNotBlockIndexBound -> ");
+
+    /* Init: 100, 200, 300, 400, 500, 600, 700, 800 */
+    buf[0] = 100;
+    buf[1] = 200;
+    buf[2] = 300;
+    buf[3] = 400;
+    buf[4] = 500;
+    buf[5] = 600;
+    buf[6] = 700;
+    buf[7] = 800;
+
+    /* Search for NOT 100 */
+    blk[0] = 100;
+
+    /* Range [0, 16).
+     * 0: 100 == 100.
+     * 1 (offset 2): 200 != 100. Match 2. */
+    status = kdGenMemOpsFindNotBlockIndexBound(&idx, buf, sizeof(buf), USIZE_C(0), sizeof(buf), blk, sizeof(u16));
+    assert(status == RESULT_SUCCESS);
+    assert(idx == USIZE_C(2));
+
+    /* Search for NOT 300 in range [4, 10). Covers 2, 3, 4 (4-9).
+     * Offset 4 (idx 2): 300 == 300.
+     * Offset 6 (idx 3): 400 != 300. Match 6. */
+    blk[0] = 300;
+    status = kdGenMemOpsFindNotBlockIndexBound(&idx, buf, sizeof(buf), USIZE_C(4), USIZE_C(6), blk, sizeof(u16));
+    assert(status == RESULT_SUCCESS);
+    assert(idx == USIZE_C(6));
+
+    printf("PASSED\n");
+}
+
+
+void
+U32_FindNotBlockIndexBound(void)
+{
+    u32   buf[6];
+    u32   blk[1];
+    usize idx;
+    bool  status;
+
+    printf(LOG_PREFIX_CSTR "U32_FindNotBlockIndexBound -> ");
+
+    /* Init: 10, 20, 30, 40, 50, 60 */
+    buf[0] = 10;
+    buf[1] = 20;
+    buf[2] = 30;
+    buf[3] = 40;
+    buf[4] = 50;
+    buf[5] = 60;
+
+    /* Search for NOT 10.
+     * 0: 10 == 10.
+     * 1 (offset 4): 20 != 10. Match 4. */
+    blk[0] = 10;
+    status = kdGenMemOpsFindNotBlockIndexBound(&idx, buf, sizeof(buf), USIZE_C(0), sizeof(buf), blk, sizeof(u32));
+    assert(status == RESULT_SUCCESS);
+    assert(idx == USIZE_C(4));
 
     printf("PASSED\n");
 }
@@ -297,31 +347,29 @@ FindNotBlockIndexBound_U32(void)
 
 #if defined KD_ARCH_64BIT_INT || defined ARCH_64BIT_INT
 void
-FindNotBlockIndexBound_U64(void)
+U64_FindNotBlockIndexBound(void)
 {
-    u64   buf[10];
-    u64   blk = U64_C(0x1111222233334444);
+    u64   buf[5];
+    u64   blk[1];
     usize idx;
     bool  status;
 
-    printf(LOG_PREFIX_CSTR "FindNotBlockIndexBound_U64 -> ");
+    printf(LOG_PREFIX_CSTR "U64_FindNotBlockIndexBound -> ");
 
-    {
-        int i;
-        for (i = 0; i < 10; ++i)
-            buf[i] = blk;
-    }
+    /* Init: A, B, C, D, E */
+    buf[0] = U64_C(0x1111111111111111);
+    buf[1] = U64_C(0x2222222222222222);
+    buf[2] = U64_C(0x3333333333333333);
+    buf[3] = U64_C(0x4444444444444444);
+    buf[4] = U64_C(0x5555555555555555);
 
-    /* Mismatch at Index 2 (Offset 16) */
-    buf[2] = U64_C(0xFFFFFFFFFFFFFFFF);
-
-    /* Start 16, Count 64. Range [16, 80).
-     * Offset 16 is the first checked. Immediate mismatch.
-     */
-    status = GenMemOpsFindNotBlockIndexBound(&idx, buf, sizeof(buf), 16, 64, &blk, sizeof(u64));
-
+    /* Search for NOT A.
+     * 0: A == A.
+     * 1 (offset 8): B != A. Match 8. */
+    blk[0] = U64_C(0x1111111111111111);
+    status = kdGenMemOpsFindNotBlockIndexBound(&idx, buf, sizeof(buf), USIZE_C(0), sizeof(buf), blk, sizeof(u64));
     assert(status == RESULT_SUCCESS);
-    assert(idx == 16);
+    assert(idx == USIZE_C(8));
 
     printf("PASSED\n");
 }
@@ -330,40 +378,69 @@ FindNotBlockIndexBound_U64(void)
 
 typedef struct kdi_TestStruct
 {
-    u64 a;
-    u64 b;
-    u64 c;
+    u32 a;
+    u16 b;
+    u8  c;
+    u8  d;
 } kdi_TestStruct;
 
 
 void
-FindNotBlockIndexBound_Struct(void)
+Struct_FindNotBlockIndexBound(void)
 {
     kdi_TestStruct buf[5];
     kdi_TestStruct blk;
     usize          idx;
     bool           status;
-    int            i;
+    usize          sz = sizeof(kdi_TestStruct);
 
-    printf(LOG_PREFIX_CSTR "FindNotBlockIndexBound_Struct -> ");
+    printf(LOG_PREFIX_CSTR "Struct_FindNotBlockIndexBound -> ");
 
-    blk.a = 1;
-    blk.b = 2;
-    blk.c = 3;
+    /* Init all to zero */
+    kdi_Fill_u8((u8 *)buf, sizeof(buf), 0);
 
-    for (i = 0; i < 5; ++i)
-        buf[i] = blk;
+    /* Set target pattern to match (zero struct) */
+    kdi_Fill_u8((u8 *)&blk, sizeof(blk), 0);
 
-    /* Mismatch at Index 1 (Offset 24) */
-    buf[1].a = 99;
+    /* Set buf[2] to something else */
+    buf[2].a = 0x12345678;
 
-    /* Start 0, Count 48 (2 elements).
-     * Checks Index 0 (Match), Index 1 (Mismatch).
-     */
-    status   = GenMemOpsFindNotBlockIndexBound(&idx, buf, sizeof(buf), 0, 48, &blk, sizeof(kdi_TestStruct));
+    /* Search for NOT zero-struct.
+     * 0: Zero == Zero.
+     * 1: Zero == Zero.
+     * 2: NonZero != Zero. Match 2*sz. */
+    status = kdGenMemOpsFindNotBlockIndexBound(&idx, buf, sizeof(buf), USIZE_C(0), sizeof(buf), &blk, sz);
 
     assert(status == RESULT_SUCCESS);
-    assert(idx == 24);
+    assert(idx == USIZE_C(2) * sz);
+
+    printf("PASSED\n");
+}
+
+
+void
+MultiByteBlock(void)
+{
+    u8    buf[30];
+    u8    blk[3];
+    usize idx;
+    bool  status;
+
+    printf(LOG_PREFIX_CSTR "MultiByteBlock -> ");
+
+    /* Block size 3. Buffer 30. 10 blocks. */
+    /* Init to 0x00 */
+    kdi_Fill_u8(buf, USIZE_C(30), U8_C(0x00));
+
+    /* Set 4th block (offset 9) to 0xFF */
+    kdi_Fill_u8(buf + 9, USIZE_C(3), U8_C(0xFF));
+
+    /* Search for NOT 0x00 block */
+    kdi_Fill_u8(blk, USIZE_C(3), U8_C(0x00));
+
+    status = kdGenMemOpsFindNotBlockIndexBound(&idx, buf, USIZE_C(30), USIZE_C(0), USIZE_C(30), blk, USIZE_C(3));
+    assert(status == RESULT_SUCCESS);
+    assert(idx == USIZE_C(9));
 
     printf("PASSED\n");
 }
@@ -372,35 +449,163 @@ FindNotBlockIndexBound_Struct(void)
 void
 LargeBuffer(void)
 {
-    static u8 buf[8000];
-    u8        blk[8];
-    usize     idx;
-    bool      status;
+    u8    buf[1024];
+    u8    blk[4];
+    usize idx;
+    bool  status;
 
     printf(LOG_PREFIX_CSTR "LargeBuffer -> ");
 
-    kdi_FillVal(buf, sizeof(buf), 0xAA);
-    kdi_FillVal(blk, sizeof(blk), 0xAA);
+    /* Init 0x00 */
+    kdi_Fill_u8(buf, USIZE_C(1024), U8_C(0x00));
 
-    /* Mismatch at Offset 4000 */
-    kdi_FillVal(buf + 4000, 8, 0xBB);
+    /* Set offset 512 to 0xFF */
+    kdi_Fill_u8(buf + 512, USIZE_C(4), U8_C(0xFF));
 
-    /* Start 1000, Count 5000. Range [1000, 6000).
-     * 1000 is aligned to 8 (1000 % 8 == 0).
-     * 4000 is inside range.
-     */
-    status = GenMemOpsFindNotBlockIndexBound(&idx, buf, sizeof(buf), 1000, 5000, blk, sizeof(blk));
+    /* Search NOT 0x00 */
+    kdi_Fill_u8(blk, USIZE_C(4), U8_C(0x00));
 
+    status = kdGenMemOpsFindNotBlockIndexBound(&idx, buf, USIZE_C(1024), USIZE_C(0), USIZE_C(1024), blk, USIZE_C(4));
     assert(status == RESULT_SUCCESS);
-    assert(idx == 4000);
+    assert(idx == USIZE_C(512));
 
-    /* Range ending before 4000. Start 0, Count 4000.
-     * Range [0, 4000).
-     * 4000 is the first byte EXCLUDED.
-     * Should fail to find mismatch.
+    printf("PASSED\n");
+}
+
+
+void
+SingleByteBlocks(void)
+{
+    u8    buf[16];
+    u8    blk[1];
+    usize idx;
+    bool  status;
+
+    printf(LOG_PREFIX_CSTR "SingleByteBlocks -> ");
+
+    /* Init 0x00 */
+    kdi_Fill_u8(buf, USIZE_C(16), U8_C(0x00));
+    /* Set index 5 to 0xFF */
+    buf[5] = 0xFF;
+
+    /* Search NOT 0x00 */
+    blk[0] = 0x00;
+
+    status = kdGenMemOpsFindNotBlockIndexBound(&idx, buf, USIZE_C(16), USIZE_C(0), USIZE_C(16), blk, USIZE_C(1));
+    assert(status == RESULT_SUCCESS);
+    assert(idx == USIZE_C(5));
+
+    printf("PASSED\n");
+}
+
+
+void
+AlternatingBlocks(void)
+{
+    u8    buf[32];
+    u8    blk[4];
+    usize idx;
+    bool  status;
+    usize i;
+
+    printf(LOG_PREFIX_CSTR "AlternatingBlocks -> ");
+
+    /* Alternating 0xAA (block A) and 0x55 (block B) */
+    /* Block size 4. */
+    for (i = 0; i < 32; i++) {
+        buf[i] = ((i / 4) % 2 == 0) ? 0xAA : 0x55;
+    }
+
+    /* Blocks:
+     * 0: AA AA AA AA
+     * 4: 55 55 55 55
+     * 8: AA AA AA AA
+     * 12: 55 55 55 55
+     * ...
      */
-    status = GenMemOpsFindNotBlockIndexBound(&idx, buf, sizeof(buf), 0, 4000, blk, sizeof(blk));
-    assert(status == RESULT_FAILURE);
+
+    /* Search NOT AA... */
+    kdi_Fill_u8(blk, USIZE_C(4), U8_C(0xAA));
+    status = kdGenMemOpsFindNotBlockIndexBound(&idx, buf, USIZE_C(32), USIZE_C(0), USIZE_C(32), blk, USIZE_C(4));
+    /* 0 matches AA. 4 does not. Match 4. */
+    assert(status == RESULT_SUCCESS);
+    assert(idx == USIZE_C(4));
+
+    /* Search NOT 55... */
+    kdi_Fill_u8(blk, USIZE_C(4), U8_C(0x55));
+    status = kdGenMemOpsFindNotBlockIndexBound(&idx, buf, USIZE_C(32), USIZE_C(0), USIZE_C(32), blk, USIZE_C(4));
+    /* 0 is AA != 55. Match 0. */
+    assert(status == RESULT_SUCCESS);
+    assert(idx == USIZE_C(0));
+
+    printf("PASSED\n");
+}
+
+
+void
+ConsecutiveMatches(void)
+{
+    u8    buf[32];
+    u8    blk[4];
+    usize idx;
+    bool  status;
+
+    printf(LOG_PREFIX_CSTR "ConsecutiveMatches -> ");
+
+    /* Init 0x00 */
+    kdi_Fill_u8(buf, USIZE_C(32), U8_C(0x00));
+
+    /* Set 4, 8 to 0xFF */
+    kdi_Fill_u8(buf + 4, USIZE_C(4), U8_C(0xFF));
+    kdi_Fill_u8(buf + 8, USIZE_C(4), U8_C(0xFF));
+
+    /* Search NOT 0x00 */
+    kdi_Fill_u8(blk, USIZE_C(4), U8_C(0x00));
+
+    /* Start at 0. Match 4. */
+    status = kdGenMemOpsFindNotBlockIndexBound(&idx, buf, USIZE_C(32), USIZE_C(0), USIZE_C(32), blk, USIZE_C(4));
+    assert(status == RESULT_SUCCESS);
+    assert(idx == USIZE_C(4));
+
+    /* Start at 4. Match 4. */
+    status = kdGenMemOpsFindNotBlockIndexBound(&idx, buf, USIZE_C(32), USIZE_C(4), USIZE_C(28), blk, USIZE_C(4));
+    assert(status == RESULT_SUCCESS);
+    assert(idx == USIZE_C(4));
+
+    /* Start at 8. Match 8. */
+    status = kdGenMemOpsFindNotBlockIndexBound(&idx, buf, USIZE_C(32), USIZE_C(8), USIZE_C(24), blk, USIZE_C(4));
+    assert(status == RESULT_SUCCESS);
+    assert(idx == USIZE_C(8));
+
+    printf("PASSED\n");
+}
+
+
+void
+OddSizes(void)
+{
+    u8    buf[42];
+    u8    blk[3];
+    usize idx;
+    bool  status;
+
+    printf(LOG_PREFIX_CSTR "OddSizes -> ");
+
+    /* Block size 3. */
+    /* Init 0x00 */
+    kdi_Fill_u8(buf, USIZE_C(42), U8_C(0x00));
+
+    /* Set block at 15 (idx 5) to 0xFF */
+    kdi_Fill_u8(buf + 15, USIZE_C(3), U8_C(0xFF));
+
+    /* Search NOT 0x00 */
+    kdi_Fill_u8(blk, USIZE_C(3), U8_C(0x00));
+
+    /* Range [0, 30). Covers 0, 3, 6, 9, 12, 15, 18, 21, 24, 27.
+     * 15 is 0xFF. Match 15. */
+    status = kdGenMemOpsFindNotBlockIndexBound(&idx, buf, USIZE_C(42), USIZE_C(0), USIZE_C(30), blk, USIZE_C(3));
+    assert(status == RESULT_SUCCESS);
+    assert(idx == USIZE_C(15));
 
     printf("PASSED\n");
 }
@@ -415,19 +620,24 @@ main(int argc, char **argv)
     printf("\n" TEST_NAME_CSTR " :: begin\n");
 
     BasicArguments();
-    StartAlignment();
-    CountAlignmentRelaxed();
-    EndValueClamping();
-    AllMatch();
+    FindNone();
+    FindFirst();
+    FindLast();
     RangeConstraints();
-
-    FindNotBlockIndexBound_U16();
-    FindNotBlockIndexBound_U32();
+    EndValueClamping();
+    FindMultiple();
+    U16_FindNotBlockIndexBound();
+    U32_FindNotBlockIndexBound();
 #if defined KD_ARCH_64BIT_INT || defined ARCH_64BIT_INT
-    FindNotBlockIndexBound_U64();
+    U64_FindNotBlockIndexBound();
 #endif
-    FindNotBlockIndexBound_Struct();
+    Struct_FindNotBlockIndexBound();
+    MultiByteBlock();
     LargeBuffer();
+    SingleByteBlocks();
+    AlternatingBlocks();
+    ConsecutiveMatches();
+    OddSizes();
 
     printf("\n" TEST_NAME_CSTR " :: end\n\n");
 

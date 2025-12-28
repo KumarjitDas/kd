@@ -11,35 +11,12 @@
 #include <assert.h>
 
 #include "../../include/kd/gen_mem_ops.h"
+#include "../utils.h"
 
 
 #define LIB_NAME_CSTR   "KD_GEN_MEM_OPS"
 #define TEST_NAME_CSTR  LIB_NAME_CSTR " library kdGenMemOpsCountBytes function test"
 #define LOG_PREFIX_CSTR "[" LIB_NAME_CSTR "] "
-
-
-static void
-kdi_FillSeq(u8 *dst, usize sz, u8 start)
-{
-    usize i;
-
-    for (i = USIZE_C(0); i < sz; ++i)
-    {
-        dst[i] = (u8)(start + (u8)i);
-    }
-}
-
-
-static void
-kdi_FillVal(u8 *dst, usize sz, u8 val)
-{
-    usize i;
-
-    for (i = USIZE_C(0); i < sz; ++i)
-    {
-        dst[i] = val;
-    }
-}
 
 
 void
@@ -51,19 +28,29 @@ BasicArguments(void)
 
     printf(LOG_PREFIX_CSTR "BasicArguments -> ");
 
+    kdi_Fill_u8(buf, USIZE_C(16), U8_C(0x00));
+
     /* count pointer is null -> failure */
-    status = GenMemOpsCountBytes(null, buf, USIZE_C(16), U8_C(0));
+    status = kdGenMemOpsCountBytes(null, buf, USIZE_C(16), U8_C(0));
     assert(status == RESULT_FAILURE);
 
-    /* ptr is null -> failure */
-    status = GenMemOpsCountBytes(&count, null, USIZE_C(16), U8_C(0));
-    assert(status == RESULT_FAILURE);
-
-    /* sz is zero -> success, count should be 0 */
+    /* ptr is null -> failure, count should be zeroed */
     count  = 55;
-    status = GenMemOpsCountBytes(&count, buf, USIZE_C(0), U8_C(0));
+    status = kdGenMemOpsCountBytes(&count, null, USIZE_C(16), U8_C(0));
+    assert(status == RESULT_FAILURE);
+    assert(count == USIZE_C(0));
+
+    /* sz is zero -> failure, count should be zeroed */
+    count  = 55;
+    status = kdGenMemOpsCountBytes(&count, buf, USIZE_C(0), U8_C(0));
+    assert(status == RESULT_FAILURE);
+    assert(count == USIZE_C(0));
+
+    /* Valid arguments */
+    count  = 55;
+    status = kdGenMemOpsCountBytes(&count, buf, USIZE_C(16), U8_C(0x00));
     assert(status == RESULT_SUCCESS);
-    assert(count == 0);
+    assert(count == USIZE_C(16));
 
     printf("PASSED\n");
 }
@@ -79,14 +66,14 @@ CountNone(void)
     printf(LOG_PREFIX_CSTR "CountNone -> ");
 
     /* Init with 0x00 */
-    kdi_FillVal(buf, USIZE_C(16), U8_C(0x00));
+    kdi_Fill_u8(buf, USIZE_C(16), U8_C(0x00));
 
     /* Count 0xFF */
     count  = 999;
-    status = GenMemOpsCountBytes(&count, buf, USIZE_C(16), U8_C(0xFF));
+    status = kdGenMemOpsCountBytes(&count, buf, USIZE_C(16), U8_C(0xFF));
 
     assert(status == RESULT_SUCCESS);
-    assert(count == 0);
+    assert(count == USIZE_C(0));
 
     printf("PASSED\n");
 }
@@ -102,14 +89,37 @@ CountAll(void)
     printf(LOG_PREFIX_CSTR "CountAll -> ");
 
     /* Init with 0xAA */
-    kdi_FillVal(buf, USIZE_C(16), U8_C(0xAA));
+    kdi_Fill_u8(buf, USIZE_C(16), U8_C(0xAA));
 
     /* Count 0xAA */
     count  = 0;
-    status = GenMemOpsCountBytes(&count, buf, USIZE_C(16), U8_C(0xAA));
+    status = kdGenMemOpsCountBytes(&count, buf, USIZE_C(16), U8_C(0xAA));
 
     assert(status == RESULT_SUCCESS);
-    assert(count == 16);
+    assert(count == USIZE_C(16));
+
+    printf("PASSED\n");
+}
+
+
+void
+CountSingle(void)
+{
+    u8    buf[16];
+    usize count;
+    bool  status;
+
+    printf(LOG_PREFIX_CSTR "CountSingle -> ");
+
+    /* Init with 0x00, set one byte to 0xFF */
+    kdi_Fill_u8(buf, USIZE_C(16), U8_C(0x00));
+    buf[7] = 0xFF;
+
+    /* Count 0xFF */
+    status = kdGenMemOpsCountBytes(&count, buf, USIZE_C(16), U8_C(0xFF));
+
+    assert(status == RESULT_SUCCESS);
+    assert(count == USIZE_C(1));
 
     printf("PASSED\n");
 }
@@ -137,82 +147,442 @@ CountMixed(void)
     buf[9] = 0;
 
     /* Count 0x00. Should appear 4 times. */
-    status = GenMemOpsCountBytes(&count, buf, USIZE_C(10), U8_C(0x00));
+    status = kdGenMemOpsCountBytes(&count, buf, USIZE_C(10), U8_C(0x00));
     assert(status == RESULT_SUCCESS);
-    assert(count == 4);
+    assert(count == USIZE_C(4));
 
     /* Count 0x01. Should appear 3 times. */
-    status = GenMemOpsCountBytes(&count, buf, USIZE_C(10), U8_C(0x01));
+    status = kdGenMemOpsCountBytes(&count, buf, USIZE_C(10), U8_C(0x01));
     assert(status == RESULT_SUCCESS);
-    assert(count == 3);
+    assert(count == USIZE_C(3));
+
+    /* Count 0x02. Should appear 3 times. */
+    status = kdGenMemOpsCountBytes(&count, buf, USIZE_C(10), U8_C(0x02));
+    assert(status == RESULT_SUCCESS);
+    assert(count == USIZE_C(3));
+
+    /* Count 0x03. Should appear 0 times. */
+    status = kdGenMemOpsCountBytes(&count, buf, USIZE_C(10), U8_C(0x03));
+    assert(status == RESULT_SUCCESS);
+    assert(count == USIZE_C(0));
 
     printf("PASSED\n");
 }
 
 
 void
-U32_CountBytes(void)
+CountZeros(void)
+{
+    u8    buf[32];
+    usize count;
+    bool  status;
+
+    printf(LOG_PREFIX_CSTR "CountZeros -> ");
+
+    /* All zeros */
+    kdi_Fill_u8(buf, USIZE_C(32), U8_C(0x00));
+
+    status = kdGenMemOpsCountBytes(&count, buf, USIZE_C(32), U8_C(0x00));
+    assert(status == RESULT_SUCCESS);
+    assert(count == USIZE_C(32));
+
+    /* Set half to non-zero */
+    kdi_Fill_u8(buf, USIZE_C(16), U8_C(0xFF));
+
+    status = kdGenMemOpsCountBytes(&count, buf, USIZE_C(32), U8_C(0x00));
+    assert(status == RESULT_SUCCESS);
+    assert(count == USIZE_C(16));
+
+    printf("PASSED\n");
+}
+
+
+void
+CountMaxByte(void)
+{
+    u8    buf[32];
+    usize count;
+    bool  status;
+
+    printf(LOG_PREFIX_CSTR "CountMaxByte -> ");
+
+    /* All 0xFF */
+    kdi_Fill_u8(buf, USIZE_C(32), U8_C(0xFF));
+
+    status = kdGenMemOpsCountBytes(&count, buf, USIZE_C(32), U8_C(0xFF));
+    assert(status == RESULT_SUCCESS);
+    assert(count == USIZE_C(32));
+
+    /* Set some to different values */
+    buf[0]  = 0x00;
+    buf[15] = 0x7F;
+    buf[31] = 0xFE;
+
+    status  = kdGenMemOpsCountBytes(&count, buf, USIZE_C(32), U8_C(0xFF));
+    assert(status == RESULT_SUCCESS);
+    assert(count == USIZE_C(29));
+
+    printf("PASSED\n");
+}
+
+
+void
+AlternatingPattern(void)
+{
+    u8    buf[32];
+    usize count;
+    bool  status;
+    usize i;
+
+    printf(LOG_PREFIX_CSTR "AlternatingPattern -> ");
+
+    /* Alternating 0xAA, 0x55 */
+    for (i = 0; i < 32; ++i)
+    {
+        buf[i] = (i & 1) ? 0x55 : 0xAA;
+    }
+
+    /* Count 0xAA (even indices) */
+    status = kdGenMemOpsCountBytes(&count, buf, USIZE_C(32), U8_C(0xAA));
+    assert(status == RESULT_SUCCESS);
+    assert(count == USIZE_C(16));
+
+    /* Count 0x55 (odd indices) */
+    status = kdGenMemOpsCountBytes(&count, buf, USIZE_C(32), U8_C(0x55));
+    assert(status == RESULT_SUCCESS);
+    assert(count == USIZE_C(16));
+
+    printf("PASSED\n");
+}
+
+
+void
+SequentialValues(void)
+{
+    u8    buf[256];
+    usize count;
+    bool  status;
+
+    printf(LOG_PREFIX_CSTR "SequentialValues -> ");
+
+    /* Init: 0..255 */
+    kdi_FillSeq_u8(buf, USIZE_C(256), U8_C(0x00));
+
+    /* Each value appears exactly once */
+    status = kdGenMemOpsCountBytes(&count, buf, USIZE_C(256), U8_C(0x00));
+    assert(status == RESULT_SUCCESS);
+    assert(count == USIZE_C(1));
+
+    status = kdGenMemOpsCountBytes(&count, buf, USIZE_C(256), U8_C(0x7F));
+    assert(status == RESULT_SUCCESS);
+    assert(count == USIZE_C(1));
+
+    status = kdGenMemOpsCountBytes(&count, buf, USIZE_C(256), U8_C(0xFF));
+    assert(status == RESULT_SUCCESS);
+    assert(count == USIZE_C(1));
+
+    printf("PASSED\n");
+}
+
+
+void
+SmallBuffer(void)
+{
+    u8    buf[1];
+    usize count;
+    bool  status;
+
+    printf(LOG_PREFIX_CSTR "SmallBuffer -> ");
+
+    /* Single byte buffer - match */
+    buf[0] = 0x42;
+    status = kdGenMemOpsCountBytes(&count, buf, USIZE_C(1), U8_C(0x42));
+    assert(status == RESULT_SUCCESS);
+    assert(count == USIZE_C(1));
+
+    /* Single byte buffer - no match */
+    status = kdGenMemOpsCountBytes(&count, buf, USIZE_C(1), U8_C(0x43));
+    assert(status == RESULT_SUCCESS);
+    assert(count == USIZE_C(0));
+
+    printf("PASSED\n");
+}
+
+
+void
+LargeBuffer(void)
+{
+    u8    buf[1024];
+    usize count;
+    bool  status;
+    usize i;
+
+    printf(LOG_PREFIX_CSTR "LargeBuffer -> ");
+
+    /* Init with pattern */
+    for (i = 0; i < 1024; ++i)
+    {
+        buf[i] = (u8)(i % 256);
+    }
+
+    /* Count specific value that appears multiple times */
+    /* Value 0 appears at indices: 0, 256, 512, 768 = 4 times */
+    status = kdGenMemOpsCountBytes(&count, buf, USIZE_C(1024), U8_C(0x00));
+    assert(status == RESULT_SUCCESS);
+    assert(count == USIZE_C(4));
+
+    /* Value 100 appears at indices: 100, 356, 612, 868 = 4 times */
+    status = kdGenMemOpsCountBytes(&count, buf, USIZE_C(1024), U8_C(100));
+    assert(status == RESULT_SUCCESS);
+    assert(count == USIZE_C(4));
+
+    printf("PASSED\n");
+}
+
+
+void
+U16_Buffer(void)
+{
+    u16   buf[8];
+    usize count;
+    bool  status;
+
+    printf(LOG_PREFIX_CSTR "U16_Buffer -> ");
+
+    /* Fill with u16 values, but count bytes within them */
+    buf[0] = 0x1122;
+    buf[1] = 0x3344;
+    buf[2] = 0x2211;
+    buf[3] = 0x4433;
+    buf[4] = 0x1122;
+    buf[5] = 0x3344;
+    buf[6] = 0x2211;
+    buf[7] = 0x4433;
+
+    /* Count byte 0x22 (appears in different positions depending on endianness) */
+    /* We don't know endianness, but we know total count */
+    status = kdGenMemOpsCountBytes(&count, buf, sizeof(buf), U8_C(0x22));
+    assert(status == RESULT_SUCCESS);
+    assert(count == USIZE_C(4)); /* 2 in buf[0], 2 in buf[4] */
+
+    /* Count byte 0x11 */
+    status = kdGenMemOpsCountBytes(&count, buf, sizeof(buf), U8_C(0x11));
+    assert(status == RESULT_SUCCESS);
+    assert(count == USIZE_C(4)); /* 2 in buf[2], 2 in buf[6] */
+
+    printf("PASSED\n");
+}
+
+
+void
+U32_Buffer(void)
 {
     u32   buf[4];
     usize count;
     bool  status;
 
-    printf(LOG_PREFIX_CSTR "U32_CountBytes -> ");
+    printf(LOG_PREFIX_CSTR "U32_Buffer -> ");
 
     /* Init: 0x00000000 */
-    kdi_FillVal((u8 *)buf, sizeof(buf), 0);
+    kdi_Fill_u8((u8 *)buf, sizeof(buf), 0);
 
     /* Set specific bytes */
-    /* buf[0] bytes: [AA, 00, 00, 00] (Assuming Little Endian for mental map, but logic holds regardless) */
-    /* We just access via byte pointer for setup to be endian-safe for the test logic */
-    ((u8 *)buf)[0] = 0xAA;
-    ((u8 *)buf)[7] = 0xAA; /* Last byte of buf[1] */
-    ((u8 *)buf)[8] = 0xAA; /* First byte of buf[2] */
+    ((u8 *)buf)[0]  = 0xAA;
+    ((u8 *)buf)[7]  = 0xAA;
+    ((u8 *)buf)[8]  = 0xAA;
+    ((u8 *)buf)[15] = 0xAA;
 
     /* Count 0xAA */
-    status         = GenMemOpsCountBytes(&count, buf, sizeof(buf), U8_C(0xAA));
-
+    status          = kdGenMemOpsCountBytes(&count, buf, sizeof(buf), U8_C(0xAA));
     assert(status == RESULT_SUCCESS);
-    assert(count == 3);
+    assert(count == USIZE_C(4));
 
-    /* Count 0x00 */
-    /* Total bytes = 16. Modified = 3. 0x00s = 13. */
-    status = GenMemOpsCountBytes(&count, buf, sizeof(buf), U8_C(0x00));
+    /* Count 0x00 (total 16 bytes, 4 are 0xAA, so 12 are 0x00) */
+    status = kdGenMemOpsCountBytes(&count, buf, sizeof(buf), U8_C(0x00));
     assert(status == RESULT_SUCCESS);
-    assert(count == 13);
+    assert(count == USIZE_C(12));
 
     printf("PASSED\n");
 }
 
 
 void
-LargeArray_Count(void)
+CountAtBoundaries(void)
+{
+    u8    buf[16];
+    usize count;
+    bool  status;
+
+    printf(LOG_PREFIX_CSTR "CountAtBoundaries -> ");
+
+    kdi_Fill_u8(buf, USIZE_C(16), U8_C(0x00));
+
+    /* Set first and last byte */
+    buf[0]  = 0xFF;
+    buf[15] = 0xFF;
+
+    status  = kdGenMemOpsCountBytes(&count, buf, USIZE_C(16), U8_C(0xFF));
+    assert(status == RESULT_SUCCESS);
+    assert(count == USIZE_C(2));
+
+    /* Count zeros */
+    status = kdGenMemOpsCountBytes(&count, buf, USIZE_C(16), U8_C(0x00));
+    assert(status == RESULT_SUCCESS);
+    assert(count == USIZE_C(14));
+
+    printf("PASSED\n");
+}
+
+
+void
+RepeatingGroups(void)
+{
+    u8    buf[30];
+    usize count;
+    bool  status;
+    usize i;
+
+    printf(LOG_PREFIX_CSTR "RepeatingGroups -> ");
+
+    /* Pattern: 0xFF, 0xFF, 0xFF, 0x00, 0x00 (repeating) */
+    for (i = 0; i < 30; i += 5)
+    {
+        buf[i]     = 0xFF;
+        buf[i + 1] = 0xFF;
+        buf[i + 2] = 0xFF;
+        buf[i + 3] = 0x00;
+        buf[i + 4] = 0x00;
+    }
+
+    /* Count 0xFF (18 out of 30) */
+    status = kdGenMemOpsCountBytes(&count, buf, USIZE_C(30), U8_C(0xFF));
+    assert(status == RESULT_SUCCESS);
+    assert(count == USIZE_C(18));
+
+    /* Count 0x00 (12 out of 30) */
+    status = kdGenMemOpsCountBytes(&count, buf, USIZE_C(30), U8_C(0x00));
+    assert(status == RESULT_SUCCESS);
+    assert(count == USIZE_C(12));
+
+    printf("PASSED\n");
+}
+
+
+void
+PartialBuffer(void)
+{
+    u8    buf[32];
+    usize count;
+    bool  status;
+
+    printf(LOG_PREFIX_CSTR "PartialBuffer -> ");
+
+    /* Fill entire buffer */
+    kdi_Fill_u8(buf, USIZE_C(32), U8_C(0xAA));
+
+    /* But only count first 10 bytes */
+    status = kdGenMemOpsCountBytes(&count, buf, USIZE_C(10), U8_C(0xAA));
+    assert(status == RESULT_SUCCESS);
+    assert(count == USIZE_C(10));
+
+    /* Modify bytes beyond count range, should not affect result */
+    buf[20] = 0x00;
+    buf[25] = 0x00;
+    buf[31] = 0x00;
+
+    status  = kdGenMemOpsCountBytes(&count, buf, USIZE_C(10), U8_C(0xAA));
+    assert(status == RESULT_SUCCESS);
+    assert(count == USIZE_C(10));
+
+    printf("PASSED\n");
+}
+
+
+void
+ConsecutiveMatches(void)
+{
+    u8    buf[32];
+    usize count;
+    bool  status;
+
+    printf(LOG_PREFIX_CSTR "ConsecutiveMatches -> ");
+
+    /* First 16 bytes are 0xBB, last 16 bytes are 0xCC */
+    kdi_Fill_u8(buf, USIZE_C(16), U8_C(0xBB));
+    kdi_Fill_u8(buf + 16, USIZE_C(16), U8_C(0xCC));
+
+    /* Count consecutive 0xBB */
+    status = kdGenMemOpsCountBytes(&count, buf, USIZE_C(32), U8_C(0xBB));
+    assert(status == RESULT_SUCCESS);
+    assert(count == USIZE_C(16));
+
+    /* Count consecutive 0xCC */
+    status = kdGenMemOpsCountBytes(&count, buf, USIZE_C(32), U8_C(0xCC));
+    assert(status == RESULT_SUCCESS);
+    assert(count == USIZE_C(16));
+
+    printf("PASSED\n");
+}
+
+
+void
+SparseMatches(void)
 {
     u8    buf[100];
     usize count;
     bool  status;
     usize i;
 
-    printf(LOG_PREFIX_CSTR "LargeArray_Count -> ");
+    printf(LOG_PREFIX_CSTR "SparseMatches -> ");
 
-    /* Init: 0..99 */
-    kdi_FillSeq(buf, USIZE_C(100), U8_C(0));
+    /* Fill with 0x00 */
+    kdi_Fill_u8(buf, USIZE_C(100), U8_C(0x00));
 
-    /* Count specific values */
-
-    /* Value 50 appears once */
-    status = GenMemOpsCountBytes(&count, buf, USIZE_C(100), U8_C(50));
-    assert(status == RESULT_SUCCESS);
-    assert(count == 1);
-
-    /* Set first 50 bytes to 0xFF */
-    for (i = 0; i < 50; ++i)
+    /* Set every 10th byte to 0xFF */
+    for (i = 0; i < 100; i += 10)
+    {
         buf[i] = 0xFF;
+    }
 
-    /* Count 0xFF */
-    status = GenMemOpsCountBytes(&count, buf, USIZE_C(100), U8_C(0xFF));
+    /* Count sparse 0xFF (10 matches) */
+    status = kdGenMemOpsCountBytes(&count, buf, USIZE_C(100), U8_C(0xFF));
     assert(status == RESULT_SUCCESS);
-    assert(count == 50);
+    assert(count == USIZE_C(10));
+
+    /* Count dense 0x00 (90 matches) */
+    status = kdGenMemOpsCountBytes(&count, buf, USIZE_C(100), U8_C(0x00));
+    assert(status == RESULT_SUCCESS);
+    assert(count == USIZE_C(90));
+
+    printf("PASSED\n");
+}
+
+
+void
+OddSizes(void)
+{
+    u8    buf[33];
+    usize count;
+    bool  status;
+
+    printf(LOG_PREFIX_CSTR "OddSizes -> ");
+
+    /* Odd size: 33 bytes */
+    kdi_Fill_u8(buf, USIZE_C(33), U8_C(0x77));
+
+    status = kdGenMemOpsCountBytes(&count, buf, USIZE_C(33), U8_C(0x77));
+    assert(status == RESULT_SUCCESS);
+    assert(count == USIZE_C(33));
+
+    /* Size 17 */
+    status = kdGenMemOpsCountBytes(&count, buf, USIZE_C(17), U8_C(0x77));
+    assert(status == RESULT_SUCCESS);
+    assert(count == USIZE_C(17));
+
+    /* Size 7 */
+    status = kdGenMemOpsCountBytes(&count, buf, USIZE_C(7), U8_C(0x77));
+    assert(status == RESULT_SUCCESS);
+    assert(count == USIZE_C(7));
 
     printf("PASSED\n");
 }
@@ -229,9 +599,22 @@ main(int argc, char **argv)
     BasicArguments();
     CountNone();
     CountAll();
+    CountSingle();
     CountMixed();
-    U32_CountBytes();
-    LargeArray_Count();
+    CountZeros();
+    CountMaxByte();
+    AlternatingPattern();
+    SequentialValues();
+    SmallBuffer();
+    LargeBuffer();
+    U16_Buffer();
+    U32_Buffer();
+    CountAtBoundaries();
+    RepeatingGroups();
+    PartialBuffer();
+    ConsecutiveMatches();
+    SparseMatches();
+    OddSizes();
 
     printf("\n" TEST_NAME_CSTR " :: end\n\n");
 

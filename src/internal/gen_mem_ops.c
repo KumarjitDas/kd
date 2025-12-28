@@ -451,13 +451,92 @@ kdi_GenMemOpsIsEqual(bool *result, byte *ptr_1, byte *ptr_2, usize sz)
 
 
 void
-kdi_GenMemOpsIsVal(bool *result, byte *ptr, usize sz, byte val)
+kdi_GenMemOpsIsBlocks_U8(bool *result, u8 *ptr, usize sz, u8 item)
 {
     *result = true;
 
     while (sz-- && *result)
     {
-        *result = *ptr == val;
+        *result = *ptr == item;
+        ++ptr;
+    }
+}
+
+
+void
+kdi_GenMemOpsIsBlocks_U16(bool *result, u16 *ptr, usize sz, u16 item)
+{
+    *result = true;
+
+    while (sz && *result)
+    {
+        *result = *ptr == item;
+
+        ++ptr;
+        sz -= SZ_U16;
+    }
+}
+
+
+void
+kdi_GenMemOpsIsBlocks_U32(bool *result, u32 *ptr, usize sz, u32 item)
+{
+    *result = true;
+
+    while (sz && *result)
+    {
+        *result = *ptr == item;
+
+        ++ptr;
+        sz -= SZ_U32;
+    }
+}
+
+
+#if defined ARCH_64BIT_INT
+void
+kdi_GenMemOpsIsBlocks_U64(bool *result, u64 *ptr, usize sz, u64 item)
+{
+    *result = true;
+
+    while (sz && *result)
+    {
+        *result = *ptr == item;
+
+        ++ptr;
+        sz -= SZ_U64;
+    }
+}
+#endif
+
+
+void
+kdi_GenMemOpsIsBlocks_Un(bool *result, byte *ptr, usize ptr_sz, byte *block, usize block_sz)
+{
+    byte *block_begin = block;
+    byte *block_end   = block + block_sz - 1;
+    usize match_count = 0;
+    bool  match;
+
+    *result = true;
+
+    while (ptr_sz-- && *result)
+    {
+        match_count += *ptr == *block_begin;
+        match        = match_count == block_sz;
+
+        if (block_begin == block_end)
+        {
+            *result     = match;
+            match_count = 0;
+            block_begin = block;
+        }
+        else
+        {
+            match_count = match ? 0 : match_count;
+            ++block_begin;
+        }
+
         ++ptr;
     }
 }
@@ -592,8 +671,8 @@ kdi_GenMemOpsInsertBlockAt_U8(u8 *dst, usize *dst_sz, usize idx, u8 val)
         --ptr_before;
     }
 
-    *ptr    = val;
-    *dst_sz = *dst_sz + 1;
+    *ptr     = val;
+    *dst_sz += 1;
 }
 
 
@@ -613,8 +692,8 @@ kdi_GenMemOpsInsertBlockAt_U16(u16 *dst, usize *dst_sz, usize idx, u16 val)
         temp_sz -= SZ_U16;
     }
 
-    *ptr    = val;
-    *dst_sz = *dst_sz + SZ_U16;
+    *ptr     = val;
+    *dst_sz += SZ_U16;
 }
 
 
@@ -634,8 +713,8 @@ kdi_GenMemOpsInsertBlockAt_U32(u32 *dst, usize *dst_sz, usize idx, u32 val)
         temp_sz -= SZ_U32;
     }
 
-    *ptr    = val;
-    *dst_sz = *dst_sz + SZ_U32;
+    *ptr     = val;
+    *dst_sz += SZ_U32;
 }
 
 
@@ -656,8 +735,8 @@ kdi_GenMemOpsInsertBlockAt_U64(u64 *dst, usize *dst_sz, usize idx, u64 val)
         temp_sz -= SZ_U64;
     }
 
-    *ptr    = val;
-    *dst_sz = *dst_sz + SZ_U64;
+    *ptr     = val;
+    *dst_sz += SZ_U64;
 }
 #endif
 
@@ -679,7 +758,7 @@ kdi_GenMemOpsInsertBlockAt_Un(byte *dst, usize *dst_sz, usize idx, byte *block, 
 
     kdi_GenMemOpsCopy(ptr_before, block, block_sz);
 
-    *dst_sz = *dst_sz + block_sz;
+    *dst_sz += block_sz;
 }
 
 
@@ -1218,18 +1297,15 @@ kdi_GenMemOpsFindNotBlockIndex_Un(usize *idx, byte *ptr, usize sz, byte *block, 
 bool
 kdi_GenMemOpsFindLastBlockIndex_U8(usize *idx, u8 *ptr, usize sz, u8 item)
 {
-    usize curr_idx  = sz;
-
-    ptr            += sz;
+    ptr += sz;
 
     while (sz--)
     {
         --ptr;
-        --curr_idx;
 
         if (*ptr == item)
         {
-            *idx = curr_idx;
+            *idx = sz;
             return RESULT_SUCCESS;
         }
     }
@@ -1241,19 +1317,16 @@ kdi_GenMemOpsFindLastBlockIndex_U8(usize *idx, u8 *ptr, usize sz, u8 item)
 bool
 kdi_GenMemOpsFindLastBlockIndex_U16(usize *idx, u16 *ptr, usize sz, u16 item)
 {
-    usize curr_idx = sz;
-
-    ptr            = PU16_C(PBYTE_C(ptr) + sz);
+    ptr = PU16_C(PBYTE_C(ptr) + sz);
 
     while (sz)
     {
         --ptr;
-        curr_idx -= SZ_U16;
-        sz       -= SZ_U16;
+        sz -= SZ_U16;
 
         if (*ptr == item)
         {
-            *idx = curr_idx;
+            *idx = sz;
             return RESULT_SUCCESS;
         }
     }
@@ -1265,19 +1338,16 @@ kdi_GenMemOpsFindLastBlockIndex_U16(usize *idx, u16 *ptr, usize sz, u16 item)
 bool
 kdi_GenMemOpsFindLastBlockIndex_U32(usize *idx, u32 *ptr, usize sz, u32 item)
 {
-    usize curr_idx = sz;
-
-    ptr            = PU32_C(PBYTE_C(ptr) + sz);
+    ptr = PU32_C(PBYTE_C(ptr) + sz);
 
     while (sz)
     {
         --ptr;
-        curr_idx -= SZ_U32;
-        sz       -= SZ_U32;
+        sz -= SZ_U32;
 
         if (*ptr == item)
         {
-            *idx = curr_idx;
+            *idx = sz;
             return RESULT_SUCCESS;
         }
     }
@@ -1290,19 +1360,16 @@ kdi_GenMemOpsFindLastBlockIndex_U32(usize *idx, u32 *ptr, usize sz, u32 item)
 bool
 kdi_GenMemOpsFindLastBlockIndex_U64(usize *idx, u64 *ptr, usize sz, u64 item)
 {
-    usize curr_idx = sz;
-
-    ptr            = PU64_C(PBYTE_C(ptr) + sz);
+    ptr = PU64_C(PBYTE_C(ptr) + sz);
 
     while (sz)
     {
         --ptr;
-        curr_idx -= SZ_U64;
-        sz       -= SZ_U64;
+        sz -= SZ_U64;
 
         if (*ptr == item)
         {
-            *idx = curr_idx;
+            *idx = sz;
             return RESULT_SUCCESS;
         }
     }
@@ -1525,7 +1592,7 @@ kdi_GenMemOpsFindBlockIndicesU16_IdxU8(u8 *idxs, usize idxs_sz, usize *found, u1
         if (*ptr == item)
         {
             *idxs   = curr_idx;
-            *found += SZ_U16;
+            *found += 1;
 
             ++idxs;
             --idxs_sz;
@@ -1548,7 +1615,7 @@ kdi_GenMemOpsFindBlockIndicesU32_IdxU8(u8 *idxs, usize idxs_sz, usize *found, u3
         if (*ptr == item)
         {
             *idxs   = curr_idx;
-            *found += SZ_U32;
+            *found += 1;
 
             ++idxs;
             --idxs_sz;
@@ -1572,7 +1639,7 @@ kdi_GenMemOpsFindBlockIndicesU64_IdxU8(u8 *idxs, usize idxs_sz, usize *found, u6
         if (*ptr == item)
         {
             *idxs   = curr_idx;
-            *found += SZ_U64;
+            *found += 1;
 
             ++idxs;
             --idxs_sz;
@@ -1603,7 +1670,7 @@ kdi_GenMemOpsFindBlockIndicesUn_IdxU8(u8 *idxs, usize idxs_sz, usize *found, byt
         if (match)
         {
             *idxs   = curr_idx;
-            *found += block_sz;
+            *found += 1;
 
             ++idxs;
             --idxs_sz;
@@ -1636,7 +1703,7 @@ kdi_GenMemOpsFindBlockIndicesU8_IdxU16(u16 *idxs, usize idxs_sz, usize *found, u
         if (*ptr == item)
         {
             *idxs   = curr_idx;
-            *found += 1;
+            *found += SZ_U16;
 
             ++idxs;
             idxs_sz -= SZ_U16;
@@ -1681,7 +1748,7 @@ kdi_GenMemOpsFindBlockIndicesU32_IdxU16(u16 *idxs, usize idxs_sz, usize *found, 
         if (*ptr == item)
         {
             *idxs   = curr_idx;
-            *found += SZ_U32;
+            *found += SZ_U16;
 
             ++idxs;
             idxs_sz -= SZ_U16;
@@ -1705,7 +1772,7 @@ kdi_GenMemOpsFindBlockIndicesU64_IdxU16(u16 *idxs, usize idxs_sz, usize *found, 
         if (*ptr == item)
         {
             *idxs   = curr_idx;
-            *found += SZ_U64;
+            *found += SZ_U16;
 
             ++idxs;
             idxs_sz -= SZ_U16;
@@ -1736,7 +1803,7 @@ kdi_GenMemOpsFindBlockIndicesUn_IdxU16(u16 *idxs, usize idxs_sz, usize *found, b
         if (match)
         {
             *idxs   = curr_idx;
-            *found += block_sz;
+            *found += SZ_U16;
 
             ++idxs;
             --idxs_sz;
@@ -1769,7 +1836,7 @@ kdi_GenMemOpsFindBlockIndicesU8_IdxU32(u32 *idxs, usize idxs_sz, usize *found, u
         if (*ptr == item)
         {
             *idxs   = curr_idx;
-            *found += 1;
+            *found += SZ_U32;
 
             ++idxs;
             idxs_sz -= SZ_U32;
@@ -1791,7 +1858,7 @@ kdi_GenMemOpsFindBlockIndicesU16_IdxU32(u32 *idxs, usize idxs_sz, usize *found, 
         if (*ptr == item)
         {
             *idxs   = curr_idx;
-            *found += SZ_U16;
+            *found += SZ_U32;
 
             ++idxs;
             idxs_sz -= SZ_U32;
@@ -1838,7 +1905,7 @@ kdi_GenMemOpsFindBlockIndicesU64_IdxU32(u32 *idxs, usize idxs_sz, usize *found, 
         if (*ptr == item)
         {
             *idxs   = curr_idx;
-            *found += SZ_U64;
+            *found += SZ_U32;
 
             ++idxs;
             idxs_sz -= SZ_U32;
@@ -1869,7 +1936,7 @@ kdi_GenMemOpsFindBlockIndicesUn_IdxU32(u32 *idxs, usize idxs_sz, usize *found, b
         if (match)
         {
             *idxs   = curr_idx;
-            *found += block_sz;
+            *found += SZ_U32;
 
             ++idxs;
             --idxs_sz;
@@ -1903,7 +1970,7 @@ kdi_GenMemOpsFindBlockIndicesU8_IdxU64(u64 *idxs, usize idxs_sz, usize *found, u
         if (*ptr == item)
         {
             *idxs   = curr_idx;
-            *found += 1;
+            *found += SZ_U64;
 
             ++idxs;
             idxs_sz -= SZ_U64;
@@ -1925,7 +1992,7 @@ kdi_GenMemOpsFindBlockIndicesU16_IdxU64(u64 *idxs, usize idxs_sz, usize *found, 
         if (*ptr == item)
         {
             *idxs   = curr_idx;
-            *found += SZ_U16;
+            *found += SZ_U64;
 
             ++idxs;
             idxs_sz -= SZ_U64;
@@ -1948,7 +2015,7 @@ kdi_GenMemOpsFindBlockIndicesU32_IdxU64(u64 *idxs, usize idxs_sz, usize *found, 
         if (*ptr == item)
         {
             *idxs   = curr_idx;
-            *found += SZ_U32;
+            *found += SZ_U64;
 
             ++idxs;
             idxs_sz -= SZ_U64;
@@ -2001,7 +2068,7 @@ kdi_GenMemOpsFindBlockIndicesUn_IdxU64(u64 *idxs, usize idxs_sz, usize *found, b
         if (match)
         {
             *idxs   = curr_idx;
-            *found += block_sz;
+            *found += SZ_U64;
 
             ++idxs;
             --idxs_sz;

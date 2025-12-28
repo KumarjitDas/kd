@@ -9,8 +9,10 @@
 
 #include <stdio.h>
 #include <assert.h>
+#include <string.h>   /* For memset */
 
 #include "../../include/kd/gen_mem_ops.h"
+#include "../utils.h" /* For kdi_Fill_u8 */
 
 
 #define LIB_NAME_CSTR   "KD_GEN_MEM_OPS"
@@ -18,101 +20,79 @@
 #define LOG_PREFIX_CSTR "[" LIB_NAME_CSTR "] "
 
 
-static void
-kdi_FillVal(u8 *dst, usize sz, u8 val)
-{
-    usize i;
-
-    for (i = USIZE_C(0); i < sz; ++i)
-    {
-        dst[i] = val;
-    }
-}
-
-
 void
 BasicArguments(void)
 {
-    u8    buf[16];
+    u8    buf[32];
     u8    blk[4];
-    usize idx = 55;
+    usize idx = 999;
     bool  status;
 
     printf(LOG_PREFIX_CSTR "BasicArguments -> ");
 
-    /* idx pointer is null -> failure */
-    status = GenMemOpsFindLastNotBlockIndex(null, buf, USIZE_C(16), blk, USIZE_C(4));
+    kdi_Fill_u8(buf, sizeof(buf), U8_C(0xAA));
+    kdi_Fill_u8(blk, sizeof(blk), U8_C(0xBB)); /* Target is 0xBB block, different from buf */
+
+    /* idx pointer is NULL -> failure */
+    status = kdGenMemOpsFindLastNotBlockIndex(NULL, buf, USIZE_C(32), blk, USIZE_C(4));
     assert(status == RESULT_FAILURE);
 
-    /* ptr is null -> failure */
-    status = GenMemOpsFindLastNotBlockIndex(&idx, null, USIZE_C(16), blk, USIZE_C(4));
+    /* base is NULL -> failure */
+    idx    = 999;
+    status = kdGenMemOpsFindLastNotBlockIndex(&idx, NULL, USIZE_C(32), blk, USIZE_C(4));
     assert(status == RESULT_FAILURE);
 
-    /* ptr_sz is zero -> failure */
-    status = GenMemOpsFindLastNotBlockIndex(&idx, buf, USIZE_C(0), blk, USIZE_C(4));
+    /* block is NULL -> failure */
+    idx    = 999;
+    status = kdGenMemOpsFindLastNotBlockIndex(&idx, buf, USIZE_C(32), NULL, USIZE_C(4));
     assert(status == RESULT_FAILURE);
 
-    /* block is null -> failure */
-    status = GenMemOpsFindLastNotBlockIndex(&idx, buf, USIZE_C(16), null, USIZE_C(4));
+    /* base_sz is zero -> failure */
+    idx    = 999;
+    status = kdGenMemOpsFindLastNotBlockIndex(&idx, buf, USIZE_C(0), blk, USIZE_C(4));
     assert(status == RESULT_FAILURE);
 
     /* block_sz is zero -> failure */
-    status = GenMemOpsFindLastNotBlockIndex(&idx, buf, USIZE_C(16), blk, USIZE_C(0));
+    idx    = 999;
+    status = kdGenMemOpsFindLastNotBlockIndex(&idx, buf, USIZE_C(32), blk, USIZE_C(0));
     assert(status == RESULT_FAILURE);
 
-    /* block_sz > ptr_sz -> failure */
-    status = GenMemOpsFindLastNotBlockIndex(&idx, buf, USIZE_C(4), blk, USIZE_C(16));
+    /* base_sz not divisible by block_sz -> failure */
+    idx    = 999;
+    status = kdGenMemOpsFindLastNotBlockIndex(&idx, buf, USIZE_C(31), blk, USIZE_C(4));
     assert(status == RESULT_FAILURE);
+
+    /* Valid arguments - all blocks in buf are 0xAA, search for NOT 0xBB.
+     * All blocks in buf are NOT 0xBB, so the last block (index 28) should be found. */
+    idx    = 999;
+    status = kdGenMemOpsFindLastNotBlockIndex(&idx, buf, USIZE_C(32), blk, USIZE_C(4));
+    assert(status == RESULT_SUCCESS);
+    assert(idx == USIZE_C(28)); /* Last block is at index 28 (32 - 4) */
 
     printf("PASSED\n");
 }
 
 
 void
-SizeAlignment(void)
+AllMatchTarget(void)
 {
-    u8    buf[16];
+    u8    buf[32];
     u8    blk[4];
     usize idx;
     bool  status;
 
-    printf(LOG_PREFIX_CSTR "SizeAlignment -> ");
+    printf(LOG_PREFIX_CSTR "AllMatchTarget -> ");
 
-    /* ptr_sz (15) is not divisible by block_sz (4) -> Failure */
-    status = GenMemOpsFindLastNotBlockIndex(&idx, buf, USIZE_C(15), blk, USIZE_C(4));
-    assert(status == RESULT_FAILURE);
+    /* Fill buffer with 0xAA blocks */
+    kdi_Fill_u8(buf, USIZE_C(32), U8_C(0xAA));
+    /* Target block is also 0xAA */
+    kdi_Fill_u8(blk, USIZE_C(4), U8_C(0xAA));
 
-    /* ptr_sz (16) is divisible by block_sz (4) -> Success (Logic runs) */
-    kdi_FillVal(buf, 16, 0xAA);
-    kdi_FillVal(blk, 4, 0xAA);
-
-    /* Since all match, it returns FAILURE (Not found), but arg check passed */
-    status = GenMemOpsFindLastNotBlockIndex(&idx, buf, USIZE_C(16), blk, USIZE_C(4));
-    assert(status == RESULT_FAILURE);
-
-    printf("PASSED\n");
-}
-
-
-void
-AllMatch(void)
-{
-    u8    buf[16];
-    u8    blk[4];
-    usize idx;
-    bool  status;
-
-    printf(LOG_PREFIX_CSTR "AllMatch -> ");
-
-    /* Fill buffer with 0xAA */
-    kdi_FillVal(buf, USIZE_C(16), U8_C(0xAA));
-    /* Block is 0xAA... */
-    kdi_FillVal(blk, USIZE_C(4), U8_C(0xAA));
-
-    /* Search for block NOT equal to blk.
-     * All blocks match. Should return FAILURE (Not found).
+    /* Search for last block NOT equal to blk.
+     * Since all blocks in buf match blk, this should fail.
      */
-    status = GenMemOpsFindLastNotBlockIndex(&idx, buf, USIZE_C(16), blk, USIZE_C(4));
+    idx    = 999;
+    status = kdGenMemOpsFindLastNotBlockIndex(&idx, buf, USIZE_C(32), blk, USIZE_C(4));
 
     assert(status == RESULT_FAILURE);
 
@@ -123,25 +103,27 @@ AllMatch(void)
 void
 SingleMismatchLast(void)
 {
-    u8    buf[16];
+    u8    buf[32];
     u8    blk[4];
     usize idx;
     bool  status;
 
     printf(LOG_PREFIX_CSTR "SingleMismatchLast -> ");
 
-    /* Fill with 0xAA */
-    kdi_FillVal(buf, USIZE_C(16), U8_C(0xAA));
-    kdi_FillVal(blk, USIZE_C(4), U8_C(0xAA));
+    /* Fill buffer with 0xAA blocks */
+    kdi_Fill_u8(buf, USIZE_C(32), U8_C(0xAA));
+    /* Target block is 0xAA */
+    kdi_Fill_u8(blk, USIZE_C(4), U8_C(0xAA));
 
-    /* Change last block (Offset 12) to 0xBB */
-    kdi_FillVal(buf + 12, 4, 0xBB);
+    /* Change last block (Offset 28) to 0xBB */
+    kdi_Fill_u8(buf + 28, USIZE_C(4), U8_C(0xBB));
 
-    /* Search for last mismatch */
-    status = GenMemOpsFindLastNotBlockIndex(&idx, buf, USIZE_C(16), blk, USIZE_C(4));
+    /* Search for last block NOT 0xAA. Should find 0xBB at index 28. */
+    idx    = 999;
+    status = kdGenMemOpsFindLastNotBlockIndex(&idx, buf, USIZE_C(32), blk, USIZE_C(4));
 
     assert(status == RESULT_SUCCESS);
-    assert(idx == 12);
+    assert(idx == USIZE_C(28));
 
     printf("PASSED\n");
 }
@@ -150,26 +132,27 @@ SingleMismatchLast(void)
 void
 SingleMismatchFirst(void)
 {
-    u8    buf[16];
+    u8    buf[32];
     u8    blk[4];
     usize idx;
     bool  status;
 
     printf(LOG_PREFIX_CSTR "SingleMismatchFirst -> ");
 
-    /* Fill with 0xAA */
-    kdi_FillVal(buf, USIZE_C(16), U8_C(0xAA));
-    kdi_FillVal(blk, USIZE_C(4), U8_C(0xAA));
+    /* Fill buffer with 0xAA blocks */
+    kdi_Fill_u8(buf, USIZE_C(32), U8_C(0xAA));
+    /* Target block is 0xAA */
+    kdi_Fill_u8(blk, USIZE_C(4), U8_C(0xAA));
 
     /* Change first block (Offset 0) to 0xBB */
-    kdi_FillVal(buf, 4, 0xBB);
+    kdi_Fill_u8(buf, USIZE_C(4), U8_C(0xBB));
 
-    /* Search for last mismatch */
-    status = GenMemOpsFindLastNotBlockIndex(&idx, buf, USIZE_C(16), blk, USIZE_C(4));
+    /* Search for last block NOT 0xAA. Should find 0xBB at index 0 (as it's the only one). */
+    idx    = 999;
+    status = kdGenMemOpsFindLastNotBlockIndex(&idx, buf, USIZE_C(32), blk, USIZE_C(4));
 
     assert(status == RESULT_SUCCESS);
-    /* Only mismatch is at 0, so it is the "last" one found scanning backwards too */
-    assert(idx == 0);
+    assert(idx == USIZE_C(0));
 
     printf("PASSED\n");
 }
@@ -185,180 +168,277 @@ MultipleMismatches(void)
 
     printf(LOG_PREFIX_CSTR "MultipleMismatches -> ");
 
-    /* Fill with 0xAA */
-    kdi_FillVal(buf, USIZE_C(32), U8_C(0xAA));
-    kdi_FillVal(blk, USIZE_C(4), U8_C(0xAA));
+    /* Fill buffer with 0xAA blocks */
+    kdi_Fill_u8(buf, USIZE_C(32), U8_C(0xAA));
+    /* Target block is 0xAA */
+    kdi_Fill_u8(blk, USIZE_C(4), U8_C(0xAA));
 
-    /* Mismatches at Offset 4 (Index 1) and Offset 20 (Index 5) */
-    kdi_FillVal(buf + 4, 4, 0xBB);
-    kdi_FillVal(buf + 20, 4, 0xCC);
+    /* Mismatches at Offset 4 (Block index 1) and Offset 20 (Block index 5) */
+    kdi_Fill_u8(buf + 4, USIZE_C(4), U8_C(0xBB));
+    kdi_Fill_u8(buf + 20, USIZE_C(4), U8_C(0xCC));
 
-    /* Search for last mismatch */
-    status = GenMemOpsFindLastNotBlockIndex(&idx, buf, USIZE_C(32), blk, USIZE_C(4));
+    /* Search for last block NOT 0xAA. Should find the one at Offset 20. */
+    idx    = 999;
+    status = kdGenMemOpsFindLastNotBlockIndex(&idx, buf, USIZE_C(32), blk, USIZE_C(4));
 
     assert(status == RESULT_SUCCESS);
-    /* Should find the one at Offset 20 */
-    assert(idx == 20);
+    assert(idx == USIZE_C(20));
 
     printf("PASSED\n");
 }
 
 
 void
-FindLastNotBlockIndex_U16(void)
+AlternatingBlocks(void)
 {
-    u16   buf[10];
-    u16   blk = 0xAAAA;
+    u8    buf[32];
+    u8    blk_AA[4];
+    u8    blk_55[4];
     usize idx;
     bool  status;
+    usize i;
 
-    printf(LOG_PREFIX_CSTR "FindLastNotBlockIndex_U16 -> ");
+    printf(LOG_PREFIX_CSTR "AlternatingBlocks -> ");
 
-    kdi_FillVal((u8 *)buf, sizeof(buf), 0);
-
+    /* Alternating 0xAA (block A) and 0x55 (block B) */
+    /* Block size 4. */
+    for (i = 0; i < 32; i += 4)
     {
-        int i;
-        for (i = 0; i < 10; ++i)
-            buf[i] = 0xAAAA;
+        if ((i / 4) % 2 == 0)
+        { /* Even block index */
+            kdi_Fill_u8(buf + i, USIZE_C(4), U8_C(0xAA));
+        }
+        else
+        { /* Odd block index */
+            kdi_Fill_u8(buf + i, USIZE_C(4), U8_C(0x55));
+        }
     }
+    /* Blocks:
+     * 0-3:   AA AA AA AA
+     * 4-7:   55 55 55 55
+     * 8-11:  AA AA AA AA
+     * 12-15: 55 55 55 55
+     * 16-19: AA AA AA AA
+     * 20-23: 55 55 55 55
+     * 24-27: AA AA AA AA
+     * 28-31: 55 55 55 55
+     */
 
-    /* Set mismatch at element index 2 (Offset 4) and 8 (Offset 16) */
-    buf[2] = 0xBBBB;
-    buf[8] = 0xCCCC;
+    kdi_Fill_u8(blk_AA, USIZE_C(4), U8_C(0xAA));
+    kdi_Fill_u8(blk_55, USIZE_C(4), U8_C(0x55));
 
-    status = GenMemOpsFindLastNotBlockIndex(&idx, buf, sizeof(buf), &blk, sizeof(u16));
-
+    /* Find Last NOT 0xAA block. Last 0x55 block is at index 28. */
+    idx    = 999;
+    status = kdGenMemOpsFindLastNotBlockIndex(&idx, buf, USIZE_C(32), blk_AA, USIZE_C(4));
     assert(status == RESULT_SUCCESS);
-    /* Last mismatch is index 8 -> Offset 16 */
-    assert(idx == 16);
+    assert(idx == USIZE_C(28));
+
+    /* Find Last NOT 0x55 block. Last 0xAA block is at index 24. */
+    idx    = 999;
+    status = kdGenMemOpsFindLastNotBlockIndex(&idx, buf, USIZE_C(32), blk_55, USIZE_C(4));
+    assert(status == RESULT_SUCCESS);
+    assert(idx == USIZE_C(24));
 
     printf("PASSED\n");
 }
 
 
 void
-FindLastNotBlockIndex_U32(void)
+LargeBuffer(void)
 {
-    u32   buf[10];
-    u32   blk = 0x12345678;
-    usize idx;
-    bool  status;
-
-    printf(LOG_PREFIX_CSTR "FindLastNotBlockIndex_U32 -> ");
-
-    {
-        int i;
-        for (i = 0; i < 10; ++i)
-            buf[i] = 0x12345678;
-    }
-
-    /* Mismatch at Index 1 (Offset 4) and Index 5 (Offset 20) */
-    buf[1] = 0x87654321;
-    buf[5] = 0x99999999;
-
-    status = GenMemOpsFindLastNotBlockIndex(&idx, buf, sizeof(buf), &blk, sizeof(u32));
-
-    assert(status == RESULT_SUCCESS);
-    /* Last mismatch is Index 5 -> Offset 20 */
-    assert(idx == 20);
-
-    printf("PASSED\n");
-}
-
-
-#if defined KD_ARCH_64BIT_INT || defined ARCH_64BIT_INT
-void
-FindLastNotBlockIndex_U64(void)
-{
-    u64   buf[10];
-    u64   blk = U64_C(0x1111222233334444);
-    usize idx;
-    bool  status;
-
-    printf(LOG_PREFIX_CSTR "FindLastNotBlockIndex_U64 -> ");
-
-    {
-        int i;
-        for (i = 0; i < 10; ++i)
-            buf[i] = blk;
-    }
-
-    /* Mismatch at Index 9 (Offset 72) */
-    buf[9] = U64_C(0xFFFFFFFFFFFFFFFF);
-
-    status = GenMemOpsFindLastNotBlockIndex(&idx, buf, sizeof(buf), &blk, sizeof(u64));
-
-    assert(status == RESULT_SUCCESS);
-    /* Last mismatch is Index 9 -> Offset 72 */
-    assert(idx == 72);
-
-    printf("PASSED\n");
-}
-#endif
-
-
-typedef struct kdi_TestStruct
-{
-    u64 a;
-    u64 b;
-    u64 c;
-} kdi_TestStruct;
-
-
-void
-FindLastNotBlockIndex_Struct(void)
-{
-    kdi_TestStruct buf[5];
-    kdi_TestStruct blk;
-    usize          idx;
-    bool           status;
-    int            i;
-
-    printf(LOG_PREFIX_CSTR "FindLastNotBlockIndex_Struct -> ");
-
-    blk.a = 1;
-    blk.b = 2;
-    blk.c = 3;
-
-    for (i = 0; i < 5; ++i)
-        buf[i] = blk;
-
-    /* Mismatch at Index 1 (Offset 24) and Index 3 (Offset 72) */
-    buf[1].a = 99;
-    buf[3].c = 88;
-
-    status   = GenMemOpsFindLastNotBlockIndex(&idx, buf, sizeof(buf), &blk, sizeof(kdi_TestStruct));
-
-    assert(status == RESULT_SUCCESS);
-    /* Last mismatch is Index 3 -> Offset 72 */
-    assert(idx == 72);
-
-    printf("PASSED\n");
-}
-
-
-void
-FindLastNotBlockIndex_LargeArray(void)
-{
-    static u8 buf[8000];
-    u8        blk[8];
+    static u8 buf[1024]; /* Static to avoid stack overflow for large array */
+    u8        blk[16];
     usize     idx;
     bool      status;
+    usize     i;
 
-    printf(LOG_PREFIX_CSTR "FindLastNotBlockIndex_LargeArray -> ");
+    printf(LOG_PREFIX_CSTR "LargeBuffer -> ");
 
-    kdi_FillVal(buf, sizeof(buf), 0xAA);
-    kdi_FillVal(blk, sizeof(blk), 0xAA);
+    /* Init buffer with target pattern (0xCC blocks) */
+    kdi_Fill_u8(buf, USIZE_C(1024), U8_C(0xCC));
+    /* Target block is 0xCC */
+    kdi_Fill_u8(blk, USIZE_C(16), U8_C(0xCC));
 
-    /* Mismatch at Offset 800 and Offset 4000 */
-    kdi_FillVal(buf + 800, 8, 0xBB);
-    kdi_FillVal(buf + 4000, 8, 0xCC);
+    /* Set some non-matching blocks at specific points */
+    kdi_Fill_u8(buf + 96, USIZE_C(16), U8_C(0xDD)); /* Mismatch at aligned offset 96 (Block index 6) */
+    kdi_Fill_u8(buf + 496, USIZE_C(16), U8_C(0xEE)); /* Mismatch at aligned offset 496 (Block index 31) */
+    kdi_Fill_u8(buf + 896, USIZE_C(16), U8_C(0xFF)); /* Last mismatch at aligned offset 896 (Block index 56) */
 
-    status = GenMemOpsFindLastNotBlockIndex(&idx, buf, sizeof(buf), blk, sizeof(blk));
-
+    /* Find Last NOT 0xCC block. Should find 0xFF block at index 900. */
+    idx    = 999;
+    status = kdGenMemOpsFindLastNotBlockIndex(&idx, buf, USIZE_C(1024), blk, USIZE_C(16));
     assert(status == RESULT_SUCCESS);
-    /* Should find the last one (4000) */
-    assert(idx == 4000);
+    assert(idx == USIZE_C(896));
+
+    /* Now, fill with sequential values and test */
+    for (i = 0; i < 1024; ++i)
+    {
+        buf[i] = (u8)(i % 256);
+    }
+    /* Pattern: 0, 1, ..., 255, 0, 1, ... */
+
+    /* Create a target block that matches `buf` at offset 0 (0..15) */
+    for (i = 0; i < 16; ++i)
+    {
+        blk[i] = (u8)((0 + i) % 256); /* This is 0, 1, ..., 15 */
+    }
+
+    /* Find Last NOT blk (0..15).
+     * The last block that does *not* match 0..15 is the one right before the end
+     * if the last block happens to match 0..15.
+     * The very last block starts at index 1024 - 16 = 1008.
+     * Its values are 1008%256, ..., 1023%256 which is 240, 241, ..., 255.
+     * This does NOT match 0..15. So the last block itself is a mismatch.
+     */
+    idx    = 999;
+    status = kdGenMemOpsFindLastNotBlockIndex(&idx, buf, USIZE_C(1024), blk, USIZE_C(16));
+    assert(status == RESULT_SUCCESS);
+    assert(idx == USIZE_C(1008)); /* Last block (offset 1008) is not 0..15 */
+
+    printf("PASSED\n");
+}
+
+
+void
+SingleBlockBuffer(void)
+{
+    u8    buf[8];
+    u8    blk[8];
+    usize idx;
+    bool  status;
+
+    printf(LOG_PREFIX_CSTR "SingleBlockBuffer -> ");
+
+    /* Buffer is a single block of 0xCC */
+    kdi_Fill_u8(buf, sizeof(buf), U8_C(0xCC));
+    /* Target block is 0xDD */
+    kdi_Fill_u8(blk, sizeof(blk), U8_C(0xDD));
+
+    /* Find NOT 0xDD block. Should find the 0xCC block at index 0. */
+    idx    = 999;
+    status = kdGenMemOpsFindLastNotBlockIndex(&idx, buf, sizeof(buf), blk, sizeof(blk));
+    assert(status == RESULT_SUCCESS);
+    assert(idx == USIZE_C(0));
+
+    /* Target block is 0xCC */
+    kdi_Fill_u8(blk, sizeof(blk), U8_C(0xCC));
+    /* Find NOT 0xCC block. Should fail. */
+    idx    = 999;
+    status = kdGenMemOpsFindLastNotBlockIndex(&idx, buf, sizeof(buf), blk, sizeof(blk));
+    assert(status == RESULT_FAILURE);
+
+    printf("PASSED\n");
+}
+
+
+void
+U16_Buffer(void)
+{
+    u16   buf[8]; /* 16 bytes total */
+    u16   blk[2]; /* 4 bytes for search block */
+    usize idx;
+    bool  status;
+
+    printf(LOG_PREFIX_CSTR "U16_Buffer -> ");
+
+    /* Init buf with 0xAAAA (blocks of {0xAA,0xAA} in u8 terms) */
+    memset(buf, 0xAA, sizeof(buf)); /* This fills u16 with 0xAAAA */
+
+    /* Set some non-matching blocks. Block size for comparison is 2 * sizeof(u16) = 4 bytes */
+    /* Block at offset 4 (buf[2], buf[3]) becomes {0xBBBB, 0xCCCC} */
+    buf[2] = 0xBBBB;
+    buf[3] = 0xCCCC;
+    /* Block at offset 12 (buf[6], buf[7]) becomes {0xDDDD, 0xEEEE} */
+    buf[6] = 0xDDDD;
+    buf[7] = 0xEEEE;
+
+    /* Search for block {0xAAAA, 0xAAAA} (which is all 0xAA in u8 terms) */
+    blk[0] = 0xAAAA;
+    blk[1] = 0xAAAA;
+
+    /* Should find the last non-matching block at offset 12. */
+    idx    = 999;
+    status = kdGenMemOpsFindLastNotBlockIndex(&idx, (u8 *)buf, sizeof(buf), (u8 *)blk, sizeof(blk));
+    assert(status == RESULT_SUCCESS);
+    assert(idx == USIZE_C(12));
+
+    /* Search for block {0xDDDD, 0xEEEE} */
+    blk[0] = 0xDDDD;
+    blk[1] = 0xEEEE;
+
+    /* Find Last NOT {0xDDDD, 0xEEEE}.
+     * The last block is {0xDDDD, 0xEEEE}.
+     * The block before that, at offset 8, is {0xAAAA, 0xAAAA}. This is a mismatch.
+     * So, the last mismatch found should be at index 8. */
+    idx    = 999;
+    status = kdGenMemOpsFindLastNotBlockIndex(&idx, (u8 *)buf, sizeof(buf), (u8 *)blk, sizeof(blk));
+    assert(status == RESULT_SUCCESS);
+    assert(idx == USIZE_C(8));
+
+    printf("PASSED\n");
+}
+
+
+void
+AllSameBlockNotTarget(void)
+{
+    u8    buf[32];
+    u8    blk[4];
+    usize idx;
+    bool  status;
+
+    printf(LOG_PREFIX_CSTR "AllSameBlockNotTarget -> ");
+
+    /* All blocks are [0x77]*4 */
+    kdi_Fill_u8(buf, USIZE_C(32), U8_C(0x77));
+    /* Target block is [0x00]*4 */
+    kdi_Fill_u8(blk, USIZE_C(4), U8_C(0x00));
+
+    /* Find last block NOT [0x00]*4. All blocks are [0x77]*4, so they are all mismatches.
+     * Should return index 28 (the last block). */
+    idx    = 999;
+    status = kdGenMemOpsFindLastNotBlockIndex(&idx, buf, USIZE_C(32), blk, USIZE_C(4));
+    assert(status == RESULT_SUCCESS);
+    assert(idx == USIZE_C(28));
+
+    printf("PASSED\n");
+}
+
+
+void
+OddBlockSize(void)
+{
+    u8    buf[30]; /* 10 blocks of 3 bytes */
+    u8    blk[3];
+    usize idx;
+    bool  status;
+
+    printf(LOG_PREFIX_CSTR "OddBlockSize -> ");
+
+    /* Init buf with 0xAA */
+    kdi_Fill_u8(buf, USIZE_C(30), U8_C(0xAA));
+
+    /* Set 0xFF block at 9 (block 3) and 24 (block 8) */
+    kdi_Fill_u8(buf + 9, USIZE_C(3), U8_C(0xFF));
+    kdi_Fill_u8(buf + 24, USIZE_C(3), U8_C(0xFF));
+
+    /* Target block is 0xAA */
+    kdi_Fill_u8(blk, USIZE_C(3), U8_C(0xAA));
+
+    /* Find last block NOT 0xAA. Should be at index 24 (last 0xFF block). */
+    idx    = 999;
+    status = kdGenMemOpsFindLastNotBlockIndex(&idx, buf, USIZE_C(30), blk, USIZE_C(3));
+    assert(status == RESULT_SUCCESS);
+    assert(idx == USIZE_C(24));
+
+    /* Target block is 0xFF */
+    kdi_Fill_u8(blk, USIZE_C(3), U8_C(0xFF));
+
+    /* Find last block NOT 0xFF. Should be at index 27 (last 0xAA block). */
+    idx    = 999;
+    status = kdGenMemOpsFindLastNotBlockIndex(&idx, buf, USIZE_C(30), blk, USIZE_C(3));
+    assert(status == RESULT_SUCCESS);
+    assert(idx == USIZE_C(27));
 
     printf("PASSED\n");
 }
@@ -373,19 +453,16 @@ main(int argc, char **argv)
     printf("\n" TEST_NAME_CSTR " :: begin\n");
 
     BasicArguments();
-    SizeAlignment();
-    AllMatch();
+    AllMatchTarget();
     SingleMismatchLast();
     SingleMismatchFirst();
     MultipleMismatches();
-
-    FindLastNotBlockIndex_U16();
-    FindLastNotBlockIndex_U32();
-#if defined KD_ARCH_64BIT_INT || defined ARCH_64BIT_INT
-    FindLastNotBlockIndex_U64();
-#endif
-    FindLastNotBlockIndex_Struct();
-    FindLastNotBlockIndex_LargeArray();
+    AlternatingBlocks();
+    LargeBuffer();
+    SingleBlockBuffer();
+    U16_Buffer();
+    AllSameBlockNotTarget();
+    OddBlockSize();
 
     printf("\n" TEST_NAME_CSTR " :: end\n\n");
 

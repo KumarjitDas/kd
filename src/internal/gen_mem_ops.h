@@ -35,7 +35,7 @@ KDAPI(void) kdi_GenMemOpsSetBlocks_U32(u32 *dst, usize sz, u32 val);
 #if defined ARCH_64BIT_INT
 KDAPI(void) kdi_GenMemOpsSetBlocks_U64(u64 *dst, usize sz, u64 val);
 #endif
-KDAPI(void) kdi_GenMemOpsSetBlocks_Un(byte *dst, usize dsst_sz, byte *block, usize block_sz);
+KDAPI(void) kdi_GenMemOpsSetBlocks_Un(byte *dst, usize dst_sz, byte *block, usize block_sz);
 
 KDAPI(void) kdi_GenMemOpsReverseBlocks_U8(u8 *ptr, usize sz);
 KDAPI(void) kdi_GenMemOpsReverseBlocks_U16(u16 *ptr, usize sz);
@@ -66,7 +66,13 @@ KDAPI(void) kdi_GenMemOpsRotateLeft(byte *ptr, usize sz, usize k);
 
 KDAPI(void) kdi_GenMemOpsIsEqual(bool *result, byte *ptr_1, byte *ptr_2, usize sz);
 
-KDAPI(void) kdi_GenMemOpsIsVal(bool *result, byte *ptr, usize sz, byte val);
+KDAPI(void) kdi_GenMemOpsIsBlocks_U8(bool *result, u8 *ptr, usize sz, u8 item);
+KDAPI(void) kdi_GenMemOpsIsBlocks_U16(bool *result, u16 *ptr, usize sz, u16 item);
+KDAPI(void) kdi_GenMemOpsIsBlocks_U32(bool *result, u32 *ptr, usize sz, u32 item);
+#if defined ARCH_64BIT_INT
+KDAPI(void) kdi_GenMemOpsIsBlocks_U64(bool *result, u64 *ptr, usize sz, u64 item);
+#endif
+KDAPI(void) kdi_GenMemOpsIsBlocks_Un(bool *result, byte *ptr, usize ptr_sz, byte *block, usize block_sz);
 
 KDAPI(void) kdi_GenMemOpsRegionOverlap(bool *result, byte *ptr_1, usize ptr_1_sz, byte *ptr_2, usize ptr_2_sz);
 KDAPI(void) kdi_GenMemOpsRegionContains(bool *result, byte *base, usize base_sz, byte *ptr, usize ptr_sz);
