@@ -339,10 +339,10 @@ IF "!BUILD_TESTS!"=="1" (
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindLastNotByteIndexBound"
 	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindLastNotBlockIndexBound"
 
-	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindByteIndicesU8"
-	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindByteIndicesU16"
-	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindByteIndicesU32"
-	rem SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindByteIndicesU64"
+	SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindByteIndicesU8"
+	SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindByteIndicesU16"
+	SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindByteIndicesU32"
+	SET "TESTS=!TESTS! gen_mem_ops\kdGenMemOpsFindByteIndicesU64"
 
 	REM Tests till this point are done.
 

@@ -1943,7 +1943,7 @@ GenMemOpsFindByteIndicesU8(u8 *idxs, usize idxs_sz, usize *found, void *ptr, usi
 
     if (ptr_sz > MAX_U8)
     {
-        ptr_sz = MAX_U8;
+        ptr_sz = MAX_U8 + 1;
     }
 
     kdi_GenMemOpsFindBlockIndicesU8_IdxU8(idxs, idxs_sz, found, ptr, ptr_sz, item);
@@ -1997,10 +1997,12 @@ GenMemOpsFindByteIndicesU32(u32 *idxs, usize idxs_sz, usize *found, void *ptr, u
         return RESULT_FAILURE;
     }
 
+#if defined ARCH_64BIT_INT
     if (ptr_sz > MAX_U32)
     {
         ptr_sz = MAX_U32 + 1;
     }
+#endif
 
     kdi_GenMemOpsFindBlockIndicesU8_IdxU32(idxs, idxs_sz, found, ptr, ptr_sz, item);
 
@@ -2034,6 +2036,8 @@ GenMemOpsFindByteIndicesU64(u64 *idxs, usize idxs_sz, usize *found, void *ptr, u
 bool
 GenMemOpsFindBlockIndicesU8(u8 *idxs, usize idxs_sz, usize *found, void *ptr, usize ptr_sz, void *block, usize block_sz)
 {
+    usize extra;
+
     if (!found)
     {
         return RESULT_FAILURE;
@@ -2048,7 +2052,8 @@ GenMemOpsFindBlockIndicesU8(u8 *idxs, usize idxs_sz, usize *found, void *ptr, us
 
     if (ptr_sz > MAX_U8)
     {
-        ptr_sz = MAX_U8 + block_sz - MAX_U8 % block_sz;
+        extra  = MAX_U8 % block_sz;
+        ptr_sz = MAX_U8 - extra + extra ? block_sz : 0;
     }
 
     switch (block_sz)
@@ -2078,6 +2083,8 @@ GenMemOpsFindBlockIndicesU8(u8 *idxs, usize idxs_sz, usize *found, void *ptr, us
 bool
 GenMemOpsFindBlockIndicesU16(u16 *idxs, usize idxs_sz, usize *found, void *ptr, usize ptr_sz, void *block, usize block_sz)
 {
+    usize extra;
+
     if (!found)
     {
         return RESULT_FAILURE;
@@ -2092,7 +2099,8 @@ GenMemOpsFindBlockIndicesU16(u16 *idxs, usize idxs_sz, usize *found, void *ptr, 
 
     if (ptr_sz > MAX_U16)
     {
-        ptr_sz = MAX_U16 + block_sz - MAX_U16 % block_sz;
+        extra  = MAX_U16 % block_sz;
+        ptr_sz = MAX_U16 - extra + extra ? block_sz : 0;
     }
 
     switch (block_sz)
@@ -2122,6 +2130,8 @@ GenMemOpsFindBlockIndicesU16(u16 *idxs, usize idxs_sz, usize *found, void *ptr, 
 bool
 GenMemOpsFindBlockIndicesU32(u32 *idxs, usize idxs_sz, usize *found, void *ptr, usize ptr_sz, void *block, usize block_sz)
 {
+    usize extra;
+
     if (!found)
     {
         return RESULT_FAILURE;
@@ -2138,10 +2148,13 @@ GenMemOpsFindBlockIndicesU32(u32 *idxs, usize idxs_sz, usize *found, void *ptr, 
         return RESULT_FAILURE;
     }
 
+#if defined ARCH_64BIT_INT
     if (ptr_sz > MAX_U32)
     {
-        ptr_sz = MAX_U32 + block_sz - MAX_U32 % block_sz;
+        extra  = MAX_U32 % block_sz;
+        ptr_sz = MAX_U32 - extra + extra ? block_sz : 0;
     }
+#endif
 
     switch (block_sz)
     {
@@ -2277,10 +2290,12 @@ GenMemOpsFindNotByteIndicesU32(u32 *idxs, usize idxs_sz, usize *found, void *ptr
         return RESULT_FAILURE;
     }
 
+#if defined ARCH_64BIT_INT
     if (ptr_sz > MAX_U32)
     {
         ptr_sz = MAX_U32 + 1;
     }
+#endif
 
     kdi_GenMemOpsFindNotBlockIndicesU8_IdxU32(idxs, idxs_sz, found, ptr, ptr_sz, item);
 
@@ -2314,6 +2329,8 @@ GenMemOpsFindNotByteIndicesU64(u64 *idxs, usize idxs_sz, usize *found, void *ptr
 bool
 GenMemOpsFindNotBlockIndicesU8(u8 *idxs, usize idxs_sz, usize *found, void *ptr, usize ptr_sz, void *block, usize block_sz)
 {
+    usize extra;
+
     if (!found)
     {
         return RESULT_FAILURE;
@@ -2328,7 +2345,8 @@ GenMemOpsFindNotBlockIndicesU8(u8 *idxs, usize idxs_sz, usize *found, void *ptr,
 
     if (ptr_sz > MAX_U8)
     {
-        ptr_sz = MAX_U8 + block_sz - MAX_U8 % block_sz;
+        extra  = MAX_U8 % block_sz;
+        ptr_sz = MAX_U8 - extra + extra ? block_sz : 0;
     }
 
     switch (block_sz)
@@ -2358,6 +2376,8 @@ GenMemOpsFindNotBlockIndicesU8(u8 *idxs, usize idxs_sz, usize *found, void *ptr,
 bool
 GenMemOpsFindNotBlockIndicesU16(u16 *idxs, usize idxs_sz, usize *found, void *ptr, usize ptr_sz, void *block, usize block_sz)
 {
+    usize extra;
+
     if (!found)
     {
         return RESULT_FAILURE;
@@ -2372,7 +2392,8 @@ GenMemOpsFindNotBlockIndicesU16(u16 *idxs, usize idxs_sz, usize *found, void *pt
 
     if (ptr_sz > MAX_U16)
     {
-        ptr_sz = MAX_U16 + block_sz - MAX_U16 % block_sz;
+        extra  = MAX_U16 % block_sz;
+        ptr_sz = MAX_U16 - extra + extra ? block_sz : 0;
     }
 
     switch (block_sz)
@@ -2402,6 +2423,8 @@ GenMemOpsFindNotBlockIndicesU16(u16 *idxs, usize idxs_sz, usize *found, void *pt
 bool
 GenMemOpsFindNotBlockIndicesU32(u32 *idxs, usize idxs_sz, usize *found, void *ptr, usize ptr_sz, void *block, usize block_sz)
 {
+    usize extra;
+
     if (!found)
     {
         return RESULT_FAILURE;
@@ -2421,7 +2444,8 @@ GenMemOpsFindNotBlockIndicesU32(u32 *idxs, usize idxs_sz, usize *found, void *pt
 #if defined ARCH_64BIT_INT
     if (ptr_sz > MAX_U32)
     {
-        ptr_sz = MAX_U32 + block_sz - MAX_U32 % block_sz;
+        extra  = MAX_U32 % block_sz;
+        ptr_sz = MAX_U32 - extra + extra ? block_sz : 0;
     }
 #endif
 
@@ -2736,7 +2760,7 @@ GenMemOpsFindByteIndicesBoundU64(u64 *idxs, usize idxs_sz, usize *found, void *b
 bool
 GenMemOpsFindBlockIndicesBoundU8(u8 *idxs, usize idxs_sz, usize *found, void *base, usize base_sz, usize begin_idx, usize end_count_byte, void *block, usize block_sz)
 {
-    usize found_items, temp_idx;
+    usize extra, found_items, temp_idx;
 
     if (!found)
     {
@@ -2752,7 +2776,8 @@ GenMemOpsFindBlockIndicesBoundU8(u8 *idxs, usize idxs_sz, usize *found, void *ba
 
     if (base_sz > MAX_U8)
     {
-        base_sz = MAX_U8 + block_sz - MAX_U8 % block_sz;
+        extra   = MAX_U8 % block_sz;
+        base_sz = MAX_U8 - extra + extra ? block_sz : 0;
     }
 
     end_count_byte -= end_count_byte % block_sz;
@@ -2807,7 +2832,7 @@ GenMemOpsFindBlockIndicesBoundU8(u8 *idxs, usize idxs_sz, usize *found, void *ba
 bool
 GenMemOpsFindBlockIndicesBoundU16(u16 *idxs, usize idxs_sz, usize *found, void *base, usize base_sz, usize begin_idx, usize end_count_byte, void *block, usize block_sz)
 {
-    usize found_items, temp_idx;
+    usize extra, found_items, temp_idx;
 
     if (!found)
     {
@@ -2823,7 +2848,8 @@ GenMemOpsFindBlockIndicesBoundU16(u16 *idxs, usize idxs_sz, usize *found, void *
 
     if (base_sz > MAX_U16)
     {
-        base_sz = MAX_U16 + block_sz - MAX_U16 % block_sz;
+        extra   = MAX_U16 % block_sz;
+        base_sz = MAX_U16 - extra + extra ? block_sz : 0;
     }
 
     end_count_byte -= end_count_byte % block_sz;
@@ -2878,7 +2904,7 @@ GenMemOpsFindBlockIndicesBoundU16(u16 *idxs, usize idxs_sz, usize *found, void *
 bool
 GenMemOpsFindBlockIndicesBoundU32(u32 *idxs, usize idxs_sz, usize *found, void *base, usize base_sz, usize begin_idx, usize end_count_byte, void *block, usize block_sz)
 {
-    usize found_items, temp_idx;
+    usize extra, found_items, temp_idx;
 
     if (!found)
     {
@@ -2899,7 +2925,8 @@ GenMemOpsFindBlockIndicesBoundU32(u32 *idxs, usize idxs_sz, usize *found, void *
 #if defined ARCH_64BIT_INT
     if (base_sz > MAX_U32)
     {
-        base_sz = MAX_U32 + block_sz - MAX_U32 % block_sz;
+        extra   = MAX_U32 % block_sz;
+        base_sz = MAX_U32 - extra + extra ? block_sz : 0;
     }
 #endif
 
@@ -3216,7 +3243,7 @@ GenMemOpsFindNotByteIndicesBoundU64(u64 *idxs, usize idxs_sz, usize *found, void
 bool
 GenMemOpsFindNotBlockIndicesBoundU8(u8 *idxs, usize idxs_sz, usize *found, void *base, usize base_sz, usize begin_idx, usize end_count_byte, void *block, usize block_sz)
 {
-    usize found_items, temp_idx;
+    usize extra, found_items, temp_idx;
 
     if (!found)
     {
@@ -3232,7 +3259,8 @@ GenMemOpsFindNotBlockIndicesBoundU8(u8 *idxs, usize idxs_sz, usize *found, void 
 
     if (base_sz > MAX_U8)
     {
-        base_sz = MAX_U8 + block_sz - MAX_U8 % block_sz;
+        extra   = MAX_U8 % block_sz;
+        base_sz = MAX_U8 - extra + extra ? block_sz : 0;
     }
 
     end_count_byte -= end_count_byte % block_sz;
@@ -3287,7 +3315,7 @@ GenMemOpsFindNotBlockIndicesBoundU8(u8 *idxs, usize idxs_sz, usize *found, void 
 bool
 GenMemOpsFindNotBlockIndicesBoundU16(u16 *idxs, usize idxs_sz, usize *found, void *base, usize base_sz, usize begin_idx, usize end_count_byte, void *block, usize block_sz)
 {
-    usize found_items, temp_idx;
+    usize extra, found_items, temp_idx;
 
     if (!found)
     {
@@ -3303,7 +3331,8 @@ GenMemOpsFindNotBlockIndicesBoundU16(u16 *idxs, usize idxs_sz, usize *found, voi
 
     if (base_sz > MAX_U16)
     {
-        base_sz = MAX_U16 + block_sz - MAX_U16 % block_sz;
+        extra   = MAX_U16 % block_sz;
+        base_sz = MAX_U16 - extra + extra ? block_sz : 0;
     }
 
     end_count_byte -= end_count_byte % block_sz;
@@ -3358,7 +3387,7 @@ GenMemOpsFindNotBlockIndicesBoundU16(u16 *idxs, usize idxs_sz, usize *found, voi
 bool
 GenMemOpsFindNotBlockIndicesBoundU32(u32 *idxs, usize idxs_sz, usize *found, void *base, usize base_sz, usize begin_idx, usize end_count_byte, void *block, usize block_sz)
 {
-    usize found_items, temp_idx;
+    usize extra, found_items, temp_idx;
 
     if (!found)
     {
@@ -3379,7 +3408,8 @@ GenMemOpsFindNotBlockIndicesBoundU32(u32 *idxs, usize idxs_sz, usize *found, voi
 #if defined ARCH_64BIT_INT
     if (base_sz > MAX_U32)
     {
-        base_sz = MAX_U32 + block_sz - MAX_U32 % block_sz;
+        extra   = MAX_U32 % block_sz;
+        base_sz = MAX_U32 - extra + extra ? block_sz : 0;
     }
 #endif
 
